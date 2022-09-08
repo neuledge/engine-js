@@ -1,0 +1,31 @@
+{
+  "name": "@neuledge/entity",
+  "version": "0.0.0",
+  "type": "module",
+  "main": "lib/index",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/neuledge/neuledge-js.git"
+  },
+  "license": "Apache-2.0",
+  "publishConfig": {
+    "access": "public"
+  },
+  "exports": {
+    ".": "./lib/index.js",
+    "./*": "./lib/*"
+  },
+  "scripts": {
+    "clean": "rm -rf lib *.tsbuildinfo",
+    "test": "yarn run jest",
+    "jest": "NODE_OPTIONS=--experimental-vm-modules jest"
+  },
+  "devDependencies": {
+    "@types/jest": "^28.1.6",
+    "jest": "^28.1.3"
+  },
+  "dependencies": {
+    "@neuledge/scalar": "0.0.0",
+    "@neuledge/state": "0.0.0"
+  }
+}
