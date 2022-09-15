@@ -1,8 +1,8 @@
 import {
   createScalar,
   Scalar,
+  ScalarFunc,
   ScalarInput,
-  ClassScalar,
   ScalarType,
   ScalarValue,
 } from './Scalar.js';
@@ -24,20 +24,21 @@ describe('Scalar', () => {
     it('should create from function', () => {
       const scalar = createScalar(String);
 
-      expect<ClassScalar<string, unknown>>(scalar);
+      expect<Scalar<string, unknown, string>>(scalar);
 
       expect(scalar.encode(123)).toBe('123');
       expect(scalar.decode).toBe(undefined);
     });
   });
 
-  describe('Scalar<>', () => {
+  describe('ScalarFunc<>', () => {
     it('should match scalar function', () => {
-      expect<Scalar<string>>(String);
-      expect<Scalar<string, unknown>>(String);
-      expect<Scalar<string, unknown, string>>(String);
+      expect<ScalarFunc<string>>(String);
+      expect<ScalarFunc<string, unknown>>(String);
     });
+  });
 
+  describe('Scalar<>', () => {
     it('should match scalar oject', () => {
       expect<Scalar<string>>({
         encode: (value: string) => value,

@@ -1,12 +1,4 @@
-export type Scalar<
-  Type = any, // eslint-disable-line @typescript-eslint/no-explicit-any
-  Input = Type,
-  Value = Type,
-> =
-  | ClassScalar<Type, Input, Value>
-  | (FuncScalar<Type, Input> & FuncScalar<Value, Input>);
-
-export interface ClassScalar<
+export interface Scalar<
   Type = any, // eslint-disable-line @typescript-eslint/no-explicit-any
   Input = Type,
   Value = Type,
@@ -15,45 +7,38 @@ export interface ClassScalar<
   decode?: (value: Value) => Type | PromiseLike<Type>;
 }
 
-export type FuncScalar<
-  Type = any, // eslint-disable-line @typescript-eslint/no-explicit-any
-  Input = Type,
-> = (value: Input) => Type;
-
-export type ScalarType<S extends Scalar> = S extends ClassScalar<
+export type ScalarType<S extends Scalar> = S extends Scalar<
   infer T,
   any, // eslint-disable-line @typescript-eslint/no-explicit-any
   any // eslint-disable-line @typescript-eslint/no-explicit-any
 >
   ? T
-  : S extends FuncScalar<infer T, any> // eslint-disable-line @typescript-eslint/no-explicit-any
-  ? T
   : never;
 
-export type ScalarInput<S extends Scalar> = S extends ClassScalar<
+export type ScalarInput<S extends Scalar> = S extends Scalar<
   any, // eslint-disable-line @typescript-eslint/no-explicit-any
   infer T,
   any // eslint-disable-line @typescript-eslint/no-explicit-any
 >
   ? T
-  : S extends FuncScalar<
-      any, // eslint-disable-line @typescript-eslint/no-explicit-any
-      infer T
-    >
-  ? T
   : never;
 
-export type ScalarValue<S extends Scalar> = S extends ClassScalar<
+export type ScalarValue<S extends Scalar> = S extends Scalar<
   any, // eslint-disable-line @typescript-eslint/no-explicit-any
   any, // eslint-disable-line @typescript-eslint/no-explicit-any
   infer T
 >
   ? T
-  : S extends FuncScalar<infer T, any> // eslint-disable-line @typescript-eslint/no-explicit-any
-  ? T
   : never;
 
+export type ScalarFunc<
+  Type = any, // eslint-disable-line @typescript-eslint/no-explicit-any
+  Input = Type,
+> = (value: Input) => Type | PromiseLike<Type>;
+
 export const createScalar = <Type, Input, Value>(
-  scalar: Scalar<Type, Input, Value>,
-): ClassScalar<Type, Input, Value> =>
+  scalar:
+    | Scalar<Type, Input, Value>
+    | (ScalarFunc<Type, Input> & ScalarFunc<Value, Input>),
+): Scalar<Type, Input, Value> =>
   typeof scalar === 'function' ? { encode: scalar } : scalar;
