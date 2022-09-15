@@ -1,5 +1,5 @@
 import { Scalar } from '@neuledge/scalar';
-import { type State } from './State.js';
+import { type State } from './State/index.js';
 
 export type StateFieldType =
   | Scalar

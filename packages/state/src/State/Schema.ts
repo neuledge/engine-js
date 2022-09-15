@@ -1,5 +1,5 @@
 import { Scalar } from '@neuledge/scalar';
-import { StateFieldType } from './Field.js';
+import { StateFieldType } from '../Field.js';
 
 export type StateSchema = {
   [Key in string]: SchemaFieldProperties;

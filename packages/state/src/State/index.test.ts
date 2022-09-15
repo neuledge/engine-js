@@ -1,5 +1,5 @@
 import { Scalar } from '@neuledge/scalar';
-import { createState, State } from './State.js';
+import { createState, State } from './index.js';
 
 /* eslint-disable max-lines-per-function */
 

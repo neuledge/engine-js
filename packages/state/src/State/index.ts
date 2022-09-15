@@ -1,8 +1,8 @@
 import { StateSchema } from './Schema.js';
 
 export interface State<
-  Key extends string = any, // eslint-disable-line @typescript-eslint/no-explicit-any
-  Schema extends StateSchema = any, // eslint-disable-line @typescript-eslint/no-explicit-any
+  Key extends string = string,
+  Schema extends StateSchema = StateSchema,
 > {
   key: Key;
   schema: Schema;

@@ -1,4 +1,5 @@
-import { Projection, State } from '@neuledge/state';
+import { Projection } from '@/Projection.js';
+import { State } from '@neuledge/state';
 import { EntityCreateData, EntityData, EntityUpdateData } from './data.js';
 
 export type Entity<S extends State, P extends Projection<S>> = {
@@ -31,7 +32,7 @@ export const isState =
     ...stateKeys: K[]
   ): ((doc: T) => doc is T & { $state: K }) =>
   (doc): doc is T & { $state: K } =>
-    stateKeys.includes(doc.$state);
+    stateKeys.includes(doc.$state as K);
 
 // helpers
 

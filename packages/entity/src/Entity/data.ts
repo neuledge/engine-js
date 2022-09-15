@@ -1,13 +1,8 @@
 import { EntityId } from '@/Id.js';
 import { EntityList } from '@/List.js';
+import { Projection } from '@/Projection.js';
 import { Scalar } from '@neuledge/scalar';
-import {
-  ArrayType,
-  Projection,
-  State,
-  StateFieldType,
-  UnionType,
-} from '@neuledge/state';
+import { ArrayType, State, StateFieldType, UnionType } from '@neuledge/state';
 import { Entity, EntityCreate } from './index.js';
 import {
   NullableKeys,
@@ -35,7 +30,7 @@ export type EntityCreateData<S extends State> = {
 };
 
 export type EntityUpdateData<S extends State> = {
-  [K in keyof S]?: EntityFieldData<S['schema'][K]['type']> | null;
+  [K in keyof S['schema']]?: EntityFieldData<S['schema'][K]['type']> | null;
 };
 
 // field helpers

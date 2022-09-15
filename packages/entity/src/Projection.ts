@@ -1,9 +1,9 @@
 import { Scalar } from '@neuledge/scalar';
-import { ArrayType, State, StateSchema, UnionType } from '@neuledge/state';
+import { ArrayType, State, UnionType } from '@neuledge/state';
 import { EntityListOffset } from './List.js';
 import { Merge } from './utils.js';
 
-export type Projection<S extends State<string, StateSchema>> = {
+export type Projection<S extends State> = {
   [K in keyof Merge<S['schema']>]?: [
     NonNullable<Merge<S['schema']>[K]>,
   ] extends [{ type: infer T }]

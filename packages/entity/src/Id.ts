@@ -1,13 +1,13 @@
-import { ScalarType } from '@neuledge/scalar';
-import { State, StateSchema } from '@neuledge/state';
+import { Scalar } from '@neuledge/scalar';
+import { State } from '@neuledge/state';
 
 export type EntityId<S extends State> = {
-  [K in IdKeys<S>]: ScalarType<S['schema'][K]['type']>;
+  [K in IdKeys<S>]: S extends Scalar<infer T, never, never> ? T : never;
 };
 
 // keys helpers
 
-type IdKeys<S extends State<string, StateSchema>> = Exclude<
+type IdKeys<S extends State> = Exclude<
   {
     [K in keyof S['schema']]: [S['schema'][K]['primaryKey']] extends [true]
       ? K
