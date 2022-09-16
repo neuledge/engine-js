@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {},
+  "references": [
+    { "path": "packages/scalar" },
+    { "path": "packages/state" },
+    { "path": "packages/engine" },
+
+    { "path": "tsconfig.scripts.json" }
+  ],
+  "include": [],
+  "exclude": ["node_modules"]
+}

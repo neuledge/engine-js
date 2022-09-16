@@ -1,0 +1,5 @@
+_ignore_
+build
+lib
+dist
+node_modules
