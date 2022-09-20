@@ -21,6 +21,7 @@
     "jest": "NODE_OPTIONS=--experimental-vm-modules jest"
   },
   "dependencies": {
+    "@neuledge/scalar": "0.0.0",
     "@neuledge/state": "0.0.0"
   },
   "devDependencies": {
