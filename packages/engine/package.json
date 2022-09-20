@@ -20,10 +20,6 @@
     "test": "yarn run jest",
     "jest": "NODE_OPTIONS=--experimental-vm-modules jest"
   },
-  "dependencies": {
-    "@neuledge/scalar": "0.0.0",
-    "@neuledge/state": "0.0.0"
-  },
   "devDependencies": {
     "@types/jest": "^28.1.6",
     "jest": "^28.1.3"

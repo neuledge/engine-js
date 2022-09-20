@@ -3,7 +3,6 @@
   "compilerOptions": {},
   "references": [
     { "path": "packages/scalar" },
-    { "path": "packages/state" },
     { "path": "packages/engine" },
 
     { "path": "tsconfig.scripts.json" }
