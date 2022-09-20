@@ -1,9 +1,9 @@
 import { Projection } from './projection.js';
-import { State, StateEntity } from './state.js';
+import { State, StateEntity, StateKey, StateProjection } from './state.js';
 
-export type Entity<S extends State, P extends S['Projection']> = {
-  [K in S['key']]: S extends { key: K } ? EntityProject<S, P> : never;
-}[S['key']];
+export type Entity<S extends State, P extends StateProjection<S>> = {
+  [K in StateKey<S>]: S extends State<object, K> ? EntityProject<S, P> : never;
+}[StateKey<S>];
 
 type EntityProject<
   S extends State,

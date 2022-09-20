@@ -13,7 +13,7 @@ export interface Mutation<
 export type MutationSelect<S extends State, A extends keyof S> = MutationState<
   S,
   A
->['Projection'];
+>['$projection'];
 
 export type MutationState<
   S extends State,

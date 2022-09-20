@@ -10,14 +10,14 @@ describe('Engine', () => {
       expect(engine);
 
       class state {
-        static key = 'Test' as const;
-        static Projection: {
+        static $key = 'Test' as const;
+        static $projection: {
           id?: boolean;
           firstName?: boolean;
           lastName?: boolean;
         };
-        static Query: { id?: number };
-        static UniqueQuery: { id: number };
+        static $query: { id?: number };
+        static $uniqueQuery: { id: number };
 
         id!: number;
         firstName!: string;
@@ -36,7 +36,7 @@ describe('Engine', () => {
         where: { id: 123 },
         action: 'update',
         arguments: { foo: 'str' },
-        select: { firstName: true, lastName: true }, // FIXME should prevent `foo`
+        select: { firstName: true, lastName: true },
       });
 
       res?.$state;

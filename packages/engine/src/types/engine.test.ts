@@ -8,21 +8,21 @@ import {
   MutateUniqueProjectOptions,
 } from './engine.js';
 import { MutationSelect } from './mutations.js';
-import { State, StateEntity } from './state.js';
+import { State, StateEntity, StateProjection } from './state.js';
 
 /* eslint-disable unicorn/consistent-function-scoping */
 /* eslint-disable max-lines-per-function */
 
 describe('types/engine', () => {
   class UserName {
-    static key = 'UserName' as const;
-    static Projection: {
+    static $key = 'UserName' as const;
+    static $projection: {
       id?: boolean;
       firstName?: boolean;
       lastName?: boolean;
     };
-    static Query: { id?: number };
-    static UniqueQuery: { id: number };
+    static $query: { id?: number };
+    static $uniqueQuery: { id: number };
 
     id!: number;
     firstName!: string;
@@ -52,14 +52,14 @@ describe('types/engine', () => {
   }
 
   class UserEmail {
-    static key = 'UserEmail' as const;
-    static Projection: {
+    static $key = 'UserEmail' as const;
+    static $projection: {
       id?: boolean;
       email?: boolean;
       passwordHash?: boolean;
     };
-    static Query: { id?: number } | { email?: string };
-    static UniqueQuery: { id: number } | { email: string };
+    static $query: { id?: number } | { email?: string };
+    static $uniqueQuery: { id: number } | { email: string };
 
     id!: number;
     email!: string;
@@ -71,7 +71,7 @@ describe('types/engine', () => {
   }
 
   describe('FindUniqueOptions<>', () => {
-    const test = <S extends State, P extends S['Projection']>(
+    const test = <S extends State, P extends StateProjection<S>>(
       options: FindUniqueOptions<S, P>,
     ) => options;
 
@@ -138,7 +138,7 @@ describe('types/engine', () => {
   });
 
   describe('FindManyOptions<>', () => {
-    const test = <S extends State, P extends S['Projection']>(
+    const test = <S extends State, P extends StateProjection<S>>(
       options: FindManyOptions<S, P>,
     ) => options;
 
@@ -199,7 +199,7 @@ describe('types/engine', () => {
   });
 
   describe('FindFirstOptions<>', () => {
-    const test = <S extends State, P extends S['Projection']>(
+    const test = <S extends State, P extends StateProjection<S>>(
       options: FindFirstOptions<S, P>,
     ) => options;
 

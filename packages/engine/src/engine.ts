@@ -15,6 +15,7 @@ import {
   MutateUniqueProjectOptions,
   MutateOneProjectOptions,
   MutateManyProjectOptions,
+  StateProjection,
 } from './types/index.js';
 
 export class NeuledgeEngine<Store extends EngineStore> {
@@ -22,31 +23,31 @@ export class NeuledgeEngine<Store extends EngineStore> {
 
   // finds
 
-  async findMany<S extends State, P extends S['Projection']>(
+  async findMany<S extends State, P extends StateProjection<S>>(
     options: FindManyOptions<S, P>,
   ): Promise<EntityList<Entity<S, P>>> {
     return createEntityList([], null);
   }
 
-  async findUnique<S extends State, P extends S['Projection']>(
+  async findUnique<S extends State, P extends StateProjection<S>>(
     options: FindUniqueOptions<S, P>,
   ): Promise<Entity<S, P> | undefined> {
     return undefined;
   }
 
-  async findUniqueOrThrow<S extends State, P extends S['Projection']>(
+  async findUniqueOrThrow<S extends State, P extends StateProjection<S>>(
     options: FindUniqueOptions<S, P>,
   ): Promise<Entity<S, P>> {
     throw new Error('Not implemented');
   }
 
-  async findFirst<S extends State, P extends S['Projection']>(
+  async findFirst<S extends State, P extends StateProjection<S>>(
     options: FindFirstOptions<S, P>,
   ): Promise<Entity<S, P> | undefined> {
     return undefined;
   }
 
-  async findFirstOrThrow<S extends State, P extends S['Projection']>(
+  async findFirstOrThrow<S extends State, P extends StateProjection<S>>(
     options: FindFirstOptions<S, P>,
   ): Promise<Entity<S, P>> {
     throw new Error('Not implemented');

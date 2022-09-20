@@ -6,30 +6,32 @@ import {
   ProjectedMutationName,
 } from './mutations.js';
 import { ProjectionSelect } from './projection.js';
-import { State } from './state.js';
+import { State, StateProjection } from './state.js';
 import { Where, UniqueWhere } from './where.js';
 
 // find
 
-interface FindBasicOptions<S extends State, P extends S['Projection']> {
+interface FindBasicOptions<S extends State, P extends StateProjection<S>> {
   states: S[];
-  select: ProjectionSelect<P, S['Projection']>;
+  select: ProjectionSelect<P, StateProjection<S>>;
   filter?: never; // TODO filter
 }
 
-export interface FindUniqueOptions<S extends State, P extends S['Projection']>
-  extends FindBasicOptions<S, P> {
+export interface FindUniqueOptions<
+  S extends State,
+  P extends StateProjection<S>,
+> extends FindBasicOptions<S, P> {
   where: UniqueWhere<S>;
 }
 
-export interface FindManyOptions<S extends State, P extends S['Projection']>
+export interface FindManyOptions<S extends State, P extends StateProjection<S>>
   extends FindBasicOptions<S, P> {
   where?: Where<S>;
   limit?: number;
   offset?: EntityListOffset;
 }
 
-export interface FindFirstOptions<S extends State, P extends S['Projection']>
+export interface FindFirstOptions<S extends State, P extends StateProjection<S>>
   extends FindManyOptions<S, P> {
   limit?: 1 | -1;
 }
