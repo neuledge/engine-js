@@ -4,6 +4,7 @@
   "references": [
     { "path": "packages/scalar" },
     { "path": "packages/engine" },
+    { "path": "packages/states" },
 
     { "path": "tsconfig.scripts.json" }
   ],
