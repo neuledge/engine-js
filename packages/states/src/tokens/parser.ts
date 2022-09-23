@@ -112,10 +112,18 @@ export class TokensParser {
   maybeConsumePunctuation<K extends string>(
     kind: K,
   ): (PunctuationToken & { kind: K }) | undefined {
-    return this.maybeConsume(
-      TokenType.PUNCTUATION,
-      (token) => token.kind === kind,
-    ) as (PunctuationToken & { kind: K }) | undefined;
+    const token = this.current;
+
+    if (
+      !token ||
+      (token as PunctuationToken & { kind: K }).kind !== kind ||
+      token.type !== TokenType.PUNCTUATION
+    ) {
+      return undefined;
+    }
+
+    this.position += 1;
+    return token as PunctuationToken & { kind: K };
   }
 
   maybeConsume<T extends TokenType>(
