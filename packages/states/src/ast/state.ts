@@ -64,7 +64,11 @@ const parseStateFieldNode = (cursor: TokensParser): StateFieldNode => {
   const secId = dotSign ? parseIdentifierNode(cursor) : undefined;
 
   let fieldType: TypeNode | undefined;
+  let nullSign;
+
   if (!refSign && !secId) {
+    nullSign = cursor.maybeConsumePunctuation('?');
+
     const typeSign = cursor.maybeConsumePunctuation(':');
     if (typeSign) maybeRef = false;
 
@@ -92,7 +96,7 @@ const parseStateFieldNode = (cursor: TokensParser): StateFieldNode => {
         decorators,
         fieldType,
         index,
-        nullable: false,
+        nullable: !!nullSign,
       }
     : {
         type: 'FieldReference',
