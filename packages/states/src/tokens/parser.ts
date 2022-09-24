@@ -109,6 +109,23 @@ export class TokensParser {
     );
   }
 
+  maybeConsumeKeyword<N extends string>(
+    name: N,
+  ): (WordToken & { name: N }) | undefined {
+    const token = this.current;
+
+    if (
+      !token ||
+      (token as WordToken & { name: N }).name !== name ||
+      token.type !== TokenType.WORD
+    ) {
+      return undefined;
+    }
+
+    this.position += 1;
+    return token as WordToken & { name: N };
+  }
+
   maybeConsumePunctuation<K extends string>(
     kind: K,
   ): (PunctuationToken & { kind: K }) | undefined {

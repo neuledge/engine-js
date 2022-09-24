@@ -48,11 +48,9 @@ export const tokenize = (content: string): Token[] => {
 };
 
 const getRawTokens = (content: string): string[] =>
-  content
-    .trim()
-    .match(
-      /([$_a-z]\w*|[+-]?(?:\d*\.\d+|\d+)|\s+|"""(?:[^"]+|"[^"]|""[^"])*"""|"(?:[^\n"\\]+|\\.)*"|'(?:[^\n'\\]+|\\.)*'|[!%&*+<=>@^|-]+|.)/gi,
-    ) || [];
+  content.match(
+    /([$_a-z]\w*|(?:\d*\.\d+|\d+)|\s+|"""(?:[^"]+|"[^"]|""[^"])*"""|"(?:[^\n"\\]+|\\.)*"|'(?:[^\n'\\]+|\\.)*'|[!%&*+<=>@^|-]+|.)/gi,
+  ) || [];
 
 const parseRawToken = (
   raw: string,

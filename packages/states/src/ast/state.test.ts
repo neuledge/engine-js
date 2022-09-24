@@ -29,9 +29,9 @@ state FreeAccount {
             identifier: { name: 'id', type: 'Identifier' },
             decorators: [
               {
-                arguments: [],
-                callee: { name: 'id', type: 'Identifier' },
                 type: 'Decorator',
+                callee: { name: 'id', type: 'Identifier' },
+                arguments: [],
               },
             ],
             description: undefined,
@@ -53,8 +53,8 @@ state FreeAccount {
               identifier: { name: 'TrimmedString', type: 'Identifier' },
               arguments: [
                 {
-                  key: { name: 'limit', type: 'Identifier' },
                   type: 'Argument',
+                  key: { name: 'limit', type: 'Identifier' },
                   value: { type: 'Literal', value: 100 },
                 },
               ],
@@ -77,22 +77,16 @@ state FreeAccount {
           },
           {
             type: 'Field',
-            identifier: {
-              type: 'Identifier',
-              name: 'users',
-            },
+            identifier: { type: 'Identifier', name: 'users' },
             decorators: [],
             description: undefined,
             fieldType: {
               type: 'TypeExpression',
-              identifier: {
-                type: 'Identifier',
-                name: 'User',
-              },
+              identifier: { type: 'Identifier', name: 'User' },
               list: true,
             },
-            index: 4,
             nullable: false,
+            index: 4,
           },
         ],
         decorators: [
