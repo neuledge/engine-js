@@ -8,7 +8,7 @@ export * from './function.js';
 export * from './identifier.js';
 export * from './import.js';
 export * from './literal.js';
-export * from './property.js';
+export * from './parameter.js';
 export * from './root.js';
 export * from './state.js';
 export * from './type.js';
