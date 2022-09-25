@@ -1,11 +1,11 @@
 import { IdentifierNode } from './identifier.js';
-import { PropertyNode } from './property.js';
+import { ParameterNode } from './parameter.js';
 
 export interface FunctionNode {
   type: 'Function';
   source?: IdentifierNode;
   identifier: IdentifierNode;
-  arguments: PropertyNode[];
+  parameters: ParameterNode[];
   returnType: IdentifierNode;
   body: []; // TODO body
 }

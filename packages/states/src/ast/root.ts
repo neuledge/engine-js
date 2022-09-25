@@ -1,6 +1,6 @@
 import { TokensParser } from '@/tokens/index.js';
 import { EitherNode } from './either.js';
-import { ImportNode } from './import.js';
+import { ImportNode, parseImportNodes } from './import.js';
 import { parseStateNode, StateNode } from './state.js';
 
 export interface RootNode {
@@ -11,18 +11,17 @@ export interface RootNode {
 
 export type RootBodyNode = StateNode | EitherNode;
 
-export const parseRootNode = (cursor: TokensParser): RootNode => {
+export const parseRootNode = (cursor: TokensParser): RootNode => ({
+  type: 'Root',
+  imports: parseImportNodes(cursor),
+  body: parseRootBodyNodes(cursor),
+});
+
+const parseRootBodyNodes = (cursor: TokensParser): RootBodyNode[] => {
   const body: RootBodyNode[] = [];
   while (cursor.current) {
-    body.push(parseRootBodyNode(cursor));
+    body.push(parseStateNode(cursor));
   }
 
-  return {
-    type: 'Root',
-    imports: [],
-    body,
-  };
+  return body;
 };
-
-const parseRootBodyNode = (cursor: TokensParser): RootBodyNode =>
-  parseStateNode(cursor);
