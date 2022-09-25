@@ -28,6 +28,7 @@ describe('parser/tokenize', () => {
           line: 2,
           raw: '@',
           type: TokenType.PUNCTUATION,
+          adjacent: true,
         },
         {
           column: 7,
@@ -42,6 +43,7 @@ describe('parser/tokenize', () => {
           line: 2,
           raw: '(',
           type: TokenType.PUNCTUATION,
+          adjacent: true,
         },
         {
           column: 13,
@@ -56,6 +58,7 @@ describe('parser/tokenize', () => {
           line: 2,
           raw: ':',
           type: TokenType.PUNCTUATION,
+          adjacent: false,
         },
         {
           column: 19,
@@ -71,6 +74,7 @@ describe('parser/tokenize', () => {
           line: 2,
           raw: ',',
           type: TokenType.PUNCTUATION,
+          adjacent: false,
         },
         {
           column: 32,
@@ -85,6 +89,7 @@ describe('parser/tokenize', () => {
           line: 2,
           raw: ':',
           type: TokenType.PUNCTUATION,
+          adjacent: false,
         },
         {
           column: 40,
@@ -92,6 +97,7 @@ describe('parser/tokenize', () => {
           line: 2,
           raw: '[',
           type: TokenType.PUNCTUATION,
+          adjacent: true,
         },
         {
           column: 41,
@@ -107,6 +113,7 @@ describe('parser/tokenize', () => {
           line: 2,
           raw: ']',
           type: TokenType.PUNCTUATION,
+          adjacent: true,
         },
         {
           column: 48,
@@ -114,6 +121,7 @@ describe('parser/tokenize', () => {
           line: 2,
           raw: ')',
           type: TokenType.PUNCTUATION,
+          adjacent: false,
         },
         {
           column: 6,
@@ -135,6 +143,7 @@ describe('parser/tokenize', () => {
           line: 3,
           raw: '{',
           type: TokenType.PUNCTUATION,
+          adjacent: false,
         },
         {
           column: 8,
@@ -142,6 +151,7 @@ describe('parser/tokenize', () => {
           line: 4,
           raw: '@',
           type: TokenType.PUNCTUATION,
+          adjacent: true,
         },
         { column: 9, line: 4, name: 'id', raw: 'id', type: TokenType.WORD },
         { column: 12, line: 4, name: 'id', raw: 'id', type: TokenType.WORD },
@@ -151,6 +161,7 @@ describe('parser/tokenize', () => {
           line: 4,
           raw: ':',
           type: TokenType.PUNCTUATION,
+          adjacent: false,
         },
         {
           column: 16,
@@ -165,6 +176,7 @@ describe('parser/tokenize', () => {
           line: 4,
           raw: '=',
           type: TokenType.PUNCTUATION,
+          adjacent: false,
         },
         { column: 34, line: 4, raw: '1', type: TokenType.NUMBER, value: 1 },
         { column: 8, line: 5, name: 'name', raw: 'name', type: TokenType.WORD },
@@ -174,6 +186,7 @@ describe('parser/tokenize', () => {
           line: 5,
           raw: ':',
           type: TokenType.PUNCTUATION,
+          adjacent: false,
         },
         {
           column: 14,
@@ -188,6 +201,7 @@ describe('parser/tokenize', () => {
           line: 5,
           raw: '(',
           type: TokenType.PUNCTUATION,
+          adjacent: true,
         },
         {
           column: 28,
@@ -202,6 +216,7 @@ describe('parser/tokenize', () => {
           line: 5,
           raw: ':',
           type: TokenType.PUNCTUATION,
+          adjacent: false,
         },
         { column: 35, line: 5, raw: '100', type: TokenType.NUMBER, value: 100 },
         {
@@ -210,6 +225,7 @@ describe('parser/tokenize', () => {
           line: 5,
           raw: ')',
           type: TokenType.PUNCTUATION,
+          adjacent: false,
         },
         {
           column: 40,
@@ -217,6 +233,7 @@ describe('parser/tokenize', () => {
           line: 5,
           raw: '=',
           type: TokenType.PUNCTUATION,
+          adjacent: false,
         },
         { column: 42, line: 5, raw: '2', type: TokenType.NUMBER, value: 2 },
         { column: 8, line: 6, name: 'plan', raw: 'plan', type: TokenType.WORD },
@@ -226,6 +243,7 @@ describe('parser/tokenize', () => {
           line: 6,
           raw: ':',
           type: TokenType.PUNCTUATION,
+          adjacent: false,
         },
         {
           column: 14,
@@ -240,6 +258,7 @@ describe('parser/tokenize', () => {
           line: 6,
           raw: '=',
           type: TokenType.PUNCTUATION,
+          adjacent: false,
         },
         { column: 25, line: 6, raw: '3', type: TokenType.NUMBER, value: 3 },
         {
@@ -255,6 +274,7 @@ describe('parser/tokenize', () => {
           line: 7,
           raw: ':',
           type: TokenType.PUNCTUATION,
+          adjacent: false,
         },
         {
           column: 15,
@@ -269,6 +289,7 @@ describe('parser/tokenize', () => {
           line: 7,
           raw: '[',
           type: TokenType.PUNCTUATION,
+          adjacent: true,
         },
         {
           column: 20,
@@ -276,6 +297,7 @@ describe('parser/tokenize', () => {
           line: 7,
           raw: ']',
           type: TokenType.PUNCTUATION,
+          adjacent: false,
         },
         {
           column: 22,
@@ -283,6 +305,7 @@ describe('parser/tokenize', () => {
           line: 7,
           raw: '=',
           type: TokenType.PUNCTUATION,
+          adjacent: false,
         },
         { column: 24, line: 7, raw: '4', type: TokenType.NUMBER, value: 4 },
         {
@@ -291,6 +314,7 @@ describe('parser/tokenize', () => {
           line: 8,
           raw: '}',
           type: TokenType.PUNCTUATION,
+          adjacent: false,
         },
       ]);
     });
@@ -332,6 +356,7 @@ describe('parser/tokenize', () => {
           line: 3,
           raw: '{',
           type: TokenType.PUNCTUATION,
+          adjacent: false,
         },
         { column: 8, line: 4, name: 'id', raw: 'id', type: TokenType.WORD },
         {
@@ -340,6 +365,7 @@ describe('parser/tokenize', () => {
           line: 4,
           raw: ':',
           type: TokenType.PUNCTUATION,
+          adjacent: false,
         },
         {
           column: 12,
@@ -354,6 +380,7 @@ describe('parser/tokenize', () => {
           line: 4,
           raw: '=',
           type: TokenType.PUNCTUATION,
+          adjacent: false,
         },
         { column: 21, line: 4, raw: '1', type: TokenType.NUMBER, value: 1 },
         { column: 8, line: 5, name: 'name', raw: 'name', type: TokenType.WORD },
@@ -363,6 +390,7 @@ describe('parser/tokenize', () => {
           line: 5,
           raw: ':',
           type: TokenType.PUNCTUATION,
+          adjacent: false,
         },
         {
           column: 14,
@@ -377,6 +405,7 @@ describe('parser/tokenize', () => {
           line: 5,
           raw: '?',
           type: TokenType.PUNCTUATION,
+          adjacent: false,
         },
         {
           column: 22,
@@ -384,6 +413,7 @@ describe('parser/tokenize', () => {
           line: 5,
           raw: '=',
           type: TokenType.PUNCTUATION,
+          adjacent: false,
         },
         { column: 24, line: 5, raw: '2', type: TokenType.NUMBER, value: 2 },
         {
@@ -392,6 +422,7 @@ describe('parser/tokenize', () => {
           line: 6,
           raw: '}',
           type: TokenType.PUNCTUATION,
+          adjacent: false,
         },
       ]);
     });
@@ -436,6 +467,7 @@ describe('parser/tokenize', () => {
           line: 3,
           raw: '{',
           type: TokenType.PUNCTUATION,
+          adjacent: false,
         },
         {
           column: 8,
@@ -459,6 +491,7 @@ describe('parser/tokenize', () => {
           line: 8,
           raw: ':',
           type: TokenType.PUNCTUATION,
+          adjacent: false,
         },
         {
           column: 17,
@@ -473,6 +506,7 @@ describe('parser/tokenize', () => {
           line: 8,
           raw: '!',
           type: TokenType.PUNCTUATION,
+          adjacent: false,
         },
         {
           column: 6,
@@ -480,6 +514,7 @@ describe('parser/tokenize', () => {
           line: 9,
           raw: '}',
           type: TokenType.PUNCTUATION,
+          adjacent: false,
         },
       ]);
     });
@@ -487,77 +522,85 @@ describe('parser/tokenize', () => {
     it('should tokenize migration example', () => {
       expect(
         tokenize(`
-        state FreeAccount {
-            +FreeAccount:1.*
+          state FreeAccount:2 extends FreeAccount:1 {
             createdAt: Date = 1
           }
             
           # migration function between state versions
-          (FreeAccount:1): FreeAccount => {
+          (FreeAccount:1): FreeAccount:2 => {
             createdAt: Date(timestamp: 0)
           }
           `),
       ).toEqual<Token[]>([
         {
-          column: 8,
+          column: 10,
           line: 2,
           name: 'state',
           raw: 'state',
           type: TokenType.WORD,
         },
         {
-          column: 14,
+          column: 16,
           line: 2,
           name: 'FreeAccount',
           raw: 'FreeAccount',
           type: TokenType.WORD,
         },
         {
-          column: 26,
+          column: 27,
+          kind: ':',
+          line: 2,
+          raw: ':',
+          type: TokenType.PUNCTUATION,
+          adjacent: true,
+        },
+        {
+          column: 28,
+          line: 2,
+          raw: '2',
+          value: 2,
+          type: TokenType.NUMBER,
+        },
+        {
+          column: 30,
+          line: 2,
+          name: 'extends',
+          raw: 'extends',
+          type: TokenType.WORD,
+        },
+        {
+          column: 38,
+          line: 2,
+          name: 'FreeAccount',
+          raw: 'FreeAccount',
+          type: TokenType.WORD,
+        },
+        {
+          column: 49,
+          kind: ':',
+          line: 2,
+          raw: ':',
+          type: TokenType.PUNCTUATION,
+          adjacent: true,
+        },
+        {
+          column: 50,
+          line: 2,
+          raw: '1',
+          value: 1,
+          type: TokenType.NUMBER,
+        },
+        {
+          column: 52,
           kind: '{',
           line: 2,
           raw: '{',
           type: TokenType.PUNCTUATION,
+          adjacent: false,
         },
         {
           column: 12,
-          kind: '+',
           line: 3,
-          raw: '+',
-          type: TokenType.PUNCTUATION,
-        },
-        {
-          column: 13,
-          line: 3,
-          name: 'FreeAccount',
-          raw: 'FreeAccount',
-          type: TokenType.WORD,
-        },
-        {
-          column: 24,
-          kind: ':',
-          line: 3,
-          raw: ':',
-          type: TokenType.PUNCTUATION,
-        },
-        { column: 25, line: 3, raw: '1', type: TokenType.NUMBER, value: 1 },
-        {
-          column: 26,
-          kind: '.',
-          line: 3,
-          raw: '.',
-          type: TokenType.PUNCTUATION,
-        },
-        {
-          column: 27,
-          kind: '*',
-          line: 3,
-          raw: '*',
-          type: TokenType.PUNCTUATION,
-        },
-        {
-          column: 12,
-          line: 4,
           name: 'createdAt',
           raw: 'createdAt',
           type: TokenType.WORD,
@@ -565,13 +608,14 @@ describe('parser/tokenize', () => {
         {
           column: 21,
           kind: ':',
-          line: 4,
+          line: 3,
           raw: ':',
           type: TokenType.PUNCTUATION,
+          adjacent: false,
         },
         {
           column: 23,
-          line: 4,
+          line: 3,
           name: 'Date',
           raw: 'Date',
           type: TokenType.WORD,
@@ -579,28 +623,31 @@ describe('parser/tokenize', () => {
         {
           column: 28,
           kind: '=',
-          line: 4,
+          line: 3,
           raw: '=',
           type: TokenType.PUNCTUATION,
+          adjacent: false,
         },
-        { column: 30, line: 4, raw: '1', type: TokenType.NUMBER, value: 1 },
+        { column: 30, line: 3, raw: '1', type: TokenType.NUMBER, value: 1 },
         {
           column: 10,
           kind: '}',
-          line: 5,
+          line: 4,
           raw: '}',
           type: TokenType.PUNCTUATION,
+          adjacent: false,
         },
         {
           column: 10,
           kind: '(',
-          line: 8,
+          line: 7,
           raw: '(',
           type: TokenType.PUNCTUATION,
+          adjacent: true,
         },
         {
           column: 11,
-          line: 8,
+          line: 7,
           name: 'FreeAccount',
           raw: 'FreeAccount',
           type: TokenType.WORD,
@@ -608,49 +655,69 @@ describe('parser/tokenize', () => {
         {
           column: 22,
           kind: ':',
-          line: 8,
+          line: 7,
           raw: ':',
           type: TokenType.PUNCTUATION,
+          adjacent: true,
         },
-        { column: 23, line: 8, raw: '1', type: TokenType.NUMBER, value: 1 },
+        { column: 23, line: 7, raw: '1', type: TokenType.NUMBER, value: 1 },
         {
           column: 24,
           kind: ')',
-          line: 8,
+          line: 7,
           raw: ')',
           type: TokenType.PUNCTUATION,
+          adjacent: true,
         },
         {
           column: 25,
           kind: ':',
-          line: 8,
+          line: 7,
           raw: ':',
           type: TokenType.PUNCTUATION,
+          adjacent: false,
         },
         {
           column: 27,
-          line: 8,
+          line: 7,
           name: 'FreeAccount',
           raw: 'FreeAccount',
           type: TokenType.WORD,
         },
         {
-          column: 39,
-          kind: '=>',
-          line: 8,
-          raw: '=>',
+          column: 38,
+          kind: ':',
+          line: 7,
+          raw: ':',
           type: TokenType.PUNCTUATION,
+          adjacent: true,
         },
         {
-          column: 42,
+          column: 39,
+          line: 7,
+          raw: '2',
+          type: TokenType.NUMBER,
+          value: 2,
+        },
+        {
+          column: 41,
+          kind: '=>',
+          line: 7,
+          raw: '=>',
+          type: TokenType.PUNCTUATION,
+          adjacent: false,
+        },
+        {
+          column: 44,
           kind: '{',
-          line: 8,
+          line: 7,
           raw: '{',
           type: TokenType.PUNCTUATION,
+          adjacent: false,
         },
         {
           column: 12,
-          line: 9,
+          line: 8,
           name: 'createdAt',
           raw: 'createdAt',
           type: TokenType.WORD,
@@ -658,13 +725,14 @@ describe('parser/tokenize', () => {
         {
           column: 21,
           kind: ':',
-          line: 9,
+          line: 8,
           raw: ':',
           type: TokenType.PUNCTUATION,
+          adjacent: false,
         },
         {
           column: 23,
-          line: 9,
+          line: 8,
           name: 'Date',
           raw: 'Date',
           type: TokenType.WORD,
@@ -672,13 +740,14 @@ describe('parser/tokenize', () => {
         {
           column: 27,
           kind: '(',
-          line: 9,
+          line: 8,
           raw: '(',
           type: TokenType.PUNCTUATION,
+          adjacent: true,
         },
         {
           column: 28,
-          line: 9,
+          line: 8,
           name: 'timestamp',
           raw: 'timestamp',
           type: TokenType.WORD,
@@ -686,24 +755,27 @@ describe('parser/tokenize', () => {
         {
           column: 37,
           kind: ':',
-          line: 9,
+          line: 8,
           raw: ':',
           type: TokenType.PUNCTUATION,
+          adjacent: false,
         },
-        { column: 39, line: 9, raw: '0', type: TokenType.NUMBER, value: 0 },
+        { column: 39, line: 8, raw: '0', type: TokenType.NUMBER, value: 0 },
         {
           column: 40,
           kind: ')',
-          line: 9,
+          line: 8,
           raw: ')',
           type: TokenType.PUNCTUATION,
+          adjacent: false,
         },
         {
           column: 10,
           kind: '}',
-          line: 10,
+          line: 9,
           raw: '}',
           type: TokenType.PUNCTUATION,
+          adjacent: false,
         },
       ]);
     });

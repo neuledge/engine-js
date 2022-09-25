@@ -1,3 +1,5 @@
+import { AbstractToken } from './abstract.js';
+import { PunctuationToken } from './punctuation.js';
 import { StringToken } from './string.js';
 import { Token } from './token.js';
 import { TokenType } from './type.js';
@@ -25,14 +27,21 @@ export const tokenize = (content: string): Token[] => {
   let line = 1;
   let column = 1;
   let isComment = false;
+  let lastPunctuation: PunctuationToken | null = null;
 
   for (const raw of raws) {
     if (!isComment) {
-      const token = parseRawToken(raw, line, column);
+      const token = parseRawToken({ raw, line, column });
       if (token) {
+        if (lastPunctuation) {
+          lastPunctuation.adjacent = true;
+        }
+
         tokens.push(token);
-      } else if (raw === '#') {
-        isComment = true;
+        lastPunctuation = token.type === TokenType.PUNCTUATION ? token : null;
+      } else {
+        lastPunctuation = null;
+        if (raw === '#') isComment = true;
       }
     }
 
@@ -53,25 +62,22 @@ const getRawTokens = (content: string): string[] =>
   ) || [];
 
 const parseRawToken = (
-  raw: string,
-  line: number,
-  column: number,
+  base: Pick<AbstractToken<TokenType>, 'raw' | 'column' | 'line'>,
 ): Token | null => {
+  const { raw } = base;
   const kind = raw[0];
   const type = TokenCharMap[kind] || TokenType.PUNCTUATION;
 
   switch (type) {
     case TokenType.NUMBER: {
-      return { type, value: Number(raw), raw, line, column };
+      return { type, value: Number(raw), ...base };
     }
 
     case TokenType.STRING: {
       return {
         type,
         ...parseRawStringToken(kind, raw),
-        raw,
-        line,
-        column,
+        ...base,
       };
     }
 
@@ -80,9 +86,7 @@ const parseRawToken = (
         return {
           type: TokenType.NUMBER,
           value: Number(raw),
-          raw,
-          line,
-          column,
+          ...base,
         };
       }
 
@@ -90,11 +94,11 @@ const parseRawToken = (
         return null;
       }
 
-      return { type, kind: raw, raw, line, column };
+      return { type, kind: raw, ...base, adjacent: false };
     }
 
     case TokenType.WORD: {
-      return { type, name: raw, raw, line, column };
+      return { type, name: raw, ...base };
     }
 
     case -1: {

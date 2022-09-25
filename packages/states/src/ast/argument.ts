@@ -11,6 +11,7 @@ export interface ArgumentNode {
 export const parseMaybeArgumentNodes = (
   cursor: TokensParser,
 ): ArgumentNode[] => {
+  const { position } = cursor;
   if (
     !cursor.maybeConsumePunctuation('(') ||
     cursor.maybeConsumePunctuation(')')
@@ -18,13 +19,22 @@ export const parseMaybeArgumentNodes = (
     return [];
   }
 
-  const args: ArgumentNode[] = [];
-  do {
-    args.push(parseArgumentNode(cursor));
-  } while (cursor.maybeConsumePunctuation(','));
+  try {
+    const args: ArgumentNode[] = [];
+    do {
+      if (cursor.maybeConsumePunctuation(')')) {
+        return args;
+      }
 
-  cursor.consumePunctuation(')');
-  return args;
+      args.push(parseArgumentNode(cursor));
+    } while (cursor.maybeConsumePunctuation(','));
+
+    cursor.consumePunctuation(')');
+    return args;
+  } catch (error) {
+    cursor.position = position;
+    throw error;
+  }
 };
 
 const parseArgumentNode = (cursor: TokensParser): ArgumentNode => {

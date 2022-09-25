@@ -13,7 +13,7 @@ export interface TypeGeneratorNode {
 export interface TypeExpressionNode {
   type: 'TypeExpression';
   identifier: IdentifierNode;
-  list?: boolean;
+  list: boolean;
 }
 
 export const parseTypeNode = (cursor: TokensParser): TypeNode => {

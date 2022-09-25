@@ -17,7 +17,7 @@ describe('ast/identifier', () => {
       const cursor = new TokensParser(null, `123`);
 
       expect(() => parseIdentifierNode(cursor)).toThrow(
-        'Expected identifier name (line: 1, column: 1)',
+        'Expect identifier name (line: 1, column: 1)',
       );
       expect(cursor.position).toBe(0);
     });
@@ -26,7 +26,7 @@ describe('ast/identifier', () => {
       const cursor = new TokensParser(null, ` ? foo`);
 
       expect(() => parseIdentifierNode(cursor)).toThrow(
-        'Expected identifier name (line: 1, column: 2)',
+        'Expect identifier name (line: 1, column: 2)',
       );
       expect(cursor.position).toBe(0);
     });

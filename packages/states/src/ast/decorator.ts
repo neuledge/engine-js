@@ -1,4 +1,4 @@
-import { TokensParser, TokenType } from '@/tokens/index.js';
+import { TokensParser } from '@/tokens/index.js';
 import { ArgumentNode, parseMaybeArgumentNodes } from './argument.js';
 import { IdentifierNode, parseIdentifierNode } from './identifier.js';
 
@@ -21,11 +21,13 @@ export const parseDecoratorNodes = (cursor: TokensParser): DecoratorNode[] => {
 const parseMaybeDecoratorNode = (
   cursor: TokensParser,
 ): DecoratorNode | undefined => {
-  const decoratorToken = cursor.maybeConsume(
-    TokenType.PUNCTUATION,
-    (token) => token.kind === '@',
-  );
+  const decoratorToken = cursor.maybeConsumePunctuation('@');
   if (!decoratorToken) return undefined;
+
+  if (!decoratorToken.adjacent) {
+    cursor.position -= 1;
+    throw cursor.createError('decorator name');
+  }
 
   const callee = parseIdentifierNode(cursor);
   const args = parseMaybeArgumentNodes(cursor);

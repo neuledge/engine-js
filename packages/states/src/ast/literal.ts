@@ -62,16 +62,7 @@ const parseLiteralValue = (cursor: TokensParser): LiteralValue => {
 
         case '[': {
           cursor.position += 1;
-
-          const value: LiteralValue[] = [];
-          if (cursor.maybeConsumePunctuation(']')) return value;
-
-          do {
-            value.push(parseLiteralValue(cursor));
-          } while (cursor.maybeConsumePunctuation(','));
-
-          cursor.consumePunctuation(']');
-          return value;
+          return parseLiteralArrayValue(cursor);
         }
 
         default: {
@@ -84,4 +75,19 @@ const parseLiteralValue = (cursor: TokensParser): LiteralValue => {
       throw cursor.createError(`literal value`);
     }
   }
+};
+
+const parseLiteralArrayValue = (cursor: TokensParser): LiteralValue[] => {
+  const value: LiteralValue[] = [];
+
+  do {
+    if (cursor.maybeConsumePunctuation(']')) {
+      return value;
+    }
+
+    value.push(parseLiteralValue(cursor));
+  } while (cursor.maybeConsumePunctuation(','));
+
+  cursor.consumePunctuation(']');
+  return value;
 };

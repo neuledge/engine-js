@@ -102,7 +102,7 @@ export class TokensParser {
       sourceFile,
       token || { line: 0, column: 0 },
       expected
-        ? `Expected ${expected}`
+        ? `Expect ${expected}`
         : token
         ? `Unexpected token '${token.raw}'`
         : `Unexpected EOF`,
