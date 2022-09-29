@@ -1,14 +1,15 @@
+import { AbstractNode } from './abstract.js';
 import { DecoratorNode } from './decorator.js';
 import { DescriptionNode } from './description.js';
 import { IdentifierNode } from './identifier.js';
+import { LiteralNode } from './literal.js';
 import { TypeNode } from './type.js';
 
-export interface FieldNode {
-  type: 'Field';
+export interface FieldNode extends AbstractNode<'Field'> {
   identifier: IdentifierNode;
   description?: DescriptionNode;
   decorators: DecoratorNode[];
   fieldType: TypeNode;
-  index: number;
+  index: LiteralNode<number>;
   nullable: boolean;
 }

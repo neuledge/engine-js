@@ -1,7 +1,7 @@
 import { tokenize } from './tokenize.js';
 import { AbstractToken } from './abstract.js';
 import { PunctuationToken } from './punctuation.js';
-import { TokenSyntaxError } from './syntax-error.js';
+import { ParsingError } from './parsing-error.js';
 import { Token } from './token.js';
 import { TokenType } from './type.js';
 import { WordToken } from './word.js';
@@ -9,16 +9,20 @@ import { WordToken } from './word.js';
 export class TokensParser {
   public readonly tokens: Token[];
 
-  constructor(
-    public readonly sourceFile: string | null,
-    content: string,
-    public position = 0,
-  ) {
+  constructor(public readonly content: string, public index = 0) {
     this.tokens = tokenize(content);
   }
 
   get current(): Token | undefined {
-    return this.tokens[this.position];
+    return this.tokens[this.index];
+  }
+
+  get start(): number {
+    return this.tokens[this.index]?.start ?? this.content.length;
+  }
+
+  get end(): number {
+    return this.tokens[this.index - 1]?.end ?? 0;
   }
 
   //   match<T extends TokenType>(
@@ -74,37 +78,23 @@ export class TokensParser {
     const token = this.current;
 
     if (!TokensParser.isMatch<T>(token, type, test)) {
-      throw TokensParser.createSyntaxError(
-        this.sourceFile,
-        token || this.tokens[this.tokens.length - 1],
-        expected,
-      );
+      throw this.createError(expected);
     }
 
-    this.position += 1;
+    this.index += 1;
     return token as Token & AbstractToken<T>;
   }
 
-  createError(expected?: string): TokenSyntaxError {
-    return TokensParser.createSyntaxError(
-      this.sourceFile,
-      this.current,
-      expected,
-    );
-  }
+  createError(expected?: string): ParsingError {
+    const token = this.current ?? null;
 
-  static createSyntaxError(
-    sourceFile: string | null,
-    token: Token | null | undefined,
-    expected?: string,
-  ): TokenSyntaxError {
-    return new TokenSyntaxError(
-      sourceFile,
-      token || { line: 0, column: 0 },
+    return new ParsingError(
+      token?.start ?? this.content.length - 1,
+      token?.end ?? this.content.length,
       expected
         ? `Expect ${expected}`
         : token
-        ? `Unexpected token '${token.raw}'`
+        ? `Unexpected token '${this.content.slice(token.start, token.end)}'`
         : `Unexpected EOF`,
     );
   }
@@ -122,7 +112,7 @@ export class TokensParser {
       return undefined;
     }
 
-    this.position += 1;
+    this.index += 1;
     return token as WordToken & { name: N };
   }
 
@@ -139,7 +129,7 @@ export class TokensParser {
       return undefined;
     }
 
-    this.position += 1;
+    this.index += 1;
     return token as PunctuationToken & { kind: K };
   }
 
@@ -153,17 +143,17 @@ export class TokensParser {
       return undefined;
     }
 
-    this.position += 1;
+    this.index += 1;
     return token as Token & AbstractToken<T>;
   }
 
   transaction<T>(fn: () => T): T {
-    const { position } = this;
+    const { index: position } = this;
 
     try {
       return fn();
     } catch (error) {
-      this.position = position;
+      this.index = position;
       throw error;
     }
   }

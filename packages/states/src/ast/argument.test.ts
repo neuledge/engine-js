@@ -6,106 +6,116 @@ import { ArgumentNode, parseMaybeArgumentNodes } from './argument.js';
 describe('ast/argument', () => {
   describe('parseMaybeArgumentNodes()', () => {
     it('should skip parse if not brackets', () => {
-      const cursor = new TokensParser(null, ` = 3`);
+      const cursor = new TokensParser(` = 3`);
 
       expect(parseMaybeArgumentNodes(cursor)).toEqual([]);
-      expect(cursor.position).toBe(0);
+      expect(cursor.index).toBe(0);
     });
 
     it('should accept empty brackets', () => {
-      const cursor = new TokensParser(null, `() = 3`);
+      const cursor = new TokensParser(`() = 3`);
 
       expect(parseMaybeArgumentNodes(cursor)).toEqual([]);
-      expect(cursor.position).toBe(2);
+      expect(cursor.index).toBe(2);
     });
 
     it('should accept single argument', () => {
-      const cursor = new TokensParser(null, `(foo: 'bar') = 3`);
+      const cursor = new TokensParser(`(foo: 'bar') = 3`);
 
       expect(parseMaybeArgumentNodes(cursor)).toEqual<ArgumentNode[]>([
         {
           type: 'Argument',
-          key: { type: 'Identifier', name: 'foo' },
-          value: { type: 'Literal', value: 'bar' },
+          start: 1,
+          end: 11,
+          key: { type: 'Identifier', name: 'foo', start: 1, end: 4 },
+          value: { type: 'Literal', value: 'bar', start: 6, end: 11 },
         },
       ]);
-      expect(cursor.position).toBe(5);
+      expect(cursor.index).toBe(5);
     });
 
     it('should fail with single argument and missing value', () => {
-      const cursor = new TokensParser(null, `(foo: ,) = 3`);
+      const cursor = new TokensParser(`(foo: ,) = 3`);
 
       expect(() => parseMaybeArgumentNodes(cursor)).toThrow(
-        'Expect literal value (line: 1, column: 7)',
+        'Expect literal value',
       );
-      expect(cursor.position).toBe(0);
+      expect(cursor.index).toBe(0);
     });
 
     it('should fail with single argument and missing colon', () => {
-      const cursor = new TokensParser(null, `(foo 5,) = 3`);
+      const cursor = new TokensParser(`(foo 5,) = 3`);
 
-      expect(() => parseMaybeArgumentNodes(cursor)).toThrow(
-        "Expect ':' token (line: 1, column: 6)",
-      );
-      expect(cursor.position).toBe(0);
+      expect(() => parseMaybeArgumentNodes(cursor)).toThrow("Expect ':' token");
+      expect(cursor.index).toBe(0);
     });
 
     it('should accept single argument with trailing comma', () => {
-      const cursor = new TokensParser(null, `(foo: 'bar',) = 3`);
+      const cursor = new TokensParser(`(foo: 'bar',) = 3`);
 
       expect(parseMaybeArgumentNodes(cursor)).toEqual<ArgumentNode[]>([
         {
           type: 'Argument',
-          key: { type: 'Identifier', name: 'foo' },
-          value: { type: 'Literal', value: 'bar' },
+          start: 1,
+          end: 11,
+          key: { type: 'Identifier', name: 'foo', start: 1, end: 4 },
+          value: { type: 'Literal', value: 'bar', start: 6, end: 11 },
         },
       ]);
-      expect(cursor.position).toBe(6);
+      expect(cursor.index).toBe(6);
     });
 
     it('should fail with single argument and multiple trailing commas', () => {
-      const cursor = new TokensParser(null, `(foo: 'bar',,) = 3`);
+      const cursor = new TokensParser(`(foo: 'bar',,) = 3`);
 
       expect(() => parseMaybeArgumentNodes(cursor)).toThrow(
-        'Expect identifier name (line: 1, column: 13)',
+        'Expect identifier name',
       );
-      expect(cursor.position).toBe(0);
+      expect(cursor.index).toBe(0);
     });
 
     it('should accept two arguments', () => {
-      const cursor = new TokensParser(null, `(foo: 'bar', x: 3) = 3`);
+      const cursor = new TokensParser(`(foo: 'bar', x: 3) = 3`);
 
       expect(parseMaybeArgumentNodes(cursor)).toEqual<ArgumentNode[]>([
         {
           type: 'Argument',
-          key: { type: 'Identifier', name: 'foo' },
-          value: { type: 'Literal', value: 'bar' },
+          start: 1,
+          end: 11,
+          key: { type: 'Identifier', name: 'foo', start: 1, end: 4 },
+          value: { type: 'Literal', value: 'bar', start: 6, end: 11 },
         },
         {
           type: 'Argument',
-          key: { type: 'Identifier', name: 'x' },
-          value: { type: 'Literal', value: 3 },
+          start: 13,
+          end: 17,
+          key: { type: 'Identifier', name: 'x', start: 13, end: 14 },
+          value: { type: 'Literal', value: 3, start: 16, end: 17 },
         },
       ]);
-      expect(cursor.position).toBe(9);
+      expect(cursor.index).toBe(9);
     });
 
     it('should accept two arguments with trailing comma', () => {
-      const cursor = new TokensParser(null, `(foo: 'bar', x: 3,) = 3`);
+      const cursor = new TokensParser(`(foo: 'bar', x: 3,) = 3`);
 
       expect(parseMaybeArgumentNodes(cursor)).toEqual<ArgumentNode[]>([
         {
           type: 'Argument',
-          key: { type: 'Identifier', name: 'foo' },
-          value: { type: 'Literal', value: 'bar' },
+          start: 1,
+          end: 11,
+          key: { type: 'Identifier', name: 'foo', start: 1, end: 4 },
+          value: { type: 'Literal', value: 'bar', start: 6, end: 11 },
         },
         {
           type: 'Argument',
-          key: { type: 'Identifier', name: 'x' },
-          value: { type: 'Literal', value: 3 },
+          start: 13,
+          end: 17,
+          key: { type: 'Identifier', name: 'x', start: 13, end: 14 },
+          value: { type: 'Literal', value: 3, start: 16, end: 17 },
         },
       ]);
-      expect(cursor.position).toBe(10);
+      expect(cursor.index).toBe(10);
     });
   });
 });

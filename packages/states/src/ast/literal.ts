@@ -1,9 +1,10 @@
 import { TokensParser } from '@/tokens/parser.js';
 import { TokenType } from '@/tokens/type.js';
+import { AbstractNode } from './abstract.js';
 
-export interface LiteralNode {
-  type: 'Literal';
-  value: LiteralValue;
+export interface LiteralNode<T extends LiteralValue = LiteralValue>
+  extends AbstractNode<'Literal'> {
+  value: T;
 }
 
 export type LiteralValue = string | number | boolean | null | LiteralValue[];
@@ -18,7 +19,9 @@ const LiteralValues: Partial<Record<string, LiteralNode['value']>> = {
 
 export const parseLiteralNode = (cursor: TokensParser): LiteralNode => ({
   type: 'Literal',
+  start: cursor.start,
   value: parseLiteralValue(cursor),
+  end: cursor.end,
 });
 
 const parseLiteralValue = (cursor: TokensParser): LiteralValue => {
@@ -27,7 +30,7 @@ const parseLiteralValue = (cursor: TokensParser): LiteralValue => {
   switch (token?.type) {
     case TokenType.STRING:
     case TokenType.NUMBER: {
-      cursor.position += 1;
+      cursor.index += 1;
       return token.value;
     }
 
@@ -37,7 +40,7 @@ const parseLiteralValue = (cursor: TokensParser): LiteralValue => {
         throw cursor.createError(`literal value`);
       }
 
-      cursor.position += 1;
+      cursor.index += 1;
       return value;
     }
 
@@ -46,9 +49,9 @@ const parseLiteralValue = (cursor: TokensParser): LiteralValue => {
       switch (kind) {
         case '-':
         case '+': {
-          cursor.position += 1;
+          cursor.index += 1;
 
-          const { position } = cursor;
+          const { index: position } = cursor;
           const value = parseLiteralValue(cursor);
 
           if (typeof value === 'number') {
@@ -56,12 +59,12 @@ const parseLiteralValue = (cursor: TokensParser): LiteralValue => {
           }
 
           // rollback position before throw
-          cursor.position = position;
+          cursor.index = position;
           throw cursor.createError(`literal number`);
         }
 
         case '[': {
-          cursor.position += 1;
+          cursor.index += 1;
           return parseLiteralArrayValue(cursor);
         }
 

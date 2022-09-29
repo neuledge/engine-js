@@ -1,13 +1,14 @@
 import { TokensParser, TokenType } from '@/tokens/index.js';
+import { AbstractNode } from './abstract.js';
 import { DecoratorNode, parseDecoratorNodes } from './decorator.js';
 import { DescriptionNode, parseMaybeDescriptionNode } from './description.js';
 import { FieldReferenceNode } from './field-reference.js';
 import { FieldNode } from './field.js';
 import { IdentifierNode, parseIdentifierNode } from './identifier.js';
+import { LiteralNode } from './literal.js';
 import { parseTypeNode } from './type.js';
 
-export interface StateNode {
-  type: 'State';
+export interface StateNode extends AbstractNode<'State'> {
   identifier: IdentifierNode;
   description?: DescriptionNode;
   extends?: IdentifierNode;
@@ -20,6 +21,8 @@ export type StateFieldNode = FieldNode | FieldReferenceNode;
 export const parseStateNode = (cursor: TokensParser): StateNode => {
   const description = parseMaybeDescriptionNode(cursor);
   const decorators = parseDecoratorNodes(cursor);
+
+  const start = cursor.start;
 
   cursor.consumeKeyword('state');
   const identifier = parseIdentifierNode(cursor);
@@ -34,6 +37,8 @@ export const parseStateNode = (cursor: TokensParser): StateNode => {
 
   return {
     type: 'State',
+    start,
+    end: cursor.end,
     identifier,
     description,
     extends: extendsId,
@@ -58,6 +63,7 @@ const parseStateFieldNode = (cursor: TokensParser): StateFieldNode => {
   const decorators = parseDecoratorNodes(cursor);
 
   const maybeRef = !description && !decorators.length;
+  const start = cursor.start;
 
   const substractSign = maybeRef
     ? cursor.maybeConsumePunctuation('-')
@@ -72,6 +78,7 @@ const parseStateFieldNode = (cursor: TokensParser): StateFieldNode => {
 
   if (!dotSign) {
     return parseFieldNode(cursor, {
+      start,
       identifier: firstId,
       description,
       decorators,
@@ -81,6 +88,7 @@ const parseStateFieldNode = (cursor: TokensParser): StateFieldNode => {
   const secId = parseIdentifierNode(cursor);
 
   return parseFieldReferenceNode(cursor, {
+    start,
     state: firstId,
     identifier: secId,
     substract: !!substractSign,
@@ -89,7 +97,7 @@ const parseStateFieldNode = (cursor: TokensParser): StateFieldNode => {
 
 const parseFieldNode = (
   cursor: TokensParser,
-  base: Pick<FieldNode, 'identifier' | 'description' | 'decorators'>,
+  base: Pick<FieldNode, 'identifier' | 'description' | 'decorators' | 'start'>,
 ): FieldNode => {
   const nullSign = cursor.maybeConsumePunctuation('?');
 
@@ -100,6 +108,7 @@ const parseFieldNode = (
   return {
     type: 'Field',
     ...base,
+    end: cursor.end,
     fieldType,
     index,
     nullable: !!nullSign,
@@ -108,12 +117,16 @@ const parseFieldNode = (
 
 const parseFieldReferenceNode = (
   cursor: TokensParser,
-  base: Pick<FieldReferenceNode, 'state' | 'identifier' | 'substract'>,
+  base: Pick<
+    FieldReferenceNode,
+    'state' | 'identifier' | 'substract' | 'start'
+  >,
 ): FieldReferenceNode => {
   if (base.substract) {
     return {
       type: 'FieldReference',
       ...base,
+      end: cursor.end,
       substract: true,
     };
   }
@@ -123,17 +136,27 @@ const parseFieldReferenceNode = (
   return {
     type: 'FieldReference',
     ...base,
+    end: cursor.end,
     substract: false,
     index,
   };
 };
 
-const parseIndex = (cursor: TokensParser): number => {
+const parseIndex = (cursor: TokensParser): LiteralNode<number> => {
   cursor.consumePunctuation('=');
 
-  return cursor.consume(
+  const start = cursor.start;
+
+  const { value } = cursor.consume(
     TokenType.NUMBER,
     ({ value }) => Number.isInteger(value) && value > 0,
     `positive interger`,
-  ).value;
+  );
+
+  return {
+    type: 'Literal',
+    start,
+    value,
+    end: cursor.end,
+  };
 };

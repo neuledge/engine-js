@@ -1,9 +1,9 @@
 import { TokensParser } from '@/tokens/parser.js';
+import { AbstractNode } from './abstract.js';
 import { IdentifierNode, parseIdentifierNode } from './identifier.js';
 import { LiteralNode, parseLiteralNode } from './literal.js';
 
-export interface ArgumentNode {
-  type: 'Argument';
+export interface ArgumentNode extends AbstractNode<'Argument'> {
   key: IdentifierNode;
   value: LiteralNode;
 }
@@ -11,7 +11,7 @@ export interface ArgumentNode {
 export const parseMaybeArgumentNodes = (
   cursor: TokensParser,
 ): ArgumentNode[] => {
-  const { position } = cursor;
+  const { index: position } = cursor;
   if (
     !cursor.maybeConsumePunctuation('(') ||
     cursor.maybeConsumePunctuation(')')
@@ -32,18 +32,22 @@ export const parseMaybeArgumentNodes = (
     cursor.consumePunctuation(')');
     return args;
   } catch (error) {
-    cursor.position = position;
+    cursor.index = position;
     throw error;
   }
 };
 
 const parseArgumentNode = (cursor: TokensParser): ArgumentNode => {
+  const start = cursor.start;
+
   const key = parseIdentifierNode(cursor);
   cursor.consumePunctuation(':');
   const value = parseLiteralNode(cursor);
 
   return {
     type: 'Argument',
+    start,
+    end: cursor.end,
     key,
     value,
   };

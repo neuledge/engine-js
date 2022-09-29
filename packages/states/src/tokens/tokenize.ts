@@ -1,4 +1,3 @@
-import { AbstractToken } from './abstract.js';
 import { PunctuationToken } from './punctuation.js';
 import { StringToken } from './string.js';
 import { Token } from './token.js';
@@ -24,14 +23,13 @@ export const tokenize = (content: string): Token[] => {
   const raws = getRawTokens(content);
 
   const tokens: Token[] = [];
-  let line = 1;
-  let column = 1;
+  let position = 0;
   let isComment = false;
   let lastPunctuation: PunctuationToken | null = null;
 
   for (const raw of raws) {
     if (!isComment) {
-      const token = parseRawToken({ raw, line, column });
+      const token = parseRawToken(raw, position);
       if (token) {
         if (lastPunctuation) {
           lastPunctuation.adjacent = true;
@@ -45,12 +43,11 @@ export const tokenize = (content: string): Token[] => {
       }
     }
 
-    [line, column, isComment] = calcRawTokenPosition(
-      raw,
-      line,
-      column,
-      isComment,
-    );
+    position += raw.length;
+
+    if (isComment && raw.includes('\n')) {
+      isComment = false;
+    }
   }
 
   return tokens;
@@ -61,23 +58,23 @@ const getRawTokens = (content: string): string[] =>
     /([$_a-z]\w*|(?:\d*\.\d+|\d+)|\s+|"""(?:[^"]+|"[^"]|""[^"])*"""|"(?:[^\n"\\]+|\\.)*"|'(?:[^\n'\\]+|\\.)*'|[!%&*+<=>@^|-]+|.)/gi,
   ) || [];
 
-const parseRawToken = (
-  base: Pick<AbstractToken<TokenType>, 'raw' | 'column' | 'line'>,
-): Token | null => {
-  const { raw } = base;
+const parseRawToken = (raw: string, position: number): Token | null => {
   const kind = raw[0];
   const type = TokenCharMap[kind] || TokenType.PUNCTUATION;
+  const start = position;
+  const end = position + raw.length;
 
   switch (type) {
     case TokenType.NUMBER: {
-      return { type, value: Number(raw), ...base };
+      return { type, start, end, value: Number(raw) };
     }
 
     case TokenType.STRING: {
       return {
         type,
+        start,
+        end,
         ...parseRawStringToken(kind, raw),
-        ...base,
       };
     }
 
@@ -85,8 +82,9 @@ const parseRawToken = (
       if (raw.length > 1 && /^[+-]?(?:\d*\.\d+|\d+)$/.test(raw)) {
         return {
           type: TokenType.NUMBER,
+          start,
+          end,
           value: Number(raw),
-          ...base,
         };
       }
 
@@ -94,11 +92,11 @@ const parseRawToken = (
         return null;
       }
 
-      return { type, kind: raw, ...base, adjacent: false };
+      return { type, start, end, kind: raw, adjacent: false };
     }
 
     case TokenType.WORD: {
-      return { type, name: raw, ...base };
+      return { type, start, end, name: raw };
     }
 
     case -1: {
@@ -125,22 +123,4 @@ const parseRawStringToken = (
     kind: kind as '"' | "'",
     value: raw.slice(1, -1).replace(/\\(.)/g, '$1'),
   };
-};
-
-const calcRawTokenPosition = (
-  raw: string,
-  line: number,
-  column: number,
-  isComment: boolean,
-): [line: number, column: number, isComment: boolean] => {
-  const lines = raw.split(/\n/g);
-  if (lines.length === 1) {
-    column += lines[0].length;
-  } else {
-    line += lines.length - 1;
-    column = lines[lines.length - 1].length;
-    isComment = false;
-  }
-
-  return [line, column, isComment];
 };

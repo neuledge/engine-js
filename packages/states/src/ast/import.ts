@@ -1,8 +1,8 @@
 import { TokensParser } from '@/tokens/parser.js';
 import { TokenType } from '@/tokens/type.js';
+import { AbstractNode } from './abstract.js';
 
-export interface ImportNode {
-  type: 'Import';
+export interface ImportNode extends AbstractNode<'Import'> {
   path: string;
 }
 
@@ -19,6 +19,7 @@ export const parseImportNodes = (cursor: TokensParser): ImportNode[] => {
 export const parseMaybeImportNode = (
   cursor: TokensParser,
 ): ImportNode | undefined => {
+  const start = cursor.start;
   if (!cursor.maybeConsumeKeyword('import')) {
     return undefined;
   }
@@ -32,10 +33,12 @@ export const parseMaybeImportNode = (
 
     return {
       type: 'Import',
+      start,
+      end: cursor.end,
       path: path.value,
     };
   } catch (error) {
-    cursor.position -= 1;
+    cursor.index -= 1;
     throw error;
   }
 };

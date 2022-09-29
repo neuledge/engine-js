@@ -6,64 +6,72 @@ import { DecoratorNode, parseDecoratorNodes } from './decorator.js';
 describe('ast/decorator', () => {
   describe('parseDecoratorNodes()', () => {
     it('should skip parse if no "@" found', () => {
-      const cursor = new TokensParser(null, `state bar {}`);
+      const cursor = new TokensParser(`state bar {}`);
 
       expect(parseDecoratorNodes(cursor)).toEqual([]);
-      expect(cursor.position).toBe(0);
+      expect(cursor.index).toBe(0);
     });
 
     it('should fail if missing name', () => {
-      const cursor = new TokensParser(null, `@ state bar {}`);
+      const cursor = new TokensParser(`@ state bar {}`);
 
       expect(() => parseDecoratorNodes(cursor)).toThrow(
-        'Expect decorator name (line: 1, column: 1)',
+        'Expect decorator name',
       );
-      expect(cursor.position).toBe(0);
+      expect(cursor.index).toBe(0);
     });
 
     it('should get state decorator', () => {
-      const cursor = new TokensParser(null, `@index state bar {}`);
+      const cursor = new TokensParser(`@index state bar {}`);
 
       expect(parseDecoratorNodes(cursor)).toEqual<DecoratorNode[]>([
         {
           type: 'Decorator',
-          callee: { type: 'Identifier', name: 'index' },
+          start: 0,
+          end: 6,
+          callee: { type: 'Identifier', name: 'index', start: 1, end: 6 },
           arguments: [],
         },
       ]);
-      expect(cursor.position).toBe(2);
+      expect(cursor.index).toBe(2);
     });
 
     it('should get state decorator with empty arguments', () => {
-      const cursor = new TokensParser(null, `@index() state bar {}`);
+      const cursor = new TokensParser(`@index() state bar {}`);
 
       expect(parseDecoratorNodes(cursor)).toEqual<DecoratorNode[]>([
         {
           type: 'Decorator',
-          callee: { type: 'Identifier', name: 'index' },
+          start: 0,
+          end: 8,
+          callee: { type: 'Identifier', name: 'index', start: 1, end: 6 },
           arguments: [],
         },
       ]);
-      expect(cursor.position).toBe(4);
+      expect(cursor.index).toBe(4);
     });
 
     it('should get state decorator with arguments', () => {
-      const cursor = new TokensParser(null, `@index(foo: 'bar') state bar {}`);
+      const cursor = new TokensParser(`@index(foo: 'bar') state bar {}`);
 
       expect(parseDecoratorNodes(cursor)).toEqual<DecoratorNode[]>([
         {
           type: 'Decorator',
-          callee: { type: 'Identifier', name: 'index' },
+          start: 0,
+          end: 18,
+          callee: { type: 'Identifier', name: 'index', start: 1, end: 6 },
           arguments: [
             {
               type: 'Argument',
-              key: { type: 'Identifier', name: 'foo' },
-              value: { type: 'Literal', value: 'bar' },
+              start: 7,
+              end: 17,
+              key: { type: 'Identifier', name: 'foo', start: 7, end: 10 },
+              value: { type: 'Literal', value: 'bar', start: 12, end: 17 },
             },
           ],
         },
       ]);
-      expect(cursor.position).toBe(7);
+      expect(cursor.index).toBe(7);
     });
   });
 });

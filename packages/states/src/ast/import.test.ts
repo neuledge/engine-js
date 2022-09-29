@@ -1,39 +1,40 @@
 import { TokensParser } from '@/tokens/parser.js';
 import { ImportNode, parseImportNodes } from './import.js';
 
+/* eslint-disable max-lines-per-function */
+
 describe('ast/import', () => {
   describe('parseImportNodes()', () => {
     it('should ignore other keywords', () => {
-      const cursor = new TokensParser(null, `foo`);
+      const cursor = new TokensParser(`foo`);
 
       expect(parseImportNodes(cursor)).toEqual<ImportNode[]>([]);
-      expect(cursor.position).toBe(0);
+      expect(cursor.index).toBe(0);
     });
 
     it('should parse import', () => {
-      const cursor = new TokensParser(null, `import "foo" test`);
+      const cursor = new TokensParser(`import "foo" test`);
 
       expect(parseImportNodes(cursor)).toEqual<ImportNode[]>([
         {
           type: 'Import',
+          start: 0,
+          end: 12,
           path: 'foo',
         },
       ]);
-      expect(cursor.position).toBe(2);
+      expect(cursor.index).toBe(2);
     });
 
     it('should throw on missing path', () => {
-      const cursor = new TokensParser(null, `import import`);
+      const cursor = new TokensParser(`import import`);
 
-      expect(() => parseImportNodes(cursor)).toThrow(
-        'Expect import path (line: 1, column: 8)',
-      );
-      expect(cursor.position).toBe(0);
+      expect(() => parseImportNodes(cursor)).toThrow('Expect import path');
+      expect(cursor.index).toBe(0);
     });
 
     it('should parse multiple imports', () => {
       const cursor = new TokensParser(
-        null,
         `
       import "foo" 
       import "bar" 
@@ -44,13 +45,17 @@ describe('ast/import', () => {
         {
           type: 'Import',
           path: 'foo',
+          start: 7,
+          end: 19,
         },
         {
           type: 'Import',
           path: 'bar',
+          start: 27,
+          end: 39,
         },
       ]);
-      expect(cursor.position).toBe(4);
+      expect(cursor.index).toBe(4);
     });
   });
 });
