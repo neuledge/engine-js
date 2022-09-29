@@ -1,6 +1,7 @@
 import { AbstractNode } from './abstract.js';
 import { IdentifierNode } from './identifier.js';
 import { LiteralNode } from './literal.js';
+import { VersionateNode } from './versionate.js';
 
 export type FieldReferenceNode = FieldReference &
   (
@@ -9,8 +10,8 @@ export type FieldReferenceNode = FieldReference &
   );
 
 interface FieldReference extends AbstractNode<'FieldReference'> {
-  state: IdentifierNode;
-  identifier: IdentifierNode;
+  state: VersionateNode;
+  key: IdentifierNode;
   index?: LiteralNode<number>;
   substract?: boolean;
 }

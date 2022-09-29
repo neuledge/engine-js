@@ -24,6 +24,24 @@ export const parseLiteralNode = (cursor: TokensParser): LiteralNode => ({
   end: cursor.end,
 });
 
+export const parsePositiveIntegerLiteralNode = (
+  cursor: TokensParser,
+): LiteralNode<number> => ({
+  type: 'Literal',
+  start: cursor.start,
+  value: parsePositiveInteger(cursor),
+  end: cursor.end,
+});
+
+// value parsers
+
+const parsePositiveInteger = (cursor: TokensParser): number =>
+  cursor.consume(
+    TokenType.NUMBER,
+    ({ value }) => value > 0 && Number.isInteger(value),
+    `positive integer`,
+  ).value;
+
 const parseLiteralValue = (cursor: TokensParser): LiteralValue => {
   const token = cursor.current;
 

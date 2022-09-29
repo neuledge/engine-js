@@ -1,17 +1,18 @@
-import { TokensParser, TokenType } from '@/tokens/index.js';
+import { TokensParser } from '@/tokens/index.js';
 import { AbstractNode } from './abstract.js';
 import { DecoratorNode, parseDecoratorNodes } from './decorator.js';
 import { DescriptionNode, parseMaybeDescriptionNode } from './description.js';
 import { FieldReferenceNode } from './field-reference.js';
 import { FieldNode } from './field.js';
-import { IdentifierNode, parseIdentifierNode } from './identifier.js';
-import { LiteralNode } from './literal.js';
+import { parseIdentifierNode } from './identifier.js';
+import { LiteralNode, parsePositiveIntegerLiteralNode } from './literal.js';
 import { parseTypeNode } from './type.js';
+import { parseVersionateNode, VersionateNode } from './versionate.js';
 
 export interface StateNode extends AbstractNode<'State'> {
-  identifier: IdentifierNode;
+  id: VersionateNode;
   description?: DescriptionNode;
-  extends?: IdentifierNode;
+  extends?: VersionateNode;
   fields: StateFieldNode[];
   decorators: DecoratorNode[];
 }
@@ -25,12 +26,12 @@ export const parseStateNode = (cursor: TokensParser): StateNode => {
   const start = cursor.start;
 
   cursor.consumeKeyword('state');
-  const identifier = parseIdentifierNode(cursor);
+  const id = parseVersionateNode(cursor, true);
 
   const extendsKeyword = cursor.maybeConsumeKeyword('extends');
   let extendsId;
   if (extendsKeyword) {
-    extendsId = parseIdentifierNode(cursor);
+    extendsId = parseVersionateNode(cursor);
   }
 
   const fields = parseStateFieldNodes(cursor);
@@ -39,7 +40,7 @@ export const parseStateNode = (cursor: TokensParser): StateNode => {
     type: 'State',
     start,
     end: cursor.end,
-    identifier,
+    id,
     description,
     extends: extendsId,
     fields,
@@ -69,9 +70,13 @@ const parseStateFieldNode = (cursor: TokensParser): StateFieldNode => {
     ? cursor.maybeConsumePunctuation('-')
     : undefined;
 
-  const firstId = parseIdentifierNode(cursor);
+  const firstId = maybeRef
+    ? parseVersionateNode(cursor)
+    : parseIdentifierNode(cursor);
+
   const dotSign = maybeRef
-    ? substractSign
+    ? substractSign ||
+      (firstId.type === 'Versionate' && firstId.version != null)
       ? cursor.consumePunctuation('.')
       : cursor.maybeConsumePunctuation('.')
     : undefined;
@@ -79,7 +84,7 @@ const parseStateFieldNode = (cursor: TokensParser): StateFieldNode => {
   if (!dotSign) {
     return parseFieldNode(cursor, {
       start,
-      identifier: firstId,
+      key: firstId.type !== 'Identifier' ? firstId.identifier : firstId,
       description,
       decorators,
     });
@@ -89,15 +94,23 @@ const parseStateFieldNode = (cursor: TokensParser): StateFieldNode => {
 
   return parseFieldReferenceNode(cursor, {
     start,
-    state: firstId,
-    identifier: secId,
+    state:
+      firstId.type === 'Versionate'
+        ? firstId
+        : {
+            type: 'Versionate',
+            start: firstId.start,
+            end: firstId.end,
+            identifier: firstId,
+          },
+    key: secId,
     substract: !!substractSign,
   });
 };
 
 const parseFieldNode = (
   cursor: TokensParser,
-  base: Pick<FieldNode, 'identifier' | 'description' | 'decorators' | 'start'>,
+  base: Pick<FieldNode, 'key' | 'description' | 'decorators' | 'start'>,
 ): FieldNode => {
   const nullSign = cursor.maybeConsumePunctuation('?');
 
@@ -117,10 +130,7 @@ const parseFieldNode = (
 
 const parseFieldReferenceNode = (
   cursor: TokensParser,
-  base: Pick<
-    FieldReferenceNode,
-    'state' | 'identifier' | 'substract' | 'start'
-  >,
+  base: Pick<FieldReferenceNode, 'state' | 'key' | 'substract' | 'start'>,
 ): FieldReferenceNode => {
   if (base.substract) {
     return {
@@ -144,19 +154,5 @@ const parseFieldReferenceNode = (
 
 const parseIndex = (cursor: TokensParser): LiteralNode<number> => {
   cursor.consumePunctuation('=');
-
-  const start = cursor.start;
-
-  const { value } = cursor.consume(
-    TokenType.NUMBER,
-    ({ value }) => Number.isInteger(value) && value > 0,
-    `positive interger`,
-  );
-
-  return {
-    type: 'Literal',
-    start,
-    value,
-    end: cursor.end,
-  };
+  return parsePositiveIntegerLiteralNode(cursor);
 };

@@ -21,7 +21,7 @@ describe('ast/root', () => {
     it('should parse single state', () => {
       const cursor = new TokensParser(
         `
-      state Foo {
+      state Foo@2 {
         bar: Int = 4
       }`,
       );
@@ -29,50 +29,66 @@ describe('ast/root', () => {
       expect(parseRootNode(cursor)).toEqual<RootNode>({
         type: 'Root',
         start: 7,
-        end: 47,
+        end: 49,
         imports: [],
         body: [
           {
             type: 'State',
             start: 7,
-            end: 47,
-            identifier: { type: 'Identifier', start: 13, end: 16, name: 'Foo' },
+            end: 49,
+            id: {
+              type: 'Versionate',
+              start: 13,
+              end: 18,
+              identifier: {
+                type: 'Identifier',
+                start: 13,
+                end: 16,
+                name: 'Foo',
+              },
+              version: {
+                type: 'Literal',
+                start: 17,
+                end: 18,
+                value: 2,
+              },
+            },
             decorators: [],
             description: undefined,
             extends: undefined,
             fields: [
               {
                 type: 'Field',
-                start: 27,
-                end: 39,
-                identifier: {
+                start: 29,
+                end: 41,
+                key: {
                   type: 'Identifier',
-                  start: 27,
-                  end: 30,
+                  start: 29,
+                  end: 32,
                   name: 'bar',
                 },
                 decorators: [],
                 description: undefined,
                 fieldType: {
                   type: 'TypeExpression',
-                  start: 32,
-                  end: 35,
+                  start: 34,
+                  end: 37,
                   identifier: {
                     type: 'Identifier',
-                    start: 32,
-                    end: 35,
+                    start: 34,
+                    end: 37,
                     name: 'Int',
                   },
                   list: false,
                 },
-                index: { type: 'Literal', start: 38, end: 39, value: 4 },
+                index: { type: 'Literal', start: 40, end: 41, value: 4 },
                 nullable: false,
               },
             ],
           },
         ],
       });
-      expect(cursor.index).toBe(9);
+      expect(cursor.index).toBe(11);
     });
 
     it('should import', () => {
@@ -100,7 +116,7 @@ describe('ast/root', () => {
         `
       import "Bar"
 
-      state Foo {
+      state Foo@1 {
         bar: Int = 4
       }`,
       );
@@ -108,7 +124,7 @@ describe('ast/root', () => {
       expect(parseRootNode(cursor)).toEqual<RootNode>({
         type: 'Root',
         start: 7,
-        end: 67,
+        end: 69,
         imports: [
           {
             type: 'Import',
@@ -121,44 +137,60 @@ describe('ast/root', () => {
           {
             type: 'State',
             start: 27,
-            end: 67,
-            identifier: { type: 'Identifier', start: 33, end: 36, name: 'Foo' },
+            end: 69,
+            id: {
+              type: 'Versionate',
+              start: 33,
+              end: 38,
+              identifier: {
+                type: 'Identifier',
+                start: 33,
+                end: 36,
+                name: 'Foo',
+              },
+              version: {
+                type: 'Literal',
+                start: 37,
+                end: 38,
+                value: 1,
+              },
+            },
             decorators: [],
             description: undefined,
             extends: undefined,
             fields: [
               {
                 type: 'Field',
-                start: 47,
-                end: 59,
-                identifier: {
+                start: 49,
+                end: 61,
+                key: {
                   type: 'Identifier',
-                  start: 47,
-                  end: 50,
+                  start: 49,
+                  end: 52,
                   name: 'bar',
                 },
                 decorators: [],
                 description: undefined,
                 fieldType: {
                   type: 'TypeExpression',
-                  start: 52,
-                  end: 55,
+                  start: 54,
+                  end: 57,
                   identifier: {
                     type: 'Identifier',
-                    start: 52,
-                    end: 55,
+                    start: 54,
+                    end: 57,
                     name: 'Int',
                   },
                   list: false,
                 },
-                index: { type: 'Literal', start: 58, end: 59, value: 4 },
+                index: { type: 'Literal', start: 60, end: 61, value: 4 },
                 nullable: false,
               },
             ],
           },
         ],
       });
-      expect(cursor.index).toBe(11);
+      expect(cursor.index).toBe(13);
     });
   });
 });

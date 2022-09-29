@@ -5,11 +5,31 @@ import { parseStateNode, StateNode } from './state.js';
 
 describe('ast/state', () => {
   describe('parseStateNode()', () => {
+    it('should throw on state with missing version', () => {
+      const cursor = new TokensParser(
+        `state FreeAccount {
+          plan: FreePlan = 1 
+        }`,
+      );
+
+      expect(() => parseStateNode(cursor)).toThrow("Expect '@' token");
+    });
+
+    it('should throw on state with version 0', () => {
+      const cursor = new TokensParser(
+        `state FreeAccount@0 {
+          plan: FreePlan = 1 
+        }`,
+      );
+
+      expect(() => parseStateNode(cursor)).toThrow('Expect positive integer');
+    });
+
     it('should parse example state', () => {
       const cursor = new TokensParser(
         `
 @index(type: "full-text", fields: ["name"])
-state FreeAccount {
+state FreeAccount@1 {
     @id id: PositiveInteger = 1 
     name: TrimmedString(limit: 100) = 2 
     plan: FreePlan = 3 
@@ -21,139 +41,150 @@ state FreeAccount {
       expect(parseStateNode(cursor)).toEqual<StateNode>({
         type: 'State',
         start: 45,
-        end: 187,
+        end: 189,
         extends: undefined,
         description: undefined,
-        identifier: {
-          type: 'Identifier',
-          name: 'FreeAccount',
+        id: {
+          type: 'Versionate',
           start: 51,
-          end: 62,
+          end: 64,
+          identifier: {
+            type: 'Identifier',
+            name: 'FreeAccount',
+            start: 51,
+            end: 62,
+          },
+          version: {
+            type: 'Literal',
+            start: 63,
+            end: 64,
+            value: 1,
+          },
         },
         fields: [
           {
             type: 'Field',
-            start: 73,
-            end: 96,
-            identifier: { type: 'Identifier', start: 73, end: 75, name: 'id' },
+            start: 75,
+            end: 98,
+            key: { type: 'Identifier', start: 75, end: 77, name: 'id' },
             decorators: [
               {
                 type: 'Decorator',
-                start: 69,
-                end: 72,
-                callee: { type: 'Identifier', name: 'id', start: 70, end: 72 },
+                start: 71,
+                end: 74,
+                callee: { type: 'Identifier', name: 'id', start: 72, end: 74 },
                 arguments: [],
               },
             ],
             description: undefined,
             fieldType: {
               type: 'TypeExpression',
-              start: 77,
-              end: 92,
+              start: 79,
+              end: 94,
               identifier: {
                 name: 'PositiveInteger',
                 type: 'Identifier',
-                start: 77,
-                end: 92,
+                start: 79,
+                end: 94,
               },
               list: false,
             },
             nullable: false,
-            index: { type: 'Literal', start: 95, end: 96, value: 1 },
+            index: { type: 'Literal', start: 97, end: 98, value: 1 },
           },
           {
             type: 'Field',
-            start: 102,
-            end: 137,
-            identifier: {
+            start: 104,
+            end: 139,
+            key: {
               type: 'Identifier',
-              start: 102,
-              end: 106,
+              start: 104,
+              end: 108,
               name: 'name',
             },
             decorators: [],
             description: undefined,
             fieldType: {
               type: 'TypeGenerator',
-              start: 108,
-              end: 133,
+              start: 110,
+              end: 135,
               identifier: {
                 type: 'Identifier',
-                start: 108,
-                end: 121,
+                start: 110,
+                end: 123,
                 name: 'TrimmedString',
               },
               arguments: [
                 {
                   type: 'Argument',
-                  start: 122,
-                  end: 132,
+                  start: 124,
+                  end: 134,
                   key: {
                     type: 'Identifier',
-                    start: 122,
-                    end: 127,
+                    start: 124,
+                    end: 129,
                     name: 'limit',
                   },
-                  value: { type: 'Literal', start: 129, end: 132, value: 100 },
+                  value: { type: 'Literal', start: 131, end: 134, value: 100 },
                 },
               ],
             },
             nullable: false,
-            index: { type: 'Literal', start: 136, end: 137, value: 2 },
+            index: { type: 'Literal', start: 138, end: 139, value: 2 },
           },
           {
             type: 'Field',
-            start: 143,
-            end: 161,
-            identifier: {
+            start: 145,
+            end: 163,
+            key: {
               type: 'Identifier',
-              start: 143,
-              end: 147,
+              start: 145,
+              end: 149,
               name: 'plan',
             },
             decorators: [],
             description: undefined,
             fieldType: {
               type: 'TypeExpression',
-              start: 149,
-              end: 157,
+              start: 151,
+              end: 159,
               identifier: {
                 type: 'Identifier',
-                start: 149,
-                end: 157,
+                start: 151,
+                end: 159,
                 name: 'FreePlan',
               },
               list: false,
             },
             nullable: false,
-            index: { type: 'Literal', start: 160, end: 161, value: 3 },
+            index: { type: 'Literal', start: 162, end: 163, value: 3 },
           },
           {
             type: 'Field',
-            start: 167,
-            end: 184,
-            identifier: {
+            start: 169,
+            end: 186,
+            key: {
               type: 'Identifier',
-              start: 167,
-              end: 172,
+              start: 169,
+              end: 174,
               name: 'users',
             },
             decorators: [],
             description: undefined,
             fieldType: {
               type: 'TypeExpression',
-              start: 174,
-              end: 180,
+              start: 176,
+              end: 182,
               identifier: {
                 type: 'Identifier',
-                start: 174,
-                end: 178,
+                start: 176,
+                end: 180,
                 name: 'User',
               },
               list: true,
             },
             nullable: false,
-            index: { type: 'Literal', start: 183, end: 184, value: 4 },
+            index: { type: 'Literal', start: 185, end: 186, value: 4 },
           },
         ],
         decorators: [
@@ -183,6 +214,144 @@ state FreeAccount {
                 value: { type: 'Literal', value: ['name'], start: 35, end: 43 },
               },
             ],
+          },
+        ],
+      });
+    });
+
+    it('should parse extended state', () => {
+      const cursor = new TokensParser(
+        `state FreeAccount@1 extends BasicAccount {
+          plan: FreePlan = 1 
+        }`,
+      );
+
+      expect(parseStateNode(cursor)).toEqual<StateNode>({
+        type: 'State',
+        start: 0,
+        end: 82,
+        decorators: [],
+        description: undefined,
+        id: {
+          type: 'Versionate',
+          start: 6,
+          end: 19,
+          identifier: {
+            type: 'Identifier',
+            start: 6,
+            end: 17,
+            name: 'FreeAccount',
+          },
+          version: {
+            type: 'Literal',
+            start: 18,
+            end: 19,
+            value: 1,
+          },
+        },
+        extends: {
+          type: 'Versionate',
+          start: 28,
+          end: 40,
+          identifier: {
+            type: 'Identifier',
+            start: 28,
+            end: 40,
+            name: 'BasicAccount',
+          },
+          version: undefined,
+        },
+        fields: [
+          {
+            type: 'Field',
+            start: 53,
+            end: 71,
+            description: undefined,
+            decorators: [],
+            key: {
+              type: 'Identifier',
+              start: 53,
+              end: 57,
+              name: 'plan',
+            },
+            fieldType: {
+              type: 'TypeExpression',
+              start: 59,
+              end: 67,
+              identifier: {
+                type: 'Identifier',
+                start: 59,
+                end: 67,
+                name: 'FreePlan',
+              },
+              list: false,
+            },
+            index: { type: 'Literal', start: 70, end: 71, value: 1 },
+            nullable: false,
+          },
+        ],
+      });
+    });
+
+    it('should parse state with versonate extends', () => {
+      const cursor = new TokensParser(
+        `state FreeAccount@2 extends BasicAccount@1 {
+          plan: FreePlan = 1 
+        }`,
+      );
+
+      expect(parseStateNode(cursor)).toEqual<StateNode>({
+        type: 'State',
+        start: 0,
+        end: 84,
+        decorators: [],
+        description: undefined,
+        id: {
+          type: 'Versionate',
+          start: 6,
+          end: 19,
+          identifier: {
+            type: 'Identifier',
+            start: 6,
+            end: 17,
+            name: 'FreeAccount',
+          },
+          version: { type: 'Literal', start: 18, end: 19, value: 2 },
+        },
+        extends: {
+          type: 'Versionate',
+          start: 28,
+          end: 42,
+          identifier: {
+            type: 'Identifier',
+            start: 28,
+            end: 40,
+            name: 'BasicAccount',
+          },
+          version: { type: 'Literal', start: 41, end: 42, value: 1 },
+        },
+        fields: [
+          {
+            type: 'Field',
+            start: 55,
+            end: 73,
+            decorators: [],
+            description: undefined,
+            key: { end: 59, name: 'plan', start: 55, type: 'Identifier' },
+            fieldType: {
+              type: 'TypeExpression',
+              end: 69,
+              identifier: {
+                type: 'Identifier',
+                start: 61,
+                end: 69,
+                name: 'FreePlan',
+              },
+              list: false,
+              start: 61,
+            },
+            index: { type: 'Literal', start: 72, end: 73, value: 1 },
+            nullable: false,
           },
         ],
       });

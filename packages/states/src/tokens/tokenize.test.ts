@@ -14,14 +14,14 @@ describe('parser/tokenize', () => {
     });
 
     it('should tokenize strings', () => {
-      expect(tokenize(`'foo' "Foo"`)).toEqual([
+      expect(tokenize(`'foo' "Foo"`)).toEqual<Token[]>([
         { end: 5, kind: "'", start: 0, type: S, value: 'foo' },
         { end: 11, kind: '"', start: 6, type: S, value: 'Foo' },
       ]);
     });
 
     it('should tokenize numbers', () => {
-      expect(tokenize(`123 0 .53 423.423232`)).toEqual([
+      expect(tokenize(`123 0 .53 423.423232`)).toEqual<Token[]>([
         { end: 3, start: 0, type: N, value: 123 },
         { end: 5, start: 4, type: N, value: 0 },
         { end: 9, start: 6, type: N, value: 0.53 },
@@ -30,9 +30,19 @@ describe('parser/tokenize', () => {
     });
 
     it('should tokenize words', () => {
-      expect(tokenize(`hello world`)).toEqual([
+      expect(tokenize(`hello world`)).toEqual<Token[]>([
         { end: 5, name: 'hello', start: 0, type: W },
         { end: 11, name: 'world', start: 6, type: W },
+      ]);
+    });
+
+    it('should tokenize field reference with version', () => {
+      expect(tokenize(`BasicState@2.foo`)).toEqual<Token[]>([
+        { end: 10, name: 'BasicState', start: 0, type: W },
+        { end: 11, kind: '@', adjacent: true, start: 10, type: P },
+        { end: 12, value: 2, start: 11, type: N },
+        { end: 13, kind: '.', adjacent: true, start: 12, type: P },
+        { end: 16, name: 'foo', start: 13, type: W },
       ]);
     });
 

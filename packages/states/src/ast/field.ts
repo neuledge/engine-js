@@ -6,7 +6,7 @@ import { LiteralNode } from './literal.js';
 import { TypeNode } from './type.js';
 
 export interface FieldNode extends AbstractNode<'Field'> {
-  identifier: IdentifierNode;
+  key: IdentifierNode;
   description?: DescriptionNode;
   decorators: DecoratorNode[];
   fieldType: TypeNode;

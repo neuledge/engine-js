@@ -1,10 +1,10 @@
 import { tokenize } from './tokenize.js';
 import { AbstractToken } from './abstract.js';
 import { PunctuationToken } from './punctuation.js';
-import { ParsingError } from './parsing-error.js';
 import { Token } from './token.js';
 import { TokenType } from './type.js';
 import { WordToken } from './word.js';
+import { ParsingError } from '@/parsing-error.js';
 
 export class TokensParser {
   public readonly tokens: Token[];
@@ -89,8 +89,7 @@ export class TokensParser {
     const token = this.current ?? null;
 
     return new ParsingError(
-      token?.start ?? this.content.length - 1,
-      token?.end ?? this.content.length,
+      token ?? { start: this.content.length - 1, end: this.content.length },
       expected
         ? `Expect ${expected}`
         : token
