@@ -1,6 +1,11 @@
-import { FieldReferenceNode, StateFieldNode } from '@/ast/index.js';
+import {
+  DecoratorNode,
+  FieldReferenceNode,
+  StateFieldNode,
+} from '@/ast/index.js';
 import { ParsingError } from '@/parsing-error.js';
 import { StatesContext } from './context.js';
+import { attachDeprecatedDecorator } from './decorators/index.js';
 import { NamedDefinition } from './named.js';
 import { TypeDefinition } from './type.js';
 
@@ -14,42 +19,87 @@ export interface FieldDefintion extends NamedDefinition {
 export const defineField = (
   ctx: StatesContext,
   node: StateFieldNode,
-): FieldDefintion => {
+): FieldDefintion | null => {
   if (node.type === 'FieldReference') {
     return defineReferenceField(ctx, node);
   }
 
-  throw 1;
-};
+  const def: FieldDefintion = {
+    name: node.key.name,
+    description: node.description?.value ?? null,
+    deprecationReason: null,
+    index: node.index.value,
+    primaryKey: false,
+    nullable: node.nullable,
+    type: {} as never, // FIXME field type
+  };
 
-export const defineReferenceField = (
-  ctx: StatesContext,
-  node: FieldReferenceNode,
-): FieldDefintion => {
-  const states = ctx.states[node.state.identifier.name];
-  if (!states?.length) {
-    throw new ParsingError(
-      node.state,
-      `Can't find state '${node.state.identifier.name}'`,
-    );
+  for (const decorator of node.decorators) {
+    attachFieldDecoration(def, decorator);
   }
 
-  const version = node.state.version?.value ?? states.length - 1;
-  const state = states[version - 1];
+  return def;
+};
+
+const defineReferenceField = (
+  ctx: StatesContext,
+  node: FieldReferenceNode,
+): FieldDefintion | null => {
+  const stateName = node.state.identifier.name;
+  const version = node.state.version?.value;
+
+  const state = ctx.getStateRef(stateName, version);
   if (!state) {
     throw new ParsingError(
       node.state,
-      `Can't find state '${node.state.identifier.name}@${version}'`,
+      `Can't find state '${stateName}${version ? `@${version}` : ''}'`,
     );
   }
+  if (!state.fields) {
+    return null;
+  }
 
-  const field = state.fields[node.key.name];
+  const field = state.fields[node.key.name] as FieldDefintion;
+
   if (!field) {
     throw new ParsingError(
       node.key,
-      `Field '${node.key.name}' does not exists on state '${node.state.identifier.name}'`,
+      `Field '${node.key.name}' does not exists on state '${stateName}@${version}'`,
     );
   }
 
-  throw 2;
+  if (!('type' in field)) {
+    throw new Error(
+      `Unexpected field reference for '${stateName}@${version}.${field.name}'`,
+    );
+  }
+
+  if (node.substract) {
+    throw new Error(
+      `Unexpected field reference for '${stateName}@${version}.${field.name}'`,
+    );
+  }
+
+  return { ...field, index: node.index.value };
+};
+
+const attachFieldDecoration = (
+  def: FieldDefintion,
+  decorator: DecoratorNode,
+): void => {
+  switch (decorator.callee.name) {
+    case 'deprecated': {
+      attachDeprecatedDecorator(def, decorator);
+      break;
+    }
+
+    case 'id': {
+      def.primaryKey = true;
+      break;
+    }
+
+    default: {
+      return;
+    }
+  }
 };
