@@ -2,9 +2,11 @@
   "extends": "./tsconfig.base.json",
   "compilerOptions": {},
   "references": [
-    { "path": "packages/scalar" },
+    { "path": "packages/scalars" },
     { "path": "packages/engine" },
     { "path": "packages/states" },
+    { "path": "packages/states-typescript" },
+    { "path": "packages/states-cli" },
 
     { "path": "tsconfig.scripts.json" }
   ],

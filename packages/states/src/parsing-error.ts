@@ -11,4 +11,8 @@ export class ParsingError extends SyntaxError {
     // because we are extending a built-in class
     Object.setPrototypeOf(this, ParsingError.prototype);
   }
+
+  set path(path: string) {
+    this.stack = `${path}: ${this.message}`;
+  }
 }

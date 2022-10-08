@@ -1,0 +1,20 @@
+"The old person state"
+@deprecated(reason: "please use version 2")
+state Person@1 {
+    "Person ID"
+    @id id: Number = 1
+
+    @deprecated(reason: "not safe format")
+    name: String = 2
+}
+
+"""
+The latest Person state!
+Got it??
+"""
+state Person@2 from Person@1 {
+    -Person@1.name
+
+    firstName: String = 1
+    lastName?: String = 2
+}

@@ -1,5 +1,5 @@
 {
-  "name": "@neuledge/engine",
+  "name": "@neuledge/states-cli",
   "version": "0.0.0",
   "type": "module",
   "main": "lib/index",
@@ -18,6 +18,9 @@
     ".": "./lib/index.js",
     "./*": "./lib/*"
   },
+  "bin": {
+    "states": "bin/states.js"
+  },
   "scripts": {
     "clean": "rm -rf lib *.tsbuildinfo",
     "test": "yarn run jest",
@@ -26,5 +29,10 @@
   "devDependencies": {
     "@types/jest": "^28.1.6",
     "jest": "^28.1.3"
+  },
+  "dependencies": {
+    "commander": "^9.4.1",
+    "@neuledge/states": "0.0.0",
+    "@neuledge/states-typescript": "0.0.0"
   }
 }

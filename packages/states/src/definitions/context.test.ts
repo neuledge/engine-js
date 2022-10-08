@@ -25,7 +25,10 @@ describe('defintions/context', () => {
             index: 1,
             nullable: false,
             primaryKey: true,
-            type: {} as never,
+            type: {
+              type: 'Scalar',
+              scalar: ctx.scalars.Number,
+            },
           },
         },
       });
@@ -56,7 +59,10 @@ describe('defintions/context', () => {
             index: 1,
             nullable: false,
             primaryKey: true,
-            type: {} as never,
+            type: {
+              type: 'Scalar',
+              scalar: ctx.scalars.Number,
+            },
           },
         },
       });
@@ -102,7 +108,10 @@ describe('defintions/context', () => {
             index: 1,
             nullable: false,
             primaryKey: true,
-            type: {} as never,
+            type: {
+              type: 'Scalar',
+              scalar: ctx.scalars.Number,
+            },
           },
         },
       });
@@ -134,7 +143,10 @@ describe('defintions/context', () => {
             index: 1,
             nullable: false,
             primaryKey: true,
-            type: {} as never,
+            type: {
+              type: 'Scalar',
+              scalar: ctx.scalars.Number,
+            },
           },
           name: {
             name: 'name',
@@ -143,7 +155,10 @@ describe('defintions/context', () => {
             index: 2,
             nullable: false,
             primaryKey: false,
-            type: {} as never,
+            type: {
+              type: 'Scalar',
+              scalar: ctx.scalars.String,
+            },
           },
         },
       });
@@ -160,7 +175,7 @@ describe('defintions/context', () => {
         test?: String = 2
       }
 
-      state Test@2 extends Test@1 {
+      state Test@2 from Test@1 {
         -Test@1.test
 
         name: String = 2
@@ -180,7 +195,10 @@ describe('defintions/context', () => {
               index: 1,
               nullable: false,
               primaryKey: true,
-              type: {} as never,
+              type: {
+                type: 'Scalar',
+                scalar: ctx.scalars.Number,
+              },
             },
             test: {
               name: 'test',
@@ -189,7 +207,10 @@ describe('defintions/context', () => {
               index: 2,
               nullable: true,
               primaryKey: false,
-              type: {} as never,
+              type: {
+                type: 'Scalar',
+                scalar: ctx.scalars.String,
+              },
             },
           },
         },
@@ -206,7 +227,10 @@ describe('defintions/context', () => {
               index: 1,
               nullable: false,
               primaryKey: true,
-              type: {} as never,
+              type: {
+                type: 'Scalar',
+                scalar: ctx.scalars.Number,
+              },
             },
             name: {
               name: 'name',
@@ -215,7 +239,10 @@ describe('defintions/context', () => {
               index: 2,
               nullable: false,
               primaryKey: false,
-              type: {} as never,
+              type: {
+                type: 'Scalar',
+                scalar: ctx.scalars.String,
+              },
             },
           },
         },

@@ -55,7 +55,7 @@ describe('ast/root', () => {
             },
             decorators: [],
             description: undefined,
-            extends: undefined,
+            from: undefined,
             fields: [
               {
                 type: 'Field',
@@ -157,7 +157,7 @@ describe('ast/root', () => {
             },
             decorators: [],
             description: undefined,
-            extends: undefined,
+            from: undefined,
             fields: [
               {
                 type: 'Field',

@@ -88,8 +88,8 @@ const defineStateFields = (
 ): StateDefinition['fields'] | null => {
   const fields: StateDefinition['fields'] = {};
 
-  if (node.extends) {
-    const extendsFields = getExtendsFields(ctx, node.extends);
+  if (node.from) {
+    const extendsFields = getExtendsFields(ctx, node.from);
     if (!extendsFields) return null;
 
     Object.assign(fields, extendsFields);
@@ -144,7 +144,7 @@ const attachStateDecorator = (
 
 const getExtendsFields = (
   ctx: StatesContext,
-  ext: NonNullable<StateNode['extends']>,
+  ext: NonNullable<StateNode['from']>,
 ): StateDefinition['fields'] | undefined => {
   const { identifier, version } = ext;
 

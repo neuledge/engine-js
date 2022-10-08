@@ -42,7 +42,7 @@ state FreeAccount@1 {
         type: 'State',
         start: 45,
         end: 189,
-        extends: undefined,
+        from: undefined,
         description: undefined,
         id: {
           type: 'Versionate',
@@ -221,7 +221,7 @@ state FreeAccount@1 {
 
     it('should parse extended state', () => {
       const cursor = new TokensParser(
-        `state FreeAccount@1 extends BasicAccount {
+        `state FreeAccount@1 from BasicAccount {
           plan: FreePlan = 1 
         }`,
       );
@@ -229,7 +229,7 @@ state FreeAccount@1 {
       expect(parseStateNode(cursor)).toEqual<StateNode>({
         type: 'State',
         start: 0,
-        end: 82,
+        end: 79,
         decorators: [],
         description: undefined,
         id: {
@@ -249,14 +249,14 @@ state FreeAccount@1 {
             value: 1,
           },
         },
-        extends: {
+        from: {
           type: 'Versionate',
-          start: 28,
-          end: 40,
+          start: 25,
+          end: 37,
           identifier: {
             type: 'Identifier',
-            start: 28,
-            end: 40,
+            start: 25,
+            end: 37,
             name: 'BasicAccount',
           },
           version: undefined,
@@ -264,29 +264,29 @@ state FreeAccount@1 {
         fields: [
           {
             type: 'Field',
-            start: 53,
-            end: 71,
+            start: 50,
+            end: 68,
             description: undefined,
             decorators: [],
             key: {
               type: 'Identifier',
-              start: 53,
-              end: 57,
+              start: 50,
+              end: 54,
               name: 'plan',
             },
             fieldType: {
               type: 'TypeExpression',
-              start: 59,
-              end: 67,
+              start: 56,
+              end: 64,
               identifier: {
                 type: 'Identifier',
-                start: 59,
-                end: 67,
+                start: 56,
+                end: 64,
                 name: 'FreePlan',
               },
               list: false,
             },
-            index: { type: 'Literal', start: 70, end: 71, value: 1 },
+            index: { type: 'Literal', start: 67, end: 68, value: 1 },
             nullable: false,
           },
         ],
@@ -295,7 +295,7 @@ state FreeAccount@1 {
 
     it('should parse state with versonate extends', () => {
       const cursor = new TokensParser(
-        `state FreeAccount@2 extends BasicAccount@1 {
+        `state FreeAccount@2 from BasicAccount@1 {
           plan: FreePlan = 1 
         }`,
       );
@@ -303,7 +303,7 @@ state FreeAccount@1 {
       expect(parseStateNode(cursor)).toEqual<StateNode>({
         type: 'State',
         start: 0,
-        end: 84,
+        end: 81,
         decorators: [],
         description: undefined,
         id: {
@@ -318,39 +318,39 @@ state FreeAccount@1 {
           },
           version: { type: 'Literal', start: 18, end: 19, value: 2 },
         },
-        extends: {
+        from: {
           type: 'Versionate',
-          start: 28,
-          end: 42,
+          start: 25,
+          end: 39,
           identifier: {
             type: 'Identifier',
-            start: 28,
-            end: 40,
+            start: 25,
+            end: 37,
             name: 'BasicAccount',
           },
-          version: { type: 'Literal', start: 41, end: 42, value: 1 },
+          version: { type: 'Literal', start: 38, end: 39, value: 1 },
         },
         fields: [
           {
             type: 'Field',
-            start: 55,
-            end: 73,
+            start: 52,
+            end: 70,
             decorators: [],
             description: undefined,
-            key: { end: 59, name: 'plan', start: 55, type: 'Identifier' },
+            key: { end: 56, name: 'plan', start: 52, type: 'Identifier' },
             fieldType: {
               type: 'TypeExpression',
-              end: 69,
+              end: 66,
               identifier: {
                 type: 'Identifier',
-                start: 61,
-                end: 69,
+                start: 58,
+                end: 66,
                 name: 'FreePlan',
               },
               list: false,
-              start: 61,
+              start: 58,
             },
-            index: { type: 'Literal', start: 72, end: 73, value: 1 },
+            index: { type: 'Literal', start: 69, end: 70, value: 1 },
             nullable: false,
           },
         ],

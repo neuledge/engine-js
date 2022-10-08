@@ -14,9 +14,15 @@ import {
   StateDefinition,
   StateDefinitionRef,
 } from './state.js';
+import { ScalarDefinition } from './scalar.js';
+import { EitherDefinition } from './either.js';
+import { scalars } from './scalars/index.js';
+import { DocumentDefinition } from './document.js';
 
 export class StatesContext {
   public states: Record<string, StateDefinition[]> = {};
+  public scalars: Record<string, ScalarDefinition> = { ...scalars };
+  public eithers: Record<string, EitherDefinition> = {};
 
   private stateRefs: Record<
     string,
@@ -27,39 +33,56 @@ export class StatesContext {
       node: StateNode;
     }[]
   > = {};
-  private imported = new Set<string>();
+  private imported = new Map<string, DocumentDefinition>();
 
   constructor(public readonly basepath: string = '') {}
 
-  async import(path: string, basepath = this.basepath): Promise<void> {
+  async import(
+    filename: string,
+    basepath = this.basepath,
+  ): Promise<DocumentDefinition> {
     this.stateRefs = {};
 
-    await this.importRefs(path, basepath);
+    const res = await this.importRefs(filename, basepath);
     this.populateStateRefs();
+
+    return res;
   }
 
-  async exec(content: string, filepath?: string): Promise<void> {
+  async exec(content: string, filepath?: string): Promise<DocumentDefinition> {
     this.stateRefs = {};
 
-    await this.execRefs(content, filepath);
+    const res = await this.execRefs(content, filepath);
     this.populateStateRefs();
+
+    return res;
   }
 
-  private async importRefs(path: string, basepath: string) {
-    const filepath = resolve(basepath, path);
-    if (this.imported.has(filepath)) {
-      return;
+  private async importRefs(
+    filename: string,
+    basepath: string,
+  ): Promise<DocumentDefinition> {
+    const filepath = resolve(basepath, filename);
+
+    let res = this.imported.get(filepath);
+    if (!res) {
+      const buffer = await readFile(filepath);
+      const content = buffer.toString();
+
+      res = await this.execRefs(content, filepath);
+
+      this.imported.set(filepath, res);
     }
 
-    const buffer = await readFile(filepath);
-    const content = buffer.toString();
-
-    await this.execRefs(content, filepath);
-
-    this.imported.add(filepath);
+    return res;
   }
 
-  private async execRefs(content: string, filepath?: string): Promise<void> {
+  private async execRefs(
+    content: string,
+    filepath?: string,
+  ): Promise<DocumentDefinition> {
+    const res: DocumentDefinition = { scalars: {}, states: {}, eithers: {} };
+
     try {
       const root = this.parse(content);
 
@@ -71,11 +94,13 @@ export class StatesContext {
       }
 
       for (const node of root.body) {
-        this.registerRef(content, filepath, node);
+        this.registerRef(res, content, filepath, node);
       }
     } catch (error) {
       throw StatesContext.enhanceError(error, content, filepath);
     }
+
+    return res;
   }
 
   // references
@@ -95,6 +120,7 @@ export class StatesContext {
   }
 
   private registerRef(
+    root: DocumentDefinition,
     content: string,
     filepath: string | undefined,
     node: RootBodyNode,
@@ -114,8 +140,12 @@ export class StatesContext {
         if (!this.stateRefs[name]) {
           this.stateRefs[name] = [];
         }
+        if (!root.states[name]) {
+          root.states[name] = [];
+        }
 
         this.stateRefs[name][version - 1] = { ref, content, filepath, node };
+        root.states[name][version - 1] = ref as never;
 
         break;
       }
@@ -178,23 +208,23 @@ export class StatesContext {
     content: string,
     filepath?: string,
   ): T {
-    const { start, message: orgMsg } = (error || {}) as ParsingError;
+    const { start } = (error || {}) as ParsingError;
 
-    if (start == null || orgMsg == null) {
+    if (start == null) {
       return error;
     }
 
-    let message;
+    let path;
     if (filepath) {
       const lines = content.slice(0, start).split(/\n/g);
-      const column = lines[lines.length - 1].length;
+      const column = lines[lines.length - 1].length + 1;
 
-      message = `${filepath}(${lines.length},${column}): ${orgMsg}`;
+      path = `file://${filepath}:${lines.length}:${column}`;
     } else {
-      message = `${orgMsg} (pos: ${start})`;
+      path = `${(error as ParsingError).constructor.name}:${start}`;
     }
 
-    (error as ParsingError).message = message;
+    (error as ParsingError).path = path;
 
     return error;
   }

@@ -1,5 +1,5 @@
 {
-  "name": "@neuledge/engine",
+  "name": "@neuledge/scalars",
   "version": "0.0.0",
   "type": "module",
   "main": "lib/index",

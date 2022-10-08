@@ -12,7 +12,7 @@ import { parseVersionateNode, VersionateNode } from './versionate.js';
 export interface StateNode extends AbstractNode<'State'> {
   id: VersionateNode;
   description?: DescriptionNode;
-  extends?: VersionateNode;
+  from?: VersionateNode;
   fields: StateFieldNode[];
   decorators: DecoratorNode[];
 }
@@ -28,10 +28,10 @@ export const parseStateNode = (cursor: TokensParser): StateNode => {
   cursor.consumeKeyword('state');
   const id = parseVersionateNode(cursor, true);
 
-  const extendsKeyword = cursor.maybeConsumeKeyword('extends');
-  let extendsId;
-  if (extendsKeyword) {
-    extendsId = parseVersionateNode(cursor);
+  const fromKeyword = cursor.maybeConsumeKeyword('from');
+  let fromId;
+  if (fromKeyword) {
+    fromId = parseVersionateNode(cursor);
   }
 
   const fields = parseStateFieldNodes(cursor);
@@ -42,7 +42,7 @@ export const parseStateNode = (cursor: TokensParser): StateNode => {
     end: cursor.end,
     id,
     description,
-    extends: extendsId,
+    from: fromId,
     fields,
     decorators,
   };

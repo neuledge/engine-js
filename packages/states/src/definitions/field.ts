@@ -7,7 +7,7 @@ import { ParsingError } from '@/parsing-error.js';
 import { StatesContext } from './context.js';
 import { attachDeprecatedDecorator } from './decorators/index.js';
 import { NamedDefinition } from './named.js';
-import { TypeDefinition } from './type.js';
+import { defineType, TypeDefinition } from './type.js';
 
 export interface FieldDefintion extends NamedDefinition {
   index: number;
@@ -31,7 +31,7 @@ export const defineField = (
     index: node.index.value,
     primaryKey: false,
     nullable: node.nullable,
-    type: {} as never, // FIXME field type
+    type: defineType(ctx, node.fieldType),
   };
 
   for (const decorator of node.decorators) {
