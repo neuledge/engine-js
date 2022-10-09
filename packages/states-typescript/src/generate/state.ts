@@ -1,4 +1,3 @@
-import { StateDefinition, TypeDefinition } from '@neuledge/states';
 import { generateDescriptionComment } from './comment.js';
 
 export const generateState = (state: StateDefinition): string =>

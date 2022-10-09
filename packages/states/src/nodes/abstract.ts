@@ -1,4 +1,4 @@
-export interface AbstractToken<T extends string> {
+export interface AbstractNode<T extends string> {
   type: T;
   path?: string;
   start: number;

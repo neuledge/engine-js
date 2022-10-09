@@ -1,7 +1,6 @@
 import { AbstractToken } from './abstract.js';
-import { TokenType } from './type.js';
 
-export interface StringToken extends AbstractToken<TokenType.STRING> {
+export interface StringToken extends AbstractToken<'String'> {
   kind: '"' | "'" | '"""';
   value: string;
 }
