@@ -7,19 +7,53 @@ import { FieldNode } from './field.js';
 import { parseIdentifierNode } from './identifier.js';
 import { LiteralNode, parsePositiveIntegerLiteralNode } from './literal.js';
 import { parseTypeNode } from './type.js';
+import { ParsingError } from '@/parsing-error.js';
 
 export type StateFieldNode = FieldNode | ReferenceFieldNode | ExcludedFieldNode;
 
-export const parseStateFieldNodes = (cursor: Tokenizer): StateFieldNode[] => {
-  const fields: StateFieldNode[] = [];
+export const parseStateFieldNodes = (
+  cursor: Tokenizer,
+  hasParent?: boolean,
+): StateFieldNode[] => {
+  const fieldMap: Record<string, StateFieldNode> = {};
+  const indexMap: Record<number, StateFieldNode> = {};
 
   cursor.consumePunctuation('{');
 
   while (!cursor.maybeConsumePunctuation('}')) {
-    fields.push(parseStateFieldNode(cursor));
+    const field = parseStateFieldNode(cursor);
+
+    if (fieldMap[field.key.name]) {
+      throw new ParsingError(
+        field.key,
+        `Duplicate field name '${field.key.name}'`,
+      );
+    }
+
+    if (!hasParent && field.type === 'ExcludedField') {
+      throw new ParsingError(
+        field,
+        `Unexpected excluded field on state without a parent state`,
+      );
+    }
+
+    if ('index' in field) {
+      if (indexMap[field.index.value]) {
+        throw new ParsingError(
+          field.index,
+          `Duplicate index for field name '${
+            indexMap[field.index.value].key.name
+          }'`,
+        );
+      }
+
+      indexMap[field.index.value] = field;
+    }
+
+    fieldMap[field.key.name] = field;
   }
 
-  return fields;
+  return Object.values(fieldMap);
 };
 
 const parseStateFieldNode = (cursor: Tokenizer): StateFieldNode => {

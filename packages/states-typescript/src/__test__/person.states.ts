@@ -3,8 +3,8 @@
  *
  * @deprecated please use version 2
  */
-export class Person_v1 {
-  static $key = 'Person-1' as const;
+export class Person_old {
+  static $key = 'Person_old' as const;
   static $projection: {
     id?: boolean;
     name?: boolean;
@@ -30,8 +30,8 @@ export class Person_v1 {
  * The latest Person state!
  * Got it??
  */
-export class Person_v2 {
-  static $key = 'Person-2' as const;
+export class Person {
+  static $key = 'Person' as const;
   static $projection: {
     id?: boolean;
     firstName?: boolean;

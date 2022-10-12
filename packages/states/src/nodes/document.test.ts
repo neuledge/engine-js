@@ -43,7 +43,7 @@ describe('ast/document', () => {
         type: 'Root',
         start: 0,
         end: 12,
-        imports: [{ type: 'Import', path: 'Bar' }],
+        imports: [{ type: 'Import', source: { value: 'Bar' } }],
         body: [],
       });
       expect(cursor.index).toBe(2);
@@ -63,7 +63,7 @@ describe('ast/document', () => {
         type: 'Root',
         start: 7,
         end: 67,
-        imports: [{ type: 'Import', path: 'Bar' }],
+        imports: [{ type: 'Import', source: { value: 'Bar' } }],
         body: [{ type: 'State', id: { type: 'Identifier', name: 'Foo' } }],
       });
       expect(cursor.index).toBe(11);

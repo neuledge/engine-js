@@ -25,7 +25,7 @@ export const parseStateNode = (cursor: Tokenizer): StateNode => {
     from = parseIdentifierNode(cursor);
   }
 
-  const fields = parseStateFieldNodes(cursor);
+  const fields = parseStateFieldNodes(cursor, !!from);
 
   return {
     type: 'State',

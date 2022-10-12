@@ -1,6 +1,6 @@
 "The old person state"
 @deprecated(reason: "please use version 2")
-state Person@1 {
+state Person_old {
     "Person ID"
     @id id: Number = 1
 
@@ -12,8 +12,8 @@ state Person@1 {
 The latest Person state!
 Got it??
 """
-state Person@2 from Person@1 {
-    -Person@1.name
+state Person from Person_old {
+    -name
 
     firstName: String = 1
     lastName?: String = 2

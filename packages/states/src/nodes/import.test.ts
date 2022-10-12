@@ -18,9 +18,16 @@ describe('ast/import', () => {
       expect(parseImportNodes(cursor)).toEqual<ImportNode[]>([
         {
           type: 'Import',
+          path: undefined,
           start: 0,
           end: 12,
-          path: 'foo',
+          source: {
+            type: 'Literal',
+            value: 'foo',
+            path: undefined,
+            start: 7,
+            end: 12,
+          },
         },
       ]);
       expect(cursor.index).toBe(2);
@@ -44,13 +51,27 @@ describe('ast/import', () => {
       expect(parseImportNodes(cursor)).toEqual<ImportNode[]>([
         {
           type: 'Import',
-          path: 'foo',
+          source: {
+            type: 'Literal',
+            value: 'foo',
+            path: undefined,
+            start: 14,
+            end: 19,
+          },
+          path: undefined,
           start: 7,
           end: 19,
         },
         {
           type: 'Import',
-          path: 'bar',
+          source: {
+            type: 'Literal',
+            value: 'bar',
+            path: undefined,
+            start: 34,
+            end: 39,
+          },
+          path: undefined,
           start: 27,
           end: 39,
         },

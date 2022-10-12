@@ -1,87 +1,75 @@
+import { FieldNode, StateNode, TypeNode } from '@neuledge/states';
 import { generateDescriptionComment } from './comment.js';
 
-export const generateState = (state: StateDefinition): string =>
+export const generateState = (state: StateNode, fields: FieldNode[]): string =>
   generateDescriptionComment(state, '') +
-  `export class ${getStateName(state)} {\n` +
-  `  static $key = '${getStateKey(state)}' as const;\n` +
-  `  static $projection: ${generateStateProjectionType(state, '  ')};\n` +
-  `  static $query: ${generateStateQueryType(state, '  ')};\n` +
-  `  static $uniqueQuery: ${generateStateUniqueQueryType(state, '  ')};\n` +
-  `${generateStateFields(state, '  ')}\n` +
+  `export class ${state.id.name} {\n` +
+  `  static $key = '${state.id.name}' as const;\n` +
+  `  static $projection: ${generateStateProjectionType(fields, '  ')};\n` +
+  `  static $query: ${generateStateQueryType(fields, '  ')};\n` +
+  `  static $uniqueQuery: ${generateStateUniqueQueryType(fields, '  ')};\n` +
+  `${generateStateFields(fields, '  ')}\n` +
   `}`;
 
-const getStateName = (state: StateDefinition): string =>
-  `${state.name}_v${state.version}`;
-
-const getStateKey = (state: StateDefinition): string =>
-  `${state.name}-${state.version}`;
-
 const generateStateProjectionType = (
-  state: StateDefinition,
+  fields: FieldNode[],
   indent: string,
 ): string =>
-  `{${Object.values(state.fields)
-    .map((item) => `\n${indent}  ${item.name}?: boolean;`)
+  `{${fields
+    .map((item) => `\n${indent}  ${item.key.name}?: boolean;`)
     .join('')}\n${indent}}`;
 
-const generateStateQueryType = (
-  state: StateDefinition,
-  indent: string,
-): string =>
-  `{${Object.values(state.fields)
-    .filter((item) => item.primaryKey)
+const generateStateQueryType = (fields: FieldNode[], indent: string): string =>
+  `{${fields
+    .filter((item) => item.decorators.some((item) => item.callee.name === 'id'))
     .map(
       (item) =>
-        `\n${indent}  ${item.name}?: ${generateStateFieldType(item.type)};`,
+        `\n${indent}  ${item.key.name}?: ${generateStateFieldType(
+          item.valueType,
+        )};`,
     )
     .join('')}\n${indent}}`;
 
 const generateStateUniqueQueryType = (
-  state: StateDefinition,
+  fields: FieldNode[],
   indent: string,
 ): string =>
-  `{${Object.values(state.fields)
-    .filter((item) => item.primaryKey)
+  `{${fields
+    .filter((item) => item.decorators.some((item) => item.callee.name === 'id'))
     .map(
       (item) =>
-        `\n${indent}  ${item.name}: ${generateStateFieldType(item.type)};`,
+        `\n${indent}  ${item.key.name}: ${generateStateFieldType(
+          item.valueType,
+        )};`,
     )
     .join('')}\n${indent}}`;
 
-const generateStateFields = (state: StateDefinition, indent: string): string =>
-  `${Object.values(state.fields)
+const generateStateFields = (fields: FieldNode[], indent: string): string =>
+  `${fields
     .map(
       (item) =>
-        `\n${indent}${generateDescriptionComment(item, indent)}${item.name}${
+        `\n${indent}${generateDescriptionComment(item, indent)}${
+          item.key.name
+        }${
           item.nullable
-            ? `?: ${generateStateFieldType(item.type)} | null;`
-            : `!: ${generateStateFieldType(item.type)};`
+            ? `?: ${generateStateFieldType(item.valueType)} | null;`
+            : `!: ${generateStateFieldType(item.valueType)};`
         }`,
     )
     .join('')}`;
 
-const generateStateFieldType = (type: TypeDefinition): string => {
-  switch (type.type) {
-    case 'Scalar': {
-      switch (type.scalar.name) {
-        case 'String':
-          return 'string';
+const generateStateFieldType = (type: TypeNode): string => {
+  switch (type.identifier.name) {
+    case 'String':
+      return 'string';
 
-        case 'Number':
-          return 'number';
+    case 'Number':
+      return 'number';
 
-        case 'Boolean':
-          return 'boolean';
+    case 'Boolean':
+      return 'boolean';
 
-        default:
-          return type.scalar.name;
-      }
-    }
-
-    case 'State':
-      return getStateName(type.state);
-
-    case 'Either':
-      return type.either.name;
+    default:
+      return type.identifier.name;
   }
 };

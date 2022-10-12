@@ -54,12 +54,22 @@ describe('ast/state-field', () => {
       ]);
     });
 
+    it('should throw on excluded field without parent state', () => {
+      const cursor = new Tokenizer(`{ 
+        -id
+      }`);
+
+      expect(() => parseStateFieldNodes(cursor, false)).toThrow(
+        'Unexpected excluded field on state without a parent state',
+      );
+    });
+
     it('should parse excluded field', () => {
       const cursor = new Tokenizer(`{ 
         -id
       }`);
 
-      expect(parseStateFieldNodes(cursor)).toMatchObject([
+      expect(parseStateFieldNodes(cursor, true)).toMatchObject([
         {
           type: 'ExcludedField',
           key: { type: 'Identifier', name: 'id' },
@@ -72,7 +82,7 @@ describe('ast/state-field', () => {
         -OtherState.id = 1
       }`);
 
-      expect(() => parseStateFieldNodes(cursor)).toThrow(
+      expect(() => parseStateFieldNodes(cursor, true)).toThrow(
         'Expect identifier name',
       );
     });
@@ -100,7 +110,7 @@ describe('ast/state-field', () => {
         OtherState.test = 3
       }`);
 
-      expect(parseStateFieldNodes(cursor)).toMatchObject([
+      expect(parseStateFieldNodes(cursor, true)).toMatchObject([
         {
           type: 'ExcludedField',
           key: { type: 'Identifier', name: 'foo' },
@@ -122,6 +132,32 @@ describe('ast/state-field', () => {
           index: { type: 'Literal', value: 3 },
         },
       ]);
+    });
+
+    it('should throw on duplicate fields', () => {
+      const cursor = new Tokenizer(`{ 
+        -foo
+        id: PositiveInteger = 1
+        foo?: String(limit: 100) = 2
+        OtherState.test = 3
+      }`);
+
+      expect(() => parseStateFieldNodes(cursor, true)).toThrow(
+        "Duplicate field name 'foo'",
+      );
+    });
+
+    it('should throw on duplicate indexes', () => {
+      const cursor = new Tokenizer(`{ 
+        -foo
+        id: PositiveInteger = 1
+        name?: String(limit: 100) = 2
+        OtherState.test = 2
+      }`);
+
+      expect(() => parseStateFieldNodes(cursor, true)).toThrow(
+        "Duplicate index for field name 'name'",
+      );
     });
 
     it('should parse field description', () => {
