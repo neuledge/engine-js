@@ -1,6 +1,6 @@
 {
   "name": "@neuledge/states-cli",
-  "version": "0.1.0-alpha.0",
+  "version": "0.1.0-alpha.1",
   "type": "module",
   "main": "lib/index",
   "repository": {
@@ -31,8 +31,8 @@
     "jest": "^28.1.3"
   },
   "dependencies": {
-    "@neuledge/states": "^0.1.0-alpha.0",
-    "@neuledge/states-typescript": "^0.1.0-alpha.0",
+    "@neuledge/states": "^0.1.0-alpha.1",
+    "@neuledge/states-typescript": "^0.1.0-alpha.1",
     "commander": "^9.4.1"
   }
 }
