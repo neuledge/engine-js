@@ -5,7 +5,7 @@
   "main": "lib/index",
   "repository": {
     "type": "git",
-    "url": "https://github.com/neuledge/neuledge-js.git"
+    "url": "https://github.com/neuledge/engine-js.git"
   },
   "license": "Apache-2.0",
   "publishConfig": {
