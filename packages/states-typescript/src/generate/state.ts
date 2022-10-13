@@ -1,5 +1,5 @@
 import { FieldNode, StateNode, TypeNode } from '@neuledge/states';
-import { generateDescriptionComment } from './comment.js';
+import { generateDescriptionComment } from './comments.js';
 
 export const generateState = (state: StateNode, fields: FieldNode[]): string =>
   generateDescriptionComment(state, '') +

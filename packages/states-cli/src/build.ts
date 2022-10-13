@@ -1,4 +1,5 @@
 import fs from 'node:fs/promises';
+import { resolve } from 'node:path';
 import { States } from '@neuledge/states';
 import { generate } from '@neuledge/states-typescript';
 
@@ -14,7 +15,7 @@ export const build = async (
   for (const file of files) {
     const def = await states.import(file);
 
-    const tsFile = `${file}.ts`;
+    const tsFile = `${resolve(basepath ?? '', file)}.ts`;
     await fs.writeFile(tsFile, generate(states, def));
   }
 };

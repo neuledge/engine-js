@@ -6,11 +6,11 @@ export const generateDescriptionComment = (
     decorators,
   }: {
     description?: DescriptionNode | null;
-    decorators: DecoratorNode[];
+    decorators?: DecoratorNode[];
   },
   indent: string,
 ): string => {
-  const deprecationReason = getDeprecationReason(decorators);
+  const deprecationReason = decorators && getDeprecationReason(decorators);
 
   return description
     ? `/**\n${indent} * ${description.value.replace(/\n/g, `\n${indent} * `)}${
