@@ -23,6 +23,7 @@ const parseMaybeDecoratorNode = (
   cursor: Tokenizer,
 ): DecoratorNode | undefined => {
   const start = cursor.start;
+  const path = cursor.path;
 
   const decoratorToken = cursor.maybeConsumePunctuation('@');
   if (!decoratorToken) return undefined;
@@ -37,7 +38,7 @@ const parseMaybeDecoratorNode = (
 
   return {
     type: 'Decorator',
-    path: cursor.path,
+    path,
     start,
     end: cursor.end,
     callee,

@@ -1,4 +1,6 @@
 export class ParsingError extends SyntaxError {
+  public readonly name = 'ParsingError';
+
   public readonly start: number;
   public readonly end: number;
   public readonly path?: string;

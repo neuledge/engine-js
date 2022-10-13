@@ -47,7 +47,11 @@ export const tokenize = (content: string, path?: string): Token[] => {
     }
 
     const lines = value.split(/\r*\n/g);
-    line += lines.length - 1;
+    if (lines.length > 1) {
+      line += lines.length - 1;
+      column = 1;
+    }
+
     column += lines[lines.length - 1].length;
     position += value.length;
 

@@ -62,6 +62,7 @@ const parseStateFieldNode = (cursor: Tokenizer): StateFieldNode => {
 
   const maybeRef = !description && !decorators.length;
   const start = cursor.start;
+  const path = cursor.path;
 
   const substractSign = maybeRef
     ? cursor.maybeConsumePunctuation('-')
@@ -69,13 +70,20 @@ const parseStateFieldNode = (cursor: Tokenizer): StateFieldNode => {
 
   const firstId = parseIdentifierNode(cursor);
   if (substractSign) {
-    return { type: 'ExcludedField', key: firstId, start, end: cursor.end };
+    return {
+      type: 'ExcludedField',
+      key: firstId,
+      path,
+      start,
+      end: cursor.end,
+    };
   }
 
   const dotSign = maybeRef ? cursor.maybeConsumePunctuation('.') : undefined;
 
   if (!dotSign) {
     return parseFieldNode(cursor, {
+      path,
       start,
       key: firstId,
       description,
@@ -86,6 +94,7 @@ const parseStateFieldNode = (cursor: Tokenizer): StateFieldNode => {
   const secId = parseIdentifierNode(cursor);
 
   return parseReferenceFieldNode(cursor, {
+    path,
     start,
     state: firstId,
     key: secId,
@@ -94,7 +103,10 @@ const parseStateFieldNode = (cursor: Tokenizer): StateFieldNode => {
 
 const parseFieldNode = (
   cursor: Tokenizer,
-  base: Pick<FieldNode, 'key' | 'description' | 'decorators' | 'start'>,
+  base: Pick<
+    FieldNode,
+    'key' | 'description' | 'decorators' | 'path' | 'start'
+  >,
 ): FieldNode => {
   const nullSign = cursor.maybeConsumePunctuation('?');
 
@@ -105,7 +117,6 @@ const parseFieldNode = (
   return {
     type: 'Field',
     ...base,
-    path: cursor.path,
     end: cursor.end,
     valueType,
     index,
@@ -115,14 +126,13 @@ const parseFieldNode = (
 
 const parseReferenceFieldNode = (
   cursor: Tokenizer,
-  base: Pick<ReferenceFieldNode, 'state' | 'key' | 'start'>,
+  base: Pick<ReferenceFieldNode, 'state' | 'key' | 'path' | 'start'>,
 ): ReferenceFieldNode => {
   const index = parseIndex(cursor);
 
   return {
     type: 'ReferenceField',
     ...base,
-    path: cursor.path,
     end: cursor.end,
     index,
   };

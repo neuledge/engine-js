@@ -9,6 +9,7 @@ export const parseMaybeDescriptionNode = (
   cursor: Tokenizer,
 ): DescriptionNode | undefined => {
   const start = cursor.start;
+  const path = cursor.path;
 
   const strToken = cursor.maybeConsume(
     'String',
@@ -18,7 +19,7 @@ export const parseMaybeDescriptionNode = (
   return (
     strToken && {
       type: 'Description',
-      path: cursor.path,
+      path,
       start,
       end: cursor.end,
       value: strToken.value,

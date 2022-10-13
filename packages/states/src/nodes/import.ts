@@ -20,6 +20,8 @@ export const parseMaybeImportNode = (
   cursor: Tokenizer,
 ): ImportNode | undefined => {
   const start = cursor.start;
+  const path = cursor.path;
+
   if (!cursor.maybeConsumeKeyword('import')) {
     return undefined;
   }
@@ -37,7 +39,7 @@ export const parseMaybeImportNode = (
 
     return {
       type: 'Import',
-      path: cursor.path,
+      path,
       start,
       end: cursor.end,
       source,

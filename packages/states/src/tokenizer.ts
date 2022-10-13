@@ -8,7 +8,7 @@ export class Tokenizer {
 
   constructor(
     public readonly content: string,
-    public readonly path?: string,
+    path?: string,
     public index = 0,
   ) {
     this.tokens = tokenize(content, path);
@@ -16,6 +16,10 @@ export class Tokenizer {
 
   get current(): Token | undefined {
     return this.tokens[this.index];
+  }
+
+  get path(): string | undefined {
+    return this.tokens[this.index]?.path;
   }
 
   get start(): number {

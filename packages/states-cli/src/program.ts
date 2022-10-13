@@ -1,7 +1,7 @@
 import { Command } from 'commander';
 import { readFileSync } from 'node:fs';
 import { build } from './build.js';
-import { errorHandler } from './error.js';
+import { catchExceptions } from './error.js';
 
 const { version }: { version: string } = JSON.parse(
   readFileSync(new URL('../package.json', import.meta.url)).toString(),
@@ -12,6 +12,8 @@ export const createProgram = () => {
 
   setProgram(program);
   setBuildCommand(program);
+
+  catchExceptions();
 
   return program;
 };
@@ -28,6 +30,4 @@ const setBuildCommand = (program: Command) =>
     .description('Convert `.states` files to TypeScript files')
     .argument('<files...>', 'files to build')
     .option('-P, --basepath <path>', 'base path')
-    .action((files: string[], options) =>
-      build(files, options.basepath).catch(errorHandler),
-    );
+    .action((files: string[], options) => build(files, options.basepath));

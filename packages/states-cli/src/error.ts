@@ -1,6 +1,10 @@
-export const errorHandler = (err: unknown, code = 1): never => {
-  // eslint-disable-next-line no-console
-  console.error((err as Error)?.stack || err);
+import fs from 'node:fs';
+
+export const catchExceptions = () =>
+  process.on('uncaughtException', (err) => errorHandler(err));
+
+const errorHandler = (err: unknown, code = 1): never => {
+  fs.writeSync(process.stderr.fd, String((err as Error)?.stack || err) + '\n');
 
   // eslint-disable-next-line unicorn/no-process-exit
   process.exit(code);

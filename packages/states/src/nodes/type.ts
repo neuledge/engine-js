@@ -18,6 +18,7 @@ export interface TypeExpressionNode extends AbstractNode<'TypeExpression'> {
 
 export const parseTypeNode = (cursor: Tokenizer): TypeNode => {
   const start = cursor.start;
+  const path = cursor.path;
 
   const identifier = parseIdentifierNode(cursor);
   const args = parseMaybeArgumentNodes(cursor, parseLiteralNode);
@@ -25,7 +26,7 @@ export const parseTypeNode = (cursor: Tokenizer): TypeNode => {
   if (args.length) {
     return {
       type: 'TypeGenerator',
-      path: cursor.path,
+      path,
       start,
       end: cursor.end,
       identifier,
@@ -40,7 +41,7 @@ export const parseTypeNode = (cursor: Tokenizer): TypeNode => {
 
   return {
     type: 'TypeExpression',
-    path: cursor.path,
+    path,
     start,
     end: cursor.end,
     identifier,

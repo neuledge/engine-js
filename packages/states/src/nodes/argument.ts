@@ -42,6 +42,7 @@ const parseArgumentNode = <Value>(
   parseValue: (cursor: Tokenizer) => Value,
 ): ArgumentNode<Value> => {
   const start = cursor.start;
+  const path = cursor.path;
 
   const key = parseIdentifierNode(cursor);
   cursor.consumePunctuation(':');
@@ -49,7 +50,7 @@ const parseArgumentNode = <Value>(
 
   return {
     type: 'Argument',
-    path: cursor.path,
+    path,
     start,
     end: cursor.end,
     key,
