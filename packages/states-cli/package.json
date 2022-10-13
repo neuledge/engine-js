@@ -33,6 +33,7 @@
   "dependencies": {
     "@neuledge/states": "^0.1.0-alpha.1",
     "@neuledge/states-ts": "^0.1.0-alpha.2",
-    "commander": "^9.4.1"
+    "commander": "^9.4.1",
+    "fast-glob": "^3.2.12"
   }
 }

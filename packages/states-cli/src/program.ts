@@ -30,4 +30,5 @@ const setBuildCommand = (program: Command) =>
     .description('Convert `.states` files to TypeScript files')
     .argument('<files...>', 'files to build')
     .option('-P, --basepath <path>', 'base path')
-    .action((files: string[], options) => build(files, options.basepath));
+    .option('-O, --output <file>', 'output ts file')
+    .action((files: string[], options) => build(files, options));

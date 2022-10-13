@@ -1,0 +1,19 @@
+import 'category.states'
+
+"""
+Post in draft state
+"""
+state DraftPost {
+    @id id: Number = 1
+    category?: Category = 2
+    title: String = 3
+    content?: String = 4
+}
+
+"""
+Post in published state
+"""
+state PublishedPost from DraftPost {
+    category: Category = 1
+    content: String = 2
+}

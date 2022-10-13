@@ -1,12 +1,14 @@
 import {
   DocumentBodyNode,
   DocumentNode,
+  EitherNode,
   EntityNode,
   FieldNode,
   LiteralNode,
   MigrationNode,
   MutationNode,
   parseDocumentNode,
+  ScalarNode,
   StateFieldNode,
   StateNode,
   TypeNode,
@@ -37,6 +39,30 @@ export class States {
     private readonly load: (filename: string) => PromiseLike<string>,
     private readonly basepath: string = '',
   ) {}
+
+  *scalars(): Generator<ScalarNode, void, unknown> {
+    yield* this.entities('Scalar');
+  }
+
+  *states(): Generator<StateNode, void, unknown> {
+    yield* this.entities('State');
+  }
+
+  *eithers(): Generator<EitherNode, void, unknown> {
+    yield* this.entities('Either');
+  }
+
+  *entities<T extends EntityNode['type']>(
+    type?: T | null,
+  ): Generator<EntityNode & { type: T }, void, unknown> {
+    for (const key in this.entityMap) {
+      const entity = this.entityMap[key];
+
+      if (type == null || entity?.type === type) {
+        yield entity as EntityNode & { type: T };
+      }
+    }
+  }
 
   entity(name: string): EntityNode | BuiltInScalar | undefined {
     // eslint-disable-next-line @typescript-eslint/no-this-alias, unicorn/no-this-assignment

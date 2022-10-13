@@ -1,0 +1,11 @@
+{
+  "name": "basic-example",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "states": "states build --basepath src/states \"*.states\""
+  },
+  "devDependencies": {
+    "@neuledge/states-cli": "^0.1.0-alpha.2"
+  }
+}

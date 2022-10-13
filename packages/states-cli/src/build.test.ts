@@ -16,14 +16,14 @@ describe('build', () => {
         .spyOn(fs, 'writeFile')
         .mockImplementation(async () => void 0);
 
-      await build(['foo.states'], '/');
+      await build(['foo.states'], { basepath: '/' });
 
       expect(readFile).toBeCalledTimes(1);
       expect(readFile).toBeCalledWith('/foo.states', { encoding: 'utf8' });
 
       expect(writeFile).toBeCalledTimes(1);
       expect(writeFile).toBeCalledWith(
-        '/foo.states.ts',
+        '/states.ts',
         `export class Foo {
   static $key = 'Foo' as const;
   static $projection: {

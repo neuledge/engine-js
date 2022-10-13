@@ -1,0 +1,9 @@
+"""
+Basic category
+"""
+state Category {
+    @id id: Number = 1
+    name: String = 2
+    description?: String = 3
+    parent?: Category = 4
+}

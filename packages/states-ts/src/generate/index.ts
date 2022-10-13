@@ -1,10 +1,13 @@
-import { DocumentNode, States } from '@neuledge/states';
+import { EntityNode, States } from '@neuledge/states';
 import { generateState } from './state.js';
 
-export const generate = (states: States, document: DocumentNode): string => {
+export const generate = (
+  states: States,
+  entities: Iterable<EntityNode> = states.entities(),
+): string => {
   const res: string[] = [];
 
-  for (const node of document.body) {
+  for (const node of entities) {
     switch (node.type) {
       case 'State': {
         const fields = states.fields(node.id.name);
