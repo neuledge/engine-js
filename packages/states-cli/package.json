@@ -32,7 +32,7 @@
   },
   "dependencies": {
     "@neuledge/states": "^0.1.0-alpha.1",
-    "@neuledge/states-typescript": "^0.1.0-alpha.1",
+    "@neuledge/states-ts": "^0.1.0-alpha.1",
     "commander": "^9.4.1"
   }
 }

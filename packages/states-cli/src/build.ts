@@ -1,7 +1,7 @@
 import fs from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { States } from '@neuledge/states';
-import { generate } from '@neuledge/states-typescript';
+import { generate } from '@neuledge/states-ts';
 
 export const build = async (
   files: string[],
