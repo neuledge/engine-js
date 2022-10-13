@@ -5,7 +5,7 @@
     { "path": "packages/scalars" },
     { "path": "packages/engine" },
     { "path": "packages/states" },
-    { "path": "packages/states-typescript" },
+    { "path": "packages/states-ts" },
     { "path": "packages/states-cli" },
 
     { "path": "tsconfig.scripts.json" }
