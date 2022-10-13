@@ -1,6 +1,6 @@
 # Neuledge JavaScript Engine
 
-JavaScript implementation of Neuledge business-logic engine.
+JavaScript implementation of Neuledge state-machine engine.
 
 Define business-logic states and compile them to a type-safe state-machine ORM:
 
