@@ -12,13 +12,15 @@ export type UniqueWhere<S extends State> = StateUniqueQuery<S> & {
 type ForbiddenUniqueKeys<S extends State> = {
   [K in StateKey<S>]: Exclude<
     AllKeys<StateUniqueQuery<S>>,
-    S extends State<object, K> ? AllKeys<StateUniqueQuery<S>> : never
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    S extends State<any, K> ? AllKeys<StateUniqueQuery<S>> : never
   >;
 }[StateKey<S>];
 
 type ForbiddenQueryKeys<S extends State> = {
   [K in StateKey<S>]: Exclude<
     AllKeys<StateQuery<S>>,
-    S extends State<object, K> ? AllKeys<StateQuery<S>> : never
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    S extends State<any, K> ? AllKeys<StateQuery<S>> : never
   >;
 }[StateKey<S>];

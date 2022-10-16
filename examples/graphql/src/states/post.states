@@ -1,5 +1,7 @@
 import 'category.states'
 
+either Post = DraftPost | PublishedPost
+
 """
 Post in draft state
 """

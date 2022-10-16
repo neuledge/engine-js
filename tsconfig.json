@@ -8,6 +8,8 @@
     { "path": "packages/states-ts" },
     { "path": "packages/states-cli" },
 
+    { "path": "examples/graphql" },
+
     { "path": "tsconfig.scripts.json" }
   ],
   "include": [],

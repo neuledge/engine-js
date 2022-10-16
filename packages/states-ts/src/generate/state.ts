@@ -6,8 +6,8 @@ export const generateState = (state: StateNode, fields: FieldNode[]): string =>
   `export class ${state.id.name} {\n` +
   `  static $key = '${state.id.name}' as const;\n` +
   `  static $projection: ${generateStateProjectionType(fields, '  ')};\n` +
-  `  static $query: ${generateStateQueryType(fields, '  ')};\n` +
-  `  static $uniqueQuery: ${generateStateUniqueQueryType(fields, '  ')};\n` +
+  `  static $find: ${generateStateFindType(fields, '  ')};\n` +
+  `  static $unique: ${generateStateUniqueType(fields, '  ')};\n` +
   `${generateStateFields(fields, '  ')}\n` +
   `}`;
 
@@ -19,7 +19,7 @@ const generateStateProjectionType = (
     .map((item) => `\n${indent}  ${item.key.name}?: boolean;`)
     .join('')}\n${indent}}`;
 
-const generateStateQueryType = (fields: FieldNode[], indent: string): string =>
+const generateStateFindType = (fields: FieldNode[], indent: string): string =>
   `{${fields
     .filter((item) => item.decorators.some((item) => item.callee.name === 'id'))
     .map(
@@ -30,10 +30,7 @@ const generateStateQueryType = (fields: FieldNode[], indent: string): string =>
     )
     .join('')}\n${indent}}`;
 
-const generateStateUniqueQueryType = (
-  fields: FieldNode[],
-  indent: string,
-): string =>
+const generateStateUniqueType = (fields: FieldNode[], indent: string): string =>
   `{${fields
     .filter((item) => item.decorators.some((item) => item.callee.name === 'id'))
     .map(

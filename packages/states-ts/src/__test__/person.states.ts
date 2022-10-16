@@ -9,10 +9,10 @@ export class Person_old {
     id?: boolean;
     name?: boolean;
   };
-  static $query: {
+  static $find: {
     id?: number;
   };
-  static $uniqueQuery: {
+  static $unique: {
     id: number;
   };
 
@@ -37,10 +37,10 @@ export class Person {
     firstName?: boolean;
     lastName?: boolean;
   };
-  static $query: {
+  static $find: {
     id?: number;
   };
-  static $uniqueQuery: {
+  static $unique: {
     id: number;
   };
 

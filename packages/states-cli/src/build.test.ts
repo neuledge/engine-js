@@ -29,10 +29,10 @@ describe('build', () => {
   static $projection: {
     id?: boolean;
   };
-  static $query: {
+  static $find: {
     id?: number;
   };
-  static $uniqueQuery: {
+  static $unique: {
     id: number;
   };
 

@@ -1,0 +1,23 @@
+{
+  "name": "graphql-example",
+  "version": "0.0.0",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "generate:states": "states build --basepath src/states \"*.states\"",
+    "generate:codegen": "graphql-codegen",
+    "generate": "yarn generate:states && yarn generate:codegen",
+    "start": "node lib/app.js"
+  },
+  "dependencies": {
+    "@neuledge/engine": "^0.1.0-alpha.1",
+    "fastify": "^4.8.1",
+    "graphql": "^16.6.0",
+    "mercurius": "^11.0.1"
+  },
+  "devDependencies": {
+    "@graphql-codegen/cli": "^2.13.7",
+    "@graphql-codegen/typescript-resolvers": "^2.7.4",
+    "@neuledge/states-cli": "^0.1.0-alpha.2"
+  }
+}

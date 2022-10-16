@@ -16,8 +16,8 @@ describe('Engine', () => {
       //           firstName?: boolean;
       //           lastName?: boolean;
       //         };
-      //         static $query: { id?: number };
-      //         static $uniqueQuery: { id: number };
+      //         static $find: { id?: number };
+      //         static $unique: { id: number };
       //
       //         id!: number;
       //         firstName!: string;

@@ -1,0 +1,63 @@
+type Query {
+  categories: [Category!]!
+  draftPosts: [DraftPost!]!
+
+  category(id: Int!): Category!
+  post(id: Int!): Post!
+}
+
+type Mutation {
+  createPost(data: CreatePostInput!): DraftPost!
+  updatePost(id: Int!, data: UpdatePostInput!): Post!
+  publishPost(id: Int!): PublishedPost!
+  deletePost(id: Int!): Int
+
+  createCategory(data: CreateCategoryInput!): Category!
+  updateCategory(id: Int!, data: UpdateCategoryInput!): Category!
+  deleteCategory(id: Int!): Int
+}
+
+type Category {
+  id: Int!
+  name: String!
+  description: String
+  posts(offset: Int, limit: Int): [PublishedPost!]!
+}
+
+union Post = DraftPost | PublishedPost
+
+type DraftPost {
+  id: Int!
+  category: Category
+  title: String!
+  content: String
+}
+
+type PublishedPost {
+  id: Int!
+  category: Category!
+  title: String!
+  content: String!
+}
+
+input CreatePostInput {
+  title: String!
+  content: String
+  categoryId: Int
+}
+
+input UpdatePostInput {
+  title: String
+  content: String
+  categoryId: Int
+}
+
+input CreateCategoryInput {
+  name: String!
+  description: String
+}
+
+input UpdateCategoryInput {
+  name: String
+  description: String
+}

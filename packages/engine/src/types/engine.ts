@@ -1,3 +1,8 @@
+import {
+  CreationArguments,
+  CreationName,
+  CreationSelect,
+} from './creations.js';
 import { EntityListOffset } from './list.js';
 import {
   MutationArguments,
@@ -5,61 +10,161 @@ import {
   MutationSelect,
   ProjectedMutationName,
 } from './mutations.js';
-import { ProjectionSelect } from './projection.js';
+import { StateSelection } from './select.js';
 import { State, StateProjection } from './state.js';
 import { Where, UniqueWhere } from './where.js';
 
 // find
 
-interface FindBasicOptions<S extends State, P extends StateProjection<S>> {
+interface FindBaseOptions<S extends State> {
   states: S[];
-  select: ProjectionSelect<P, StateProjection<S>>;
   filter?: never; // TODO filter
 }
 
-export interface FindUniqueOptions<
-  S extends State,
-  P extends StateProjection<S>,
-> extends FindBasicOptions<S, P> {
+interface FindBasicOptions<S extends State> extends FindBaseOptions<S> {
+  select?: undefined;
+}
+
+interface FindBasicProjectOptions<S extends State, P extends StateProjection<S>>
+  extends FindBaseOptions<S> {
+  select: StateSelection<P, StateProjection<S>>;
+}
+
+export interface FindUniqueOptions<S extends State>
+  extends FindBasicOptions<S> {
   where: UniqueWhere<S>;
 }
 
-export interface FindManyOptions<S extends State, P extends StateProjection<S>>
-  extends FindBasicOptions<S, P> {
-  where?: Where<S>;
-  limit?: number;
-  offset?: EntityListOffset;
+export interface FindUniqueProjectOptions<
+  S extends State,
+  P extends StateProjection<S>,
+> extends FindBasicProjectOptions<S, P> {
+  where: UniqueWhere<S>;
 }
 
-export interface FindFirstOptions<S extends State, P extends StateProjection<S>>
-  extends FindManyOptions<S, P> {
-  limit?: 1 | -1;
+export interface FindManyOptions<S extends State> extends FindBasicOptions<S> {
+  where?: Where<S> | null;
+  limit?: number | null;
+  offset?: EntityListOffset | null;
+}
+
+export interface FindManyProjectOptions<
+  S extends State,
+  P extends StateProjection<S>,
+> extends FindBasicProjectOptions<S, P> {
+  where?: Where<S> | null;
+  limit?: number | null;
+  offset?: EntityListOffset | null;
+}
+
+export interface FindFirstOptions<S extends State> extends FindManyOptions<S> {
+  limit?: 1 | -1 | null;
+}
+
+export interface FindFirstProjectOptions<
+  S extends State,
+  P extends StateProjection<S>,
+> extends FindManyProjectOptions<S, P> {
+  limit?: 1 | -1 | null;
+}
+
+// create
+
+interface CreateBaseOptions<S extends State, A extends keyof S> {
+  state: S;
+  action: CreationName<S, A>;
+}
+
+interface CreateBasicOptions<S extends State, A extends keyof S>
+  extends CreateBaseOptions<S, A> {
+  select?: true | null;
+}
+
+interface CreateVoidOptions<S extends State, A extends keyof S>
+  extends CreateBaseOptions<S, A> {
+  select: false;
+}
+
+interface CreateProjectOptions<
+  S extends State,
+  A extends keyof S,
+  P extends CreationSelect<S>,
+> extends CreateBaseOptions<S, A> {
+  select?: StateSelection<P, CreationSelect<S>> | null;
+}
+
+export interface CreateOneOptions<S extends State, A extends keyof S>
+  extends CreateBasicOptions<S, A> {
+  arguments: CreationArguments<S, A>;
+}
+
+export interface CreateOneVoidOptions<S extends State, A extends keyof S>
+  extends CreateVoidOptions<S, A> {
+  arguments: CreationArguments<S, A>;
+}
+
+export interface CreateOneProjectOptions<
+  S extends State,
+  A extends keyof S,
+  P extends CreationSelect<S>,
+> extends CreateProjectOptions<S, A, P> {
+  arguments: CreationArguments<S, A>;
+}
+
+export interface CreateManyOptions<S extends State, A extends keyof S>
+  extends CreateBasicOptions<S, A> {
+  arguments: CreationArguments<S, A>[];
+}
+
+export interface CreateManyVoidOptions<S extends State, A extends keyof S>
+  extends CreateVoidOptions<S, A> {
+  arguments: CreationArguments<S, A>[];
+}
+
+export interface CreateManyProjectOptions<
+  S extends State,
+  A extends keyof S,
+  P extends CreationSelect<S>,
+> extends CreateProjectOptions<S, A, P> {
+  arguments: CreationArguments<S, A>[];
 }
 
 // mutate
 
-interface MutateBasicOptions<S extends State, A extends keyof S> {
+interface MutateBaseOptions<S extends State, A extends keyof S> {
   states: S[];
-  action: MutationName<A, S>;
   arguments: MutationArguments<S, A>;
-  filter?: never; // TODO filter
-  select?: undefined;
+  filter?: null; // TODO filter
+}
+
+interface MutateBasicOptions<S extends State, A extends keyof S>
+  extends MutateBaseOptions<S, A> {
+  action: MutationName<S, A>;
+  select?: false | null;
+}
+
+interface MutateReturnOptions<S extends State, A extends keyof S>
+  extends MutateBaseOptions<S, A> {
+  action: ProjectedMutationName<S, A>;
+  select: true;
 }
 
 interface MutateProjectOptions<
   S extends State,
   A extends keyof S,
   P extends MutationSelect<S, A>,
-> {
-  states: S[];
-  action: ProjectedMutationName<A, S>;
-  arguments: MutationArguments<S, A>;
-  filter?: never; // TODO filter
-  select: ProjectionSelect<P, MutationSelect<S, A>>;
+> extends MutateBaseOptions<S, A> {
+  action: ProjectedMutationName<S, A>;
+  select: StateSelection<P, MutationSelect<S, A>>;
 }
 
 export interface MutateUniqueOptions<S extends State, A extends keyof S>
   extends MutateBasicOptions<S, A> {
+  where: UniqueWhere<S>;
+}
+
+export interface MutateUniqueReturnOptions<S extends State, A extends keyof S>
+  extends MutateReturnOptions<S, A> {
   where: UniqueWhere<S>;
 }
 
@@ -73,8 +178,14 @@ export interface MutateUniqueProjectOptions<
 
 export interface MutateManyOptions<S extends State, A extends keyof S>
   extends MutateBasicOptions<S, A> {
-  where?: Where<S>;
-  limit?: number;
+  where?: Where<S> | null;
+  limit?: number | null;
+}
+
+export interface MutateManyReturnOptions<S extends State, A extends keyof S>
+  extends MutateReturnOptions<S, A> {
+  where?: Where<S> | null;
+  limit?: number | null;
 }
 
 export interface MutateManyProjectOptions<
@@ -82,13 +193,18 @@ export interface MutateManyProjectOptions<
   A extends keyof S,
   P extends MutationSelect<S, A>,
 > extends MutateProjectOptions<S, A, P> {
-  where?: Where<S>;
-  limit?: number;
+  where?: Where<S> | null;
+  limit?: number | null;
 }
 
 export interface MutateOneOptions<S extends State, A extends keyof S>
   extends MutateManyOptions<S, A> {
-  limit?: 1;
+  limit?: 1 | null;
+}
+
+export interface MutateOneReturnOptions<S extends State, A extends keyof S>
+  extends MutateReturnOptions<S, A> {
+  limit?: 1 | null;
 }
 
 export interface MutateOneProjectOptions<
@@ -96,5 +212,5 @@ export interface MutateOneProjectOptions<
   A extends keyof S,
   P extends MutationSelect<S, A>,
 > extends MutateManyProjectOptions<S, A, P> {
-  limit?: 1;
+  limit?: 1 | null;
 }

@@ -1,7 +1,7 @@
 import {
-  FindFirstOptions,
-  FindManyOptions,
-  FindUniqueOptions,
+  FindFirstProjectOptions,
+  FindManyProjectOptions,
+  FindUniqueProjectOptions,
   MutateManyOptions,
   MutateOneOptions,
   MutateUniqueOptions,
@@ -16,13 +16,14 @@ import { State, StateEntity, StateProjection } from './state.js';
 describe('types/engine', () => {
   class UserName {
     static $key = 'UserName' as const;
+    static $id: { id: number };
     static $projection: {
       id?: boolean;
       firstName?: boolean;
       lastName?: boolean;
     };
-    static $query: { id?: number };
-    static $uniqueQuery: { id: number };
+    static $find: { id?: number };
+    static $unique: { id: number };
 
     id!: number;
     firstName!: string;
@@ -53,13 +54,14 @@ describe('types/engine', () => {
 
   class UserEmail {
     static $key = 'UserEmail' as const;
+    static $id: { id: number };
     static $projection: {
       id?: boolean;
       email?: boolean;
       passwordHash?: boolean;
     };
-    static $query: { id?: number } | { email?: string };
-    static $uniqueQuery: { id: number } | { email: string };
+    static $find: { id?: number } | { email?: string };
+    static $unique: { id: number } | { email: string };
 
     id!: number;
     email!: string;
@@ -72,7 +74,7 @@ describe('types/engine', () => {
 
   describe('FindUniqueOptions<>', () => {
     const test = <S extends State, P extends StateProjection<S>>(
-      options: FindUniqueOptions<S, P>,
+      options: FindUniqueProjectOptions<S, P>,
     ) => options;
 
     it('should find user name', () => {
@@ -82,7 +84,9 @@ describe('types/engine', () => {
         where: { id: 123 },
       });
 
-      expect<FindUniqueOptions<typeof UserName, { firstName: true }>>(res);
+      expect<FindUniqueProjectOptions<typeof UserName, { firstName: true }>>(
+        res,
+      );
     });
 
     it('should not except none exists fields', () => {
@@ -93,7 +97,9 @@ describe('types/engine', () => {
         where: { id: 123 },
       });
 
-      expect<FindUniqueOptions<typeof UserName, { firstName: true }>>(res);
+      expect<FindUniqueProjectOptions<typeof UserName, { firstName: true }>>(
+        res,
+      );
     });
 
     it('should not except none exists fields', () => {
@@ -113,7 +119,7 @@ describe('types/engine', () => {
       });
 
       expect<
-        FindUniqueOptions<
+        FindUniqueProjectOptions<
           typeof UserName | typeof UserEmail,
           { firstName: true }
         >
@@ -129,7 +135,7 @@ describe('types/engine', () => {
       });
 
       expect<
-        FindUniqueOptions<
+        FindUniqueProjectOptions<
           typeof UserName | typeof UserEmail,
           { firstName: true }
         >
@@ -139,7 +145,7 @@ describe('types/engine', () => {
 
   describe('FindManyOptions<>', () => {
     const test = <S extends State, P extends StateProjection<S>>(
-      options: FindManyOptions<S, P>,
+      options: FindManyProjectOptions<S, P>,
     ) => options;
 
     it('should find user names without where', () => {
@@ -150,7 +156,7 @@ describe('types/engine', () => {
         offset: '123',
       });
 
-      expect<FindManyOptions<typeof UserName, { firstName: true }>>(res);
+      expect<FindManyProjectOptions<typeof UserName, { firstName: true }>>(res);
     });
 
     it('should find user names with empty where', () => {
@@ -162,9 +168,9 @@ describe('types/engine', () => {
         offset: '123',
       });
 
-      expect<FindManyOptions<typeof UserName, { firstName: true; id: false }>>(
-        res,
-      );
+      expect<
+        FindManyProjectOptions<typeof UserName, { firstName: true; id: false }>
+      >(res);
     });
 
     it('should find user names with where id', () => {
@@ -176,7 +182,9 @@ describe('types/engine', () => {
         offset: '123',
       });
 
-      expect<FindManyOptions<typeof UserName, { firstName: false }>>(res);
+      expect<FindManyProjectOptions<typeof UserName, { firstName: false }>>(
+        res,
+      );
     });
 
     it('should not allow find only with email', () => {
@@ -190,7 +198,7 @@ describe('types/engine', () => {
       });
 
       expect<
-        FindManyOptions<
+        FindManyProjectOptions<
           typeof UserName | typeof UserEmail,
           { firstName: false }
         >
@@ -200,7 +208,7 @@ describe('types/engine', () => {
 
   describe('FindFirstOptions<>', () => {
     const test = <S extends State, P extends StateProjection<S>>(
-      options: FindFirstOptions<S, P>,
+      options: FindFirstProjectOptions<S, P>,
     ) => options;
 
     it('should allow limit one', () => {
@@ -211,7 +219,7 @@ describe('types/engine', () => {
         offset: '123',
       });
 
-      expect<FindManyOptions<typeof UserName, { firstName: true }>>(res);
+      expect<FindManyProjectOptions<typeof UserName, { firstName: true }>>(res);
     });
 
     it('should allow allow limit reverse one', () => {
@@ -222,7 +230,7 @@ describe('types/engine', () => {
         offset: '123',
       });
 
-      expect<FindManyOptions<typeof UserName, { firstName: true }>>(res);
+      expect<FindManyProjectOptions<typeof UserName, { firstName: true }>>(res);
     });
 
     it('should not allow limit to be more then one', () => {
@@ -234,7 +242,7 @@ describe('types/engine', () => {
         offset: '123',
       });
 
-      expect<FindManyOptions<typeof UserName, { firstName: true }>>(res);
+      expect<FindManyProjectOptions<typeof UserName, { firstName: true }>>(res);
     });
   });
 
@@ -399,7 +407,7 @@ describe('types/engine', () => {
       expect<MutateOneOptions<typeof UserName, 'toEmail'>>(res);
     });
 
-    it('should not accept limit  select options', () => {
+    it('should not accept limit select options', () => {
       test({
         states: [UserName],
         action: 'toEmail',
