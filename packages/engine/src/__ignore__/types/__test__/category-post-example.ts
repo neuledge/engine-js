@@ -1,8 +1,9 @@
 import {
   StateEntity as $,
   StateId as $id,
-  StateSelect as $select,
-  StateListSelect as $list,
+  // StateInnerSelect as $select,
+  // StateInnerSelectList as $selectList,
+  // EntityList as $list,
 } from '@neuledge/engine';
 
 /**
@@ -17,18 +18,21 @@ export class Category {
   static $unique: {
     id: number;
   };
-  static $projection: {
-    id: number;
-    name: string;
-    description?: string | null;
-    posts: $<typeof Post[number]>[];
-  };
-  static $select: {
-    id?: boolean;
-    name?: boolean;
-    description?: boolean;
-    posts?: $list<typeof Post[number]>;
-  };
+  // static $projection: {
+  //   id: number;
+  //   name: string;
+  //   description?: string | null;
+  //   posts: $list<typeof Post[number]['$projection']>;
+  // };
+  // static $select: {
+  //   id?: boolean;
+  //   name?: boolean;
+  //   description?: boolean;
+  //   posts?: $selectList<typeof Post[number]>;
+  // };
+  static $relations = () => ({
+    posts: [[...Post]] as const,
+  });
 
   id!: number;
   name!: string;
@@ -86,18 +90,21 @@ export class DraftPost {
   static $unique: {
     id: number;
   };
-  static $projection: {
-    id: number;
-    category?: $<typeof Category> | null;
-    title: string;
-    content?: string | null;
-  };
-  static $select: {
-    id?: boolean;
-    category?: $select<typeof Category>;
-    title?: boolean;
-    content?: boolean;
-  };
+  static $relations = () => ({
+    category: [Category],
+  });
+  // static $projection: {
+  //   id: number;
+  //   category?: typeof Category['$projection'] | null;
+  //   title: string;
+  //   content?: string | null;
+  // };
+  // static $select: {
+  //   id?: boolean;
+  //   category?: $select<typeof Category> | boolean;
+  //   title?: boolean;
+  //   content?: boolean;
+  // };
 
   id!: number;
   category?: $id<typeof Category> | null;
@@ -159,6 +166,7 @@ export class DraftPost {
       constructor: PublishedPost,
       content: this.content,
       category: this.category,
+      publishedAt: new Date(),
     };
   }
 
@@ -179,23 +187,29 @@ export class PublishedPost {
   static $unique: {
     id: number;
   };
-  static $projection: {
-    id: number;
-    category: $<typeof Category>;
-    title: string;
-    content: string;
-  };
-  static $select: {
-    id?: boolean;
-    category?: $select<typeof Category>;
-    title?: boolean;
-    content?: boolean;
-  };
+  static $relations = () => ({
+    category: [Category],
+  });
+  // static $projection: {
+  //   id: number;
+  //   category: typeof Category['$projection'];
+  //   title: string;
+  //   content: string;
+  //   publishedAt: Date;
+  // };
+  // static $select: {
+  //   id?: boolean;
+  //   category?: $select<typeof Category> | boolean;
+  //   title?: boolean;
+  //   content?: boolean;
+  //   publishedAt?: boolean;
+  // };
 
   id!: number;
   title!: string;
   category!: $id<typeof Category>;
   content!: string;
+  publishedAt!: Date;
 
   static update(
     this: PublishedPost,

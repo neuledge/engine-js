@@ -10,11 +10,13 @@ import {
   MutationSelect,
   ProjectedMutationName,
 } from './mutations.js';
-import { StateSelection } from './select.js';
 import { State, StateProjection } from './state.js';
+import { Merge, Subset } from './utils.js';
 import { Where, UniqueWhere } from './where.js';
 
 // find
+
+type FindSelect<S, P extends object> = Subset<S, Merge<P>>;
 
 interface FindBaseOptions<S extends State> {
   states: S[];
@@ -27,7 +29,7 @@ interface FindBasicOptions<S extends State> extends FindBaseOptions<S> {
 
 interface FindBasicProjectOptions<S extends State, P extends StateProjection<S>>
   extends FindBaseOptions<S> {
-  select: StateSelection<P, StateProjection<S>>;
+  select: FindSelect<P, StateProjection<S>>;
 }
 
 export interface FindUniqueOptions<S extends State>
@@ -90,7 +92,7 @@ interface CreateProjectOptions<
   A extends keyof S,
   P extends CreationSelect<S>,
 > extends CreateBaseOptions<S, A> {
-  select?: StateSelection<P, CreationSelect<S>> | null;
+  select?: FindSelect<P, CreationSelect<S>> | null;
 }
 
 export interface CreateOneOptions<S extends State, A extends keyof S>
@@ -155,7 +157,7 @@ interface MutateProjectOptions<
   P extends MutationSelect<S, A>,
 > extends MutateBaseOptions<S, A> {
   action: ProjectedMutationName<S, A>;
-  select: StateSelection<P, MutationSelect<S, A>>;
+  select: FindSelect<P, MutationSelect<S, A>>;
 }
 
 export interface MutateUniqueOptions<S extends State, A extends keyof S>

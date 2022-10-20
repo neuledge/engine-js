@@ -1,5 +1,5 @@
 export interface EntityList<T> extends Array<T> {
-  nextOffset: EntityListOffset | null;
+  nextOffset?: EntityListOffset | null;
 }
 
 export type EntityListOffset = string | number | Buffer;
