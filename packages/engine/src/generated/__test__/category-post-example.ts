@@ -151,9 +151,11 @@ export class DraftPost {
 export class PublishedPost {
   static $key = 'PublishedPost' as const;
   static $id: { id: number };
-  static $find: {
-    id?: number;
-  };
+  static $find:
+    | {
+        id?: number;
+      }
+    | { category?: $id<typeof Category> };
   static $unique: {
     id: number;
   };
@@ -191,4 +193,4 @@ export class PublishedPost {
 }
 
 export type Post = DraftPost | PublishedPost;
-export const Post = [DraftPost, PublishedPost] as const;
+export const Post = [DraftPost, PublishedPost];

@@ -13,27 +13,25 @@ export class NeuledgeEngine<Store extends EngineStore> {
 
   // finds
 
-  findMany<S extends State>(states: [S, ...S[]]): FindManyQuery<S> {
+  findMany<S extends State>(...states: S[]): FindManyQuery<S> {
     return new FindManyQuery(states);
   }
 
-  findUnique<S extends State>(states: [S, ...S[]]): FindUniqueQuery<S> {
+  findUnique<S extends State>(...states: S[]): FindUniqueQuery<S> {
     return new FindUniqueQuery(states);
   }
 
   findUniqueOrThrow<S extends State>(
-    states: [S, ...S[]],
+    ...states: S[]
   ): FindUniqueOrThrowQuery<S> {
     return new FindUniqueOrThrowQuery(states);
   }
 
-  findFirst<S extends State>(states: [S, ...S[]]): FindFirstQuery<S> {
+  findFirst<S extends State>(...states: S[]): FindFirstQuery<S> {
     return new FindFirstQuery(states);
   }
 
-  findFirstOrThrow<S extends State>(
-    states: [S, ...S[]],
-  ): FindFirstOrThrowQuery<S> {
+  findFirstOrThrow<S extends State>(...states: S[]): FindFirstOrThrowQuery<S> {
     return new FindFirstOrThrowQuery(states);
   }
 

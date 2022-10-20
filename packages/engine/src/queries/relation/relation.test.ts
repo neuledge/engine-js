@@ -5,7 +5,7 @@ import {
   Post,
   PublishedPost,
 } from '@/generated/__test__/category-post-example.js';
-import { Where } from '@/where.js';
+import { Where } from '@/queries/where.js';
 import { RelationQuery } from './relation.js';
 
 /* eslint-disable max-lines-per-function */

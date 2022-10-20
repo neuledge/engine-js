@@ -21,29 +21,26 @@ export const resolvers = {
       { id }: Category,
       { limit, offset }: CategoryPostsArgs,
     ): Promise<PublishedPost[]> =>
-      engine.findMany({
-        states: [PublishedPost],
-        // where: { categoryId: id },
-        limit,
-        offset,
-      }),
+      engine
+        .findUniqueOrThrow(Category)
+        .where({ id })
+        .include('posts', [PublishedPost], (rel) =>
+          rel.limit(limit).offset(offset),
+        )
+        .then((res) => res.posts),
   },
 
   Query: {
     category: async (_: P, { id }: QueryCategoryArgs): Promise<Category> =>
-      engine.findUniqueOrThrow({ states: [Category], where: { id } }),
+      engine.findUniqueOrThrow(Category).where({ id }),
 
     categories: async (): Promise<Category[]> =>
-      engine.findMany({ states: [Category] }),
+      engine.findMany(Category).exec(),
 
     post: async (_: P, { id }: QueryPostArgs): Promise<Post> =>
-      engine.findUniqueOrThrow({
-        states: [...Post],
-        where: { id },
-      }),
+      engine.findUniqueOrThrow(...Post).where({ id }),
 
-    draftPosts: async (): Promise<DraftPost[]> =>
-      engine.findMany({ states: [DraftPost] }),
+    draftPosts: async (): Promise<DraftPost[]> => engine.findMany(DraftPost),
   },
 
   Mutation: {

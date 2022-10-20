@@ -1,18 +1,19 @@
 import { Entity, ProjectedEntity } from '@/entity.js';
 import { State, StateRelation, StateRelations } from '@/generated/index.js';
+import { UniqueWhere } from '@/queries/where.js';
 import { EntityRelation, RelationQuery } from '../relation/index.js';
 import { Select } from '../select.js';
 import { FindQuery } from './find.js';
 
-export class FindManyQuery<S extends State, R = Entity<S>> extends FindQuery<
-  S,
-  R
-> {
+export class FindUniqueOrThrowQuery<
+  S extends State,
+  R = Entity<S>,
+> extends FindQuery<S, R, UniqueWhere<S>> {
   select<P extends Select<S>>(
     select: P,
-  ): FindManyQuery<S, ProjectedEntity<S, P>> {
+  ): FindUniqueOrThrowQuery<S, ProjectedEntity<S, P>> {
     const res = this.clone(
-      new FindManyQuery<S, ProjectedEntity<S, P>>(this.states),
+      new FindUniqueOrThrowQuery<S, ProjectedEntity<S, P>>(this.states),
     );
 
     res._select = select;
@@ -23,12 +24,15 @@ export class FindManyQuery<S extends State, R = Entity<S>> extends FindQuery<
     key: K,
     states?: null,
     relation?: null,
-  ): FindManyQuery<S, EntityRelation<S, K, R, Entity<StateRelation<S, K>>>>;
+  ): FindUniqueOrThrowQuery<
+    S,
+    EntityRelation<S, K, R, Entity<StateRelation<S, K>>>
+  >;
   include<K extends keyof StateRelations<S>, SR extends StateRelation<S, K>>(
     key: K,
     states?: SR[] | null,
     relation?: null,
-  ): FindManyQuery<S, EntityRelation<S, K, R, Entity<SR>>>;
+  ): FindUniqueOrThrowQuery<S, EntityRelation<S, K, R, Entity<SR>>>;
   include<
     K extends keyof StateRelations<S>,
     SR extends StateRelation<S, K>,
@@ -37,7 +41,7 @@ export class FindManyQuery<S extends State, R = Entity<S>> extends FindQuery<
     key: K,
     states: SR[],
     relation: (rel: RelationQuery<SR>) => RelationQuery<SR, RR>,
-  ): FindManyQuery<S, EntityRelation<S, K, R, RR>>;
+  ): FindUniqueOrThrowQuery<S, EntityRelation<S, K, R, RR>>;
   include<K extends keyof StateRelations<S>>(
     key: K,
     states?: StateRelation<S, K>[] | null,
@@ -46,7 +50,10 @@ export class FindManyQuery<S extends State, R = Entity<S>> extends FindQuery<
           rel: RelationQuery<StateRelation<S, K>>,
         ) => RelationQuery<StateRelation<S, K>>)
       | null,
-  ): FindManyQuery<S, EntityRelation<S, K, R, Entity<StateRelation<S, K>>>> {
+  ): FindUniqueOrThrowQuery<
+    S,
+    EntityRelation<S, K, R, Entity<StateRelation<S, K>>>
+  > {
     if (!states) {
       states = this.getRelationStates(key);
     }
@@ -55,7 +62,7 @@ export class FindManyQuery<S extends State, R = Entity<S>> extends FindQuery<
     if (relation) rel = relation(rel);
 
     const res = this.clone(
-      new FindManyQuery<
+      new FindUniqueOrThrowQuery<
         S,
         EntityRelation<S, K, R, Entity<StateRelation<S, K>>>
       >(this.states),
@@ -65,7 +72,17 @@ export class FindManyQuery<S extends State, R = Entity<S>> extends FindQuery<
     return res;
   }
 
-  exec = this.execMany;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  limit(limit: 1): this {
+    return this;
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  offset(offset: null): this {
+    return this;
+  }
+
+  exec = this.execFirstOrThrow;
 
   // eslint-disable-next-line unicorn/no-thenable
   then = this.execThen(this.exec);

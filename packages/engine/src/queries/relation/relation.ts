@@ -1,13 +1,13 @@
 import { Entity, ProjectedEntity } from '@/entity.js';
 import { State, StateRelation, StateRelations } from '@/generated/index.js';
 import { EntityListOffset } from '@/list.js';
-import { Select } from '@/select.js';
-import { UniqueWhere, Where } from '@/where.js';
+import { Select } from '@/queries/select.js';
+import { UniqueWhere, Where } from '@/queries/where.js';
 import { EntityRelation } from './entity.js';
 
 export class RelationQuery<
   S extends State,
-  Result = Entity<S>,
+  R = Entity<S>,
   W extends Where<S> | UniqueWhere<S> = Where<S>,
 > {
   protected _where: W | undefined;
@@ -20,21 +20,17 @@ export class RelationQuery<
 
   constructor(public readonly states: S[]) {}
 
-  private clone<Result>(): RelationQuery<S, Result, W> {
-    const res = new (this.constructor as {
-      new (states: S[]): RelationQuery<S, Result, W>;
-    })(this.states);
+  protected clone<R, T extends RelationQuery<S, R, W>>(instance: T): T {
+    instance._where = this._where;
+    instance._select = this._select;
+    instance._relations = this._relations;
+    instance._limit = this._limit;
+    instance._offset = this._offset;
 
-    res._where = this._where;
-    res._select = this._select;
-    res._relations = this._relations;
-    res._limit = this._limit;
-    res._offset = this._offset;
-
-    return res;
+    return instance;
   }
 
-  where(where: W | null): this {
+  where(where: W | null | undefined): this {
     this._where = where ?? undefined;
     return this;
   }
@@ -42,7 +38,9 @@ export class RelationQuery<
   select<P extends Select<S>>(
     select: P,
   ): RelationQuery<S, ProjectedEntity<S, P>, W> {
-    const res = this.clone<ProjectedEntity<S, P> | Entity<S>>();
+    const res = this.clone(
+      new RelationQuery<S, ProjectedEntity<S, P>, W>(this.states),
+    );
 
     res._select = select;
     return res;
@@ -50,59 +48,72 @@ export class RelationQuery<
 
   include<K extends keyof StateRelations<S>>(
     key: K,
-    states?: undefined | null,
-  ): RelationQuery<
-    S,
-    EntityRelation<S, typeof key, Result, Entity<StateRelation<S, K>>>,
-    W
-  >;
+    states?: null,
+    relation?: null,
+  ): RelationQuery<S, EntityRelation<S, K, R, Entity<StateRelation<S, K>>>, W>;
+  include<K extends keyof StateRelations<S>, SR extends StateRelation<S, K>>(
+    key: K,
+    states?: SR[] | null,
+    relation?: null,
+  ): RelationQuery<S, EntityRelation<S, K, R, Entity<SR>>, W>;
   include<
     K extends keyof StateRelations<S>,
-    RS extends StateRelation<S, K>,
+    SR extends StateRelation<S, K>,
     RR,
   >(
     key: K,
-    states: RS[],
-    relation: ((rel: RelationQuery<RS>) => RelationQuery<RS, RR>) | null,
-  ): RelationQuery<S, EntityRelation<S, typeof key, Result, RR>, W>;
-  include<K extends keyof StateRelations<S>, RS extends StateRelation<S, K>>(
+    states: SR[],
+    relation: (rel: RelationQuery<SR>) => RelationQuery<SR, RR>,
+  ): RelationQuery<S, EntityRelation<S, K, R, RR>, W>;
+  include<K extends keyof StateRelations<S>>(
     key: K,
-    states: RS[],
-    relation?: null,
-  ): RelationQuery<S, EntityRelation<S, typeof key, Result, Entity<RS>>, W>;
-  include<K extends keyof StateRelations<S>, RS extends StateRelation<S, K>>(
-    key: K,
-    states?: RS[] | null,
-    relation?: ((rel: RelationQuery<RS>) => RelationQuery<RS>) | null,
-  ): RelationQuery<S, Result, W> {
+    states?: StateRelation<S, K>[] | null,
+    relation?:
+      | ((
+          rel: RelationQuery<StateRelation<S, K>>,
+        ) => RelationQuery<StateRelation<S, K>>)
+      | null,
+  ): RelationQuery<S, EntityRelation<S, K, R, Entity<StateRelation<S, K>>>, W> {
     if (!states) {
-      // eslint-disable-next-line unicorn/prefer-spread
-      states = ([] as State[]).concat(
-        ...this.states.map((item): State[] => {
-          const rel = item.$relations()[key as string];
-
-          return Array.isArray(rel) && Array.isArray(rel[0])
-            ? (rel[0] as State[])
-            : ((rel ?? []) as State[]);
-        }),
-      ) as RS[];
+      states = this.getRelationStates(key);
     }
 
-    let rel = new RelationQuery<RS>(states);
-    if (relation) rel = relation(new RelationQuery<RS>(states));
+    let rel = new RelationQuery<StateRelation<S, K>>(states);
+    if (relation) rel = relation(rel);
 
-    const res = this.clone();
+    const res = this.clone(
+      new RelationQuery<
+        S,
+        EntityRelation<S, K, R, Entity<StateRelation<S, K>>>,
+        W
+      >(this.states),
+    );
     res._relations = { ...res._relations, [key]: rel };
 
     return res;
   }
 
-  limit(limit: number | null): this {
+  protected getRelationStates<K extends keyof StateRelations<S>>(
+    key: K,
+  ): StateRelation<S, K>[] {
+    // eslint-disable-next-line unicorn/prefer-spread
+    return ([] as State[]).concat(
+      ...this.states.map((item): State[] => {
+        const rel = item.$relations()[key as string];
+
+        return Array.isArray(rel) && Array.isArray(rel[0])
+          ? (rel[0] as State[])
+          : ((rel ?? []) as State[]);
+      }),
+    ) as StateRelation<S, K>[];
+  }
+
+  limit(limit: number | null | undefined): this {
     this._limit = limit ?? undefined;
     return this;
   }
 
-  offset(offset: EntityListOffset | null): this {
+  offset(offset: EntityListOffset | null | undefined): this {
     this._offset = offset ?? undefined;
     return this;
   }

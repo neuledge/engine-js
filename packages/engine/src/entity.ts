@@ -1,5 +1,5 @@
 import { State, StateKey } from './generated/index.js';
-import { Select } from './select.js';
+import { Select } from './queries/select.js';
 
 export type Entity<S extends State> = {
   [K in StateKey<S>]: S extends State<K> ? StateEntity<S> : never;
