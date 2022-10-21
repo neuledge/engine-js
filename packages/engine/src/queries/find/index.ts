@@ -1,3 +1,5 @@
+export * from './find.js';
+export * from './mutate-first.js';
 export * from './find-first.js';
 export * from './find-first-or-throw.js';
 export * from './find-many.js';

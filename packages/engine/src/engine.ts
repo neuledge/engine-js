@@ -35,177 +35,65 @@ export class NeuledgeEngine<Store extends EngineStore> {
     return new FindFirstOrThrowQuery(states);
   }
 
-  //   // create
-  //
-  //   async createOne<S extends State, A extends keyof S>(
-  //     options: CreateOneOptions<S, A>,
-  //   ): Promise<Entity<S>>;
-  //   async createOne<
+  // mutate
+
+  //   mutateMany<
   //     S extends State,
-  //     A extends keyof S,
-  //     P extends CreationSelect<S>,
-  //   >(options: CreateOneProjectOptions<S, A, P>): Promise<ProjectedEntity<S, P>>;
-  //   async createOne<S extends State, A extends keyof S>(
-  //     options: CreateOneVoidOptions<S, A>,
-  //   ): Promise<void>;
-  //   async createOne<
+  //     K extends StateCreateActions<S>,
+  //     A extends StateActionArguments<S, K>,
+  //   >(states: S[], action: K, ...args: A[]): MutateManyQuery<S>;
+  //   mutateMany<
   //     S extends State,
-  //     A extends keyof S,
-  //     P extends CreationSelect<S>,
-  //   >(
-  //     options:
-  //       | CreateOneOptions<S, A>
-  //       | CreateOneProjectOptions<S, A, P>
-  //       | CreateOneVoidOptions<S, A>,
-  //   ): Promise<Entity<S> | ProjectedEntity<S, P> | void> {
-  //     throw new Error('Not implemented');
+  //     K extends StateUpdateActions<S>,
+  //     A extends StateActionArguments<S, K>,
+  //   >(states: S[], action: K, args: A): MutateManyQuery<S>;
+  //   mutateMany<S extends State, K extends StateTransformActions<S>>(
+  //     states: S[],
+  //     action: K,
+  //     args?: Record<string, never>,
+  //   ): MutateManyQuery<S>;
+  //   mutateMany<S extends State, K extends StateDeleteActions<S>>(
+  //     states: S[],
+  //     action: K,
+  //     args?: Record<string, never>,
+  //   ): MutateManyQuery<S>;
+  //   mutateMany<
+  //     S extends State,
+  //     K extends StateCreateActions<S>,
+  //     A extends StateActionArguments<S, K>,
+  //   >(states: S[], action: K, ...args: A[]): MutateManyQuery<S> {
+  //     return new MutateOneQuery(states, action, args);
   //   }
   //
-  //   async createMany<S extends State, A extends keyof S>(
-  //     options: CreateManyOptions<S, A>,
-  //   ): Promise<Entity<S>[]>;
-  //   async createMany<
-  //     S extends State,
-  //     A extends keyof S,
-  //     P extends CreationSelect<S>,
-  //   >(
-  //     options: CreateManyProjectOptions<S, A, P>,
-  //   ): Promise<ProjectedEntity<S, P>[]>;
-  //   async createMany<S extends State, A extends keyof S>(
-  //     options: CreateManyVoidOptions<S, A>,
-  //   ): Promise<void>;
-  //   async createMany<
-  //     S extends State,
-  //     A extends keyof S,
-  //     P extends CreationSelect<S>,
-  //   >(
-  //     options:
-  //       | CreateManyOptions<S, A>
-  //       | CreateManyProjectOptions<S, A, P>
-  //       | CreateManyVoidOptions<S, A>,
-  //   ): Promise<Entity<S>[] | ProjectedEntity<S, P>[] | void> {
-  //     throw new Error('Not implemented');
+  //   mutateFirst<S extends State>(
+  //     states: S[],
+  //     action: string,
+  //     args?: {},
+  //   ): MutateFirstQuery<S> {
+  //     return new MutateFirstQuery(states);
   //   }
   //
-  //   // mutate
-  //
-  //   async mutateUnique<S extends State, A extends keyof S>(
-  //     options: MutateUniqueOptions<S, A>,
-  //   ): Promise<void>;
-  //   async mutateUnique<S extends State, A extends keyof S>(
-  //     options: MutateUniqueReturnOptions<S, A>,
-  //   ): Promise<Entity<MutationState<S, A>> | undefined>;
-  //   async mutateUnique<
-  //     S extends State,
-  //     A extends keyof S,
-  //     P extends MutationSelect<S, A>,
-  //   >(
-  //     options: MutateUniqueProjectOptions<S, A, P>,
-  //   ): Promise<ProjectedEntity<MutationState<S, A>, P> | undefined>;
-  //   async mutateUnique<
-  //     S extends State,
-  //     A extends keyof S,
-  //     P extends MutationSelect<S, A>,
-  //   >(
-  //     options:
-  //       | MutateUniqueOptions<S, A>
-  //       | MutateUniqueReturnOptions<S, A>
-  //       | MutateUniqueProjectOptions<S, A, P>,
-  //   ): Promise<
-  //     | Entity<MutationState<S, A>>
-  //     | ProjectedEntity<MutationState<S, A>, P>
-  //     | undefined
-  //     | void
-  //   > {
-  //     throw new Error('Not implemented');
+  //   mutateFirstOrThrow<S extends State>(
+  //     states: S[],
+  //     action: string,
+  //     args?: {},
+  //   ): MutateFirstOrThrowQuery<S> {
+  //     return new MutateFirstOrThrowQuery(states);
   //   }
   //
-  //   async mutateUniqueOrThrow<S extends State, A extends keyof S>(
-  //     options: MutateUniqueOptions<S, A>,
-  //   ): Promise<void>;
-  //   async mutateUniqueOrThrow<S extends State, A extends keyof S>(
-  //     options: MutateUniqueReturnOptions<S, A>,
-  //   ): Promise<Entity<MutationState<S, A>>>;
-  //   async mutateUniqueOrThrow<
-  //     S extends State,
-  //     A extends keyof S,
-  //     P extends MutationSelect<S, A>,
-  //   >(
-  //     options: MutateUniqueProjectOptions<S, A, P>,
-  //   ): Promise<ProjectedEntity<MutationState<S, A>, P>>;
-  //   async mutateUniqueOrThrow<
-  //     S extends State,
-  //     A extends keyof S,
-  //     P extends MutationSelect<S, A>,
-  //   >(
-  //     options:
-  //       | MutateUniqueOptions<S, A>
-  //       | MutateUniqueReturnOptions<S, A>
-  //       | MutateUniqueProjectOptions<S, A, P>,
-  //   ): Promise<
-  //     Entity<MutationState<S, A>> | ProjectedEntity<MutationState<S, A>, P> | void
-  //   > {
-  //     throw new Error('Not implemented');
+  //   mutateUnique<S extends State>(
+  //     states: S[],
+  //     action: string,
+  //     args?: {},
+  //   ): MutateUniqueQuery<S> {
+  //     return new MutateUniqueQuery(states);
   //   }
   //
-  //   async mutateOne<S extends State, A extends keyof S>(
-  //     options: MutateOneOptions<S, A>,
-  //   ): Promise<void>;
-  //   async mutateOne<S extends State, A extends keyof S>(
-  //     options: MutateOneReturnOptions<S, A>,
-  //   ): Promise<Entity<MutationState<S, A>> | undefined>;
-  //   async mutateOne<
-  //     S extends State,
-  //     A extends keyof S,
-  //     P extends MutationSelect<S, A>,
-  //   >(
-  //     options: MutateOneProjectOptions<S, A, P>,
-  //   ): Promise<ProjectedEntity<MutationState<S, A>, P> | undefined>;
-  //   async mutateOne<
-  //     S extends State,
-  //     A extends keyof S,
-  //     P extends MutationSelect<S, A>,
-  //   >(
-  //     options:
-  //       | MutateOneOptions<S, A>
-  //       | MutateOneReturnOptions<S, A>
-  //       | MutateOneProjectOptions<S, A, P>,
-  //   ): Promise<
-  //     | Entity<MutationState<S, A>>
-  //     | ProjectedEntity<MutationState<S, A>, P>
-  //     | undefined
-  //     | void
-  //   > {
-  //     throw new Error('Not implemented');
-  //   }
-  //
-  //   async mutateMany<S extends State, A extends keyof S>(
-  //     options: MutateManyOptions<S, A>,
-  //   ): Promise<void>;
-  //   async mutateMany<S extends State, A extends keyof S>(
-  //     options: MutateManyReturnOptions<S, A>,
-  //   ): Promise<EntityList<Entity<MutationState<S, A>>>>;
-  //   async mutateMany<
-  //     S extends State,
-  //     A extends keyof S,
-  //     P extends MutationSelect<S, A>,
-  //   >(
-  //     options: MutateManyProjectOptions<S, A, P>,
-  //   ): Promise<EntityList<ProjectedEntity<MutationState<S, A>, P>>>;
-  //   async mutateMany<
-  //     S extends State,
-  //     A extends keyof S,
-  //     P extends MutationSelect<S, A>,
-  //   >(
-  //     options:
-  //       | MutateManyOptions<S, A>
-  //       | MutateManyReturnOptions<S, A>
-  //       | MutateManyProjectOptions<S, A, P>,
-  //   ): Promise<
-  //     | EntityList<Entity<MutationState<S, A>>>
-  //     | EntityList<ProjectedEntity<MutationState<S, A>, P>>
-  //     | void
-  //   > {
-  //     throw new Error('Not implemented');
+  //   mutateUniqueOrThrow<S extends State>(
+  //     states: S[],
+  //     action: string,
+  //     args?: {},
+  //   ): MutateUniqueOrThrowQuery<S> {
+  //     return new MutateUniqueOrThrowQuery(states);
   //   }
 }

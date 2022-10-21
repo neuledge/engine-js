@@ -48,75 +48,45 @@ export const resolvers = {
       _: P,
       { data }: MutationCreatePostArgs,
     ): Promise<DraftPost> =>
-      engine.createOne({
-        state: DraftPost,
-        action: 'createPost',
-        arguments: data,
-      }),
+      engine.mutateOneOrThrow([DraftPost], 'create', data).select(),
 
     updatePost: async (
       _: P,
       { id, data }: MutationUpdatePostArgs,
     ): Promise<Post> =>
-      engine.mutateUniqueOrThrow({
-        states: [...Post],
-        where: { id },
-        action: 'update',
-        arguments: data,
-        select: true,
-      }),
+      engine
+        .mutateOneOrThrow([...Post], 'update', data)
+        .where({ id })
+        .select(),
 
     publishPost: async (
       _: P,
       { id }: MutationPublishPostArgs,
     ): Promise<PublishedPost> =>
-      engine.mutateUniqueOrThrow({
-        states: [DraftPost],
-        where: { id },
-        action: 'publish',
-        arguments: {},
-        select: true,
-      }),
+      engine.mutateUniqueOrThrow([DraftPost], 'publish').where({ id }).select(),
 
     deletePost: async (_: P, { id }: MutationDeletePostArgs): Promise<void> =>
-      engine.mutateUniqueOrThrow({
-        states: [...Post],
-        where: { id },
-        action: 'delete',
-        arguments: {},
-      }),
+      engine.mutateUniqueOrThrow([...Post], 'delete').where({ id }),
 
     createCategory: async (
       _: P,
       { data }: MutationCreateCategoryArgs,
     ): Promise<Category> =>
-      engine.createOne({
-        state: Category,
-        action: 'createCategory',
-        arguments: data,
-      }),
+      engine.mutateOneOrThrow([Category], 'create', data).select(),
 
     updateCategory: async (
       _: P,
       { id, data }: MutationUpdateCategoryArgs,
     ): Promise<Category> =>
-      engine.mutateUniqueOrThrow({
-        states: [Category],
-        where: { id },
-        action: 'update',
-        arguments: data,
-        select: true,
-      }),
+      engine
+        .mutateUniqueOrThrow([Category], 'update', data)
+        .where({ id })
+        .select(),
 
     deleteCategory: async (
       _: P,
       { id }: MutationDeleteCategoryArgs,
     ): Promise<void> =>
-      engine.mutateUniqueOrThrow({
-        states: [Category],
-        where: { id },
-        action: 'delete',
-        arguments: {},
-      }),
+      engine.mutateUniqueOrThrow([Category], 'delete').where({ id }),
   },
 };
