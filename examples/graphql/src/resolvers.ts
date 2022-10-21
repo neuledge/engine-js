@@ -48,14 +48,14 @@ export const resolvers = {
       _: P,
       { data }: MutationCreatePostArgs,
     ): Promise<DraftPost> =>
-      engine.mutateOneOrThrow([DraftPost], 'create', data).select(),
+      engine.createOne([DraftPost], 'create', data).select(),
 
     updatePost: async (
       _: P,
       { id, data }: MutationUpdatePostArgs,
     ): Promise<Post> =>
       engine
-        .mutateOneOrThrow([...Post], 'update', data)
+        .updateUniqueOrThrow([...Post], 'update', data)
         .where({ id })
         .select(),
 
@@ -63,23 +63,23 @@ export const resolvers = {
       _: P,
       { id }: MutationPublishPostArgs,
     ): Promise<PublishedPost> =>
-      engine.mutateUniqueOrThrow([DraftPost], 'publish').where({ id }).select(),
+      engine.updateUniqueOrThrow([DraftPost], 'publish').where({ id }).select(),
 
     deletePost: async (_: P, { id }: MutationDeletePostArgs): Promise<void> =>
-      engine.mutateUniqueOrThrow([...Post], 'delete').where({ id }),
+      engine.deleteUniqueOrThrow([...Post], 'delete').where({ id }),
 
     createCategory: async (
       _: P,
       { data }: MutationCreateCategoryArgs,
     ): Promise<Category> =>
-      engine.mutateOneOrThrow([Category], 'create', data).select(),
+      engine.createOne([Category], 'create', data).select(),
 
     updateCategory: async (
       _: P,
       { id, data }: MutationUpdateCategoryArgs,
     ): Promise<Category> =>
       engine
-        .mutateUniqueOrThrow([Category], 'update', data)
+        .updateUniqueOrThrow([Category], 'update', data)
         .where({ id })
         .select(),
 
@@ -87,6 +87,6 @@ export const resolvers = {
       _: P,
       { id }: MutationDeleteCategoryArgs,
     ): Promise<void> =>
-      engine.mutateUniqueOrThrow([Category], 'delete').where({ id }),
+      engine.deleteUniqueOrThrow([Category], 'delete').where({ id }),
   },
 };

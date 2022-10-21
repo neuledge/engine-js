@@ -20,7 +20,7 @@ export class Category {
   name!: string;
   description?: string | null;
 
-  static createCategory({
+  static create({
     name,
     description,
   }: {
@@ -81,7 +81,7 @@ export class DraftPost {
   title!: string;
   content?: string | null;
 
-  static createPost({
+  static create({
     title,
     content,
     category,
