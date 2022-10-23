@@ -35,62 +35,62 @@ export interface DeleteMutation<S extends State = State> {
 
 type Resolveable<T> = T | PromiseLike<T>;
 
-// state actions
+// state methods
 
-export type StateActions<S extends State> =
-  | StateCreateActions<S>
-  | StateUpdateActions<S>
-  | StateTransformActions<S>
-  | StateDeleteActions<S>;
+export type StateMethods<S extends State> =
+  | StateCreateMethods<S>
+  | StateUpdateMethods<S>
+  | StateTransformMethods<S>
+  | StateDeleteMethods<S>;
 
-export type StateCreateActions<S extends State> = {
+export type StateCreateMethods<S extends State> = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  [K in keyof S]: S[K] extends CreateMutation<S, any> ? K : never;
+  [M in keyof S]: S[M] extends CreateMutation<S, any> ? M : never;
 }[keyof S];
 
-export type StateUpdateActions<S extends State> = {
+export type StateUpdateMethods<S extends State> = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  [K in keyof S]: S[K] extends UpdateMutation<S, any, State<string, object>>
-    ? K
+  [M in keyof S]: S[M] extends UpdateMutation<S, any, State<string, object>>
+    ? M
     : never;
 }[keyof S];
 
-export type StateTransformActions<S extends State> = {
-  [K in keyof S]: S[K] extends TransformMutation<S, State<string, object>>
-    ? K
+export type StateTransformMethods<S extends State> = {
+  [M in keyof S]: S[M] extends TransformMutation<S, State<string, object>>
+    ? M
     : never;
 }[keyof S];
 
-export type StateDeleteActions<S extends State> = {
-  [K in keyof S]: S[K] extends DeleteMutation<S> ? K : never;
+export type StateDeleteMethods<S extends State> = {
+  [M in keyof S]: S[M] extends DeleteMutation<S> ? M : never;
 }[keyof S];
 
 // state action helpers
 
-export type StateActionArguments<
+export type StateMethodArguments<
   S extends State,
-  K extends keyof S,
+  M extends keyof S,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-> = S[K] extends (this: any, args: infer A) => any
+> = S[M] extends (this: any, args: infer A) => any
   ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
     unknown extends A
     ? Record<string, never>
     : A
   : Record<string, never>;
 
-export type StateActionReturn<
+export type StateMethodReturn<
   S extends State,
-  K extends keyof S,
+  M extends keyof S,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-> = S[K] extends DeleteMutation<any>
-  ? null
+> = S[M] extends DeleteMutation<any>
+  ? never
   : // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  S[K] extends CreateMutation<S, any>
+  S[M] extends CreateMutation<S, any>
   ? S
   : // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  S[K] extends UpdateMutation<any, any, infer R>
+  S[M] extends UpdateMutation<any, any, infer R>
   ? R
   : // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  S[K] extends TransformMutation<any, infer R>
+  S[M] extends TransformMutation<any, infer R>
   ? R
-  : null;
+  : never;

@@ -47,9 +47,9 @@ input CreatePostInput {
 }
 
 input UpdatePostInput {
-  title: String
-  content: String
-  categoryId: Int
+  title: String!
+  content: String!
+  categoryId: Int!
 }
 
 input CreateCategoryInput {
@@ -58,6 +58,6 @@ input CreateCategoryInput {
 }
 
 input UpdateCategoryInput {
-  name: String
+  name: String!
   description: String
 }

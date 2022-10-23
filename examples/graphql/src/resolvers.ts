@@ -24,8 +24,8 @@ export const resolvers = {
       engine
         .findUniqueOrThrow(Category)
         .where({ id })
-        .include('posts', [PublishedPost], (rel) =>
-          rel.limit(limit).offset(offset),
+        .includeMany('posts', [PublishedPost], (rel) =>
+          rel.limit(limit ?? null).offset(offset ?? null),
         )
         .then((res) => res.posts),
   },
@@ -48,14 +48,24 @@ export const resolvers = {
       _: P,
       { data }: MutationCreatePostArgs,
     ): Promise<DraftPost> =>
-      engine.createOne([DraftPost], 'create', data).select(),
+      engine
+        .createOne([DraftPost], 'create', {
+          title: data.title,
+          content: data.content,
+          category: data.categoryId ? { id: data.categoryId } : null,
+        })
+        .select(),
 
     updatePost: async (
       _: P,
       { id, data }: MutationUpdatePostArgs,
     ): Promise<Post> =>
       engine
-        .updateUniqueOrThrow([...Post], 'update', data)
+        .updateUniqueOrThrow([...Post], 'update', {
+          title: data.title,
+          content: data.content,
+          category: { id: data.categoryId },
+        })
         .where({ id })
         .select(),
 

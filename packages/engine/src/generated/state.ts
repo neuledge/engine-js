@@ -21,12 +21,3 @@ export type StateRelations<S extends State> = S extends {
 }
   ? R
   : never;
-
-export type StateRelation<
-  S extends State,
-  K extends keyof StateRelations<S>,
-> = StateRelations<S>[K] extends readonly State[]
-  ? StateRelations<S>[K][number]
-  : StateRelations<S>[K] extends readonly [readonly State[]]
-  ? StateRelations<S>[K][0][number]
-  : never;

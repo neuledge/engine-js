@@ -88,7 +88,7 @@ export class DraftPost {
   }: {
     title: string;
     content?: string | null;
-    category: $id<typeof Category>;
+    category?: $id<typeof Category> | null;
   }): $<typeof DraftPost> {
     return {
       $state: 'DraftPost',
@@ -109,7 +109,7 @@ export class DraftPost {
     }: {
       title: string;
       content?: string | null;
-      category: $id<typeof Category>;
+      category?: $id<typeof Category> | null;
     },
   ): $<typeof DraftPost> {
     return {

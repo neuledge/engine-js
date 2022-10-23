@@ -1,9 +1,9 @@
 import { Category, Post } from '@/generated/__test__/category-post-example.js';
-import { Select } from './select.js';
+import { Select } from './entity.js';
 
 /* eslint-disable max-lines-per-function */
 
-describe('queries/select', () => {
+describe('queries/select/entity', () => {
   describe('Select<>', () => {
     it('should select fields', () => {
       type t = Select<typeof Category>;

@@ -1,11 +1,11 @@
 import {
-  StateActionArguments,
-  StateActionReturn,
-  StateActions,
-  StateCreateActions,
-  StateDeleteActions,
-  StateTransformActions,
-  StateUpdateActions,
+  StateMethodArguments,
+  StateMethods,
+  StateCreateMethods,
+  StateDeleteMethods,
+  StateTransformMethods,
+  StateUpdateMethods,
+  StateMethodReturn,
 } from './mutation.js';
 import {
   Category,
@@ -17,164 +17,166 @@ import {
 /* eslint-disable max-lines-per-function */
 
 describe('generated/mutation', () => {
-  describe('StateActions<>', () => {
-    it('should have single state actions', () => {
+  describe('StateMethods<>', () => {
+    it('should have single state methods', () => {
       expect<{ create: 1; update: 1; delete: 1 }>(
-        {} as Record<StateActions<typeof Category>, 1>,
+        {} as Record<StateMethods<typeof Category>, 1>,
       );
 
       expect<{ create: 1; update: 1; publish: 1; delete: 1 }>(
-        {} as Record<StateActions<typeof DraftPost>, 1>,
+        {} as Record<StateMethods<typeof DraftPost>, 1>,
       );
 
       expect<{ update: 1; delete: 1 }>(
-        {} as Record<StateActions<typeof PublishedPost>, 1>,
+        {} as Record<StateMethods<typeof PublishedPost>, 1>,
       );
     });
 
-    it('should have multiple state actions', () => {
+    it('should have multiple state methods', () => {
       expect<{ update: 1; delete: 1 }>(
-        {} as Record<StateActions<typeof Post[number]>, 1>,
+        {} as Record<StateMethods<typeof Post[number]>, 1>,
       );
     });
   });
 
-  describe('StateCreateActions<>', () => {
-    it('should have single state actions', () => {
+  describe('StateCreateMethods<>', () => {
+    it('should have single state methods', () => {
       expect<{ create: 1 }>(
-        {} as Record<StateCreateActions<typeof Category>, 1>,
+        {} as Record<StateCreateMethods<typeof Category>, 1>,
       );
       expect<{ create: 1 }>(
-        {} as Record<StateCreateActions<typeof DraftPost>, 1>,
+        {} as Record<StateCreateMethods<typeof DraftPost>, 1>,
       );
       expect<Record<never, 1>>(
-        {} as Record<StateCreateActions<typeof PublishedPost>, 1>,
+        {} as Record<StateCreateMethods<typeof PublishedPost>, 1>,
       );
     });
 
-    it('should have multiple state actions', () => {
+    it('should have multiple state methods', () => {
       expect<Record<never, 1>>(
-        {} as Record<StateCreateActions<typeof Post[number]>, 1>,
+        {} as Record<StateCreateMethods<typeof Post[number]>, 1>,
       );
     });
   });
 
-  describe('StateUpdateActions<>', () => {
-    it('should have single state actions', () => {
+  describe('StateUpdateMethods<>', () => {
+    it('should have single state methods', () => {
       expect<{ update: 1 }>(
-        {} as Record<StateUpdateActions<typeof Category>, 1>,
+        {} as Record<StateUpdateMethods<typeof Category>, 1>,
       );
       expect<{ update: 1 }>(
-        {} as Record<StateUpdateActions<typeof DraftPost>, 1>,
+        {} as Record<StateUpdateMethods<typeof DraftPost>, 1>,
       );
       expect<{ update: 1 }>(
-        {} as Record<StateUpdateActions<typeof PublishedPost>, 1>,
+        {} as Record<StateUpdateMethods<typeof PublishedPost>, 1>,
       );
     });
 
-    it('should have multiple state actions', () => {
+    it('should have multiple state methods', () => {
       expect<{ update: 1 }>(
-        {} as Record<StateUpdateActions<typeof Post[number]>, 1>,
+        {} as Record<StateUpdateMethods<typeof Post[number]>, 1>,
       );
     });
   });
 
-  describe('StateTransformActions<>', () => {
-    it('should have single state actions', () => {
+  describe('StateTransformMethods<>', () => {
+    it('should have single state methods', () => {
       expect<Record<never, 1>>(
-        {} as Record<StateTransformActions<typeof Category>, 1>,
+        {} as Record<StateTransformMethods<typeof Category>, 1>,
       );
       expect<{ publish: 1 }>(
-        {} as Record<StateTransformActions<typeof DraftPost>, 1>,
+        {} as Record<StateTransformMethods<typeof DraftPost>, 1>,
       );
       expect<Record<never, 1>>(
-        {} as Record<StateTransformActions<typeof PublishedPost>, 1>,
+        {} as Record<StateTransformMethods<typeof PublishedPost>, 1>,
       );
     });
 
-    it('should have multiple state actions', () => {
+    it('should have multiple state methods', () => {
       expect<Record<never, 1>>(
-        {} as Record<StateTransformActions<typeof Post[number]>, 1>,
+        {} as Record<StateTransformMethods<typeof Post[number]>, 1>,
       );
     });
   });
 
-  describe('StateDeleteActions<>', () => {
-    it('should have single state actions', () => {
+  describe('StateDeleteMethods<>', () => {
+    it('should have single state methods', () => {
       expect<{ delete: 1 }>(
-        {} as Record<StateDeleteActions<typeof Category>, 1>,
+        {} as Record<StateDeleteMethods<typeof Category>, 1>,
       );
       expect<{ delete: 1 }>(
-        {} as Record<StateDeleteActions<typeof DraftPost>, 1>,
+        {} as Record<StateDeleteMethods<typeof DraftPost>, 1>,
       );
       expect<{ delete: 1 }>(
-        {} as Record<StateDeleteActions<typeof PublishedPost>, 1>,
+        {} as Record<StateDeleteMethods<typeof PublishedPost>, 1>,
       );
     });
 
-    it('should have multiple state actions', () => {
+    it('should have multiple state methods', () => {
       expect<{ delete: 1 }>(
-        {} as Record<StateDeleteActions<typeof Post[number]>, 1>,
+        {} as Record<StateDeleteMethods<typeof Post[number]>, 1>,
       );
     });
   });
 
-  describe('StateActionArguments<>', () => {
-    it('should have single state action arguments', () => {
+  describe('StateMethodArguments<>', () => {
+    it('should have single state method arguments', () => {
       expect<{
         name: string;
         description?: string | null;
-      }>({} as StateActionArguments<typeof Category, 'create'>);
+      }>({} as StateMethodArguments<typeof Category, 'create'>);
 
       expect<{
         title: string;
         content?: string | null;
-        category: typeof Category['$id'];
-      }>({} as StateActionArguments<typeof DraftPost, 'update'>);
+        category?: typeof Category['$id'] | null;
+      }>({} as StateMethodArguments<typeof DraftPost, 'update'>);
 
       expect<Record<string, never>>(
-        {} as StateActionArguments<typeof DraftPost, 'publish'>,
+        {} as StateMethodArguments<typeof DraftPost, 'publish'>,
       );
 
       expect<Record<string, never>>(
-        {} as StateActionArguments<typeof PublishedPost, 'delete'>,
+        {} as StateMethodArguments<typeof PublishedPost, 'delete'>,
       );
     });
 
-    it('should have multiple states action arguments', () => {
+    it('should have multiple states method arguments', () => {
       expect<{
         title: string;
         content: string;
         category: typeof Category['$id'];
-      }>({} as StateActionArguments<typeof Post[number], 'update'>);
+      }>({} as StateMethodArguments<typeof Post[number], 'update'>);
 
       expect<Record<string, never>>(
-        {} as StateActionArguments<typeof Post[number], 'delete'>,
+        {} as StateMethodArguments<typeof Post[number], 'delete'>,
       );
     });
   });
 
-  describe('StateActionReturn<>', () => {
-    it('should have single state action return', () => {
+  describe('StateMethodReturn<>', () => {
+    it('should have single state method return', () => {
       expect<typeof Category>(
-        {} as StateActionReturn<typeof Category, 'create'>,
+        {} as StateMethodReturn<typeof Category, 'create'>,
       );
 
       expect<typeof DraftPost>(
-        {} as StateActionReturn<typeof DraftPost, 'update'>,
+        {} as StateMethodReturn<typeof DraftPost, 'update'>,
       );
 
       expect<typeof PublishedPost>(
-        {} as StateActionReturn<typeof DraftPost, 'publish'>,
+        {} as StateMethodReturn<typeof DraftPost, 'publish'>,
       );
 
-      expect<StateActionReturn<typeof PublishedPost, 'delete'>>(null);
+      expect<never>({} as StateMethodReturn<typeof PublishedPost, 'delete'>);
     });
 
-    it('should have multiple states action return', () => {
-      expect<StateActionReturn<typeof Post[number], 'update'>>(DraftPost);
-      expect<StateActionReturn<typeof Post[number], 'update'>>(PublishedPost);
-      expect<StateActionReturn<typeof Post[number], 'delete'>>(null);
+    it('should have multiple states method return', () => {
+      expect<typeof DraftPost | typeof PublishedPost>(
+        {} as StateMethodReturn<typeof Post[number], 'update'>,
+      );
+
+      expect<never>({} as StateMethodReturn<typeof Post[number], 'delete'>);
     });
   });
 });
