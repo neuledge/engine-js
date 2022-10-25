@@ -2,11 +2,11 @@ import { State, StateKey, StateQuery, StateUnique } from '@/generated/index.js';
 import { AllKeys } from './utils.js';
 
 export type Where<S extends State> = StateQuery<S> & {
-  [K in ForbiddenQueryKeys<S>]?: never;
+  [K in NonCommonQueryKeys<S>]?: never;
 };
 
 export type UniqueWhere<S extends State> = StateUnique<S> & {
-  [K in ForbiddenUniqueKeys<S>]?: never;
+  [K in NonCommonUniqueKeys<S>]?: never;
 };
 
 // Forbidden all non-common keys between the given states, effectively doing an
@@ -24,7 +24,7 @@ export type UniqueWhere<S extends State> = StateUnique<S> & {
 //   2. Combine result with and OR operator (`category`)
 //   3. Forbidden the result from all keys (`id`)
 
-type ForbiddenQueryKeys<S extends State> = {
+type NonCommonQueryKeys<S extends State> = {
   [K in StateKey<S>]: Exclude<
     AllKeys<StateQuery<S>>,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -32,7 +32,7 @@ type ForbiddenQueryKeys<S extends State> = {
   >;
 }[StateKey<S>];
 
-type ForbiddenUniqueKeys<S extends State> = {
+type NonCommonUniqueKeys<S extends State> = {
   [K in StateKey<S>]: Exclude<
     AllKeys<StateUnique<S>>,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

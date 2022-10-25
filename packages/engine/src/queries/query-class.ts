@@ -1,15 +1,16 @@
 import { State } from '@/generated/index.js';
 import { ExecQuery } from './exec.js';
-import { FilterQuery, UniqueFilterQuery } from './filter.js';
+import { FilterQuery } from './filter.js';
 import { LimitQuery } from './limit.js';
 import { OffsetQuery } from './offset.js';
 import { SelectQuery } from './select.js';
+import { UniqueQuery } from './unique.js';
 
 export class QueryClass<I extends State, O extends State>
   implements
     SelectQuery<any, I, O, any>,
     FilterQuery<I>,
-    UniqueFilterQuery<any, I, O, any>,
+    UniqueQuery<any, I, O, any>,
     LimitQuery,
     OffsetQuery,
     ExecQuery<any>
@@ -33,6 +34,10 @@ export class QueryClass<I extends State, O extends State>
   }
 
   where(where: any): this {
+    return this;
+  }
+
+  unique(where: any): this {
     return this;
   }
 

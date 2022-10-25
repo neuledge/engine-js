@@ -3,21 +3,10 @@ import {
   StateFilterKeys,
   StateRelationState,
 } from '@/generated/index.js';
-import { QueryMode } from './query.js';
-import { Query } from './query.js';
-import { UniqueWhere, Where } from './where.js';
+import { Where } from './where.js';
 
 export interface FilterQuery<S extends State> extends BasicFilterQuery<S> {
   where(where: Where<S> | null): this;
-}
-
-export interface UniqueFilterQuery<
-  M extends QueryMode,
-  I extends State,
-  O extends State,
-  R,
-> extends BasicFilterQuery<I> {
-  where(where: UniqueWhere<I>): Query<M, I, O, R>;
 }
 
 interface BasicFilterQuery<S extends State> {

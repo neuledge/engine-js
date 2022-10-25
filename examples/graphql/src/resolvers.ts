@@ -23,7 +23,7 @@ export const resolvers = {
     ): Promise<PublishedPost[]> =>
       engine
         .findUniqueOrThrow(Category)
-        .where({ id })
+        .unique({ id })
         .includeMany('posts', [PublishedPost], (rel) =>
           rel.limit(limit ?? null).offset(offset ?? null),
         )
@@ -32,13 +32,13 @@ export const resolvers = {
 
   Query: {
     category: async (_: P, { id }: QueryCategoryArgs): Promise<Category> =>
-      engine.findUniqueOrThrow(Category).where({ id }),
+      engine.findUniqueOrThrow(Category).unique({ id }),
 
     categories: async (): Promise<Category[]> =>
       engine.findMany(Category).exec(),
 
     post: async (_: P, { id }: QueryPostArgs): Promise<Post> =>
-      engine.findUniqueOrThrow(...Post).where({ id }),
+      engine.findUniqueOrThrow(...Post).unique({ id }),
 
     draftPosts: async (): Promise<DraftPost[]> => engine.findMany(DraftPost),
   },
@@ -66,17 +66,20 @@ export const resolvers = {
           content: data.content,
           category: { id: data.categoryId },
         })
-        .where({ id })
+        .unique({ id })
         .select(),
 
     publishPost: async (
       _: P,
       { id }: MutationPublishPostArgs,
     ): Promise<PublishedPost> =>
-      engine.updateUniqueOrThrow([DraftPost], 'publish').where({ id }).select(),
+      engine
+        .updateUniqueOrThrow([DraftPost], 'publish')
+        .unique({ id })
+        .select(),
 
     deletePost: async (_: P, { id }: MutationDeletePostArgs): Promise<void> =>
-      engine.deleteUniqueOrThrow([...Post], 'delete').where({ id }),
+      engine.deleteUniqueOrThrow([...Post], 'delete').unique({ id }),
 
     createCategory: async (
       _: P,
@@ -90,13 +93,13 @@ export const resolvers = {
     ): Promise<Category> =>
       engine
         .updateUniqueOrThrow([Category], 'update', data)
-        .where({ id })
+        .unique({ id })
         .select(),
 
     deleteCategory: async (
       _: P,
       { id }: MutationDeleteCategoryArgs,
     ): Promise<void> =>
-      engine.deleteUniqueOrThrow([Category], 'delete').where({ id }),
+      engine.deleteUniqueOrThrow([Category], 'delete').unique({ id }),
   },
 };
