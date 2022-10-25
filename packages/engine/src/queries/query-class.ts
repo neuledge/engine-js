@@ -1,4 +1,3 @@
-import { NeuledgeEngine } from '@/engine.js';
 import {
   State,
   StateFilterKeys,
@@ -15,7 +14,7 @@ import { ExecQuery } from './exec.js';
 import { FilterQuery, FilterQueryOptions } from './filter.js';
 import { LimitQuery, LimitQueryOptions } from './limit.js';
 import { OffsetQuery, OffsetQueryOptions } from './offset.js';
-import { QueryOptions, QueryType } from './query.js';
+import { QueryOptions, QueryOptionsExec, QueryType } from './query.js';
 import { SelectManyQuery } from './select-many.js';
 import { SelectOneQuery } from './select-one.js';
 import { Select, SelectQuery, SelectQueryOptions } from './select.js';
@@ -36,13 +35,16 @@ export class QueryClass<
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ExecQuery<any>
 {
-  private readonly _engine: NeuledgeEngine;
   private readonly _options: QueryOptions<T, I, O>;
+  private readonly _exec?: QueryOptionsExec<T, I, O>;
   private readonly _outputStates: O[];
 
-  constructor(engine: NeuledgeEngine, options: QueryOptions<T, I, O>) {
-    this._engine = engine;
+  constructor(
+    options: QueryOptions<T, I, O>,
+    exec?: QueryOptionsExec<T, I, O>,
+  ) {
     this._options = options;
+    this._exec = exec;
 
     this._outputStates =
       'method' in options
@@ -75,7 +77,7 @@ export class QueryClass<
       'SelectMany',
       StateRelationState<O, K>,
       StateRelationState<O, K>
-    > = new QueryClass(this._engine, {
+    > = new QueryClass({
       type: 'SelectMany',
       states: states ?? QueryClass.relationStates(this._outputStates, key),
     });
@@ -109,7 +111,7 @@ export class QueryClass<
       'SelectOne',
       StateRelationState<O, K>,
       StateRelationState<O, K>
-    > = new QueryClass(this._engine, {
+    > = new QueryClass({
       type: 'SelectOne',
       states: states ?? QueryClass.relationStates(this._outputStates, key),
     });
@@ -143,7 +145,7 @@ export class QueryClass<
       'SelectOne',
       StateRelationState<O, K>,
       StateRelationState<O, K>
-    > = new QueryClass(this._engine, {
+    > = new QueryClass({
       type: 'SelectOne',
       states: states ?? QueryClass.relationStates(this._outputStates, key),
     });
@@ -191,7 +193,7 @@ export class QueryClass<
       'Filter',
       StateRelationState<I, K>,
       StateRelationState<I, K>
-    > = new QueryClass(this._engine, {
+    > = new QueryClass({
       type: 'Filter',
       states,
     });
@@ -226,14 +228,17 @@ export class QueryClass<
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async exec(): Promise<any> {
+    if (!this._exec) {
+      throw new TypeError(`This query is not executable`);
+    }
+
     if ('unique' in this._options && this._options.unique === true) {
       throw new TypeError(
         `Can't resolve a unique query without the '.unique()' clause`,
       );
     }
 
-    // FIXME implement query.exec()
-    throw new Error('Not implemented');
+    return this._exec(this._options);
   }
 
   // eslint-disable-next-line unicorn/no-thenable, @typescript-eslint/no-explicit-any
