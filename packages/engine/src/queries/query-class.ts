@@ -1,3 +1,4 @@
+import { NeuledgeEngine } from '@/engine.js';
 import {
   State,
   StateFilterKeys,
@@ -15,6 +16,7 @@ import { ExecQuery } from './exec.js';
 import { FilterQuery } from './filter.js';
 import { LimitQuery } from './limit.js';
 import { OffsetQuery } from './offset.js';
+import { QueryType } from './query.js';
 import { SelectManyQuery } from './select-many.js';
 import { SelectOneQuery } from './select-one.js';
 import { Select, SelectQuery } from './select.js';
@@ -23,6 +25,7 @@ import { Subset } from './utils.js';
 import { UniqueWhere, Where } from './where.js';
 
 export class QueryClass<
+  T extends QueryType,
   I extends State,
   O extends State,
   K extends StateMutations<I>,
@@ -36,6 +39,8 @@ export class QueryClass<
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ExecQuery<any>
 {
+  private readonly _engine: NeuledgeEngine;
+  private readonly _type: T;
   private readonly _inputStates: I[];
   private readonly _outputStates: O[];
   private readonly _action?: K;
@@ -62,7 +67,7 @@ export class QueryClass<
       any
     >;
   } = {};
-  private _unique?: UniqueWhere<I> | true;
+  private _unique?: UniqueWhere<I>;
   private _where?: Where<I>;
   private _filter: {
     [K in StateFilterKeys<I>]?: FilterQuery<StateRelationState<I, K>>;
@@ -71,20 +76,22 @@ export class QueryClass<
   private _offset?: EntityListOffset;
 
   constructor(
+    engine: NeuledgeEngine,
+    type: T,
     states: I[],
-    unique?: UniqueWhere<I> | null | boolean,
     action?: K,
     args?: A[],
   ) {
+    this._engine = engine;
+    this._type = type;
     this._inputStates = states;
     this._outputStates = action
       ? (QueryClass.methodReturnStates(states, action) as never)
       : (states as never);
-    this._unique = unique || undefined;
     this._action = action;
     this._args = args;
 
-    if (unique === true) {
+    if (type.includes('Unique')) {
       // prevent resolve this query until unique clause provided
       // eslint-disable-next-line unicorn/no-thenable
       this.then = null as never;
@@ -106,6 +113,8 @@ export class QueryClass<
     query?: (query: SelectManyQuery<RS>) => SelectManyQuery<RS, RR>,
   ): this {
     let rel: SelectManyQuery<RS, RR> = new QueryClass(
+      this._engine,
+      this._type,
       states ?? QueryClass.relationStates(this._outputStates, key),
     );
     if (query) rel = query(rel);
@@ -124,6 +133,8 @@ export class QueryClass<
     query?: (rel: SelectOneQuery<RS>) => SelectOneQuery<RS, RR>,
   ): this {
     let rel: SelectOneQuery<RS, RR> = new QueryClass(
+      this._engine,
+      this._type,
       states ?? QueryClass.relationStates(this._outputStates, key),
     );
     if (query) rel = query(rel);
@@ -142,6 +153,8 @@ export class QueryClass<
     query?: (rel: SelectOneQuery<RS>) => SelectOneQuery<RS, RR>,
   ): this {
     let rel: SelectOneQuery<RS, RR> = new QueryClass(
+      this._engine,
+      this._type,
       states ?? QueryClass.relationStates(this._outputStates, key),
     );
     if (query) rel = query(rel);
@@ -169,7 +182,7 @@ export class QueryClass<
     states: RS[],
     query?: (query: FilterQuery<RS>) => FilterQuery<RS>,
   ): this {
-    let rel: FilterQuery<RS> = new QueryClass(states);
+    let rel: FilterQuery<RS> = new QueryClass(this._engine, this._type, states);
     if (query) rel = query(rel);
 
     this._filter[key] = rel;
@@ -188,7 +201,7 @@ export class QueryClass<
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async exec(): Promise<any> {
-    if (this._unique === true) {
+    if (this._unique == null && this._type.includes('Unique')) {
       throw new TypeError(
         `Can't resolve a unique query without the '.unique()' clause`,
       );

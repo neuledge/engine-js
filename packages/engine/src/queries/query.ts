@@ -46,11 +46,31 @@ export type Query<
   R = Entity<O>,
 > = QueryModes<I, O, R>[M];
 
+export type QueryType =
+  | 'CreateMany'
+  | 'CreateOne'
+  | 'DeleteMany'
+  | 'DeleteFirst'
+  | 'DeleteFirstOrThrow'
+  | 'DeleteUnique'
+  | 'DeleteUniqueOrThrow'
+  | 'FindMany'
+  | 'FindFirst'
+  | 'FindFirstOrThrow'
+  | 'FindUnique'
+  | 'FindUniqueOrThrow'
+  | 'UpdateMany'
+  | 'UpdateFirst'
+  | 'UpdateFirstOrThrow'
+  | 'UpdateUnique'
+  | 'UpdateUniqueOrThrow';
+
 export type QueryMode = keyof QueryModes<never, never, never>;
 
 export interface QueryModes<I extends State, O extends State, R> {
   // CreateMany: never,
   CreateManyAndReturn: CreateManyAndReturnQuery<O, R>;
+  // CreateOne: never;
   CreateOneAndReturn: CreateOneAndReturnQuery<O, R>;
   // DeleteMany: never,
   DeleteManyAndReturn: DeleteManyAndReturnQuery<O, R>;
