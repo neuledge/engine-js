@@ -10,11 +10,11 @@ import {
   StateRequireOneKeys,
 } from '@/generated/index.js';
 import { EntityListOffset } from '@/list.js';
-import { ExecQuery } from './exec.js';
+import { ExecQuery, ExecQueryOptions } from './exec.js';
 import { FilterQuery, FilterQueryOptions } from './filter.js';
 import { LimitQuery, LimitQueryOptions } from './limit.js';
 import { OffsetQuery, OffsetQueryOptions } from './offset.js';
-import { QueryOptions, QueryOptionsExec, QueryType } from './query.js';
+import { QueryOptions, QueryType } from './query.js';
 import { SelectManyQuery } from './select-many.js';
 import { SelectOneQuery } from './select-one.js';
 import { Select, SelectQuery, SelectQueryOptions } from './select.js';
@@ -35,17 +35,9 @@ export class QueryClass<
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ExecQuery<any>
 {
-  private readonly _options: QueryOptions<T, I, O>;
-  private readonly _exec?: QueryOptionsExec<T, I, O>;
   private readonly _outputStates: O[];
 
-  constructor(
-    options: QueryOptions<T, I, O>,
-    exec?: QueryOptionsExec<T, I, O>,
-  ) {
-    this._options = options;
-    this._exec = exec;
-
+  constructor(private readonly options: QueryOptions<T, I, O>) {
     this._outputStates =
       'method' in options
         ? (QueryClass.methodReturnStates(
@@ -62,7 +54,7 @@ export class QueryClass<
   }
 
   select<P extends Select<O>>(select?: Subset<P, Select<O>>): this {
-    (this._options as SelectQueryOptions<O>).select = select;
+    (this.options as SelectQueryOptions<O>).select = select;
     return this;
   }
 
@@ -90,12 +82,12 @@ export class QueryClass<
       >;
     }
 
-    const options = this._options as SelectQueryOptions<O>;
+    const options = this.options as SelectQueryOptions<O>;
 
     if (!options.includeMany) {
       options.includeMany = {};
     }
-    options.includeMany[key] = rel._options;
+    options.includeMany[key] = rel.options;
 
     return this;
   }
@@ -124,12 +116,12 @@ export class QueryClass<
       >;
     }
 
-    const options = this._options as SelectQueryOptions<O>;
+    const options = this.options as SelectQueryOptions<O>;
 
     if (!options.includeOne) {
       options.includeOne = {};
     }
-    options.includeOne[key] = rel._options;
+    options.includeOne[key] = rel.options;
 
     return this;
   }
@@ -158,18 +150,18 @@ export class QueryClass<
       >;
     }
 
-    const options = this._options as SelectQueryOptions<O>;
+    const options = this.options as SelectQueryOptions<O>;
 
     if (!options.requireOne) {
       options.requireOne = {};
     }
-    options.requireOne[key] = rel._options;
+    options.requireOne[key] = rel.options;
 
     return this;
   }
 
   unique(where: UniqueWhere<I>): this {
-    (this._options as UniqueQueryOptions<I>).unique = where;
+    (this.options as UniqueQueryOptions<I>).unique = where;
 
     // re-enable resolve for this query
     delete (this as Partial<this>).then;
@@ -178,7 +170,7 @@ export class QueryClass<
   }
 
   where(where: Where<I> | null): this {
-    (this._options as FilterQueryOptions<I>).where = where ?? undefined;
+    (this.options as FilterQueryOptions<I>).where = where ?? undefined;
     return this;
   }
 
@@ -206,39 +198,40 @@ export class QueryClass<
       >;
     }
 
-    const options = this._options as FilterQueryOptions<I>;
+    const options = this.options as FilterQueryOptions<I>;
 
     if (!options.filter) {
       options.filter = {};
     }
-    options.filter[key] = rel._options;
+    options.filter[key] = rel.options;
 
     return this;
   }
 
   limit(limit: number | null): this {
-    (this._options as LimitQueryOptions).limit = limit ?? undefined;
+    (this.options as LimitQueryOptions).limit = limit ?? undefined;
     return this;
   }
 
   offset(offset: EntityListOffset | null): this {
-    (this._options as OffsetQueryOptions).offset = offset ?? undefined;
+    (this.options as OffsetQueryOptions).offset = offset ?? undefined;
     return this;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async exec(): Promise<any> {
-    if (!this._exec) {
+    if (!('exec' in this.options)) {
       throw new TypeError(`This query is not executable`);
     }
 
-    if ('unique' in this._options && this._options.unique === true) {
+    if ('unique' in this.options && this.options.unique === true) {
       throw new TypeError(
         `Can't resolve a unique query without the '.unique()' clause`,
       );
     }
 
-    return this._exec(this._options);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return (this.options as ExecQueryOptions<any, any, any>).exec();
   }
 
   // eslint-disable-next-line unicorn/no-thenable, @typescript-eslint/no-explicit-any

@@ -1,6 +1,6 @@
 import { Entity } from '@/entity.js';
 import { State } from '@/generated/index.js';
-import { ExecQuery } from './exec.js';
+import { ExecQuery, ExecQueryOptions } from './exec.js';
 import { OffsetQuery, OffsetQueryOptions } from './offset.js';
 import { SelectQuery, SelectQueryOptions } from './select.js';
 import { FilterQuery, FilterQueryOptions } from './filter.js';
@@ -25,4 +25,5 @@ export interface FindUniqueQueryOptions<I extends State, O extends State>
     SelectQueryOptions<O>,
     FilterQueryOptions<O>,
     UniqueQueryOptions<O>,
-    OffsetQueryOptions {}
+    OffsetQueryOptions,
+    ExecQueryOptions<'FindUnique', I, O> {}

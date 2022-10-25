@@ -1,6 +1,6 @@
 import { Entity } from '@/entity.js';
 import { State, StateUpdateMutations } from '@/generated/index.js';
-import { ExecQuery } from './exec.js';
+import { ExecQuery, ExecQueryOptions } from './exec.js';
 import { FilterQuery, FilterQueryOptions } from './filter.js';
 import { SingleArgsQueryOptions } from './method.js';
 import { SelectQuery, SelectQueryOptions } from './select.js';
@@ -46,4 +46,5 @@ export interface UpdateUniqueOrThrowQueryOptions<
     SingleArgsQueryOptions<I, StateUpdateMutations<I>>,
     SelectQueryOptions<O>,
     FilterQueryOptions<I>,
-    UniqueQueryOptions<I> {}
+    UniqueQueryOptions<I>,
+    ExecQueryOptions<'UpdateUniqueOrThrow', I, O> {}

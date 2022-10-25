@@ -1,6 +1,6 @@
 import { Entity } from '@/entity.js';
 import { State, StateDeleteMutations } from '@/generated/index.js';
-import { ExecQuery } from './exec.js';
+import { ExecQuery, ExecQueryOptions } from './exec.js';
 import { FilterQuery, FilterQueryOptions } from './filter.js';
 import { MethodQueryOptions } from './method.js';
 import { SelectQuery, SelectQueryOptions } from './select.js';
@@ -24,4 +24,5 @@ export interface DeleteFirstOrThrowQueryOptions<
 > extends TypeQueryOptions<'DeleteFirstOrThrow', I>,
     MethodQueryOptions<StateDeleteMutations<I>>,
     SelectQueryOptions<O>,
-    FilterQueryOptions<I> {}
+    FilterQueryOptions<I>,
+    ExecQueryOptions<'DeleteFirstOrThrow', I, O> {}

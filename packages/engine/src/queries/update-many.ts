@@ -1,7 +1,7 @@
 import { Entity } from '@/entity.js';
 import { State, StateUpdateMutations } from '@/generated/index.js';
 import { EntityList } from '@/list.js';
-import { ExecQuery } from './exec.js';
+import { ExecQuery, ExecQueryOptions } from './exec.js';
 import { FilterQuery, FilterQueryOptions } from './filter.js';
 import { LimitQuery, LimitQueryOptions } from './limit.js';
 import { SingleArgsQueryOptions } from './method.js';
@@ -25,4 +25,5 @@ export interface UpdateManyQueryOptions<I extends State, O extends State>
     SingleArgsQueryOptions<I, StateUpdateMutations<I>>,
     SelectQueryOptions<O>,
     FilterQueryOptions<I>,
-    LimitQueryOptions {}
+    LimitQueryOptions,
+    ExecQueryOptions<'UpdateMany', I, O> {}

@@ -1,6 +1,6 @@
 import { Entity } from '@/entity.js';
 import { State } from '@/generated/index.js';
-import { ExecQuery } from './exec.js';
+import { ExecQuery, ExecQueryOptions } from './exec.js';
 import { OffsetQuery, OffsetQueryOptions } from './offset.js';
 import { SelectQuery, SelectQueryOptions } from './select.js';
 import { FilterQuery, FilterQueryOptions } from './filter.js';
@@ -16,4 +16,5 @@ export interface FindFirstOrThrowQueryOptions<I extends State, O extends State>
   extends TypeQueryOptions<'FindFirstOrThrow', I>,
     SelectQueryOptions<O>,
     FilterQueryOptions<O>,
-    OffsetQueryOptions {}
+    OffsetQueryOptions,
+    ExecQueryOptions<'FindFirstOrThrow', I, O> {}

@@ -1,7 +1,7 @@
 import { Entity } from '@/entity.js';
 import { State } from '@/generated/index.js';
 import { EntityList } from '@/list.js';
-import { ExecQuery } from './exec.js';
+import { ExecQuery, ExecQueryOptions } from './exec.js';
 import { FilterQuery, FilterQueryOptions } from './filter.js';
 import { LimitQuery, LimitQueryOptions } from './limit.js';
 import { OffsetQuery, OffsetQueryOptions } from './offset.js';
@@ -20,4 +20,5 @@ export interface FindManyQueryOptions<I extends State, O extends State>
     SelectQueryOptions<O>,
     FilterQueryOptions<O>,
     LimitQueryOptions,
-    OffsetQueryOptions {}
+    OffsetQueryOptions,
+    ExecQueryOptions<'FindMany', I, O> {}

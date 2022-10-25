@@ -89,13 +89,6 @@ export type QueryOptions<
   O extends State,
 > = QueryOptionsTypes<I, O>[T];
 
-export type QueryOptionsExec<
-  T extends QueryType,
-  I extends State,
-  O extends State,
-  R = any, // eslint-disable-line @typescript-eslint/no-explicit-any
-> = (options: QueryOptions<T, I, O>) => Promise<R>;
-
 export type QueryType = keyof QueryOptionsTypes<never, never>;
 export type QueryMode = keyof QueryModes<never, never, never>;
 
