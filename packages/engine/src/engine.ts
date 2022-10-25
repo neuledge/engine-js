@@ -32,7 +32,29 @@ import {
 import { EngineStore } from './store.js';
 
 export class NeuledgeEngine<Store extends EngineStore = EngineStore> {
-  constructor(public readonly store: Store) {}
+  private readonly exec: <
+    T extends QueryType = any, // eslint-disable-line @typescript-eslint/no-explicit-any
+    I extends State = any, // eslint-disable-line @typescript-eslint/no-explicit-any
+    O extends State = any, // eslint-disable-line @typescript-eslint/no-explicit-any
+    R = any, // eslint-disable-line @typescript-eslint/no-explicit-any
+  >(
+    this: QueryOptions<T, I, O>,
+  ) => Promise<R>;
+
+  constructor(public readonly store: Store) {
+    // eslint-disable-next-line unicorn/no-this-assignment, @typescript-eslint/no-this-alias
+    const self = this;
+
+    this.exec = async function <
+      T extends QueryType,
+      I extends State,
+      O extends State,
+    >(this: QueryOptions<T, I, O>) {
+      console.log(this);
+
+      throw new Error('Not implemented');
+    };
+  }
 
   // finds
 
@@ -326,16 +348,4 @@ export class NeuledgeEngine<Store extends EngineStore = EngineStore> {
       exec: this.exec,
     });
   }
-
-  // exec
-
-  private readonly exec = async function <
-    T extends QueryType = any, // eslint-disable-line @typescript-eslint/no-explicit-any
-    I extends State = any, // eslint-disable-line @typescript-eslint/no-explicit-any
-    O extends State = any, // eslint-disable-line @typescript-eslint/no-explicit-any
-  >(this: QueryOptions<T, I, O>) {
-    console.log(this);
-
-    throw new Error('Not implemented');
-  };
 }
