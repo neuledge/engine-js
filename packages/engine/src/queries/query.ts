@@ -1,40 +1,77 @@
 import { Entity } from '@/entity.js';
 import { State } from '@/generated/index.js';
-import { CreateManyAndReturnQuery } from './create-many.js';
-import { CreateOneAndReturnQuery } from './create-one.js';
-import { DeleteFirstAndReturnOrThrowQuery } from './delete-first-or-throw.js';
-import { DeleteFirstAndReturnQuery } from './delete-first.js';
-import { DeleteManyAndReturnQuery } from './delete-many.js';
+import {
+  CreateManyAndReturnQuery,
+  CreateManyQueryOptions,
+} from './create-many.js';
+import {
+  CreateOneAndReturnQuery,
+  CreateOneQueryOptions,
+} from './create-one.js';
+import {
+  DeleteFirstAndReturnOrThrowQuery,
+  DeleteFirstOrThrowQueryOptions,
+} from './delete-first-or-throw.js';
+import {
+  DeleteFirstAndReturnQuery,
+  DeleteFirstQueryOptions,
+} from './delete-first.js';
+import {
+  DeleteManyAndReturnQuery,
+  DeleteManyQueryOptions,
+} from './delete-many.js';
 import {
   DeleteUniqueAndReturnOrThrowQuery,
+  DeleteUniqueOrThrowQueryOptions,
   DeleteUniqueWhereAndReturnOrThrowQuery,
   DeleteUniqueWhereOrThrowQuery,
 } from './delete-unique-or-throw.js';
 import {
   DeleteUniqueAndReturnQuery,
+  DeleteUniqueQueryOptions,
   DeleteUniqueWhereAndReturnQuery,
   DeleteUniqueWhereQuery,
 } from './delete-unique.js';
-import { FindFirstOrThrowQuery } from './find-first-or-throw.js';
-import { FindFirstQuery } from './find-first.js';
-import { FindManyQuery } from './find-many.js';
+import { FilterOnlyQueryOptions } from './filter.js';
+import {
+  FindFirstOrThrowQuery,
+  FindFirstOrThrowQueryOptions,
+} from './find-first-or-throw.js';
+import { FindFirstQuery, FindFirstQueryOptions } from './find-first.js';
+import { FindManyQuery, FindManyQueryOptions } from './find-many.js';
 import {
   FindUniqueOrThrowQuery,
+  FindUniqueOrThrowQueryOptions,
   FindUniqueWhereOrThrowQuery,
 } from './find-unique-or-throw.js';
-import { FindUniqueQuery, FindUniqueWhereQuery } from './find-unique.js';
-import { SelectManyQuery } from './select-many.js';
-import { SelectOneQuery } from './select-one.js';
-import { UpdateFirstAndReturnOrThrowQuery } from './update-first-or-throw.js';
-import { UpdateFirstAndReturnQuery } from './update-first.js';
-import { UpdateManyAndReturnQuery } from './update-many.js';
+import {
+  FindUniqueQuery,
+  FindUniqueQueryOptions,
+  FindUniqueWhereQuery,
+} from './find-unique.js';
+import { SelectManyQuery, SelectManyQueryOptions } from './select-many.js';
+import { SelectOneQuery, SelectOneQueryOptions } from './select-one.js';
+import {
+  UpdateFirstAndReturnOrThrowQuery,
+  UpdateFirstOrThrowQueryOptions,
+} from './update-first-or-throw.js';
+import {
+  UpdateFirstAndReturnQuery,
+  UpdateFirstQueryOptions,
+} from './update-first.js';
+import {
+  UpdateManyAndReturnQuery,
+  UpdateManyQueryOptions,
+} from './update-many.js';
 import {
   UpdateUniqueAndReturnOrThrowQuery,
+  UpdateUniqueOrThrowQueryOptions,
   UpdateUniqueWhereAndReturnOrThrowQuery,
   UpdateUniqueWhereOrThrowQuery,
 } from './update-unique-or-throw.js';
 import {
   UpdateUniqueAndReturnQuery,
+  UpdateUniqueQueryOptions,
   UpdateUniqueWhereAndReturnQuery,
   UpdateUniqueWhereQuery,
 } from './update-unique.js';
@@ -46,28 +83,16 @@ export type Query<
   R = Entity<O>,
 > = QueryModes<I, O, R>[M];
 
-export type QueryType =
-  | 'CreateMany'
-  | 'CreateOne'
-  | 'DeleteMany'
-  | 'DeleteFirst'
-  | 'DeleteFirstOrThrow'
-  | 'DeleteUnique'
-  | 'DeleteUniqueOrThrow'
-  | 'FindMany'
-  | 'FindFirst'
-  | 'FindFirstOrThrow'
-  | 'FindUnique'
-  | 'FindUniqueOrThrow'
-  | 'UpdateMany'
-  | 'UpdateFirst'
-  | 'UpdateFirstOrThrow'
-  | 'UpdateUnique'
-  | 'UpdateUniqueOrThrow';
+export type QueryOptions<
+  T extends QueryType,
+  I extends State,
+  O extends State,
+> = QueryOptionsTypes<I, O>[T];
 
+export type QueryType = keyof QueryOptionsTypes<never, never>;
 export type QueryMode = keyof QueryModes<never, never, never>;
 
-export interface QueryModes<I extends State, O extends State, R> {
+interface QueryModes<I extends State, O extends State, R> {
   // CreateMany: never,
   CreateManyAndReturn: CreateManyAndReturnQuery<O, R>;
   // CreateOne: never;
@@ -116,4 +141,27 @@ export interface QueryModes<I extends State, O extends State, R> {
     O,
     R
   >;
+}
+
+interface QueryOptionsTypes<I extends State, O extends State> {
+  CreateMany: CreateManyQueryOptions<I, O>;
+  CreateOne: CreateOneQueryOptions<I, O>;
+  DeleteFirstOrThrow: DeleteFirstOrThrowQueryOptions<I, O>;
+  DeleteFirst: DeleteFirstQueryOptions<I, O>;
+  DeleteMany: DeleteManyQueryOptions<I, O>;
+  DeleteUniqueOrThrow: DeleteUniqueOrThrowQueryOptions<I, O>;
+  DeleteUnique: DeleteUniqueQueryOptions<I, O>;
+  Filter: FilterOnlyQueryOptions<I>;
+  FindFirstOrThrow: FindFirstOrThrowQueryOptions<I, O>;
+  FindFirst: FindFirstQueryOptions<I, O>;
+  FindMany: FindManyQueryOptions<I, O>;
+  FindUniqueOrThrow: FindUniqueOrThrowQueryOptions<I, O>;
+  FindUnique: FindUniqueQueryOptions<I, O>;
+  SelectMany: SelectManyQueryOptions<I, O>;
+  SelectOne: SelectOneQueryOptions<I, O>;
+  UpdateFirstOrThrow: UpdateFirstOrThrowQueryOptions<I, O>;
+  UpdateFirst: UpdateFirstQueryOptions<I, O>;
+  UpdateMany: UpdateManyQueryOptions<I, O>;
+  UpdateUniqueOrThrow: UpdateUniqueOrThrowQueryOptions<I, O>;
+  UpdateUnique: UpdateUniqueQueryOptions<I, O>;
 }

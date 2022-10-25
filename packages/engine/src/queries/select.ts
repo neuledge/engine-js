@@ -8,8 +8,8 @@ import {
 } from '@/generated/index.js';
 import { EntityList } from '@/list.js';
 import { Query, QueryMode } from './query.js';
-import { SelectManyQuery } from './select-many.js';
-import { SelectOneQuery } from './select-one.js';
+import { SelectManyQuery, SelectManyQueryOptions } from './select-many.js';
+import { SelectOneQuery, SelectOneQueryOptions } from './select-one.js';
 import { Merge, Subset } from './utils.js';
 
 export interface SelectQuery<
@@ -87,6 +87,28 @@ export interface SelectQuery<
     states: RS[],
     query: (rel: SelectOneQuery<RS>) => SelectOneQuery<RS, RR>,
   ): Query<M, I, O, R & { [k in K]: RR }>;
+}
+
+export interface SelectQueryOptions<S extends State> {
+  select?: Select<S>;
+  includeMany?: {
+    [K in StateIncludeManyKeys<S>]?: SelectManyQueryOptions<
+      StateRelationState<S, K>,
+      StateRelationState<S, K>
+    >;
+  };
+  includeOne?: {
+    [K in StateIncludeOneKeys<S>]?: SelectOneQueryOptions<
+      StateRelationState<S, K>,
+      StateRelationState<S, K>
+    >;
+  };
+  requireOne?: {
+    [K in StateRequireOneKeys<S>]?: SelectOneQueryOptions<
+      StateRelationState<S, K>,
+      StateRelationState<S, K>
+    >;
+  };
 }
 
 export type Select<S extends State> = {

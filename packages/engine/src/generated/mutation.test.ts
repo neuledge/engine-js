@@ -3,8 +3,8 @@ import {
   StateMutations,
   StateCreateMutations,
   StateDeleteMutations,
-  StateTransformMutations,
-  StateUpdateMutations,
+  StateUpdateWithoutArgsMutations,
+  StateUpdateWithArgsMutations,
   StateMutationsReturn,
 } from './mutation.js';
 import {
@@ -62,19 +62,19 @@ describe('generated/mutation', () => {
   describe('StateUpdateMethods<>', () => {
     it('should have single state methods', () => {
       expect<{ update: 1 }>(
-        {} as Record<StateUpdateMutations<typeof Category>, 1>,
+        {} as Record<StateUpdateWithArgsMutations<typeof Category>, 1>,
       );
       expect<{ update: 1 }>(
-        {} as Record<StateUpdateMutations<typeof DraftPost>, 1>,
+        {} as Record<StateUpdateWithArgsMutations<typeof DraftPost>, 1>,
       );
       expect<{ update: 1 }>(
-        {} as Record<StateUpdateMutations<typeof PublishedPost>, 1>,
+        {} as Record<StateUpdateWithArgsMutations<typeof PublishedPost>, 1>,
       );
     });
 
     it('should have multiple state methods', () => {
       expect<{ update: 1 }>(
-        {} as Record<StateUpdateMutations<typeof Post[number]>, 1>,
+        {} as Record<StateUpdateWithArgsMutations<typeof Post[number]>, 1>,
       );
     });
   });
@@ -82,19 +82,19 @@ describe('generated/mutation', () => {
   describe('StateTransformMethods<>', () => {
     it('should have single state methods', () => {
       expect<Record<never, 1>>(
-        {} as Record<StateTransformMutations<typeof Category>, 1>,
+        {} as Record<StateUpdateWithoutArgsMutations<typeof Category>, 1>,
       );
       expect<{ publish: 1 }>(
-        {} as Record<StateTransformMutations<typeof DraftPost>, 1>,
+        {} as Record<StateUpdateWithoutArgsMutations<typeof DraftPost>, 1>,
       );
       expect<Record<never, 1>>(
-        {} as Record<StateTransformMutations<typeof PublishedPost>, 1>,
+        {} as Record<StateUpdateWithoutArgsMutations<typeof PublishedPost>, 1>,
       );
     });
 
     it('should have multiple state methods', () => {
       expect<Record<never, 1>>(
-        {} as Record<StateTransformMutations<typeof Post[number]>, 1>,
+        {} as Record<StateUpdateWithoutArgsMutations<typeof Post[number]>, 1>,
       );
     });
   });

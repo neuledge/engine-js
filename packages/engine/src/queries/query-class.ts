@@ -4,7 +4,6 @@ import {
   StateFilterKeys,
   StateIncludeManyKeys,
   StateIncludeOneKeys,
-  StateMutationArguments,
   StateMutationsReturn,
   StateMutations,
   StateRelations,
@@ -13,14 +12,14 @@ import {
 } from '@/generated/index.js';
 import { EntityListOffset } from '@/list.js';
 import { ExecQuery } from './exec.js';
-import { FilterQuery } from './filter.js';
-import { LimitQuery } from './limit.js';
-import { OffsetQuery } from './offset.js';
-import { QueryType } from './query.js';
+import { FilterQuery, FilterQueryOptions } from './filter.js';
+import { LimitQuery, LimitQueryOptions } from './limit.js';
+import { OffsetQuery, OffsetQueryOptions } from './offset.js';
+import { QueryOptions, QueryType } from './query.js';
 import { SelectManyQuery } from './select-many.js';
 import { SelectOneQuery } from './select-one.js';
-import { Select, SelectQuery } from './select.js';
-import { UniqueQuery } from './unique.js';
+import { Select, SelectQuery, SelectQueryOptions } from './select.js';
+import { UniqueQuery, UniqueQueryOptions } from './unique.js';
 import { Subset } from './utils.js';
 import { UniqueWhere, Where } from './where.js';
 
@@ -28,8 +27,6 @@ export class QueryClass<
   T extends QueryType,
   I extends State,
   O extends State,
-  K extends StateMutations<I>,
-  A extends StateMutationArguments<I, K>,
 > implements
     SelectQuery<any, I, O, any>, // eslint-disable-line @typescript-eslint/no-explicit-any
     FilterQuery<I>,
@@ -40,58 +37,22 @@ export class QueryClass<
     ExecQuery<any>
 {
   private readonly _engine: NeuledgeEngine;
-  private readonly _type: T;
-  private readonly _inputStates: I[];
+  private readonly _options: QueryOptions<T, I, O>;
   private readonly _outputStates: O[];
-  private readonly _action?: K;
-  private readonly _args?: A[];
-  private _select?: Select<O>;
-  private _includeMany: {
-    [K in StateIncludeManyKeys<O>]?: SelectManyQuery<
-      StateRelationState<O, K>,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      any
-    >;
-  } = {};
-  private _includeOne: {
-    [K in StateIncludeOneKeys<O>]?: SelectOneQuery<
-      StateRelationState<O, K>,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      any
-    >;
-  } = {};
-  private _requireOne: {
-    [K in StateRequireOneKeys<O>]?: SelectOneQuery<
-      StateRelationState<O, K>,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      any
-    >;
-  } = {};
-  private _unique?: UniqueWhere<I>;
-  private _where?: Where<I>;
-  private _filter: {
-    [K in StateFilterKeys<I>]?: FilterQuery<StateRelationState<I, K>>;
-  } = {};
-  private _limit?: number;
-  private _offset?: EntityListOffset;
 
-  constructor(
-    engine: NeuledgeEngine,
-    type: T,
-    states: I[],
-    action?: K,
-    args?: A[],
-  ) {
+  constructor(engine: NeuledgeEngine, options: QueryOptions<T, I, O>) {
     this._engine = engine;
-    this._type = type;
-    this._inputStates = states;
-    this._outputStates = action
-      ? (QueryClass.methodReturnStates(states, action) as never)
-      : (states as never);
-    this._action = action;
-    this._args = args;
+    this._options = options;
 
-    if (type.includes('Unique')) {
+    this._outputStates =
+      'method' in options
+        ? (QueryClass.methodReturnStates(
+            options.states,
+            options.method,
+          ) as never)
+        : (options.states as never);
+
+    if ('unique' in options && options.unique === true) {
       // prevent resolve this query until unique clause provided
       // eslint-disable-next-line unicorn/no-thenable
       this.then = null as never;
@@ -99,72 +60,114 @@ export class QueryClass<
   }
 
   select<P extends Select<O>>(select?: Subset<P, Select<O>>): this {
-    this._select = select;
+    (this._options as SelectQueryOptions<O>).select = select;
     return this;
   }
 
-  includeMany<
-    K extends StateIncludeManyKeys<O>,
-    RS extends StateRelationState<O, K>,
-    RR,
-  >(
+  includeMany<K extends StateIncludeManyKeys<O>>(
     key: K,
-    states?: RS[],
-    query?: (query: SelectManyQuery<RS>) => SelectManyQuery<RS, RR>,
+    states?: StateRelationState<O, K>[],
+    query?: (
+      query: SelectManyQuery<StateRelationState<O, K>>,
+    ) => SelectManyQuery<StateRelationState<O, K>, unknown>,
   ): this {
-    let rel: SelectManyQuery<RS, RR> = new QueryClass(
-      this._engine,
-      this._type,
-      states ?? QueryClass.relationStates(this._outputStates, key),
-    );
-    if (query) rel = query(rel);
+    let rel: QueryClass<
+      'SelectMany',
+      StateRelationState<O, K>,
+      StateRelationState<O, K>
+    > = new QueryClass(this._engine, {
+      type: 'SelectMany',
+      states: states ?? QueryClass.relationStates(this._outputStates, key),
+    });
 
-    this._includeMany[key] = rel;
+    if (query) {
+      rel = query(rel) as QueryClass<
+        'SelectMany',
+        StateRelationState<O, K>,
+        StateRelationState<O, K>
+      >;
+    }
+
+    const options = this._options as SelectQueryOptions<O>;
+
+    if (!options.includeMany) {
+      options.includeMany = {};
+    }
+    options.includeMany[key] = rel._options;
+
     return this;
   }
 
-  includeOne<
-    K extends StateIncludeOneKeys<O>,
-    RS extends StateRelationState<O, K>,
-    RR,
-  >(
+  includeOne<K extends StateIncludeOneKeys<O>>(
     key: K,
-    states?: RS[],
-    query?: (rel: SelectOneQuery<RS>) => SelectOneQuery<RS, RR>,
+    states?: StateRelationState<O, K>[],
+    query?: (
+      rel: SelectOneQuery<StateRelationState<O, K>>,
+    ) => SelectOneQuery<StateRelationState<O, K>, unknown>,
   ): this {
-    let rel: SelectOneQuery<RS, RR> = new QueryClass(
-      this._engine,
-      this._type,
-      states ?? QueryClass.relationStates(this._outputStates, key),
-    );
-    if (query) rel = query(rel);
+    let rel: QueryClass<
+      'SelectOne',
+      StateRelationState<O, K>,
+      StateRelationState<O, K>
+    > = new QueryClass(this._engine, {
+      type: 'SelectOne',
+      states: states ?? QueryClass.relationStates(this._outputStates, key),
+    });
 
-    this._includeOne[key] = rel;
+    if (query) {
+      rel = query(rel) as QueryClass<
+        'SelectOne',
+        StateRelationState<O, K>,
+        StateRelationState<O, K>
+      >;
+    }
+
+    const options = this._options as SelectQueryOptions<O>;
+
+    if (!options.includeOne) {
+      options.includeOne = {};
+    }
+    options.includeOne[key] = rel._options;
+
     return this;
   }
 
-  requireOne<
-    K extends StateRequireOneKeys<O>,
-    RS extends StateRelationState<O, K>,
-    RR,
-  >(
+  requireOne<K extends StateRequireOneKeys<O>>(
     key: K,
-    states?: RS[],
-    query?: (rel: SelectOneQuery<RS>) => SelectOneQuery<RS, RR>,
+    states?: StateRelationState<O, K>[],
+    query?: (
+      rel: SelectOneQuery<StateRelationState<O, K>>,
+    ) => SelectOneQuery<StateRelationState<O, K>, unknown>,
   ): this {
-    let rel: SelectOneQuery<RS, RR> = new QueryClass(
-      this._engine,
-      this._type,
-      states ?? QueryClass.relationStates(this._outputStates, key),
-    );
-    if (query) rel = query(rel);
+    let rel: QueryClass<
+      'SelectOne',
+      StateRelationState<O, K>,
+      StateRelationState<O, K>
+    > = new QueryClass(this._engine, {
+      type: 'SelectOne',
+      states: states ?? QueryClass.relationStates(this._outputStates, key),
+    });
 
-    this._requireOne[key] = rel;
+    if (query) {
+      rel = query(rel) as QueryClass<
+        'SelectOne',
+        StateRelationState<O, K>,
+        StateRelationState<O, K>
+      >;
+    }
+
+    const options = this._options as SelectQueryOptions<O>;
+
+    if (!options.requireOne) {
+      options.requireOne = {};
+    }
+    options.requireOne[key] = rel._options;
+
     return this;
   }
 
   unique(where: UniqueWhere<I>): this {
-    this._unique = where;
+    (this._options as UniqueQueryOptions<I>).unique = where;
 
     // re-enable resolve for this query
     delete (this as Partial<this>).then;
@@ -173,35 +176,57 @@ export class QueryClass<
   }
 
   where(where: Where<I> | null): this {
-    this._where = where ?? undefined;
+    (this._options as FilterQueryOptions<I>).where = where ?? undefined;
     return this;
   }
 
-  filter<K extends StateFilterKeys<I>, RS extends StateRelationState<I, K>>(
+  filter<K extends StateFilterKeys<I>>(
     key: K,
-    states: RS[],
-    query?: (query: FilterQuery<RS>) => FilterQuery<RS>,
+    states: StateRelationState<I, K>[],
+    query?: (
+      query: FilterQuery<StateRelationState<I, K>>,
+    ) => FilterQuery<StateRelationState<I, K>>,
   ): this {
-    let rel: FilterQuery<RS> = new QueryClass(this._engine, this._type, states);
-    if (query) rel = query(rel);
+    let rel: QueryClass<
+      'Filter',
+      StateRelationState<I, K>,
+      StateRelationState<I, K>
+    > = new QueryClass(this._engine, {
+      type: 'Filter',
+      states,
+    });
 
-    this._filter[key] = rel;
+    if (query) {
+      rel = query(rel) as QueryClass<
+        'Filter',
+        StateRelationState<I, K>,
+        StateRelationState<I, K>
+      >;
+    }
+
+    const options = this._options as FilterQueryOptions<I>;
+
+    if (!options.filter) {
+      options.filter = {};
+    }
+    options.filter[key] = rel._options;
+
     return this;
   }
 
   limit(limit: number | null): this {
-    this._limit = limit ?? undefined;
+    (this._options as LimitQueryOptions).limit = limit ?? undefined;
     return this;
   }
 
   offset(offset: EntityListOffset | null): this {
-    this._offset = offset ?? undefined;
+    (this._options as OffsetQueryOptions).offset = offset ?? undefined;
     return this;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async exec(): Promise<any> {
-    if (this._unique == null && this._type.includes('Unique')) {
+    if ('unique' in this._options && this._options.unique === true) {
       throw new TypeError(
         `Can't resolve a unique query without the '.unique()' clause`,
       );

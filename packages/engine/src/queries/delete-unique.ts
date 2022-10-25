@@ -1,9 +1,11 @@
 import { Entity } from '@/entity.js';
-import { State } from '@/generated/index.js';
+import { State, StateDeleteMutations } from '@/generated/index.js';
 import { ExecQuery } from './exec.js';
-import { FilterQuery } from './filter.js';
-import { SelectQuery } from './select.js';
-import { UniqueQuery } from './unique.js';
+import { FilterQuery, FilterQueryOptions } from './filter.js';
+import { MethodQueryOptions } from './method.js';
+import { SelectQuery, SelectQueryOptions } from './select.js';
+import { TypeQueryOptions } from './type.js';
+import { UniqueQuery, UniqueQueryOptions } from './unique.js';
 
 export interface DeleteUniqueQuery<S extends State>
   extends SelectQuery<'DeleteUniqueAndReturn', S, S, Entity<S>>,
@@ -26,3 +28,10 @@ export interface DeleteUniqueWhereAndReturnQuery<S extends State, R = Entity<S>>
     FilterQuery<S>,
     UniqueQuery<'DeleteUniqueWhereAndReturn', S, S, R>,
     ExecQuery<R | undefined> {}
+
+export interface DeleteUniqueQueryOptions<I extends State, O extends State>
+  extends TypeQueryOptions<'DeleteUnique', I>,
+    MethodQueryOptions<StateDeleteMutations<I>>,
+    SelectQueryOptions<O>,
+    FilterQueryOptions<I>,
+    UniqueQueryOptions<I> {}

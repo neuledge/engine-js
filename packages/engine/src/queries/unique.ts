@@ -11,3 +11,7 @@ export interface UniqueQuery<
 > {
   unique(where: UniqueWhere<I>): Query<M, I, O, R>;
 }
+
+export interface UniqueQueryOptions<S extends State> {
+  unique: UniqueWhere<S> | true;
+}

@@ -1,8 +1,10 @@
 import { Entity } from '@/entity.js';
-import { State } from '@/generated/index.js';
+import { State, StateDeleteMutations } from '@/generated/index.js';
 import { ExecQuery } from './exec.js';
-import { FilterQuery } from './filter.js';
-import { SelectQuery } from './select.js';
+import { FilterQuery, FilterQueryOptions } from './filter.js';
+import { MethodQueryOptions } from './method.js';
+import { SelectQuery, SelectQueryOptions } from './select.js';
+import { TypeQueryOptions } from './type.js';
 
 export interface DeleteFirstQuery<S extends State>
   extends SelectQuery<'DeleteFirstAndReturn', S, S, Entity<S>>,
@@ -13,3 +15,9 @@ export interface DeleteFirstAndReturnQuery<S extends State, R = Entity<S>>
   extends SelectQuery<'DeleteFirstAndReturn', S, S, R>,
     FilterQuery<S>,
     ExecQuery<R | undefined> {}
+
+export interface DeleteFirstQueryOptions<I extends State, O extends State>
+  extends TypeQueryOptions<'DeleteFirst', I>,
+    MethodQueryOptions<StateDeleteMutations<I>>,
+    SelectQueryOptions<O>,
+    FilterQueryOptions<I> {}
