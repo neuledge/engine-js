@@ -1,11 +1,11 @@
 import {
   State,
-  StateCreateMethods,
-  StateDeleteMethods,
-  StateMethodArguments,
-  StateMethodReturn,
-  StateTransformMethods,
-  StateUpdateMethods,
+  StateCreateMutations,
+  StateDeleteMutations,
+  StateMutationArguments,
+  StateMutationsReturn,
+  StateTransformMutations,
+  StateUpdateMutations,
 } from './generated/index.js';
 import {
   FindFirstOrThrowQuery,
@@ -39,13 +39,13 @@ export class NeuledgeEngine<Store extends EngineStore> {
   }
 
   findUnique<S extends State>(...states: S[]): FindUniqueQuery<S> {
-    return new QueryClass(states);
+    return new QueryClass(states, true);
   }
 
   findUniqueOrThrow<S extends State>(
     ...states: S[]
   ): FindUniqueOrThrowQuery<S> {
-    return new QueryClass(states);
+    return new QueryClass(states, true);
   }
 
   findFirst<S extends State>(...states: S[]): FindFirstQuery<S> {
@@ -60,177 +60,177 @@ export class NeuledgeEngine<Store extends EngineStore> {
 
   createMany<
     S extends State,
-    K extends StateCreateMethods<S>,
-    A extends StateMethodArguments<S, K>,
+    K extends StateCreateMutations<S>,
+    A extends StateMutationArguments<S, K>,
   >(states: S[], action: K, ...args: A[]): CreateManyQuery<S> {
-    return new QueryClass(states, action, args);
+    return new QueryClass(states, null, action, args);
   }
 
   createOne<
     S extends State,
-    K extends StateCreateMethods<S>,
-    A extends StateMethodArguments<S, K>,
+    K extends StateCreateMutations<S>,
+    A extends StateMutationArguments<S, K>,
   >(states: S[], action: K, args: A): CreateOneQuery<S> {
-    return new QueryClass(states, action, args);
+    return new QueryClass(states, null, action, [args]);
   }
 
-  updateMany<S extends State, K extends StateTransformMethods<S>>(
+  updateMany<S extends State, K extends StateTransformMutations<S>>(
     states: S[],
     action: K,
-  ): UpdateManyQuery<S, StateMethodReturn<S, K>>;
+  ): UpdateManyQuery<S, StateMutationsReturn<S, K>>;
   updateMany<
     S extends State,
-    K extends StateUpdateMethods<S> | StateTransformMethods<S>,
-    A extends StateMethodArguments<S, K>,
+    K extends StateUpdateMutations<S> | StateTransformMutations<S>,
+    A extends StateMutationArguments<S, K>,
   >(
     states: S[],
     action: K,
     args: A,
-  ): UpdateManyQuery<S, StateMethodReturn<S, K>>;
+  ): UpdateManyQuery<S, StateMutationsReturn<S, K>>;
   updateMany<
     S extends State,
-    K extends StateUpdateMethods<S> | StateTransformMethods<S>,
-    A extends StateMethodArguments<S, K>,
+    K extends StateUpdateMutations<S> | StateTransformMutations<S>,
+    A extends StateMutationArguments<S, K>,
   >(
     states: S[],
     action: K,
     args?: A,
-  ): UpdateManyQuery<S, StateMethodReturn<S, K>> {
-    return new QueryClass(states, action, args ?? ({} as A));
+  ): UpdateManyQuery<S, StateMutationsReturn<S, K>> {
+    return new QueryClass(states, null, action, [args ?? ({} as A)]);
   }
 
-  updateFirst<S extends State, K extends StateTransformMethods<S>>(
+  updateFirst<S extends State, K extends StateTransformMutations<S>>(
     states: S[],
     action: K,
-  ): UpdateFirstQuery<S, StateMethodReturn<S, K>>;
+  ): UpdateFirstQuery<S, StateMutationsReturn<S, K>>;
   updateFirst<
     S extends State,
-    K extends StateUpdateMethods<S> | StateTransformMethods<S>,
-    A extends StateMethodArguments<S, K>,
+    K extends StateUpdateMutations<S> | StateTransformMutations<S>,
+    A extends StateMutationArguments<S, K>,
   >(
     states: S[],
     action: K,
     args: A,
-  ): UpdateFirstQuery<S, StateMethodReturn<S, K>>;
+  ): UpdateFirstQuery<S, StateMutationsReturn<S, K>>;
   updateFirst<
     S extends State,
-    K extends StateUpdateMethods<S> | StateTransformMethods<S>,
-    A extends StateMethodArguments<S, K>,
+    K extends StateUpdateMutations<S> | StateTransformMutations<S>,
+    A extends StateMutationArguments<S, K>,
   >(
     states: S[],
     action: K,
     args?: A,
-  ): UpdateFirstQuery<S, StateMethodReturn<S, K>> {
-    return new QueryClass(states, action, args ?? ({} as A));
+  ): UpdateFirstQuery<S, StateMutationsReturn<S, K>> {
+    return new QueryClass(states, null, action, [args ?? ({} as A)]);
   }
 
-  updateFirstOrThrow<S extends State, K extends StateTransformMethods<S>>(
+  updateFirstOrThrow<S extends State, K extends StateTransformMutations<S>>(
     states: S[],
     action: K,
-  ): UpdateFirstOrThrowQuery<S, StateMethodReturn<S, K>>;
+  ): UpdateFirstOrThrowQuery<S, StateMutationsReturn<S, K>>;
   updateFirstOrThrow<
     S extends State,
-    K extends StateUpdateMethods<S> | StateTransformMethods<S>,
-    A extends StateMethodArguments<S, K>,
+    K extends StateUpdateMutations<S> | StateTransformMutations<S>,
+    A extends StateMutationArguments<S, K>,
   >(
     states: S[],
     action: K,
     args: A,
-  ): UpdateFirstOrThrowQuery<S, StateMethodReturn<S, K>>;
+  ): UpdateFirstOrThrowQuery<S, StateMutationsReturn<S, K>>;
   updateFirstOrThrow<
     S extends State,
-    K extends StateUpdateMethods<S> | StateTransformMethods<S>,
-    A extends StateMethodArguments<S, K>,
+    K extends StateUpdateMutations<S> | StateTransformMutations<S>,
+    A extends StateMutationArguments<S, K>,
   >(
     states: S[],
     action: K,
     args?: A,
-  ): UpdateFirstOrThrowQuery<S, StateMethodReturn<S, K>> {
-    return new QueryClass(states, action, args ?? ({} as A));
+  ): UpdateFirstOrThrowQuery<S, StateMutationsReturn<S, K>> {
+    return new QueryClass(states, null, action, [args ?? ({} as A)]);
   }
 
-  updateUnique<S extends State, K extends StateTransformMethods<S>>(
+  updateUnique<S extends State, K extends StateTransformMutations<S>>(
     states: S[],
     action: K,
-  ): UpdateUniqueQuery<S, StateMethodReturn<S, K>>;
+  ): UpdateUniqueQuery<S, StateMutationsReturn<S, K>>;
   updateUnique<
     S extends State,
-    K extends StateUpdateMethods<S> | StateTransformMethods<S>,
-    A extends StateMethodArguments<S, K>,
+    K extends StateUpdateMutations<S> | StateTransformMutations<S>,
+    A extends StateMutationArguments<S, K>,
   >(
     states: S[],
     action: K,
     args: A,
-  ): UpdateUniqueQuery<S, StateMethodReturn<S, K>>;
+  ): UpdateUniqueQuery<S, StateMutationsReturn<S, K>>;
   updateUnique<
     S extends State,
-    K extends StateUpdateMethods<S> | StateTransformMethods<S>,
-    A extends StateMethodArguments<S, K>,
+    K extends StateUpdateMutations<S> | StateTransformMutations<S>,
+    A extends StateMutationArguments<S, K>,
   >(
     states: S[],
     action: K,
     args?: A,
-  ): UpdateUniqueQuery<S, StateMethodReturn<S, K>> {
-    return new QueryClass(states, action, args ?? ({} as A));
+  ): UpdateUniqueQuery<S, StateMutationsReturn<S, K>> {
+    return new QueryClass(states, true, action, [args ?? ({} as A)]);
   }
 
-  updateUniqueOrThrow<S extends State, K extends StateTransformMethods<S>>(
+  updateUniqueOrThrow<S extends State, K extends StateTransformMutations<S>>(
     states: S[],
     action: K,
-  ): UpdateUniqueOrThrowQuery<S, StateMethodReturn<S, K>>;
+  ): UpdateUniqueOrThrowQuery<S, StateMutationsReturn<S, K>>;
   updateUniqueOrThrow<
     S extends State,
-    K extends StateUpdateMethods<S> | StateTransformMethods<S>,
-    A extends StateMethodArguments<S, K>,
+    K extends StateUpdateMutations<S> | StateTransformMutations<S>,
+    A extends StateMutationArguments<S, K>,
   >(
     states: S[],
     action: K,
     args: A,
-  ): UpdateUniqueOrThrowQuery<S, StateMethodReturn<S, K>>;
+  ): UpdateUniqueOrThrowQuery<S, StateMutationsReturn<S, K>>;
   updateUniqueOrThrow<
     S extends State,
-    K extends StateUpdateMethods<S> | StateTransformMethods<S>,
-    A extends StateMethodArguments<S, K>,
+    K extends StateUpdateMutations<S> | StateTransformMutations<S>,
+    A extends StateMutationArguments<S, K>,
   >(
     states: S[],
     action: K,
     args?: A,
-  ): UpdateUniqueOrThrowQuery<S, StateMethodReturn<S, K>> {
-    return new QueryClass(states, action, args ?? ({} as A));
+  ): UpdateUniqueOrThrowQuery<S, StateMutationsReturn<S, K>> {
+    return new QueryClass(states, true, action, [args ?? ({} as A)]);
   }
 
-  deleteMany<S extends State, K extends StateDeleteMethods<S>>(
+  deleteMany<S extends State, K extends StateDeleteMutations<S>>(
     states: S[],
     action: K,
   ): DeleteManyQuery<S> {
-    return new QueryClass(states, action);
+    return new QueryClass(states, null, action);
   }
 
-  deleteFirst<S extends State, K extends StateDeleteMethods<S>>(
+  deleteFirst<S extends State, K extends StateDeleteMutations<S>>(
     states: S[],
     action: K,
   ): DeleteFirstQuery<S> {
-    return new QueryClass(states, action);
+    return new QueryClass(states, null, action);
   }
 
-  deleteOneOrThrow<S extends State, K extends StateDeleteMethods<S>>(
+  deleteOneOrThrow<S extends State, K extends StateDeleteMutations<S>>(
     states: S[],
     action: K,
   ): DeleteFirstOrThrowQuery<S> {
-    return new QueryClass(states, action);
+    return new QueryClass(states, null, action);
   }
 
-  deleteUnique<S extends State, K extends StateDeleteMethods<S>>(
+  deleteUnique<S extends State, K extends StateDeleteMutations<S>>(
     states: S[],
     action: K,
   ): DeleteUniqueQuery<S> {
-    return new QueryClass(states, action);
+    return new QueryClass(states, true, action);
   }
 
-  deleteUniqueOrThrow<S extends State, K extends StateDeleteMethods<S>>(
+  deleteUniqueOrThrow<S extends State, K extends StateDeleteMutations<S>>(
     states: S[],
     action: K,
   ): DeleteUniqueOrThrowQuery<S> {
-    return new QueryClass(states, action);
+    return new QueryClass(states, true, action);
   }
 }

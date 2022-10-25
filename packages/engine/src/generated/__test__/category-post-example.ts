@@ -15,6 +15,7 @@ export class Category {
   static $relations = () => ({
     posts: [[...Post]] as const,
   });
+  static $methods = {};
 
   id!: number;
   name!: string;
@@ -74,6 +75,9 @@ export class DraftPost {
   };
   static $relations = () => ({
     category: [Category],
+  });
+  static $methods = () => ({
+    publish: [PublishedPost],
   });
 
   id!: number;
@@ -162,6 +166,7 @@ export class PublishedPost {
   static $relations = () => ({
     category: [Category],
   });
+  static $methods = {};
 
   id!: number;
   title!: string;

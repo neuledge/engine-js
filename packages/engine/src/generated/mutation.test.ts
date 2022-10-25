@@ -1,11 +1,11 @@
 import {
-  StateMethodArguments,
-  StateMethods,
-  StateCreateMethods,
-  StateDeleteMethods,
-  StateTransformMethods,
-  StateUpdateMethods,
-  StateMethodReturn,
+  StateMutationArguments,
+  StateMutations,
+  StateCreateMutations,
+  StateDeleteMutations,
+  StateTransformMutations,
+  StateUpdateMutations,
+  StateMutationsReturn,
 } from './mutation.js';
 import {
   Category,
@@ -20,21 +20,21 @@ describe('generated/mutation', () => {
   describe('StateMethods<>', () => {
     it('should have single state methods', () => {
       expect<{ create: 1; update: 1; delete: 1 }>(
-        {} as Record<StateMethods<typeof Category>, 1>,
+        {} as Record<StateMutations<typeof Category>, 1>,
       );
 
       expect<{ create: 1; update: 1; publish: 1; delete: 1 }>(
-        {} as Record<StateMethods<typeof DraftPost>, 1>,
+        {} as Record<StateMutations<typeof DraftPost>, 1>,
       );
 
       expect<{ update: 1; delete: 1 }>(
-        {} as Record<StateMethods<typeof PublishedPost>, 1>,
+        {} as Record<StateMutations<typeof PublishedPost>, 1>,
       );
     });
 
     it('should have multiple state methods', () => {
       expect<{ update: 1; delete: 1 }>(
-        {} as Record<StateMethods<typeof Post[number]>, 1>,
+        {} as Record<StateMutations<typeof Post[number]>, 1>,
       );
     });
   });
@@ -42,19 +42,19 @@ describe('generated/mutation', () => {
   describe('StateCreateMethods<>', () => {
     it('should have single state methods', () => {
       expect<{ create: 1 }>(
-        {} as Record<StateCreateMethods<typeof Category>, 1>,
+        {} as Record<StateCreateMutations<typeof Category>, 1>,
       );
       expect<{ create: 1 }>(
-        {} as Record<StateCreateMethods<typeof DraftPost>, 1>,
+        {} as Record<StateCreateMutations<typeof DraftPost>, 1>,
       );
       expect<Record<never, 1>>(
-        {} as Record<StateCreateMethods<typeof PublishedPost>, 1>,
+        {} as Record<StateCreateMutations<typeof PublishedPost>, 1>,
       );
     });
 
     it('should have multiple state methods', () => {
       expect<Record<never, 1>>(
-        {} as Record<StateCreateMethods<typeof Post[number]>, 1>,
+        {} as Record<StateCreateMutations<typeof Post[number]>, 1>,
       );
     });
   });
@@ -62,19 +62,19 @@ describe('generated/mutation', () => {
   describe('StateUpdateMethods<>', () => {
     it('should have single state methods', () => {
       expect<{ update: 1 }>(
-        {} as Record<StateUpdateMethods<typeof Category>, 1>,
+        {} as Record<StateUpdateMutations<typeof Category>, 1>,
       );
       expect<{ update: 1 }>(
-        {} as Record<StateUpdateMethods<typeof DraftPost>, 1>,
+        {} as Record<StateUpdateMutations<typeof DraftPost>, 1>,
       );
       expect<{ update: 1 }>(
-        {} as Record<StateUpdateMethods<typeof PublishedPost>, 1>,
+        {} as Record<StateUpdateMutations<typeof PublishedPost>, 1>,
       );
     });
 
     it('should have multiple state methods', () => {
       expect<{ update: 1 }>(
-        {} as Record<StateUpdateMethods<typeof Post[number]>, 1>,
+        {} as Record<StateUpdateMutations<typeof Post[number]>, 1>,
       );
     });
   });
@@ -82,19 +82,19 @@ describe('generated/mutation', () => {
   describe('StateTransformMethods<>', () => {
     it('should have single state methods', () => {
       expect<Record<never, 1>>(
-        {} as Record<StateTransformMethods<typeof Category>, 1>,
+        {} as Record<StateTransformMutations<typeof Category>, 1>,
       );
       expect<{ publish: 1 }>(
-        {} as Record<StateTransformMethods<typeof DraftPost>, 1>,
+        {} as Record<StateTransformMutations<typeof DraftPost>, 1>,
       );
       expect<Record<never, 1>>(
-        {} as Record<StateTransformMethods<typeof PublishedPost>, 1>,
+        {} as Record<StateTransformMutations<typeof PublishedPost>, 1>,
       );
     });
 
     it('should have multiple state methods', () => {
       expect<Record<never, 1>>(
-        {} as Record<StateTransformMethods<typeof Post[number]>, 1>,
+        {} as Record<StateTransformMutations<typeof Post[number]>, 1>,
       );
     });
   });
@@ -102,19 +102,19 @@ describe('generated/mutation', () => {
   describe('StateDeleteMethods<>', () => {
     it('should have single state methods', () => {
       expect<{ delete: 1 }>(
-        {} as Record<StateDeleteMethods<typeof Category>, 1>,
+        {} as Record<StateDeleteMutations<typeof Category>, 1>,
       );
       expect<{ delete: 1 }>(
-        {} as Record<StateDeleteMethods<typeof DraftPost>, 1>,
+        {} as Record<StateDeleteMutations<typeof DraftPost>, 1>,
       );
       expect<{ delete: 1 }>(
-        {} as Record<StateDeleteMethods<typeof PublishedPost>, 1>,
+        {} as Record<StateDeleteMutations<typeof PublishedPost>, 1>,
       );
     });
 
     it('should have multiple state methods', () => {
       expect<{ delete: 1 }>(
-        {} as Record<StateDeleteMethods<typeof Post[number]>, 1>,
+        {} as Record<StateDeleteMutations<typeof Post[number]>, 1>,
       );
     });
   });
@@ -124,20 +124,20 @@ describe('generated/mutation', () => {
       expect<{
         name: string;
         description?: string | null;
-      }>({} as StateMethodArguments<typeof Category, 'create'>);
+      }>({} as StateMutationArguments<typeof Category, 'create'>);
 
       expect<{
         title: string;
         content?: string | null;
         category?: typeof Category['$id'] | null;
-      }>({} as StateMethodArguments<typeof DraftPost, 'update'>);
+      }>({} as StateMutationArguments<typeof DraftPost, 'update'>);
 
       expect<Record<string, never>>(
-        {} as StateMethodArguments<typeof DraftPost, 'publish'>,
+        {} as StateMutationArguments<typeof DraftPost, 'publish'>,
       );
 
       expect<Record<string, never>>(
-        {} as StateMethodArguments<typeof PublishedPost, 'delete'>,
+        {} as StateMutationArguments<typeof PublishedPost, 'delete'>,
       );
     });
 
@@ -146,10 +146,10 @@ describe('generated/mutation', () => {
         title: string;
         content: string;
         category: typeof Category['$id'];
-      }>({} as StateMethodArguments<typeof Post[number], 'update'>);
+      }>({} as StateMutationArguments<typeof Post[number], 'update'>);
 
       expect<Record<string, never>>(
-        {} as StateMethodArguments<typeof Post[number], 'delete'>,
+        {} as StateMutationArguments<typeof Post[number], 'delete'>,
       );
     });
   });
@@ -157,26 +157,26 @@ describe('generated/mutation', () => {
   describe('StateMethodReturn<>', () => {
     it('should have single state method return', () => {
       expect<typeof Category>(
-        {} as StateMethodReturn<typeof Category, 'create'>,
+        {} as StateMutationsReturn<typeof Category, 'create'>,
       );
 
       expect<typeof DraftPost>(
-        {} as StateMethodReturn<typeof DraftPost, 'update'>,
+        {} as StateMutationsReturn<typeof DraftPost, 'update'>,
       );
 
       expect<typeof PublishedPost>(
-        {} as StateMethodReturn<typeof DraftPost, 'publish'>,
+        {} as StateMutationsReturn<typeof DraftPost, 'publish'>,
       );
 
-      expect<never>({} as StateMethodReturn<typeof PublishedPost, 'delete'>);
+      expect<never>({} as StateMutationsReturn<typeof PublishedPost, 'delete'>);
     });
 
     it('should have multiple states method return', () => {
       expect<typeof DraftPost | typeof PublishedPost>(
-        {} as StateMethodReturn<typeof Post[number], 'update'>,
+        {} as StateMutationsReturn<typeof Post[number], 'update'>,
       );
 
-      expect<never>({} as StateMethodReturn<typeof Post[number], 'delete'>);
+      expect<never>({} as StateMutationsReturn<typeof Post[number], 'delete'>);
     });
   });
 });

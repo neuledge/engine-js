@@ -37,37 +37,37 @@ type Resolveable<T> = T | PromiseLike<T>;
 
 // state methods
 
-export type StateMethods<S extends State> =
-  | StateCreateMethods<S>
-  | StateUpdateMethods<S>
-  | StateTransformMethods<S>
-  | StateDeleteMethods<S>;
+export type StateMutations<S extends State> =
+  | StateCreateMutations<S>
+  | StateUpdateMutations<S>
+  | StateTransformMutations<S>
+  | StateDeleteMutations<S>;
 
-export type StateCreateMethods<S extends State> = {
+export type StateCreateMutations<S extends State> = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [M in keyof S]: S[M] extends CreateMutation<S, any> ? M : never;
 }[keyof S];
 
-export type StateUpdateMethods<S extends State> = {
+export type StateUpdateMutations<S extends State> = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [M in keyof S]: S[M] extends UpdateMutation<S, any, State<string, object>>
     ? M
     : never;
 }[keyof S];
 
-export type StateTransformMethods<S extends State> = {
+export type StateTransformMutations<S extends State> = {
   [M in keyof S]: S[M] extends TransformMutation<S, State<string, object>>
     ? M
     : never;
 }[keyof S];
 
-export type StateDeleteMethods<S extends State> = {
+export type StateDeleteMutations<S extends State> = {
   [M in keyof S]: S[M] extends DeleteMutation<S> ? M : never;
 }[keyof S];
 
-// state action helpers
+// state mutation helpers
 
-export type StateMethodArguments<
+export type StateMutationArguments<
   S extends State,
   M extends keyof S,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -78,7 +78,7 @@ export type StateMethodArguments<
     : A
   : Record<string, never>;
 
-export type StateMethodReturn<
+export type StateMutationsReturn<
   S extends State,
   M extends keyof S,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
