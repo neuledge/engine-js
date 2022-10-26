@@ -60,7 +60,7 @@ export class QueryClass<
 
   includeMany<K extends StateIncludeManyKeys<O>>(
     key: K,
-    states?: StateRelationState<O, K>[],
+    states?: StateRelationState<O, K>[] | null,
     query?: (
       query: SelectManyQuery<StateRelationState<O, K>>,
     ) => SelectManyQuery<StateRelationState<O, K>, unknown>,
@@ -94,7 +94,7 @@ export class QueryClass<
 
   includeOne<K extends StateIncludeOneKeys<O>>(
     key: K,
-    states?: StateRelationState<O, K>[],
+    states?: StateRelationState<O, K>[] | null,
     query?: (
       rel: SelectOneQuery<StateRelationState<O, K>>,
     ) => SelectOneQuery<StateRelationState<O, K>, unknown>,
@@ -128,7 +128,7 @@ export class QueryClass<
 
   requireOne<K extends StateRequireOneKeys<O>>(
     key: K,
-    states?: StateRelationState<O, K>[],
+    states?: StateRelationState<O, K>[] | null,
     query?: (
       rel: SelectOneQuery<StateRelationState<O, K>>,
     ) => SelectOneQuery<StateRelationState<O, K>, unknown>,
@@ -176,7 +176,7 @@ export class QueryClass<
 
   filter<K extends StateFilterKeys<I>>(
     key: K,
-    states: StateRelationState<I, K>[],
+    states: StateRelationState<I, K>[] | null,
     query?: (
       query: FilterQuery<StateRelationState<I, K>>,
     ) => FilterQuery<StateRelationState<I, K>>,
@@ -187,7 +187,7 @@ export class QueryClass<
       StateRelationState<I, K>
     > = new QueryClass({
       type: 'Filter',
-      states,
+      states: states ?? QueryClass.relationStates(this.options.states, key),
     });
 
     if (query) {

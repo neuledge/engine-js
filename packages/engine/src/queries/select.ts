@@ -38,6 +38,13 @@ export interface SelectQuery<
     key: K,
     states: RS[],
   ): Query<M, I, O, R & { [k in K]: EntityList<Entity<RS>> }>;
+  includeMany<K extends StateIncludeManyKeys<O>, RR>(
+    key: K,
+    states: null,
+    query: (
+      query: SelectManyQuery<StateRelationState<O, K>>,
+    ) => SelectManyQuery<StateRelationState<O, K>, RR>,
+  ): Query<M, I, O, R & { [k in K]: EntityList<RR> }>;
   includeMany<
     K extends StateIncludeManyKeys<O>,
     RS extends StateRelationState<O, K>,
@@ -58,6 +65,13 @@ export interface SelectQuery<
     key: K,
     states: RS[],
   ): Query<M, I, O, R & { [k in K]?: Entity<RS> | null }>;
+  includeOne<K extends StateIncludeOneKeys<O>, RR>(
+    key: K,
+    states: null,
+    query: (
+      rel: SelectOneQuery<StateRelationState<O, K>>,
+    ) => SelectOneQuery<StateRelationState<O, K>, RR>,
+  ): Query<M, I, O, R & { [k in K]?: RR | null }>;
   includeOne<
     K extends StateIncludeOneKeys<O>,
     RS extends StateRelationState<O, K>,
@@ -78,6 +92,13 @@ export interface SelectQuery<
     key: K,
     states: RS[],
   ): Query<M, I, O, R & { [k in K]: Entity<RS> }>;
+  requireOne<K extends StateRequireOneKeys<O>, RR>(
+    key: K,
+    states: null,
+    query: (
+      rel: SelectOneQuery<StateRelationState<O, K>>,
+    ) => SelectOneQuery<StateRelationState<O, K>, RR>,
+  ): Query<M, I, O, R & { [k in K]: RR }>;
   requireOne<
     K extends StateRequireOneKeys<O>,
     RS extends StateRelationState<O, K>,

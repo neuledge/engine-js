@@ -18,6 +18,11 @@ export interface FilterQuery<S extends State> {
     states: RS[],
     query: (query: FilterQuery<RS>) => FilterQuery<RS>,
   ): this;
+  filter<K extends StateFilterKeys<S>, RS extends StateRelationState<S, K>>(
+    key: K,
+    states: null,
+    query: (query: FilterQuery<RS>) => FilterQuery<RS>,
+  ): this;
 }
 
 export interface FilterQueryOptions<S extends State> {
