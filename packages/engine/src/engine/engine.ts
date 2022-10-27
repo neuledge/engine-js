@@ -6,7 +6,7 @@ import {
   StateMutationsReturn,
   StateUpdateWithoutArgsMutations,
   StateUpdateMutations,
-} from './generated/index.js';
+} from '../generated/index.js';
 import {
   FindFirstOrThrowQuery,
   FindFirstQuery,
@@ -28,10 +28,11 @@ import {
   UpdateUniqueOrThrowQuery,
   QueryType,
   QueryOptions,
-} from './queries/index.js';
-import { EngineStore } from './store.js';
+} from '../queries/index.js';
+import { Store } from '../store/index.js';
+import { createExec } from './exec.js';
 
-export class NeuledgeEngine<Store extends EngineStore = EngineStore> {
+export class NeuledgeEngine {
   private readonly exec: <
     T extends QueryType = any, // eslint-disable-line @typescript-eslint/no-explicit-any
     I extends State = any, // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -42,18 +43,7 @@ export class NeuledgeEngine<Store extends EngineStore = EngineStore> {
   ) => Promise<R>;
 
   constructor(public readonly store: Store) {
-    // eslint-disable-next-line unicorn/no-this-assignment, @typescript-eslint/no-this-alias
-    const self = this;
-
-    this.exec = async function <
-      T extends QueryType,
-      I extends State,
-      O extends State,
-    >(this: QueryOptions<T, I, O>) {
-      console.log(this);
-
-      throw new Error('Not implemented');
-    };
+    this.exec = createExec(store);
   }
 
   // finds

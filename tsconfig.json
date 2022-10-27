@@ -3,7 +3,10 @@
   "compilerOptions": {},
   "references": [
     { "path": "packages/scalars" },
+
     { "path": "packages/engine" },
+    { "path": "packages/mongodb-store" },
+
     { "path": "packages/states" },
     { "path": "packages/states-ts" },
     { "path": "packages/states-cli" },
