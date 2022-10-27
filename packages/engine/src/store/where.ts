@@ -1,31 +1,68 @@
 import { StoreDocumentValue } from './document.js';
 
-// TODO support advance where
-export type StoreWhere = Record<FieldName, StoreWhereTerm> | StoreWhereOrTerm;
+export type StoreWhere =
+  | Record<FieldName, StoreWhereFilter>
+  | StoreWhereOrFilter;
 
 type FieldName = string;
 
-export type StoreWhereTerm =
-  | StoreWhereEqualTerm
-  | StoreWhereNotEqualTerm
-  | StoreWhereInTerm
-  | StoreWhereNotInTerm;
+export type StoreWhereFilter =
+  | StoreWhereEqualsFilter
+  | StoreWhereNotEqualsFilter
+  | StoreWhereLowerThenFilter
+  | StoreWhereLowerThenEqualFilter
+  | StoreWhereGreaterThenFilter
+  | StoreWhereGreaterThenEqualFilter
+  | StoreWhereContainsFilter
+  | StoreWhereStartsWithFilter
+  | StoreWhereEndsWithFilter
+  | StoreWhereInFilter
+  | StoreWhereNotInFilter;
 
-export interface StoreWhereEqualTerm {
+export interface StoreWhereOrFilter {
+  $or: StoreWhere[];
+}
+
+export interface StoreWhereEqualsFilter {
   $eq: StoreDocumentValue;
 }
-export interface StoreWhereNotEqualTerm {
+
+export interface StoreWhereNotEqualsFilter {
   $ne: StoreDocumentValue;
 }
 
-export interface StoreWhereInTerm {
+export interface StoreWhereLowerThenFilter {
+  $lt: StoreDocumentValue;
+}
+
+export interface StoreWhereLowerThenEqualFilter {
+  $lte: StoreDocumentValue;
+}
+
+export interface StoreWhereGreaterThenFilter {
+  $gt: StoreDocumentValue;
+}
+
+export interface StoreWhereGreaterThenEqualFilter {
+  $gte: StoreDocumentValue;
+}
+
+export interface StoreWhereContainsFilter {
+  $contains: StoreDocumentValue;
+}
+
+export interface StoreWhereStartsWithFilter {
+  $startsWith: StoreDocumentValue;
+}
+
+export interface StoreWhereEndsWithFilter {
+  $endsWith: StoreDocumentValue;
+}
+
+export interface StoreWhereInFilter {
   $in: StoreDocumentValue[];
 }
 
-export interface StoreWhereNotInTerm {
+export interface StoreWhereNotInFilter {
   $nin: StoreDocumentValue[];
-}
-
-export interface StoreWhereOrTerm {
-  $or: StoreWhere[];
 }
