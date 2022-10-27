@@ -13,8 +13,8 @@ describe('Scalar', () => {
   describe('createScalar()', () => {
     it('should create from object', () => {
       const scalar = createScalar({
+        key: 'test',
         encode: (value: string | number) => Buffer.from(String(value)),
-
         decode: (buffer) => buffer.toString(),
       });
 
@@ -28,6 +28,7 @@ describe('Scalar', () => {
 
       expect(scalar.encode(123)).toBe('123');
       expect(scalar.decode).toBe(undefined);
+      expect(scalar.key).toBe('String');
     });
   });
 
@@ -41,16 +42,19 @@ describe('Scalar', () => {
   describe('Scalar<>', () => {
     it('should match scalar oject', () => {
       expect<Scalar<string>>({
+        key: 'test',
         encode: (value: string) => value,
         decode: (value: string) => value,
       });
 
       expect<Scalar<string, unknown>>({
+        key: 'test',
         encode: String,
         decode: (value: string) => value,
       });
 
       expect<Scalar<string, unknown, number>>({
+        key: 'test',
         encode: Number,
         decode: String,
       });
@@ -58,6 +62,7 @@ describe('Scalar', () => {
 
     it('should omit method types', () => {
       const scalar: Scalar<string, unknown, number> = {
+        key: 'test',
         encode: Number,
         decode: String,
       };

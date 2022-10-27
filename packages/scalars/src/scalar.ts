@@ -3,6 +3,8 @@ export interface Scalar<
   Input = Type,
   Value = Type,
 > {
+  key: string;
+  variants?: Record<string, unknown>;
   encode: (value: Input) => Value | PromiseLike<Value>;
   decode?: (value: Value) => Type | PromiseLike<Type>;
 }
@@ -41,4 +43,4 @@ export const createScalar = <Type, Input, Value>(
     | Scalar<Type, Input, Value>
     | (ScalarFunction<Type, Input> & ScalarFunction<Value, Input>),
 ): Scalar<Type, Input, Value> =>
-  typeof scalar === 'function' ? { encode: scalar } : scalar;
+  typeof scalar === 'function' ? { key: scalar.name, encode: scalar } : scalar;
