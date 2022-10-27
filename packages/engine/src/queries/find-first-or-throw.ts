@@ -5,10 +5,12 @@ import { OffsetQuery, OffsetQueryOptions } from './offset.js';
 import { SelectQuery, SelectQueryOptions } from './select.js';
 import { FilterQuery, FilterQueryOptions } from './filter.js';
 import { TypeQueryOptions } from './type.js';
+import { SortQuery, SortQueryOptions } from './sort.js';
 
 export interface FindFirstOrThrowQuery<S extends State, R = Entity<S>>
   extends SelectQuery<'FindFirstOrThrow', S, S, R>,
     FilterQuery<S>,
+    SortQuery<S>,
     OffsetQuery,
     ExecQuery<R> {}
 
@@ -16,5 +18,6 @@ export interface FindFirstOrThrowQueryOptions<I extends State, O extends State>
   extends TypeQueryOptions<'FindFirstOrThrow', I>,
     SelectQueryOptions<O>,
     FilterQueryOptions<O>,
+    SortQueryOptions<O>,
     OffsetQueryOptions,
     ExecQueryOptions<'FindFirstOrThrow', I, O> {}

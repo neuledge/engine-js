@@ -7,6 +7,7 @@ export interface State<K extends string = string, T = any> {
   $relations?: Defer<{
     [K in string]: readonly State[] | readonly [readonly State[]];
   }>;
+  $indexes?: { [K in string]: (keyof T)[] };
   $methods?: Defer<{ [K in string]?: readonly State[] }>;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -19,6 +20,7 @@ export type StateKey<S extends State> = S['$key'];
 export type StateId<S extends State> = S['$id'];
 export type StateQuery<S extends State> = S['$find'];
 export type StateUnique<S extends State> = S['$unique'];
+export type StateIndexes<S extends State> = NonNullable<S['$indexes']>;
 export type StateRelations<S extends State> = S extends {
   $relations: Defer<infer R>;
 }

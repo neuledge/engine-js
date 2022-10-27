@@ -18,6 +18,7 @@ import { QueryOptions, QueryType } from './query.js';
 import { SelectManyQuery } from './select-many.js';
 import { SelectOneQuery } from './select-one.js';
 import { Select, SelectQuery, SelectQueryOptions } from './select.js';
+import { SortField, SortIndex, SortQueryOptions } from './sort.js';
 import { UniqueQuery, UniqueQueryOptions } from './unique.js';
 import { Subset } from './utils.js';
 import { UniqueWhere, Where } from './where.js';
@@ -205,6 +206,12 @@ export class QueryClass<
     }
     options.filter[key] = rel.options;
 
+    return this;
+  }
+
+  sort(sort: '*' | SortIndex<O> | null, ...fields: SortField<O>[]): this {
+    (this.options as SortQueryOptions<O>).sort =
+      sort === '*' ? fields : sort ?? undefined;
     return this;
   }
 
