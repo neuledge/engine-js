@@ -9,8 +9,14 @@ export const StringScalar = createScalarGeneratorScalar(
     min?: number | null;
     max?: number | null;
   }): Scalar<string> => ({
-    key: 'String',
-    variants: { max, min },
+    key:
+      min == null
+        ? max == null
+          ? 'String'
+          : `String(${max})`
+        : max == null
+        ? `String(${min},)`
+        : `String(${max},${min})`,
 
     encode: (value) => {
       if (min != null && value.length < min) {

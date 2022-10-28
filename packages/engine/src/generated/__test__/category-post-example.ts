@@ -1,10 +1,24 @@
-import { Entity as $, StateId as $id } from '@neuledge/engine';
+import {
+  NumberScalar as Number,
+  StringScalar as String,
+} from '@neuledge/scalars';
+import {
+  Entity as $,
+  StateDefinition as $State,
+  StateId as $id,
+} from '@neuledge/engine';
 
 /**
  * Basic category
  */
+@$State
 export class Category {
   static $key = 'Category' as const;
+  static $scalars = {
+    id: { type: Number },
+    name: { type: String },
+    description: { type: String, nullable: true },
+  };
   static $id: { id: number };
   static $find: {
     id?: number;
@@ -64,8 +78,15 @@ export class Category {
 /**
  * Post in draft state
  */
+@$State
 export class DraftPost {
   static $key = 'DraftPost' as const;
+  static $scalars = {
+    id: { type: Number },
+    category: { type: [Category], nullable: true },
+    title: { type: String },
+    content: { type: String, nullable: true },
+  };
   static $id: { id: number };
   static $find: {
     id?: number;
@@ -152,8 +173,15 @@ export class DraftPost {
 /**
  * Post in published state
  */
+@$State
 export class PublishedPost {
   static $key = 'PublishedPost' as const;
+  static $scalars = {
+    id: { type: Number },
+    category: { type: [Category] },
+    title: { type: String },
+    content: { type: String },
+  };
   static $id: { id: number };
   static $find:
     | {
@@ -198,4 +226,4 @@ export class PublishedPost {
 }
 
 export type Post = DraftPost | PublishedPost;
-export const Post = [DraftPost, PublishedPost];
+export const Post = Object.assign([DraftPost, PublishedPost], { $key: 'Post' });

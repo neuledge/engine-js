@@ -4,7 +4,6 @@ export interface Scalar<
   Value = Type,
 > {
   key: string;
-  variants?: Record<string, unknown>;
   encode: (value: Input) => Value | PromiseLike<Value>;
   decode?: (value: Value) => Type | PromiseLike<Type>;
 }

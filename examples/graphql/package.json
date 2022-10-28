@@ -10,6 +10,7 @@
     "start": "node lib/app.js"
   },
   "dependencies": {
+    "@neuledge/scalars": "^0.1.0-alpha.1",
     "@neuledge/engine": "^0.1.0-alpha.1",
     "fastify": "^4.8.1",
     "graphql": "^16.6.0",

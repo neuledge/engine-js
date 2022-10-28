@@ -1,6 +1,8 @@
 import { EntityNode, States } from '@neuledge/states';
 import { generateState } from './state.js';
 
+// TODO escape conflicted helper names like `$id<>`, etc.
+
 export const generate = (
   states: States,
   entities: Iterable<EntityNode> = states.entities(),

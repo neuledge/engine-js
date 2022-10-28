@@ -8,6 +8,7 @@ import {
   StateRelations,
   StateRelationState,
   StateRequireOneKeys,
+  resolveDefer,
 } from '@/generated/index.js';
 import { EntityListOffset } from '@/list.js';
 import { ExecQuery, ExecQueryOptions } from './exec.js';
@@ -262,9 +263,7 @@ export class QueryClass<
         // eslint-disable-next-line unicorn/prefer-spread
         ([] as StateRelationState<S, K>[]).concat(
           ...states.map((item): StateRelationState<S, K>[] => {
-            const rel = QueryClass.resolveDefer(item.$relations, {})[
-              key as string
-            ];
+            const rel = resolveDefer(item.$relations, {})[key as string];
 
             return Array.isArray(rel) && Array.isArray(rel[0])
               ? (rel[0] as StateRelationState<S, K>[])
@@ -284,25 +283,12 @@ export class QueryClass<
         // eslint-disable-next-line unicorn/prefer-spread
         ([] as StateMutationsReturn<S, K>[]).concat(
           ...states.map((item): StateMutationsReturn<S, K>[] => {
-            const rel = QueryClass.resolveDefer(item.$methods, {})[
-              key as string
-            ];
+            const rel = resolveDefer(item.$methods, {})[key as string];
 
             return (rel ?? [item]) as StateMutationsReturn<S, K>[];
           }),
         ),
       ),
     ];
-  }
-
-  private static resolveDefer<T>(
-    defer: T | (() => T) | undefined | null,
-    def: T,
-  ): T {
-    if (typeof defer === 'function') {
-      return (defer as () => T)();
-    }
-
-    return defer ?? (def as T);
   }
 }
