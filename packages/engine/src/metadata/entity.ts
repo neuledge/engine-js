@@ -12,42 +12,46 @@ export const serializeMetadataEntity = (
     : serializeMetadataState(entity);
 
 export const isEntityMatches = (
-  origin: MetadataEntity | MetadataState[],
+  actual: MetadataEntity | MetadataState[],
   target: MetadataEntity | MetadataState[],
 ): boolean => {
-  if (Array.isArray(origin)) {
-    return origin.every((item) => isStateMatches(item, target));
+  if (Array.isArray(actual)) {
+    return actual.every((item) => isStateMatches(item, target));
   }
 
-  return isStateMatches(origin, target);
+  return isStateMatches(actual, target);
 };
 
 const isStateMatches = (
-  origin: MetadataState,
+  actual: MetadataState,
   target: MetadataEntity | MetadataState[],
 ): boolean => {
   if (Array.isArray(target)) {
-    return target.some((item) => isStatesMatches(origin, item));
+    return target.some((item) => isStatesMatches(actual, item));
   }
 
-  return isStatesMatches(origin, target);
+  return isStatesMatches(actual, target);
 };
 
 const isStatesMatches = (
-  origin: MetadataState,
+  actual: MetadataState,
   target: MetadataState,
 ): boolean =>
-  Object.entries(origin.fields).every(([key, { type, nullable }]) => {
-    if (nullable) return true;
-
-    const targetField = target.fields[key];
-    if (targetField.nullable) return false;
-
-    const targetType = targetField.type;
-
-    if (!Array.isArray(type)) {
-      return type === targetType;
+  Object.entries(target.fields).every(([key, { type, nullable }]) => {
+    const actualField = actual.fields[key];
+    if (!actualField) {
+      return nullable;
     }
 
-    return Array.isArray(targetType) && isEntityMatches(type, targetType);
+    if (actualField.nullable && !nullable) {
+      return false;
+    }
+
+    const actualType = actualField.type;
+
+    if (!Array.isArray(type)) {
+      return type === actualType;
+    }
+
+    return Array.isArray(actualType) && isEntityMatches(actualType, type);
   });
