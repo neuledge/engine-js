@@ -4,9 +4,11 @@ import { Scalar } from '@neuledge/scalars';
 export interface State<K extends string = string, T = any> {
   $key: K;
   $scalars: Defer<{
-    [K in keyof T]: T[K] extends undefined | null
-      ? { type: StateScalarType<NonNullable<T[K]>>; nullable: true }
-      : { type: StateScalarType<T[K]>; nullable?: false };
+    [K in keyof T]: {
+      type: StateScalarType<T[K]>;
+      index: number;
+      nullable?: boolean;
+    };
   }>;
   $id: { [K in keyof T]?: T[K] };
   $find: { [K in keyof T]?: T[K] };

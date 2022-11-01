@@ -11,7 +11,7 @@ export type StoreDocumentValue =
 
 export type StoreListOffset = string | number | Buffer;
 
-export interface StoreList extends Array<StoreDocument> {
+export interface StoreList<T = StoreDocument> extends Array<T> {
   nextOffset?: StoreListOffset | null;
 }
 

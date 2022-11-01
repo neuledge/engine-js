@@ -1,8 +1,28 @@
-import { MetadataState, serializeMetadataState } from './state.js';
-import { MetadataEither, serializeMetadataEither } from './either.js';
+import {
+  isMetadataStatesEquals,
+  MetadataState,
+  serializeMetadataState,
+} from './state.js';
+import {
+  isMetadataEithersEquals,
+  MetadataEither,
+  serializeMetadataEither,
+} from './either.js';
 
 export type MetadataEntity = MetadataState | MetadataEither;
-export type MetadataEntityHash = string;
+export type MetadataEntityHash = Buffer;
+
+export const isMetadataEntitiesEquals = (
+  a: MetadataEntity,
+  b: MetadataEntity,
+): boolean =>
+  Array.isArray(a)
+    ? Array.isArray(b)
+      ? isMetadataEithersEquals(a, b)
+      : false
+    : Array.isArray(b)
+    ? false
+    : isMetadataStatesEquals(a, b);
 
 export const serializeMetadataEntity = (
   entity: MetadataEntity,

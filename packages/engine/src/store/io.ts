@@ -1,11 +1,24 @@
-import { StoreDocument, StoreListOffset, StoreSelect } from './document.js';
-import {
-  StoreCollectionName,
-  StoreFilterOptions,
-  StoreIncludeOptions,
-} from './relation.js';
+import { StoreCollectionName, StoreField, StoreIndex } from './collection.js';
+import { StoreListOffset, StoreSelect } from './document.js';
+import { StoreFilterOptions, StoreIncludeOptions } from './relation.js';
 import { StoreSort } from './sort.js';
 import { StoreWhere } from './where.js';
+
+export interface StoreDescribeCollectionOptions {
+  collectionName: StoreCollectionName;
+}
+
+export interface StoreEnsureCollectionOptions {
+  collectionName: StoreCollectionName;
+  indexes?: StoreIndex[];
+  fields?: StoreField[];
+  dropIndexes?: string[];
+  dropFields?: string[];
+}
+
+export interface StoreDropCollectionOptions {
+  collectionName: StoreCollectionName;
+}
 
 export interface StoreFindOptions {
   collectionName: StoreCollectionName;
@@ -19,15 +32,15 @@ export interface StoreFindOptions {
   sort?: StoreSort;
 }
 
-export interface StoreCreateOptions {
+export interface StoreInsertOptions<T> {
   collectionName: StoreCollectionName;
-  create: StoreDocument[];
+  documents: T[];
 }
 
-export interface StoreUpdateOptions {
+export interface StoreUpdateOptions<T> {
   collectionName: StoreCollectionName;
   where?: StoreWhere;
-  set: StoreDocument;
+  set: T;
   limit: number;
 }
 

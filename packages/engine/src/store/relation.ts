@@ -1,7 +1,6 @@
+import { StoreCollectionName } from './collection.js';
 import { StoreListOffset, StoreSelect } from './document.js';
 import { StoreWhere } from './where.js';
-
-export type StoreCollectionName = string;
 
 export interface StoreFilterOptions {
   collectionName: StoreCollectionName;

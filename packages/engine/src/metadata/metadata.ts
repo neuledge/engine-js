@@ -1,18 +1,19 @@
 import { stateDefinitions } from '@/generated/index.js';
+import { MetadataChange } from './change.js';
 import {
   isEntityMatches,
+  isMetadataEntitiesEquals,
   MetadataEntity,
   serializeMetadataEntity,
 } from './entity.js';
 import { toMetadataState } from './state.js';
 
+const HASH_KEY_ENCODING = 'base64url';
+
 export class Metadata {
-  public readonly hashMap: Partial<
-    Record<MetadataEntity['hash'], MetadataEntity>
-  >;
-  public readonly keyMap: Partial<
-    Record<MetadataEntity['key'], MetadataEntity>
-  >;
+  public readonly hashMap: Partial<Record<string, MetadataEntity>>;
+  public readonly keyMap: Partial<Record<string, MetadataEntity>>;
+  public readonly changes: MetadataChange[];
 
   static generate(): Metadata {
     return new this(
@@ -23,33 +24,55 @@ export class Metadata {
   constructor(entities: MetadataEntity[]) {
     this.hashMap = {};
     this.keyMap = {};
+    this.changes = [];
 
     for (const entity of entities) {
-      this.hashMap[entity.hash] = entity;
-      this.keyMap[entity.key] = entity;
+      this.hashMap[entity.hash.toString(HASH_KEY_ENCODING)] = entity;
+
+      if (this.keyMap[entity.key] == null) {
+        this.keyMap[entity.key] = entity;
+      }
     }
   }
 
   sync(other: Metadata): this {
-    for (const hash in other.hashMap) {
-      if (this.hashMap[hash]) continue;
+    for (const hashKey in other.hashMap) {
+      const origin = other.hashMap[hashKey];
+      if (!origin) continue;
 
-      const otherEntity = other.hashMap[hash];
-      if (!otherEntity) continue;
-
-      const entity = this.keyMap[otherEntity.key];
-      if (entity != null && isEntityMatches(otherEntity, entity)) {
-        this.hashMap[hash] = entity;
+      let entity = this.hashMap[hashKey];
+      if (entity) {
+        if (!isMetadataEntitiesEquals(entity, origin)) {
+          this.changes.push({ type: 'renamed', origin, entity });
+        }
         continue;
       }
 
-      if (!otherEntity.origin) {
+      entity = this.keyMap[origin.key];
+      if (entity != null && isEntityMatches(origin, entity)) {
+        this.hashMap[hashKey] = entity;
+        this.changes.push({ type: 'updated', origin, entity });
+        continue;
+      }
+
+      if (!origin.origin) {
         throw new ReferenceError(
-          `Can't find entity definition for '${otherEntity.key}'`,
+          `Can't find previously defined entity '${origin.key}' on the current schema definitions`,
         );
       }
 
-      this.hashMap[hash] = otherEntity;
+      this.changes.push({ type: 'deleted', origin });
+      this.hashMap[hashKey] = origin;
+    }
+
+    for (const hashKey in this.hashMap) {
+      const entity = this.hashMap[hashKey];
+      if (!entity) continue;
+
+      const origin = this.hashMap[hashKey];
+      if (origin) continue;
+
+      this.changes.push({ type: 'created', entity });
     }
 
     return this;

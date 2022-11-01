@@ -1,10 +1,14 @@
-import { StoreList } from './document.js';
+import { StoreCollection } from './collection.js';
+import { StoreDocument, StoreList } from './document.js';
 import {
-  StoreCreateOptions,
+  StoreInsertOptions,
   StoreDeleteOptions,
   StoreFindOptions,
   StoreMutationResponse,
   StoreUpdateOptions,
+  StoreDescribeCollectionOptions,
+  StoreEnsureCollectionOptions,
+  StoreDropCollectionOptions,
 } from './io.js';
 
 export interface Store {
@@ -13,10 +17,20 @@ export interface Store {
   connect(): Promise<void>;
   close(): Promise<void>;
 
-  find(options: StoreFindOptions): Promise<StoreList>;
+  describeCollection(
+    options: StoreDescribeCollectionOptions,
+  ): Promise<StoreCollection>;
+  ensureCollection(options: StoreEnsureCollectionOptions): Promise<void>;
+  dropCollection(options: StoreDropCollectionOptions): Promise<void>;
 
-  create(items: StoreCreateOptions): Promise<StoreMutationResponse>;
-  update(options: StoreUpdateOptions): Promise<StoreMutationResponse>;
+  find<T = StoreDocument>(options: StoreFindOptions): Promise<StoreList<T>>;
+
+  insert<T = StoreDocument>(
+    items: StoreInsertOptions<T>,
+  ): Promise<StoreMutationResponse>;
+  update<T = StoreDocument>(
+    options: StoreUpdateOptions<T>,
+  ): Promise<StoreMutationResponse>;
   delete(options: StoreDeleteOptions): Promise<StoreMutationResponse>;
 }
 

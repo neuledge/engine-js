@@ -2,6 +2,7 @@ import { Either } from '@/index.js';
 import { MetadataEntityHash } from './entity.js';
 import { generateHash } from './hash.js';
 import {
+  isMetadataStatesEquals,
   MetadataState,
   serializeMetadataState,
   toMetadataState,
@@ -23,6 +24,15 @@ export const toMetadataEither = (either: Either): MetadataEither => {
   });
 };
 
+export const isMetadataEithersEquals = (
+  a: MetadataEither,
+  b: MetadataEither,
+): boolean =>
+  a.key === b.key &&
+  a.hash.equals(b.hash) &&
+  a.length === b.length &&
+  a.every((item, i) => isMetadataStatesEquals(item, b[i]));
+
 export const serializeMetadataEither = (
   either: MetadataEither,
 ): MetadataEither =>
@@ -35,6 +45,4 @@ export const serializeMetadataEither = (
   );
 
 const generateEitherHash = (states: MetadataState[]): MetadataEntityHash =>
-  generateHash(
-    states.map((item) => item.hash).sort((a, b) => a[0].localeCompare(b[0])),
-  );
+  generateHash(states.map((item) => item.hash).sort((a, b) => a.compare(b)));

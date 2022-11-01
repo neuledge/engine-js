@@ -15,9 +15,9 @@ import {
 export class Category {
   static $key = 'Category' as const;
   static $scalars = {
-    id: { type: Number },
-    name: { type: String },
-    description: { type: String, nullable: true },
+    id: { type: Number, index: 1 },
+    name: { type: String, index: 2 },
+    description: { type: String, index: 3, nullable: true },
   };
   static $id: { id: number };
   static $find: {
@@ -82,10 +82,10 @@ export class Category {
 export class DraftPost {
   static $key = 'DraftPost' as const;
   static $scalars = {
-    id: { type: Number },
-    category: { type: [Category], nullable: true },
-    title: { type: String },
-    content: { type: String, nullable: true },
+    id: { type: Number, index: 1 },
+    category: { type: [Category], index: 2, nullable: true },
+    title: { type: String, index: 3 },
+    content: { type: String, index: 4, nullable: true },
   };
   static $id: { id: number };
   static $find: {
@@ -177,10 +177,10 @@ export class DraftPost {
 export class PublishedPost {
   static $key = 'PublishedPost' as const;
   static $scalars = {
-    id: { type: Number },
-    category: { type: [Category] },
-    title: { type: String },
-    content: { type: String },
+    id: { type: Number, index: 1 },
+    category: { type: [Category], index: 2 },
+    title: { type: String, index: 3 },
+    content: { type: String, index: 4 },
   };
   static $id: { id: number };
   static $find:
