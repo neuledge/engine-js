@@ -1,6 +1,6 @@
-import { MetadataState } from './state.js';
+import { MetadataLiveState } from './state.js';
 
 export interface MetadataCollection {
   name: string;
-  states: MetadataState[];
+  states: MetadataLiveState[];
 }

@@ -16,7 +16,6 @@ const HASH_KEY_ENCODING = 'base64url';
 export class Metadata {
   private readonly hashMap: Partial<Record<string, MetadataState>>;
   private readonly keyMap: Partial<Record<string, MetadataState>>;
-  private collectionMap: Partial<Record<string, MetadataCollection>>;
 
   static generate(): Metadata {
     const names = generateStateCollectionNames(stateDefinitions.values());
@@ -31,7 +30,6 @@ export class Metadata {
   constructor(states: MetadataState[]) {
     this.hashMap = {};
     this.keyMap = {};
-    this.collectionMap = {};
 
     for (const entity of states) {
       this.hashMap[entity.hash.toString(HASH_KEY_ENCODING)] = entity;
@@ -39,26 +37,29 @@ export class Metadata {
       if (this.keyMap[entity.key] == null) {
         this.keyMap[entity.key] = entity;
       }
-
-      const collection =
-        this.collectionMap[entity.collectionName] ??
-        (this.collectionMap[entity.collectionName] = {
-          name: entity.collectionName,
-          states: [],
-        });
-
-      collection.states.push(entity);
     }
   }
 
   getCollections(states: State[]): MetadataCollection[] {
-    return [
-      ...new Set(
-        states
-          .map((item) => this.collectionMap[item.$key])
-          .filter((item): item is MetadataCollection => !!item),
-      ),
-    ];
+    const collections = new Map<
+      MetadataCollection['name'],
+      MetadataCollection
+    >();
+
+    for (const state of states) {
+      const entity = this.keyMap[state.$key];
+      if (!entity) continue;
+
+      let collection = collections.get(entity.collectionName);
+      if (!collection) {
+        collection = { name: entity.collectionName, states: [] };
+        collections.set(entity.collectionName, collection);
+      }
+
+      collection.states.push({ ...entity, origin: state });
+    }
+
+    return [...collections.values()];
   }
 
   sync(prev: Metadata): MetadataChange[] {
@@ -97,20 +98,9 @@ export class Metadata {
       this.hashMap[hashKey] = origin;
     }
 
-    this.collectionMap = {};
-
     for (const hashKey in this.hashMap) {
       const entity = this.hashMap[hashKey];
       if (!entity) continue;
-
-      const collection =
-        this.collectionMap[entity.collectionName] ??
-        (this.collectionMap[entity.collectionName] = {
-          name: entity.collectionName,
-          states: [],
-        });
-
-      collection.states.push(entity);
 
       const origin = prev.hashMap[hashKey];
       if (origin) continue;

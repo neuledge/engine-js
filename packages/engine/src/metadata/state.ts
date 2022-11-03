@@ -13,6 +13,10 @@ export interface MetadataState {
   origin?: State;
 }
 
+export interface MetadataLiveState extends MetadataState {
+  origin: State;
+}
+
 export interface MetadataStateField {
   fieldName: string;
   type: Scalar['key'] | MetadataState[];
