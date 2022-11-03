@@ -1,6 +1,7 @@
 import { State, stateDefinitions } from '@/generated/index.js';
 import { MetadataChange } from './change.js';
-import { generateStateCollectionNames } from './collections.js';
+import { MetadataCollection } from './collection.js';
+import { generateStateCollectionNames } from './names.js';
 import {
   isMetadataStatesEquals,
   isStatesMatches,
@@ -13,9 +14,9 @@ import {
 const HASH_KEY_ENCODING = 'base64url';
 
 export class Metadata {
-  public readonly hashMap: Partial<Record<string, MetadataState>>;
-  public readonly keyMap: Partial<Record<string, MetadataState>>;
-  public readonly changes: MetadataChange[];
+  private readonly hashMap: Partial<Record<string, MetadataState>>;
+  private readonly keyMap: Partial<Record<string, MetadataState>>;
+  private collectionMap: Partial<Record<string, MetadataCollection>>;
 
   static generate(): Metadata {
     const names = generateStateCollectionNames(stateDefinitions.values());
@@ -30,7 +31,7 @@ export class Metadata {
   constructor(states: MetadataState[]) {
     this.hashMap = {};
     this.keyMap = {};
-    this.changes = [];
+    this.collectionMap = {};
 
     for (const entity of states) {
       this.hashMap[entity.hash.toString(HASH_KEY_ENCODING)] = entity;
@@ -38,20 +39,31 @@ export class Metadata {
       if (this.keyMap[entity.key] == null) {
         this.keyMap[entity.key] = entity;
       }
+
+      const collection =
+        this.collectionMap[entity.collectionName] ??
+        (this.collectionMap[entity.collectionName] = {
+          name: entity.collectionName,
+          states: [],
+        });
+
+      collection.states.push(entity);
     }
   }
 
-  getCollectionNames(states: State[]): string[] {
+  getCollections(states: State[]): MetadataCollection[] {
     return [
       ...new Set(
         states
-          .map((item) => this.keyMap[item.$key]?.collectionName)
-          .filter((item): item is string => !!item),
+          .map((item) => this.collectionMap[item.$key])
+          .filter((item): item is MetadataCollection => !!item),
       ),
     ];
   }
 
-  sync(prev: Metadata): this {
+  sync(prev: Metadata): MetadataChange[] {
+    const changes: MetadataChange[] = [];
+
     for (const hashKey in prev.hashMap) {
       const origin = prev.hashMap[hashKey];
       if (!origin) continue;
@@ -61,7 +73,7 @@ export class Metadata {
         if (!isMetadataStatesEquals(entity, origin)) {
           syncStateCollectionNames(origin, entity);
 
-          this.changes.push({ type: 'renamed', origin, entity });
+          changes.push({ type: 'renamed', origin, entity });
         }
         continue;
       }
@@ -71,7 +83,7 @@ export class Metadata {
         syncStateCollectionNames(origin, entity);
 
         this.hashMap[hashKey] = entity;
-        this.changes.push({ type: 'updated', origin, entity });
+        changes.push({ type: 'updated', origin, entity });
         continue;
       }
 
@@ -81,21 +93,32 @@ export class Metadata {
         );
       }
 
-      this.changes.push({ type: 'deleted', origin });
+      changes.push({ type: 'deleted', origin });
       this.hashMap[hashKey] = origin;
     }
+
+    this.collectionMap = {};
 
     for (const hashKey in this.hashMap) {
       const entity = this.hashMap[hashKey];
       if (!entity) continue;
 
-      const origin = this.hashMap[hashKey];
+      const collection =
+        this.collectionMap[entity.collectionName] ??
+        (this.collectionMap[entity.collectionName] = {
+          name: entity.collectionName,
+          states: [],
+        });
+
+      collection.states.push(entity);
+
+      const origin = prev.hashMap[hashKey];
       if (origin) continue;
 
-      this.changes.push({ type: 'created', entity });
+      changes.push({ type: 'created', entity });
     }
 
-    return this;
+    return changes;
   }
 
   serialize(): MetadataState[] {

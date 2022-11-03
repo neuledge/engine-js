@@ -26,7 +26,7 @@ export class EngineExec {
       this.toEntityList(
         await this.store.find({
           // FIXME collection name array
-          collectionName: metadata.getCollectionNames(options.states)[0],
+          collectionName: metadata.getCollections(options.states)[0].name,
           // select: undefined,
           // where: undefined,
           // filter: undefined,

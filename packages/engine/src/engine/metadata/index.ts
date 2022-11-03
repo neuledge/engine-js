@@ -14,15 +14,14 @@ export const loadMetadata = async (
 ): Promise<Metadata> => {
   await ensureStoreMetadata(store, collectionName);
 
-  const metadata = Metadata.generate().sync(
-    await getStoreMetadata(store, collectionName),
-  );
+  const metadata = Metadata.generate();
+  const changes = metadata.sync(await getStoreMetadata(store, collectionName));
 
-  for (const change of metadata.changes) {
+  for (const change of changes) {
     // FIXME handle changes
   }
 
-  await syncStoreMetadata(store, collectionName, metadata.changes);
+  await syncStoreMetadata(store, collectionName, changes);
 
   return metadata;
 };

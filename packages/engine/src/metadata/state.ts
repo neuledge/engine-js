@@ -1,6 +1,6 @@
 import { resolveDefer, State } from '@/generated/index.js';
 import { Scalar } from '@neuledge/scalars';
-import { StateCollectionNames } from './collections.js';
+import { StateCollectionNames } from './names.js';
 import { generateHash } from './hash.js';
 
 export type MetadataStateHash = Buffer;

@@ -3,9 +3,9 @@ import {
   DraftPost,
   PublishedPost,
 } from '@/generated/__test__/category-post-example.js';
-import { generateStateCollectionNames } from './collections.js';
+import { generateStateCollectionNames } from './names.js';
 
-describe('metadata/collections', () => {
+describe('metadata/names', () => {
   describe('generateStateCollectionNames()', () => {
     it('should generate collection name for categories', () => {
       expect(generateStateCollectionNames([Category])).toEqual({
