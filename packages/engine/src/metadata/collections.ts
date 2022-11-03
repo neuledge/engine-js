@@ -1,4 +1,5 @@
 import { resolveDefer, State, StateKey } from '@/generated/index.js';
+import pluralize from 'pluralize';
 
 export type StateCollectionNames = Record<
   StateKey | `${StateKey}.${string}`,
@@ -12,7 +13,7 @@ export const generateStateCollectionNames = (
 
   const suggestions: StatesNameSuggestion[] = [];
   for (const group of groups.values()) {
-    suggestions.push(...suggestStatesCollectionNames(group.values()));
+    suggestions.push(...suggestStatesCollectionNames(group));
   }
 
   suggestions.sort((a, b) => a.name.localeCompare(b.name) || b.rank - a.rank);
@@ -41,11 +42,15 @@ export const generateStateCollectionNames = (
   return names;
 };
 
-const getStateGroups = (states: Iterable<State>): Set<Map<StateKey, State>> => {
-  const groups: Map<StateKey, Map<StateKey, State>> = new Map();
+const getStateGroups = (states: Iterable<State>): Set<Set<State>> => {
+  const groups: Map<StateKey, Set<State>> = new Map();
 
   for (const state of states) {
-    const group = new Map([[state.$key, state]]);
+    let set = groups.get(state.$key);
+    if (!set) {
+      set = new Set([state]);
+      groups.set(state.$key, set);
+    }
 
     const methods = resolveDefer(state.$methods, {});
     for (const method in methods) {
@@ -53,21 +58,16 @@ const getStateGroups = (states: Iterable<State>): Set<Map<StateKey, State>> => {
       if (!methodStates) continue;
 
       for (const methodState of methodStates) {
-        group.set(methodState.$key, methodState);
+        set.add(methodState);
 
-        // add all states from other methodState groups
-        const methodStateGroup = groups.get(methodState.$key);
-        if (methodStateGroup) {
-          for (const [key, item] of methodStateGroup) {
-            group.set(key, item);
-          }
+        for (const item of groups.get(methodState.$key) ?? []) {
+          set.add(item);
         }
       }
     }
 
-    // update all other states groups
-    for (const key of group.keys()) {
-      groups.set(key, group);
+    for (const state of set) {
+      groups.set(state.$key, set);
     }
   }
 
@@ -93,6 +93,8 @@ const suggestStatesCollectionNames = (
       .split(/(?=[A-Z])|_|(?<=[a-z])(?=\d)/)
       .map((word) => word.toLowerCase());
 
+    suggestions.push({ states, name: formatCollectionName(words), rank: 0 });
+
     if (first == null) {
       phrase.push(...words);
 
@@ -100,20 +102,19 @@ const suggestStatesCollectionNames = (
       continue;
     }
 
-    suggestions.push({ states, name: words.join('_'), rank: 0 });
-
     const wordsSet = new Set(words);
 
     for (let i = 0; i < phrase.length; i++) {
       if (!wordsSet.has(phrase[i])) {
         phrase.splice(i, 1);
+        i--;
       }
     }
   }
 
   suggestions.push({
     states,
-    name: phrase.join('_'),
+    name: formatCollectionName(phrase),
     rank: 1000,
   });
 
@@ -121,12 +122,12 @@ const suggestStatesCollectionNames = (
     suggestions.push(
       {
         states,
-        name: phrase.slice(i).join('_'),
-        rank: (500 * phrase.length) / i,
+        name: formatCollectionName(phrase.slice(i)),
+        rank: (500 * phrase.length - i) / phrase.length,
       },
       {
         states,
-        name: phrase.slice(0, i).join('_'),
+        name: formatCollectionName(phrase.slice(0, i)),
         rank: (100 * i) / phrase.length,
       },
     );
@@ -134,6 +135,9 @@ const suggestStatesCollectionNames = (
 
   return suggestions;
 };
+
+const formatCollectionName = (words: string[]): string =>
+  [...words.slice(0, -1), pluralize.plural(words[words.length - 1])].join('_');
 
 const generateStateFieldNames = (
   states: Iterable<State>,
@@ -144,7 +148,7 @@ const generateStateFieldNames = (
     const fields = resolveDefer(state.$scalars, {});
 
     for (const key in fields) {
-      const { type, nullable } = fields[key];
+      const { type } = fields[key];
 
       let name = nameMap.get(key);
       if (!name) {
@@ -152,11 +156,9 @@ const generateStateFieldNames = (
         nameMap.set(key, name);
       }
 
-      const typeKey = `${
-        Array.isArray(type)
-          ? `(${type.map((item) => item.$key).join('|')})`
-          : type
-      }${nullable ? '?' : ''}`;
+      const typeKey = Array.isArray(type)
+        ? `(${type.map((item) => item.$key).join('|')})`
+        : type.key;
 
       let keys = name.get(typeKey);
       if (!keys) {

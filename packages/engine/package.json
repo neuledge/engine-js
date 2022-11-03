@@ -25,10 +25,12 @@
   },
   "dependencies": {
     "@neuledge/scalars": "0.1.0-alpha.1",
-    "p-limit": "^3.1.0"
+    "p-limit": "^3.1.0",
+    "pluralize": "^8.0.0"
   },
   "devDependencies": {
     "@types/jest": "^28.1.6",
+    "@types/pluralize": "^0.0.29",
     "jest": "^28.1.3"
   }
 }
