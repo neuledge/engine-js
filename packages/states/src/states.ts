@@ -11,6 +11,7 @@ import {
   ScalarNode,
   StateFieldNode,
   StateNode,
+  STATE_FIELD_INDEX_MAX_INPUT_VALUE,
   TypeNode,
 } from '@/nodes/index.js';
 import { resolve, dirname } from 'node:path';
@@ -348,7 +349,13 @@ export class States {
     }
 
     for (const item of fromFields) {
-      fieldMap[item.key.name] = { ...item };
+      fieldMap[item.key.name] = {
+        ...item,
+        index: {
+          ...item.index,
+          value: item.index.value + STATE_FIELD_INDEX_MAX_INPUT_VALUE,
+        },
+      };
     }
 
     for (const item of state.fields) {
@@ -368,9 +375,6 @@ export class States {
   }
 
   private processStateField(node: StateFieldNode): FieldNode | null {
-    // FIXME handle index collisions with inherited fields
-    // suggestion: limit state indexes to 0..255 and use 256 as a flag for inherited fields
-
     switch (node.type) {
       case 'Field': {
         this.processType(node.valueType);

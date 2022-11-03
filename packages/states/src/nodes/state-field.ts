@@ -5,9 +5,11 @@ import { ExcludedFieldNode } from './excluded-field.js';
 import { ReferenceFieldNode } from './reference-field.js';
 import { FieldNode } from './field.js';
 import { parseIdentifierNode } from './identifier.js';
-import { LiteralNode, parsePositiveIntegerLiteralNode } from './literal.js';
+import { LiteralNode, parseUInt8LiteralNode } from './literal.js';
 import { parseTypeNode } from './type.js';
 import { ParsingError } from '@/parsing-error.js';
+
+export const STATE_FIELD_INDEX_MAX_INPUT_VALUE = 255;
 
 export type StateFieldNode = FieldNode | ReferenceFieldNode | ExcludedFieldNode;
 
@@ -140,5 +142,5 @@ const parseReferenceFieldNode = (
 
 const parseIndex = (cursor: Tokenizer): LiteralNode<number> => {
   cursor.consumePunctuation('=');
-  return parsePositiveIntegerLiteralNode(cursor);
+  return parseUInt8LiteralNode(cursor);
 };

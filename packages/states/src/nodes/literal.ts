@@ -27,23 +27,23 @@ export const parseLiteralNode = <Value extends LiteralValue>(
   end: cursor.end,
 });
 
-export const parsePositiveIntegerLiteralNode = (
+export const parseUInt8LiteralNode = (
   cursor: Tokenizer,
 ): LiteralNode<number> => ({
   type: 'Literal',
   path: cursor.path,
   start: cursor.start,
-  value: parsePositiveInteger(cursor),
+  value: parseUInt8(cursor),
   end: cursor.end,
 });
 
 // value parsers
 
-const parsePositiveInteger = (cursor: Tokenizer): number =>
+const parseUInt8 = (cursor: Tokenizer): number =>
   cursor.consume(
     'Number',
-    ({ value }) => value > 0 && Number.isInteger(value),
-    `positive integer`,
+    ({ value }) => value > 0 && Number.isInteger(value) && value <= 255,
+    `positive unsigned integer between 1 and 255`,
   ).value;
 
 const parseLiteralValue = (cursor: Tokenizer): LiteralValue => {
