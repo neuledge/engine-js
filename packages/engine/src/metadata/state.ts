@@ -1,34 +1,53 @@
 import { resolveDefer, State } from '@/generated/index.js';
 import { Scalar } from '@neuledge/scalars';
-import { MetadataEntityHash } from './entity.js';
+import { StateCollectionNames } from './collections.js';
 import { generateHash } from './hash.js';
 
+export type MetadataStateHash = Buffer;
+
 export interface MetadataState {
+  collectionName: string;
   key: string;
-  hash: MetadataEntityHash;
-  fields: Record<
-    string,
-    { type: Scalar['key'] | MetadataState[]; index: number; nullable: boolean }
-  >;
+  hash: MetadataStateHash;
+  fields: Record<string, MetadataStateField>;
   origin?: State;
 }
 
 export interface MetadataStateField {
+  fieldName: string;
   type: Scalar['key'] | MetadataState[];
   index: number;
   nullable: boolean;
 }
 
-export const toMetadataState = (state: State): MetadataState => {
+export const toMetadataState = (
+  names: StateCollectionNames,
+  state: State,
+): MetadataState => {
+  const collectionName = names[state.$key];
+  if (!collectionName) {
+    throw new ReferenceError(
+      `Can't find unique collection name for state '${state.$key}'`,
+    );
+  }
+
   const fields: MetadataState['fields'] = {};
 
   const scalars = resolveDefer(state.$scalars);
   for (const key in scalars) {
     const { type, index, nullable } = scalars[key];
 
+    const fieldName = names[`${state.$key}.${key}`];
+    if (!fieldName) {
+      throw new ReferenceError(
+        `Can't find unique field name for '${state.$key}.${key}'`,
+      );
+    }
+
     fields[key] = {
+      fieldName,
       type: Array.isArray(type)
-        ? type.map((item) => toMetadataState(item))
+        ? type.map((item) => toMetadataState(names, item))
         : type.key,
       index,
       nullable: !!nullable,
@@ -36,6 +55,7 @@ export const toMetadataState = (state: State): MetadataState => {
   }
 
   return {
+    collectionName: names[state.$key],
     key: state.$key,
     hash: generateStateHash(fields),
     fields,
@@ -66,29 +86,62 @@ export const isMetadataStatesEquals = (
     );
   });
 
+export const isStatesMatches = (
+  actual: MetadataState,
+  target: MetadataState,
+): boolean =>
+  actual === target ||
+  Object.entries(target.fields).every(([key, { type, nullable }]) => {
+    const actualField = actual.fields[key];
+    if (!actualField) {
+      return nullable;
+    }
+
+    if (actualField.nullable && !nullable) {
+      return false;
+    }
+
+    const actualType = actualField.type;
+
+    if (!Array.isArray(type) || !Array.isArray(actualType)) {
+      return type === actualType;
+    }
+
+    return actualType.every((actualState) =>
+      type.some((typeState) => isStatesMatches(actualState, typeState)),
+    );
+  });
+
 export const serializeMetadataState = (
   state: MetadataState,
 ): MetadataState => ({
+  collectionName: state.collectionName,
   key: state.key,
   hash: state.hash,
   fields: Object.fromEntries(
-    Object.entries(state.fields).map(([key, { type, index, nullable }]) => [
-      key,
-      {
-        type:
-          typeof type === 'string'
-            ? type
-            : type.map((item) => serializeMetadataState(item)),
-        index,
-        nullable,
-      },
-    ]),
+    Object.entries(state.fields).map(
+      ([key, { fieldName, type, index, nullable }]): [
+        string,
+        MetadataStateField,
+      ] => [
+        key,
+        {
+          fieldName,
+          type:
+            typeof type === 'string'
+              ? type
+              : type.map((item) => serializeMetadataState(item)),
+          index,
+          nullable,
+        },
+      ],
+    ),
   ),
 });
 
 const generateStateHash = (
   fields: MetadataState['fields'],
-): MetadataEntityHash =>
+): MetadataStateHash =>
   generateHash(
     Object.values(fields)
       .map(

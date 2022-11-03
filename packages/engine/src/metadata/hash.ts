@@ -1,10 +1,9 @@
 import { createHash } from 'node:crypto';
 import { METADATA_HASH_BYTES } from './constants.js';
-import { MetadataEntityHash } from './entity.js';
 
 const HASH_ALGORITHM = 'sha512';
 
-export const generateHash = (payload: unknown): MetadataEntityHash =>
+export const generateHash = (payload: unknown): Buffer =>
   createHash(HASH_ALGORITHM)
     .update(JSON.stringify(payload))
     .digest()

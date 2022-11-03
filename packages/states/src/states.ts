@@ -368,6 +368,9 @@ export class States {
   }
 
   private processStateField(node: StateFieldNode): FieldNode | null {
+    // FIXME handle index collisions with inherited fields
+    // suggestion: limit state indexes to 0..255 and use 256 as a flag for inherited fields
+
     switch (node.type) {
       case 'Field': {
         this.processType(node.valueType);

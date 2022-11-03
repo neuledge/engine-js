@@ -29,7 +29,7 @@ type StateScalarType<T> = Scalar<T, any, any> | State<string, T>[];
 export type Defer<T> = (() => T) | T;
 type Deferred<T> = T extends Defer<infer R> ? R : Record<never, never>;
 
-export type StateKey<S extends State> = S['$key'];
+export type StateKey<S extends State = State> = S['$key'];
 export type StateScalars<S extends State> = Deferred<S['$scalars']>;
 export type StateId<S extends State> = S['$id'];
 export type StateQuery<S extends State> = S['$find'];

@@ -1,17 +1,16 @@
 import {
   Metadata,
   MetadataChange,
-  MetadataEntity,
   MetadataState,
   METADATA_HASH_BYTES,
 } from '@/metadata/index.js';
 import { Store, StoreList } from '@/store/index.js';
 import pLimit from 'p-limit';
 import {
-  StoreMetadataEntity,
-  toMetadataEntity,
-  toStoreMetadataEntity,
-} from './entity.js';
+  fromStoreMetadataState,
+  StoreMetadataState,
+  toStoreMetadataState,
+} from './state.js';
 
 const HASH_ENCODING = 'base64url';
 const COLLECTION_FIND_LIMIT = 1000;
@@ -28,7 +27,6 @@ export const ensureStoreMetadata = async (
     fields: [
       { name: 'hash', type: 'binary', size: METADATA_HASH_BYTES },
       { name: 'key', type: 'string' },
-      { name: 'type', type: 'enum', values: ['state', 'either'] },
       { name: 'payload', type: 'json' },
     ],
   });
@@ -38,9 +36,9 @@ export const getStoreMetadata = async (
   store: Store,
   collectionName: string,
 ): Promise<Metadata> => {
-  const entities: Record<string, MetadataEntity> = {};
+  const entities: Record<string, MetadataState> = {};
 
-  let res: StoreList<StoreMetadataEntity> | undefined;
+  let res: StoreList<StoreMetadataState> | undefined;
   do {
     res = await store.find({
       collectionName,
@@ -49,17 +47,20 @@ export const getStoreMetadata = async (
     });
 
     for (const doc of res) {
-      entities[doc.hash.toString(HASH_ENCODING)] = toMetadataEntity((hash) => {
-        const key = hash.toString(HASH_ENCODING);
+      entities[doc.hash.toString(HASH_ENCODING)] = fromStoreMetadataState(
+        (hash) => {
+          const key = hash.toString(HASH_ENCODING);
 
-        let res = entities[key] as MetadataState | undefined;
-        if (!res) {
-          res = {} as never;
-          entities[key] = res;
-        }
+          let res = entities[key] as MetadataState | undefined;
+          if (!res) {
+            res = {} as never;
+            entities[key] = res;
+          }
 
-        return res;
-      }, doc);
+          return res;
+        },
+        doc,
+      );
     }
   } while (res.length >= COLLECTION_FIND_LIMIT);
 
@@ -104,20 +105,20 @@ export const syncStoreMetadata = async (
 };
 
 const getStoreMetadataChanges = (changes: MetadataChange[]) => {
-  const inserts: StoreMetadataEntity[] = [];
-  const updates: StoreMetadataEntity[] = [];
+  const inserts: StoreMetadataState[] = [];
+  const updates: StoreMetadataState[] = [];
   const deletes: Buffer[] = [];
 
   for (const change of changes) {
     switch (change.type) {
       case 'created': {
-        inserts.push(toStoreMetadataEntity(change.entity));
+        inserts.push(toStoreMetadataState(change.entity));
         break;
       }
 
       case 'renamed':
       case 'updated': {
-        updates.push(toStoreMetadataEntity(change.entity));
+        updates.push(toStoreMetadataState(change.entity));
         break;
       }
 

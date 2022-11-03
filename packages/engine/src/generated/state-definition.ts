@@ -1,7 +1,7 @@
-import { State } from './state.js';
+import { State, StateKey } from './state.js';
 
-export const stateDefinitions = new Set<State>();
+export const stateDefinitions = new Map<StateKey, State>();
 
 export const StateDefinition = (state: State): void => {
-  stateDefinitions.add(state);
+  stateDefinitions.set(state.$key, state);
 };

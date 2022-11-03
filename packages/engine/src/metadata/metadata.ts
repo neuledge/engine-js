@@ -1,38 +1,53 @@
-import { stateDefinitions } from '@/generated/index.js';
+import { State, stateDefinitions } from '@/generated/index.js';
 import { MetadataChange } from './change.js';
+import { generateStateCollectionNames } from './collections.js';
 import {
-  isEntityMatches,
-  isMetadataEntitiesEquals,
-  MetadataEntity,
-  serializeMetadataEntity,
-} from './entity.js';
-import { toMetadataState } from './state.js';
+  isMetadataStatesEquals,
+  isStatesMatches,
+  MetadataState,
+  serializeMetadataState,
+  toMetadataState,
+} from './state.js';
 
 const HASH_KEY_ENCODING = 'base64url';
 
 export class Metadata {
-  public readonly hashMap: Partial<Record<string, MetadataEntity>>;
-  public readonly keyMap: Partial<Record<string, MetadataEntity>>;
+  public readonly hashMap: Partial<Record<string, MetadataState>>;
+  public readonly keyMap: Partial<Record<string, MetadataState>>;
   public readonly changes: MetadataChange[];
 
   static generate(): Metadata {
+    const names = generateStateCollectionNames(stateDefinitions.values());
+
     return new this(
-      [...stateDefinitions.values()].map((item) => toMetadataState(item)),
+      [...stateDefinitions.values()].map((item) =>
+        toMetadataState(names, item),
+      ),
     );
   }
 
-  constructor(entities: MetadataEntity[]) {
+  constructor(states: MetadataState[]) {
     this.hashMap = {};
     this.keyMap = {};
     this.changes = [];
 
-    for (const entity of entities) {
+    for (const entity of states) {
       this.hashMap[entity.hash.toString(HASH_KEY_ENCODING)] = entity;
 
       if (this.keyMap[entity.key] == null) {
         this.keyMap[entity.key] = entity;
       }
     }
+  }
+
+  getCollectionNames(states: State[]): string[] {
+    return [
+      ...new Set(
+        states
+          .map((item) => this.keyMap[item.$key]?.collectionName)
+          .filter((item): item is string => !!item),
+      ),
+    ];
   }
 
   sync(other: Metadata): this {
@@ -42,14 +57,14 @@ export class Metadata {
 
       let entity = this.hashMap[hashKey];
       if (entity) {
-        if (!isMetadataEntitiesEquals(entity, origin)) {
+        if (!isMetadataStatesEquals(entity, origin)) {
           this.changes.push({ type: 'renamed', origin, entity });
         }
         continue;
       }
 
       entity = this.keyMap[origin.key];
-      if (entity != null && isEntityMatches(origin, entity)) {
+      if (entity != null && isStatesMatches(origin, entity)) {
         this.hashMap[hashKey] = entity;
         this.changes.push({ type: 'updated', origin, entity });
         continue;
@@ -78,9 +93,9 @@ export class Metadata {
     return this;
   }
 
-  serialize(): MetadataEntity[] {
+  serialize(): MetadataState[] {
     return Object.values(this.hashMap)
-      .filter((item): item is MetadataEntity => !!item)
-      .map((item) => serializeMetadataEntity(item));
+      .filter((item): item is MetadataState => !!item)
+      .map((item) => serializeMetadataState(item));
   }
 }
