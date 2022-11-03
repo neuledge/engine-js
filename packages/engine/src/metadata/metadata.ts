@@ -5,6 +5,7 @@ import {
   isMetadataStatesEquals,
   isStatesMatches,
   MetadataState,
+  syncStateCollectionNames,
   serializeMetadataState,
   toMetadataState,
 } from './state.js';
@@ -50,14 +51,16 @@ export class Metadata {
     ];
   }
 
-  sync(other: Metadata): this {
-    for (const hashKey in other.hashMap) {
-      const origin = other.hashMap[hashKey];
+  sync(prev: Metadata): this {
+    for (const hashKey in prev.hashMap) {
+      const origin = prev.hashMap[hashKey];
       if (!origin) continue;
 
       let entity = this.hashMap[hashKey];
-      if (entity) {
+      if (entity != null) {
         if (!isMetadataStatesEquals(entity, origin)) {
+          syncStateCollectionNames(origin, entity);
+
           this.changes.push({ type: 'renamed', origin, entity });
         }
         continue;
@@ -65,6 +68,8 @@ export class Metadata {
 
       entity = this.keyMap[origin.key];
       if (entity != null && isStatesMatches(origin, entity)) {
+        syncStateCollectionNames(origin, entity);
+
         this.hashMap[hashKey] = entity;
         this.changes.push({ type: 'updated', origin, entity });
         continue;

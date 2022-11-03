@@ -89,10 +89,15 @@ export const isMetadataStatesEquals = (
 export const isStatesMatches = (
   actual: MetadataState,
   target: MetadataState,
-): boolean =>
-  actual === target ||
-  Object.entries(target.fields).every(([key, { type, nullable }]) => {
-    const actualField = actual.fields[key];
+): boolean => {
+  if (actual === target) return true;
+
+  const actualFields = new Map(
+    Object.values(actual.fields).map((item) => [item.index, item]),
+  );
+
+  return Object.values(target.fields).every(({ index, type, nullable }) => {
+    const actualField = actualFields.get(index);
     if (!actualField) {
       return nullable;
     }
@@ -111,6 +116,7 @@ export const isStatesMatches = (
       type.some((typeState) => isStatesMatches(actualState, typeState)),
     );
   });
+};
 
 export const serializeMetadataState = (
   state: MetadataState,
@@ -155,3 +161,35 @@ const generateStateHash = (
       )
       .sort((a, b) => a[0] - b[0]),
   );
+
+export const syncStateCollectionNames = (
+  origin: MetadataState,
+  target: MetadataState,
+): void => {
+  target.collectionName = origin.collectionName;
+
+  const targetFields = new Map(
+    Object.values(target.fields).map((item) => [item.index, item]),
+  );
+  const targetFieldNames = new Map(
+    Object.values(target.fields).map((item) => [item.fieldName, item]),
+  );
+
+  for (const key in origin.fields) {
+    const field = origin.fields[key];
+    const targetField = targetFields.get(field.index);
+
+    if (!targetField || targetField.fieldName === field.fieldName) continue;
+
+    const oldFieldName = targetField.fieldName;
+    const overrideField = targetFieldNames.get(field.fieldName);
+
+    targetField.fieldName = field.fieldName;
+    targetFieldNames.set(targetField.fieldName, targetField);
+
+    if (overrideField) {
+      overrideField.fieldName = oldFieldName;
+      targetFieldNames.set(overrideField.fieldName, overrideField);
+    }
+  }
+};

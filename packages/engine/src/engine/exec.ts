@@ -25,7 +25,8 @@ export class EngineExec {
       // FIXME select, where, filter, includeFirst, requireFirst, includeMany, default limit
       this.toEntityList(
         await this.store.find({
-          collectionName: metadata.getCollectionNames(options.states),
+          // FIXME collection name array
+          collectionName: metadata.getCollectionNames(options.states)[0],
           // select: undefined,
           // where: undefined,
           // filter: undefined,
