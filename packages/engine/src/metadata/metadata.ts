@@ -17,8 +17,8 @@ export class Metadata {
   private readonly hashMap: Partial<Record<string, MetadataState>>;
   private readonly keyMap: Partial<Record<string, MetadataState>>;
 
-  static generate(): Metadata {
-    const names = generateStateCollectionNames(stateDefinitions.values());
+  static generate(states: Iterable<State>): Metadata {
+    const names = generateStateCollectionNames(states);
 
     return new this(
       [...stateDefinitions.values()].map((item) =>

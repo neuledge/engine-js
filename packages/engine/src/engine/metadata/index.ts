@@ -1,3 +1,4 @@
+import { stateDefinitions } from '@/index.js';
 import { Metadata } from '@/metadata/index.js';
 import { Store } from '@/store/index.js';
 import {
@@ -14,7 +15,7 @@ export const loadMetadata = async (
 ): Promise<Metadata> => {
   await ensureStoreMetadata(store, collectionName);
 
-  const metadata = Metadata.generate();
+  const metadata = Metadata.generate(stateDefinitions.values());
   const changes = metadata.sync(await getStoreMetadata(store, collectionName));
 
   for (const change of changes) {
