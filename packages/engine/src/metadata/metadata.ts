@@ -52,7 +52,7 @@ export class Metadata {
 
       let collection = collections.get(entity.collectionName);
       if (!collection) {
-        collection = { name: entity.collectionName, states: [] };
+        collection = new MetadataCollection(entity.collectionName, []);
         collections.set(entity.collectionName, collection);
       }
 
@@ -112,8 +112,10 @@ export class Metadata {
   }
 
   serialize(): MetadataState[] {
+    const refs = {};
+
     return Object.values(this.hashMap)
       .filter((item): item is MetadataState => !!item)
-      .map((item) => serializeMetadataState(item));
+      .map((item) => serializeMetadataState(refs, item));
   }
 }

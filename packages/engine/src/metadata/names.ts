@@ -156,14 +156,10 @@ const generateStateFieldNames = (
         nameMap.set(key, name);
       }
 
-      const typeKey = Array.isArray(type)
-        ? `(${type.map((item) => item.$key).join('|')})`
-        : type.key;
-
-      let keys = name.get(typeKey);
+      let keys = name.get(type.key);
       if (!keys) {
         keys = new Set();
-        name.set(typeKey, keys);
+        name.set(type.key, keys);
       }
 
       keys.add(`${state.$key}.${key}`);

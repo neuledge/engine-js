@@ -2,138 +2,113 @@ import { Entity } from '@/entity.js';
 import { State } from '@/generated/index.js';
 import { EntityList } from '@/list.js';
 import { Metadata } from '@/metadata/index.js';
-import { QueryOptions, QueryType } from '@/queries/index.js';
+import { QueryOptions } from '@/queries/index.js';
 import { Store, StoreDocument, StoreList } from '@/store/index.js';
+import { convertSelect } from './select.js';
+import { convertWhere } from './where.js';
 
 const DEFAULT_QUERY_LIMIT = 201;
-
-type ExecFn<T extends QueryType, I extends State, O extends State> = (
-  this: QueryOptions<T, I, O>,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-) => Promise<any>;
 
 export class EngineExec {
   constructor(
     private readonly store: Store,
-    private readonly metadata: Promise<Metadata>,
+    private readonly metadataPromise: Promise<Metadata>,
   ) {}
 
   // queries
 
-  findMany<I extends State, O extends State>(): ExecFn<'FindMany', I, O> {
-    return this.exec(async (metadata, options) =>
-      // FIXME select, where, filter, includeFirst, requireFirst, includeMany, default limit
-      this.toEntityList(
-        await this.store.find({
-          // FIXME collection name array
-          collectionName: metadata.getCollections(options.states)[0].name,
-          // select: undefined,
-          // where: undefined,
-          // filter: undefined,
-          // includeFirst: undefined,
-          // requireFirst: undefined,
-          offset: options.offset,
-          limit: options.limit ?? DEFAULT_QUERY_LIMIT,
-        }),
-      ),
+  async findMany<I extends State, O extends State>(
+    options: QueryOptions<'FindMany', I, O>,
+  ) {
+    const metadata = await this.metadataPromise;
+    const collections = metadata.getCollections(options.states);
+
+    if (collections.length !== 1) {
+      throw new Error('FindMany can only be used with one collection');
+    }
+    const [collection] = collections;
+
+    // FIXME handle all options
+
+    // options.includeMany
+
+    return this.toEntityList(
+      await this.store.find({
+        collectionName: collections[0].name,
+        select: options.select && convertSelect(collection, options.select),
+        where: options.where && convertWhere(collection, options.where),
+        // filter: undefined,
+        // includeFirst: undefined,
+        // requireFirst: undefined,
+        offset: options.offset,
+        limit: options.limit ?? DEFAULT_QUERY_LIMIT,
+      }),
     );
   }
 
-  findUnique<I extends State, O extends State>(): ExecFn<'FindUnique', I, O> {
-    return this.exec(async (metadata, options) => {});
-  }
+  async findUnique<I extends State, O extends State>(
+    options: QueryOptions<'FindUnique', I, O>,
+  ) {}
 
-  findUniqueOrThrow<I extends State, O extends State>(): ExecFn<
-    'FindUniqueOrThrow',
-    I,
-    O
-  > {
-    return this.exec(async (metadata, options) => {});
-  }
+  async findUniqueOrThrow<I extends State, O extends State>(
+    options: QueryOptions<'FindUniqueOrThrow', I, O>,
+  ) {}
 
-  findFirst<I extends State, O extends State>(): ExecFn<'FindFirst', I, O> {
-    return this.exec(async (metadata, options) => {});
-  }
+  async findFirst<I extends State, O extends State>(
+    options: QueryOptions<'FindFirst', I, O>,
+  ) {}
 
-  findFirstOrThrow<I extends State, O extends State>(): ExecFn<
-    'FindFirstOrThrow',
-    I,
-    O
-  > {
-    return this.exec(async (metadata, options) => {});
-  }
+  async findFirstOrThrow<I extends State, O extends State>(
+    options: QueryOptions<'FindFirstOrThrow', I, O>,
+  ) {}
 
-  createMany<I extends State, O extends State>(): ExecFn<'CreateMany', I, O> {
-    return this.exec(async (metadata, options) => {});
-  }
+  async createMany<I extends State, O extends State>(
+    options: QueryOptions<'CreateMany', I, O>,
+  ) {}
 
-  createOne<I extends State, O extends State>(): ExecFn<'CreateOne', I, O> {
-    return this.exec(async (metadata, options) => {});
-  }
+  async createOne<I extends State, O extends State>(
+    options: QueryOptions<'CreateOne', I, O>,
+  ) {}
 
-  updateMany<I extends State, O extends State>(): ExecFn<'UpdateMany', I, O> {
-    return this.exec(async (metadata, options) => {});
-  }
+  async updateMany<I extends State, O extends State>(
+    options: QueryOptions<'UpdateMany', I, O>,
+  ) {}
 
-  updateFirst<I extends State, O extends State>(): ExecFn<'UpdateFirst', I, O> {
-    return this.exec(async (metadata, options) => {});
-  }
+  async updateFirst<I extends State, O extends State>(
+    options: QueryOptions<'UpdateFirst', I, O>,
+  ) {}
 
-  updateFirstOrThrow<I extends State, O extends State>(): ExecFn<
-    'UpdateFirstOrThrow',
-    I,
-    O
-  > {
-    return this.exec(async (metadata, options) => {});
-  }
+  async updateFirstOrThrow<I extends State, O extends State>(
+    options: QueryOptions<'UpdateFirstOrThrow', I, O>,
+  ) {}
 
-  updateUnique<I extends State, O extends State>(): ExecFn<
-    'UpdateUnique',
-    I,
-    O
-  > {
-    return this.exec(async (metadata, options) => {});
-  }
+  async updateUnique<I extends State, O extends State>(
+    options: QueryOptions<'UpdateUnique', I, O>,
+  ) {}
 
-  updateUniqueOrThrow<I extends State, O extends State>(): ExecFn<
-    'UpdateUniqueOrThrow',
-    I,
-    O
-  > {
-    return this.exec(async (metadata, options) => {});
-  }
+  async updateUniqueOrThrow<I extends State, O extends State>(
+    options: QueryOptions<'UpdateUniqueOrThrow', I, O>,
+  ) {}
 
-  deleteMany<I extends State, O extends State>(): ExecFn<'DeleteMany', I, O> {
-    return this.exec(async (metadata, options) => {});
-  }
+  async deleteMany<I extends State, O extends State>(
+    options: QueryOptions<'DeleteMany', I, O>,
+  ) {}
 
-  deleteFirst<I extends State, O extends State>(): ExecFn<'DeleteFirst', I, O> {
-    return this.exec(async (metadata, options) => {});
-  }
+  async deleteFirst<I extends State, O extends State>(
+    options: QueryOptions<'DeleteFirst', I, O>,
+  ) {}
 
-  deleteFirstOrThrow<I extends State, O extends State>(): ExecFn<
-    'DeleteFirstOrThrow',
-    I,
-    O
-  > {
-    return this.exec(async (metadata, options) => {});
-  }
+  async deleteFirstOrThrow<I extends State, O extends State>(
+    options: QueryOptions<'DeleteFirstOrThrow', I, O>,
+  ) {}
 
-  deleteUnique<I extends State, O extends State>(): ExecFn<
-    'DeleteUnique',
-    I,
-    O
-  > {
-    return this.exec(async (metadata, options) => {});
-  }
+  async deleteUnique<I extends State, O extends State>(
+    options: QueryOptions<'DeleteUnique', I, O>,
+  ) {}
 
-  deleteUniqueOrThrow<I extends State, O extends State>(): ExecFn<
-    'DeleteUniqueOrThrow',
-    I,
-    O
-  > {
-    return this.exec(async (metadata, options) => {});
-  }
+  async deleteUniqueOrThrow<I extends State, O extends State>(
+    options: QueryOptions<'DeleteUniqueOrThrow', I, O>,
+  ) {}
 
   // private helpers
 
@@ -145,15 +120,4 @@ export class EngineExec {
   }
 
   private toEntity(document: StoreDocument): Entity<State> {}
-
-  private exec<T extends QueryType, I extends State, O extends State>(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    exec: (metadata: Metadata, options: QueryOptions<T, I, O>) => Promise<any>,
-  ): ExecFn<T, I, O> {
-    const { metadata } = this;
-
-    return async function () {
-      return exec(await metadata, this);
-    };
-  }
 }

@@ -1,68 +1,68 @@
-import { StoreDocumentValue } from './document.js';
+import { StoreScalarValue } from './document.js';
 
-export type StoreWhere =
-  | Record<FieldName, StoreWhereFilter>
-  | StoreWhereOrFilter;
+export type StoreWhere = StoreWhereRecord | StoreWhereOr;
+
+export type StoreWhereRecord = Record<FieldName, StoreWhereValue>;
 
 type FieldName = string;
 
-export type StoreWhereFilter =
-  | StoreWhereEqualsFilter
-  | StoreWhereNotEqualsFilter
-  | StoreWhereLowerThenFilter
-  | StoreWhereLowerThenEqualFilter
-  | StoreWhereGreaterThenFilter
-  | StoreWhereGreaterThenEqualFilter
-  | StoreWhereContainsFilter
-  | StoreWhereStartsWithFilter
-  | StoreWhereEndsWithFilter
-  | StoreWhereInFilter
-  | StoreWhereNotInFilter;
+export type StoreWhereValue =
+  | StoreWhereEquals
+  | StoreWhereNotEquals
+  | StoreWhereLowerThen
+  | StoreWhereLowerThenEqual
+  | StoreWhereGreaterThen
+  | StoreWhereGreaterThenEqual
+  | StoreWhereContains
+  | StoreWhereStartsWith
+  | StoreWhereEndsWith
+  | StoreWhereIn
+  | StoreWhereNotIn;
 
-export interface StoreWhereOrFilter {
-  $or: StoreWhere[];
+export interface StoreWhereOr {
+  $or: StoreWhereRecord[];
 }
 
-export interface StoreWhereEqualsFilter {
-  $eq: StoreDocumentValue;
+export interface StoreWhereEquals {
+  $eq: StoreScalarValue;
 }
 
-export interface StoreWhereNotEqualsFilter {
-  $ne: StoreDocumentValue;
+export interface StoreWhereNotEquals {
+  $ne: StoreScalarValue;
 }
 
-export interface StoreWhereLowerThenFilter {
-  $lt: StoreDocumentValue;
+export interface StoreWhereLowerThen {
+  $lt: StoreScalarValue;
 }
 
-export interface StoreWhereLowerThenEqualFilter {
-  $lte: StoreDocumentValue;
+export interface StoreWhereLowerThenEqual {
+  $lte: StoreScalarValue;
 }
 
-export interface StoreWhereGreaterThenFilter {
-  $gt: StoreDocumentValue;
+export interface StoreWhereGreaterThen {
+  $gt: StoreScalarValue;
 }
 
-export interface StoreWhereGreaterThenEqualFilter {
-  $gte: StoreDocumentValue;
+export interface StoreWhereGreaterThenEqual {
+  $gte: StoreScalarValue;
 }
 
-export interface StoreWhereContainsFilter {
-  $contains: StoreDocumentValue;
+export interface StoreWhereContains {
+  $contains: StoreScalarValue;
 }
 
-export interface StoreWhereStartsWithFilter {
-  $startsWith: StoreDocumentValue;
+export interface StoreWhereStartsWith {
+  $startsWith: StoreScalarValue;
 }
 
-export interface StoreWhereEndsWithFilter {
-  $endsWith: StoreDocumentValue;
+export interface StoreWhereEndsWith {
+  $endsWith: StoreScalarValue;
 }
 
-export interface StoreWhereInFilter {
-  $in: StoreDocumentValue[];
+export interface StoreWhereIn {
+  $in: StoreScalarValue[];
 }
 
-export interface StoreWhereNotInFilter {
-  $nin: StoreDocumentValue[];
+export interface StoreWhereNotIn {
+  $nin: StoreScalarValue[];
 }

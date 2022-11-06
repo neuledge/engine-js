@@ -59,7 +59,7 @@ export class NeuledgeEngine {
     return new QueryClass({
       type: 'FindMany',
       states,
-      exec: this.exec.findMany<S, S>(),
+      exec: this.exec.findMany,
     });
   }
 
@@ -68,7 +68,7 @@ export class NeuledgeEngine {
       type: 'FindUnique',
       states,
       unique: true,
-      exec: this.exec.findUnique<S, S>(),
+      exec: this.exec.findUnique,
     });
   }
 
@@ -79,7 +79,7 @@ export class NeuledgeEngine {
       type: 'FindUniqueOrThrow',
       states,
       unique: true,
-      exec: this.exec.findUniqueOrThrow<S, S>(),
+      exec: this.exec.findUniqueOrThrow,
     });
   }
 
@@ -87,7 +87,7 @@ export class NeuledgeEngine {
     return new QueryClass({
       type: 'FindFirst',
       states,
-      exec: this.exec.findFirst<S, S>(),
+      exec: this.exec.findFirst,
     });
   }
 
@@ -95,7 +95,7 @@ export class NeuledgeEngine {
     return new QueryClass({
       type: 'FindFirstOrThrow',
       states,
-      exec: this.exec.findFirstOrThrow<S, S>(),
+      exec: this.exec.findFirstOrThrow,
     });
   }
 
@@ -111,7 +111,7 @@ export class NeuledgeEngine {
       states,
       method,
       args,
-      exec: this.exec.createMany<S, S>(),
+      exec: this.exec.createMany,
     });
   }
 
@@ -125,7 +125,7 @@ export class NeuledgeEngine {
       states,
       method,
       args: [args],
-      exec: this.exec.createOne<S, S>(),
+      exec: this.exec.createOne,
     });
   }
 
@@ -156,7 +156,7 @@ export class NeuledgeEngine {
       states,
       method,
       args: [args ?? ({} as A)],
-      exec: this.exec.updateMany<S, StateMutationsReturn<S, M>>(),
+      exec: this.exec.updateMany,
     });
   }
 
@@ -187,7 +187,7 @@ export class NeuledgeEngine {
       states,
       method,
       args: [args ?? ({} as A)],
-      exec: this.exec.updateFirst<S, StateMutationsReturn<S, M>>(),
+      exec: this.exec.updateFirst,
     });
   }
 
@@ -221,7 +221,7 @@ export class NeuledgeEngine {
       states,
       method,
       args: [args ?? ({} as A)],
-      exec: this.exec.updateFirstOrThrow<S, StateMutationsReturn<S, M>>(),
+      exec: this.exec.updateFirstOrThrow,
     });
   }
 
@@ -253,7 +253,7 @@ export class NeuledgeEngine {
       method,
       args: [args ?? ({} as A)],
       unique: true,
-      exec: this.exec.updateUnique<S, StateMutationsReturn<S, M>>(),
+      exec: this.exec.updateUnique,
     });
   }
 
@@ -288,7 +288,7 @@ export class NeuledgeEngine {
       method,
       args: [args ?? ({} as A)],
       unique: true,
-      exec: this.exec.updateUniqueOrThrow<S, StateMutationsReturn<S, M>>(),
+      exec: this.exec.updateUniqueOrThrow,
     });
   }
 
@@ -300,7 +300,7 @@ export class NeuledgeEngine {
       type: 'DeleteMany',
       states,
       method,
-      exec: this.exec.deleteMany<S, S>(),
+      exec: this.exec.deleteMany,
     });
   }
 
@@ -312,7 +312,7 @@ export class NeuledgeEngine {
       type: 'DeleteFirst',
       states,
       method,
-      exec: this.exec.deleteFirst<S, S>(),
+      exec: this.exec.deleteFirst,
     });
   }
 
@@ -324,7 +324,7 @@ export class NeuledgeEngine {
       type: 'DeleteFirstOrThrow',
       states,
       method,
-      exec: this.exec.deleteFirstOrThrow<S, S>(),
+      exec: this.exec.deleteFirstOrThrow,
     });
   }
 
@@ -337,7 +337,7 @@ export class NeuledgeEngine {
       states,
       method,
       unique: true,
-      exec: this.exec.deleteUnique<S, S>(),
+      exec: this.exec.deleteUnique,
     });
   }
 
@@ -350,7 +350,7 @@ export class NeuledgeEngine {
       states,
       method,
       unique: true,
-      exec: this.exec.deleteUniqueOrThrow<S, S>(),
+      exec: this.exec.deleteUniqueOrThrow,
     });
   }
 }

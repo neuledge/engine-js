@@ -1,7 +1,7 @@
-import { State, StateKey, StateQuery, StateUnique } from '@/generated/index.js';
+import { State, StateKey, StateFind, StateUnique } from '@/generated/index.js';
 import { AllKeys } from './utils.js';
 
-export type Where<S extends State> = StateQuery<S> & {
+export type Where<S extends State> = StateFind<S> & {
   [K in NonCommonQueryKeys<S>]?: never;
 };
 
@@ -21,21 +21,19 @@ export type UniqueWhere<S extends State> = StateUnique<S> & {
 //   1. For each state:
 //   1.1. Get all state keys (`id|category` and `id`)
 //   1.2. Deduct it from states keys (`never` and `category`)
-//   2. Combine result with and OR operator (`category`)
+//   2. Combine result with an OR operator (`category`)
 //   3. Forbidden the result from all keys (`id`)
 
 type NonCommonQueryKeys<S extends State> = {
   [K in StateKey<S>]: Exclude<
-    AllKeys<StateQuery<S>>,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    S extends State<K> ? AllKeys<StateQuery<S>> : never
+    AllKeys<StateFind<S>>,
+    S extends State<K> ? AllKeys<StateFind<S>> : never
   >;
 }[StateKey<S>];
 
 type NonCommonUniqueKeys<S extends State> = {
   [K in StateKey<S>]: Exclude<
     AllKeys<StateUnique<S>>,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     S extends State<K> ? AllKeys<StateUnique<S>> : never
   >;
 }[StateKey<S>];

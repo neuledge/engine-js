@@ -1,13 +1,13 @@
-export type StoreDocument = { [key in string]?: StoreDocumentValue };
+export type StoreDocument = { [key in string]?: StoreScalarValue };
 
-export type StoreDocumentValue =
+export type StoreScalarValue =
   | null
   | string
   | number
   | bigint
   | boolean
   | Buffer
-  | { [key in string]?: StoreDocumentValue };
+  | { [key in string]?: StoreScalarValue };
 
 export type StoreListOffset = string | number | Buffer;
 

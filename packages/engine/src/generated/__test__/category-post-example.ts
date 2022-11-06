@@ -5,6 +5,9 @@ import {
 import {
   Entity as $,
   StateDefinition as $State,
+  StateWhere as $Where,
+  StateWhereNumber as $WhereNumber,
+  StateWhereObject as $WhereObject,
   StateId as $id,
 } from '@neuledge/engine';
 
@@ -20,9 +23,7 @@ export class Category {
     description: { type: String, index: 3, nullable: true },
   };
   static $id: { id: number };
-  static $find: {
-    id?: number;
-  };
+  static $find: $Where<{ id: $WhereNumber<number> }>;
   static $unique: {
     id: number;
   };
@@ -81,16 +82,23 @@ export class Category {
 @$State
 export class DraftPost {
   static $key = 'DraftPost' as const;
-  static $scalars = {
+  static $scalars = () => ({
     id: { type: Number, index: 1 },
-    category: { type: [Category], index: 2, nullable: true },
+    category: {
+      type: {
+        key: Number.key,
+        encode: (value: $id<typeof Category>) => Number.encode(value.id),
+        decode: (value: number) => ({ id: value }),
+      },
+      index: 2,
+      nullable: true,
+      relation: [Category],
+    },
     title: { type: String, index: 3 },
     content: { type: String, index: 4, nullable: true },
-  };
+  });
   static $id: { id: number };
-  static $find: {
-    id?: number;
-  };
+  static $find: $Where<{ id: $WhereNumber<number> }>;
   static $unique: {
     id: number;
   };
@@ -176,18 +184,25 @@ export class DraftPost {
 @$State
 export class PublishedPost {
   static $key = 'PublishedPost' as const;
-  static $scalars = {
+  static $scalars = () => ({
     id: { type: Number, index: 1 },
-    category: { type: [Category], index: 2 },
+    category: {
+      type: {
+        key: Number.key,
+        encode: (value: $id<typeof Category>) => Number.encode(value.id),
+        decode: (value: number) => ({ id: value }),
+      },
+      index: 2,
+      relation: [Category],
+    },
     title: { type: String, index: 3 },
     content: { type: String, index: 4 },
-  };
+  });
   static $id: { id: number };
-  static $find:
-    | {
-        id?: number;
-      }
-    | { category?: $id<typeof Category> };
+  static $find: $Where<
+    | { id: $WhereNumber<number> }
+    | { category: $WhereObject<$id<typeof Category>> }
+  >;
   static $unique: {
     id: number;
   };

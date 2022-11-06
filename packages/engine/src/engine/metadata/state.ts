@@ -10,9 +10,10 @@ export interface StoreMetadataState {
 interface StoreMetadataStateField {
   key: string;
   fieldName: string;
-  type: string | Buffer[];
+  type: string;
   index: number;
   nullable: boolean;
+  relations: Buffer[];
 }
 
 export const fromStoreMetadataState = (
@@ -35,11 +36,10 @@ const fromStoreMetadataStateField = (
   doc: StoreMetadataStateField,
 ): MetadataStateField => ({
   fieldName: doc.fieldName,
-  type: Array.isArray(doc.type)
-    ? doc.type.map((item) => getState(item))
-    : doc.type,
+  type: doc.type,
   index: doc.index,
   nullable: doc.nullable,
+  relations: doc.relations.map((hash) => getState(hash)),
 });
 
 export const toStoreMetadataState = (
@@ -52,12 +52,10 @@ export const toStoreMetadataState = (
     ([key, field]): StoreMetadataStateField => ({
       key,
       fieldName: field.fieldName,
-      type:
-        typeof field.type === 'string'
-          ? field.type
-          : field.type.map((item) => item.hash),
+      type: field.type,
       index: field.index,
       nullable: field.nullable,
+      relations: field.relations.map((item) => item.hash),
     }),
   ),
 });

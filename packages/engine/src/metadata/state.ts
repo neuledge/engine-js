@@ -19,9 +19,10 @@ export interface MetadataLiveState extends MetadataState {
 
 export interface MetadataStateField {
   fieldName: string;
-  type: Scalar['key'] | MetadataState[];
+  type: Scalar['key'];
   index: number;
   nullable: boolean;
+  relations: MetadataState[];
 }
 
 export const toMetadataState = (
@@ -39,7 +40,7 @@ export const toMetadataState = (
 
   const scalars = resolveDefer(state.$scalars);
   for (const key in scalars) {
-    const { type, index, nullable } = scalars[key];
+    const { type, index, nullable, relation } = scalars[key];
 
     const fieldName = names[`${state.$key}.${key}`];
     if (!fieldName) {
@@ -50,11 +51,10 @@ export const toMetadataState = (
 
     fields[key] = {
       fieldName,
-      type: Array.isArray(type)
-        ? type.map((item) => toMetadataState(names, item))
-        : type.key,
+      type: type.key,
       index,
       nullable: !!nullable,
+      relations: relation?.map((item) => toMetadataState(names, item)) ?? [],
     };
   }
 
@@ -74,19 +74,13 @@ export const isMetadataStatesEquals = (
   a.key === b.key &&
   a.hash.equals(b.hash) &&
   Object.entries(a.fields).every(([key, { type, index, nullable }]) => {
-    const bf = b.fields[key];
-    if (!bf) return false;
-
-    const bt = bf.type;
+    const other = b.fields[key];
+    if (!other) return false;
 
     return (
-      index === bf.index &&
-      nullable === bf.nullable &&
-      (typeof type === 'string'
-        ? type === bt
-        : type.length === bt.length &&
-          typeof bt !== 'string' &&
-          type.every((item, i) => isMetadataStatesEquals(item, bt[i])))
+      index === other.index &&
+      nullable === other.nullable &&
+      type === other.type
     );
   });
 
@@ -123,31 +117,34 @@ export const isStatesMatches = (
 };
 
 export const serializeMetadataState = (
+  refs: Record<string, MetadataState>,
   state: MetadataState,
-): MetadataState => ({
-  collectionName: state.collectionName,
-  key: state.key,
-  hash: state.hash,
-  fields: Object.fromEntries(
-    Object.entries(state.fields).map(
-      ([key, { fieldName, type, index, nullable }]): [
-        string,
-        MetadataStateField,
-      ] => [
-        key,
-        {
-          fieldName,
-          type:
-            typeof type === 'string'
-              ? type
-              : type.map((item) => serializeMetadataState(item)),
-          index,
-          nullable,
-        },
-      ],
+): MetadataState =>
+  refs[state.key] ??
+  (refs[state.key] = {
+    collectionName: state.collectionName,
+    key: state.key,
+    hash: state.hash,
+    fields: Object.fromEntries(
+      Object.entries(state.fields).map(
+        ([key, { fieldName, type, index, nullable, relations }]): [
+          string,
+          MetadataStateField,
+        ] => [
+          key,
+          {
+            fieldName,
+            type,
+            index,
+            nullable,
+            relations: relations.map((item) =>
+              serializeMetadataState(refs, item),
+            ),
+          },
+        ],
+      ),
     ),
-  ),
-});
+  });
 
 const generateStateHash = (
   fields: MetadataState['fields'],
@@ -155,12 +152,16 @@ const generateStateHash = (
   generateHash(
     Object.values(fields)
       .map(
-        ({ type, index, nullable }): [number, string | string[], boolean] => [
+        ({
+          type,
           index,
-          Array.isArray(type)
-            ? type.map((item) => item.hash.toString('hex'))
-            : type,
           nullable,
+          relations,
+        }): [number, string, boolean, string[]] => [
+          index,
+          type,
+          nullable,
+          relations.map((item) => item.hash.toString('hex')),
         ],
       )
       .sort((a, b) => a[0] - b[0]),

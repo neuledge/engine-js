@@ -239,7 +239,7 @@ export class QueryClass<
     }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return (this.options as ExecQueryOptions<any, any, any>).exec();
+    return (this.options as ExecQueryOptions<any, any, any>).exec(this.options);
   }
 
   // eslint-disable-next-line unicorn/no-thenable, @typescript-eslint/no-explicit-any

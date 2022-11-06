@@ -12,5 +12,5 @@ export interface ExecQueryOptions<
   O extends State,
   R = any, // eslint-disable-line @typescript-eslint/no-explicit-any
 > {
-  exec(this: QueryOptions<T, I, O>): Promise<R>;
+  exec(options: QueryOptions<T, I, O>): Promise<R>;
 }
