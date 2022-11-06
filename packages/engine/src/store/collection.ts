@@ -4,6 +4,8 @@ export interface StoreCollection {
   fields: StoreField[];
 }
 
+export type StoreCollection_Slim = Pick<StoreCollection, 'name'>;
+
 export type StoreCollectionName = string;
 
 export interface StoreField {

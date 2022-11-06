@@ -6,8 +6,10 @@ export interface SortQuery<S extends State> {
 }
 
 export interface SortQueryOptions<S extends State> {
-  sort?: SortIndex<S> | SortField<S>[];
+  sort?: Sort<S>;
 }
+
+export type Sort<S extends State> = SortIndex<S> | SortField<S>[];
 
 export type SortIndex<S extends State> = keyof StateIndexes<S>;
 

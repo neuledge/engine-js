@@ -20,7 +20,7 @@ export const ensureStoreMetadata = async (
   collectionName: string,
 ): Promise<void> => {
   await store.ensureCollection({
-    collectionName,
+    name: collectionName,
     indexes: [
       { name: 'hash', fields: [{ name: 'hash', order: 'asc' }], primary: true },
     ],

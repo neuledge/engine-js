@@ -5,6 +5,7 @@ import { Metadata } from '@/metadata/index.js';
 import { QueryOptions } from '@/queries/index.js';
 import { Store, StoreDocument, StoreList } from '@/store/index.js';
 import { convertSelect } from './select.js';
+import { convertSort } from './sort.js';
 import { convertWhere } from './where.js';
 
 const DEFAULT_QUERY_LIMIT = 201;
@@ -42,7 +43,7 @@ export class EngineExec {
         // requireFirst: undefined,
         offset: options.offset,
         limit: options.limit ?? DEFAULT_QUERY_LIMIT,
-        // sort: undefined,
+        sort: options.sort ? convertSort(collection, options.sort) : undefined,
       }),
     );
   }

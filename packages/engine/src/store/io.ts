@@ -5,11 +5,11 @@ import { StoreSort } from './sort.js';
 import { StoreWhere } from './where.js';
 
 export interface StoreDescribeCollectionOptions {
-  collectionName: StoreCollectionName;
+  name: StoreCollectionName;
 }
 
 export interface StoreEnsureCollectionOptions {
-  collectionName: StoreCollectionName;
+  name: StoreCollectionName;
   indexes?: StoreIndex[];
   fields?: StoreField[];
   dropIndexes?: string[];
@@ -17,7 +17,7 @@ export interface StoreEnsureCollectionOptions {
 }
 
 export interface StoreDropCollectionOptions {
-  collectionName: StoreCollectionName;
+  name: StoreCollectionName;
 }
 
 export interface StoreFindOptions {

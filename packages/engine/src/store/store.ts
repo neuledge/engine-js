@@ -1,4 +1,4 @@
-import { StoreCollection } from './collection.js';
+import { StoreCollection_Slim, StoreCollection } from './collection.js';
 import { StoreDocument, StoreList } from './document.js';
 import {
   StoreInsertOptions,
@@ -17,6 +17,7 @@ export interface Store {
   connect(): Promise<void>;
   close(): Promise<void>;
 
+  listCollections(): Promise<StoreCollection_Slim[]>;
   describeCollection(
     options: StoreDescribeCollectionOptions,
   ): Promise<StoreCollection>;

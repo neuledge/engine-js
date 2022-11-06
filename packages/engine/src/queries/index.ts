@@ -13,6 +13,7 @@ export * from './find-unique.js';
 export * from './query.js';
 export * from './query-class.js';
 export * from './select.js';
+export * from './sort.js';
 export * from './update-first-or-throw.js';
 export * from './update-first.js';
 export * from './update-many.js';

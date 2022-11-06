@@ -1,4 +1,5 @@
 import { Scalar } from '@neuledge/scalars';
+import { StateSort } from './sort.js';
 import { StateWhere } from './where.js';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -17,11 +18,11 @@ export interface State<K extends string = string, T = any> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   $find: StateWhere<any>;
   $unique: { [K in keyof T]?: T[K] };
-  $relations?: Defer<{
-    [K in string]: readonly State[] | readonly [readonly State[]];
-  }>;
-  $indexes?: { [K in string]: (keyof T)[] };
-  $methods?: Defer<{ [K in string]?: readonly State[] }>;
+  $relations?: Defer<
+    Record<string, readonly State[] | readonly [readonly State[]]>
+  >;
+  $indexes?: Record<string, StateSort<T>>;
+  $methods?: Defer<Record<string, readonly State[]>>;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   new (...args: any): T;
