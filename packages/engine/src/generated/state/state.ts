@@ -1,5 +1,5 @@
 import { Scalar } from '@neuledge/scalars';
-import { StateWhere } from './state-where.js';
+import { StateWhere } from './where.js';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export interface State<K extends string = string, T = any> {

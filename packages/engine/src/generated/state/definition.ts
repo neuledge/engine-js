@@ -1,4 +1,4 @@
-import { State, StateKey } from './state.js';
+import { State, StateKey } from './index.js';
 
 export const stateDefinitions = new Map<StateKey, State>();
 

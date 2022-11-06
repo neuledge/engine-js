@@ -9,6 +9,7 @@ import {
   StateWhereNumber as $WhereNumber,
   StateWhereObject as $WhereObject,
   StateId as $id,
+  createEither as $either,
 } from '@neuledge/engine';
 
 /**
@@ -241,4 +242,4 @@ export class PublishedPost {
 }
 
 export type Post = DraftPost | PublishedPost;
-export const Post = Object.assign([DraftPost, PublishedPost], { $key: 'Post' });
+export const Post = $either('Post', [DraftPost, PublishedPost]);

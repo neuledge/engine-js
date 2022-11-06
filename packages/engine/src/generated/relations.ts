@@ -1,4 +1,4 @@
-import { State, StateRelations } from './state.js';
+import { State, StateRelations } from './state/index.js';
 
 export type StateFilterKeys<S extends State> = keyof StateRelations<S>;
 

@@ -1,5 +1,5 @@
 import { Entity } from '@/entity.js';
-import { State } from './state.js';
+import { State } from './state/index.js';
 
 export type MutationArguments = Record<string, unknown>;
 

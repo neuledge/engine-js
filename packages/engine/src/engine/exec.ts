@@ -42,6 +42,7 @@ export class EngineExec {
         // requireFirst: undefined,
         offset: options.offset,
         limit: options.limit ?? DEFAULT_QUERY_LIMIT,
+        // sort: undefined,
       }),
     );
   }
