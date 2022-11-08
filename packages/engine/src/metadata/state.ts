@@ -31,9 +31,7 @@ export const toMetadataState = (
 ): MetadataState => {
   const collectionName = names[state.$key];
   if (!collectionName) {
-    throw new ReferenceError(
-      `Can't find unique collection name for state '${state.$key}'`,
-    );
+    throw new ReferenceError(`Unknown state '${state.$key}'`);
   }
 
   const fields: MetadataState['fields'] = {};

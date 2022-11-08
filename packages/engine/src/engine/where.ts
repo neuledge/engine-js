@@ -86,11 +86,13 @@ const convertWhereValue = (
   const res: Record<string, StoreScalarValue | StoreScalarValue[]> = {};
 
   for (const [key, value] of Object.entries(where)) {
-    if (value == null) continue;
-
     switch (key) {
       case '$eq':
-      case '$ne':
+      case '$ne': {
+        res[key] = value == null ? null : scalar.encode(value);
+        break;
+      }
+
       case '$gt':
       case '$gte':
       case '$lt':
@@ -98,6 +100,8 @@ const convertWhereValue = (
       case '$contains':
       case '$startsWith':
       case '$endsWith': {
+        if (value == null) break;
+
         res[key] = scalar.encode(value);
         break;
       }
@@ -108,7 +112,9 @@ const convertWhereValue = (
           throw new TypeError(`Expected array for '${key}'`);
         }
 
-        res[key] = value.map((item) => scalar.encode(item));
+        res[key] = value.map((item) =>
+          item == null ? null : scalar.encode(item),
+        );
         break;
       }
 

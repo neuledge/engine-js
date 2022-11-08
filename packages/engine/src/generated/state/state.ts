@@ -21,7 +21,8 @@ export interface State<K extends string = string, T = any> {
   $relations?: Defer<
     Record<string, readonly State[] | readonly [readonly State[]]>
   >;
-  $indexes?: Record<string, StateSort<T>>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  $indexes?: Record<string, StateSort<any>>;
   $methods?: Defer<Record<string, readonly State[]>>;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

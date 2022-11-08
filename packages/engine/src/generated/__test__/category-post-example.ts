@@ -211,6 +211,9 @@ export class PublishedPost {
     category: [Category],
   });
   static $methods = {};
+  static $indexes = {
+    'category.posts': ['+category', '+title'] as const,
+  };
 
   id!: number;
   title!: string;

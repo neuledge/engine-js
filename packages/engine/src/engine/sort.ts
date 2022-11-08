@@ -7,9 +7,12 @@ export const convertSort = <S extends State>(
   collection: MetadataCollection,
   sort: Sort<S>,
 ): StoreSort => {
-  if (typeof sort === 'string') {
-    const key = sort;
+  let reverse = false;
 
+  if (typeof sort === 'string') {
+    reverse = sort[0] === '-';
+
+    const key = sort.slice(1);
     for (const state of collection.states) {
       const index = state.origin.$indexes?.[key];
       if (index != null) {
@@ -26,14 +29,14 @@ export const convertSort = <S extends State>(
   const res: StoreSort = {};
 
   for (const key of sort as StateSort<S>) {
-    let direction;
+    let direction: 'asc' | 'desc';
     switch (key[0]) {
       case '+':
-        direction = 'asc' as const;
+        direction = reverse ? 'desc' : 'asc';
         break;
 
       case '-':
-        direction = 'desc' as const;
+        direction = reverse ? 'asc' : 'desc';
         break;
 
       default:

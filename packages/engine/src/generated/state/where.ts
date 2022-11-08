@@ -9,12 +9,12 @@ export type StateWhereRecord<T> = {
 };
 
 export type StateWhereScalar<V> =
-  | StateWhereObject<V>
-  | StateWhereNumber<V>
-  | StateWhereString<V>
-  | StateWhereBoolean<V>;
+  | StateWhereNullableObject<V & object>
+  | StateWhereNullableNumber<V & number>
+  | StateWhereNullableString<V & string>
+  | StateWhereNullableBoolean<V & boolean>;
 
-export type StateWhereObject<V> =
+export type StateWhereObject<V extends object> =
   | WhereEqualsFilter<V>
   | WhereNotEqualsFilter<V>
   | WhereLowerThenFilter<V>
@@ -24,7 +24,17 @@ export type StateWhereObject<V> =
   | WhereInFilter<V>
   | WhereNotInFilter<V>;
 
-export type StateWhereNumber<V> =
+export type StateWhereNullableObject<V extends object> =
+  | WhereEqualsFilter<V | null>
+  | WhereNotEqualsFilter<V | null>
+  | WhereLowerThenFilter<V>
+  | WhereLowerThenEqualFilter<V>
+  | WhereGreaterThenFilter<V>
+  | WhereGreaterThenEqualFilter<V>
+  | WhereInFilter<V | null>
+  | WhereNotInFilter<V | null>;
+
+export type StateWhereNumber<V extends number> =
   | WhereEqualsFilter<V>
   | WhereNotEqualsFilter<V>
   | WhereLowerThenFilter<V>
@@ -34,7 +44,17 @@ export type StateWhereNumber<V> =
   | WhereInFilter<V>
   | WhereNotInFilter<V>;
 
-export type StateWhereString<V> =
+export type StateWhereNullableNumber<V extends number> =
+  | WhereEqualsFilter<V | null>
+  | WhereNotEqualsFilter<V | null>
+  | WhereLowerThenFilter<V>
+  | WhereLowerThenEqualFilter<V>
+  | WhereGreaterThenFilter<V>
+  | WhereGreaterThenEqualFilter<V>
+  | WhereInFilter<V | null>
+  | WhereNotInFilter<V | null>;
+
+export type StateWhereString<V extends string> =
   | WhereEqualsFilter<V>
   | WhereNotEqualsFilter<V>
   | WhereLowerThenFilter<V>
@@ -47,9 +67,26 @@ export type StateWhereString<V> =
   | WhereInFilter<V>
   | WhereNotInFilter<V>;
 
-export type StateWhereBoolean<V> =
+export type StateWhereNullableString<V extends string> =
+  | WhereEqualsFilter<V | null>
+  | WhereNotEqualsFilter<V | null>
+  | WhereLowerThenFilter<V>
+  | WhereLowerThenEqualFilter<V>
+  | WhereGreaterThenFilter<V>
+  | WhereGreaterThenEqualFilter<V>
+  | WhereContainsFilter<V>
+  | WhereStartsWithFilter<V>
+  | WhereEndsWithFilter<V>
+  | WhereInFilter<V | null>
+  | WhereNotInFilter<V | null>;
+
+export type StateWhereBoolean<V extends boolean> =
   | WhereEqualsFilter<V>
   | WhereNotEqualsFilter<V>;
+
+export type StateWhereNullableBoolean<V extends boolean> =
+  | WhereEqualsFilter<V | null>
+  | WhereNotEqualsFilter<V | null>;
 
 interface WhereEqualsFilter<V> {
   $eq: V;

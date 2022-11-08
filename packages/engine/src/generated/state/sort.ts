@@ -1,1 +1,3 @@
-export type StateSort<T> = `${'+' | '-'}${keyof T & string}`[];
+export type StateSort<T> = readonly SortedField<keyof T & string>[];
+
+type SortedField<K extends string> = `${'+' | '-'}${K}`;

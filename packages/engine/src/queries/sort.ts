@@ -9,9 +9,14 @@ export interface SortQueryOptions<S extends State> {
   sort?: Sort<S>;
 }
 
-export type Sort<S extends State> = SortIndex<S> | SortField<S>[];
+export type Sort<S extends State> = SortIndex<S> | readonly SortField<S>[];
 
-export type SortIndex<S extends State> = keyof StateIndexes<S>;
+export type SortIndex<S extends State> = SortedField<
+  keyof StateIndexes<S> & string
+>;
 
-export type SortField<S extends State> = `${'+' | '-'}${keyof InstanceType<S> &
-  string}`;
+export type SortField<S extends State> = SortedField<
+  keyof InstanceType<S> & string
+>;
+
+type SortedField<K extends string> = `${'+' | '-'}${K}`;
