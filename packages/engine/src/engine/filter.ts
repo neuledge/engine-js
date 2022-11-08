@@ -1,23 +1,27 @@
 import { Scalar } from '@neuledge/scalars';
 import {
   resolveDefer,
-  StateWhere,
+  State,
   StateWhereRecord,
   StateWhereScalar,
 } from '@/generated/index.js';
 import { MetadataCollection } from '@/metadata/index.js';
 import {
+  StoreFindOptions,
   StoreScalarValue,
-  StoreWhere,
   StoreWhereRecord,
   StoreWhereValue,
 } from '@/store/index.js';
+import { FilterQueryOptions } from '@/queries/index.js';
 
-export const convertWhere = (
+export const convertFilter = <S extends State>(
   collection: MetadataCollection,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  where: StateWhere<any>,
-): StoreWhere => {
+  { filter, where }: FilterQueryOptions<S>,
+): Pick<StoreFindOptions, 'filter' | 'where'> => {
+  if (where == null) {
+    return {};
+  }
+
   const res: StoreWhereRecord[] = [];
 
   if (where.$or?.length > 0) {
@@ -31,7 +35,7 @@ export const convertWhere = (
     res.push(...convertWhereRecord(collection, where));
   }
 
-  return res.length === 1 ? res[0] : { $or: res };
+  return { where: res.length === 1 ? res[0] : { $or: res } };
 };
 
 const convertWhereRecord = (

@@ -1,3 +1,4 @@
+import { Scalar } from '@neuledge/scalars';
 import { State, stateDefinitions } from '@/generated/index.js';
 import { MetadataChange } from './change.js';
 import { MetadataCollection } from './collection.js';
@@ -7,13 +8,13 @@ import {
   isStatesMatches,
   MetadataState,
   syncStateCollectionNames,
-  serializeMetadataState,
   toMetadataState,
 } from './state.js';
 
 const HASH_KEY_ENCODING = 'base64url';
 
 export class Metadata {
+  private readonly typeMap: Partial<Record<string, Scalar>>;
   private readonly hashMap: Partial<Record<string, MetadataState>>;
   private readonly keyMap: Partial<Record<string, MetadataState>>;
 
@@ -28,6 +29,7 @@ export class Metadata {
   }
 
   constructor(states: MetadataState[]) {
+    this.typeMap = {};
     this.hashMap = {};
     this.keyMap = {};
 
@@ -37,7 +39,25 @@ export class Metadata {
       if (this.keyMap[entity.key] == null) {
         this.keyMap[entity.key] = entity;
       }
+
+      for (const { type } of Object.values(entity.fields)) {
+        if (this.typeMap[type.key] == null) {
+          this.typeMap[type.key] = type;
+        }
+      }
     }
+  }
+
+  findType(key: string): Scalar | undefined {
+    return this.typeMap[key];
+  }
+
+  findStateByKey(key: string): MetadataState | undefined {
+    return this.keyMap[key];
+  }
+
+  findStateByHash(hash: Buffer): MetadataState | undefined {
+    return this.hashMap[hash.toString(HASH_KEY_ENCODING)];
   }
 
   getCollections(states: State[]): MetadataCollection[] {
@@ -109,13 +129,5 @@ export class Metadata {
     }
 
     return changes;
-  }
-
-  serialize(): MetadataState[] {
-    const refs = {};
-
-    return Object.values(this.hashMap)
-      .filter((item): item is MetadataState => !!item)
-      .map((item) => serializeMetadataState(refs, item));
   }
 }

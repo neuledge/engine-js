@@ -11,7 +11,7 @@ export type ProjectedEntity<S extends State, P extends Select<S>> = {
 
 type StateEntity<S extends State, T = InstanceType<S>> = {
   $state: StateKey<S>;
-  constructor: S;
+  constructor?: S;
 } & T;
 
 type Project<S extends State, P extends Select<S>> = StateEntity<

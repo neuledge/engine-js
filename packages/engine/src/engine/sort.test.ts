@@ -15,36 +15,46 @@ describe('engine/sort', () => {
     });
 
     it('should throw on unknown sort string', () => {
-      expect(() => convertSort(postsCollection, '+foo')).toThrow(
+      expect(() => convertSort(postsCollection, { sort: '+foo' })).toThrow(
         'Unknown sort key: foo',
       );
     });
 
-    it('should convert a sort asc string to a sort object', () => {
-      const sort = convertSort(postsCollection, '+category.posts');
+    it('should convert an empty sort', () => {
+      const res = convertSort(postsCollection, {});
 
-      expect(sort).toEqual({ category: 'asc', title: 'asc' });
-      expect(Object.keys(sort)).toEqual(['category', 'title']);
+      expect(res).toEqual({});
+    });
+
+    it('should convert a sort asc string to a sort object', () => {
+      const res = convertSort(postsCollection, { sort: '+category.posts' });
+
+      expect(res).toEqual({ sort: { category: 'asc', title: 'asc' } });
+      expect(Object.keys(res.sort ?? {})).toEqual(['category', 'title']);
     });
 
     it('should convert a sort desc string to a sort object', () => {
-      const sort = convertSort(postsCollection, '-category.posts');
+      const res = convertSort(postsCollection, { sort: '-category.posts' });
 
-      expect(sort).toEqual({ category: 'desc', title: 'desc' });
-      expect(Object.keys(sort)).toEqual(['category', 'title']);
+      expect(res).toEqual({ sort: { category: 'desc', title: 'desc' } });
+      expect(Object.keys(res.sort ?? {})).toEqual(['category', 'title']);
     });
 
     it('should convert sort fields', () => {
-      const sort = convertSort(categoriesCollection, ['+name', '-description']);
+      const res = convertSort(categoriesCollection, {
+        sort: ['+name', '-description'],
+      });
 
-      expect(sort).toEqual({ name: 'asc', description: 'desc' });
-      expect(Object.keys(sort)).toEqual(['name', 'description']);
+      expect(res).toEqual({ sort: { name: 'asc', description: 'desc' } });
+      expect(Object.keys(res.sort ?? {})).toEqual(['name', 'description']);
     });
 
     it('should ignore on unknown sort field', () => {
-      const sort = convertSort(categoriesCollection, ['+name', '-foo']);
+      const res = convertSort(categoriesCollection, {
+        sort: ['+name', '-foo'],
+      });
 
-      expect(sort).toEqual({ name: 'asc' });
+      expect(res).toEqual({ sort: { name: 'asc' } });
     });
   });
 });

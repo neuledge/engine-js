@@ -1,12 +1,16 @@
 import { State } from '@/generated/index.js';
 import { MetadataCollection } from '@/metadata/index.js';
-import { Select } from '@/queries/index.js';
-import { StoreSelect } from '@/store/index.js';
+import { SelectQueryOptions } from '@/queries/index.js';
+import { StoreFindOptions, StoreSelect } from '@/store/index.js';
 
 export const convertSelect = <S extends State>(
   collection: MetadataCollection,
-  select: Select<S>,
-): StoreSelect => {
+  { select, requireOne, includeOne, includeMany }: SelectQueryOptions<S>,
+): Pick<StoreFindOptions, 'select' | 'includeFirst' | 'requireFirst'> => {
+  if (select == null) {
+    return {};
+  }
+
   const res: StoreSelect = {};
 
   for (const key in select) {
@@ -17,5 +21,5 @@ export const convertSelect = <S extends State>(
     }
   }
 
-  return res;
+  return { select: res };
 };

@@ -12,24 +12,34 @@ describe('engine/select', () => {
       postsCollection = metadata.getCollections(Post)[0];
     });
 
+    it('should convert empty object', () => {
+      const res = convertSelect(postsCollection, {});
+
+      expect(res).toEqual({});
+    });
+
     it('should convert a select object', () => {
-      const select = convertSelect(postsCollection, {
-        title: true,
-        id: true,
-        content: false,
+      const res = convertSelect(postsCollection, {
+        select: {
+          title: true,
+          id: true,
+          content: false,
+        },
       });
 
-      expect(select).toEqual({ title: true, id: true });
+      expect(res).toEqual({ select: { title: true, id: true } });
     });
 
     it('should ignore unknown fields', () => {
-      const select = convertSelect(postsCollection, {
-        title: false,
-        id: true,
-        foo: true,
+      const res = convertSelect(postsCollection, {
+        select: {
+          title: false,
+          id: true,
+          foo: true,
+        },
       });
 
-      expect(select).toEqual({ id: true });
+      expect(res).toEqual({ select: { id: true } });
     });
   });
 });

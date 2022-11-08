@@ -12,11 +12,6 @@ import {
 } from './io.js';
 
 export interface Store {
-  readonly status: StoreStatus;
-
-  connect(): Promise<void>;
-  close(): Promise<void>;
-
   listCollections(): Promise<StoreCollection_Slim[]>;
   describeCollection(
     options: StoreDescribeCollectionOptions,
@@ -33,11 +28,4 @@ export interface Store {
     options: StoreUpdateOptions<T>,
   ): Promise<StoreMutationResponse>;
   delete(options: StoreDeleteOptions): Promise<StoreMutationResponse>;
-}
-
-export enum StoreStatus {
-  DISCONNECTED = 1,
-  CONNECTING = 2,
-  CONNECTED = 3,
-  DISCONNECTING = 4,
 }

@@ -19,7 +19,7 @@ export interface MetadataLiveState extends MetadataState {
 
 export interface MetadataStateField {
   fieldName: string;
-  type: Scalar['key'];
+  type: Scalar;
   index: number;
   nullable: boolean;
   relations: MetadataState[];
@@ -49,7 +49,7 @@ export const toMetadataState = (
 
     fields[key] = {
       fieldName,
-      type: type.key,
+      type,
       index,
       nullable: !!nullable,
       relations: relation?.map((item) => toMetadataState(names, item)) ?? [],
@@ -78,7 +78,7 @@ export const isMetadataStatesEquals = (
     return (
       index === other.index &&
       nullable === other.nullable &&
-      type === other.type
+      type.key === other.type.key
     );
   });
 
@@ -105,7 +105,7 @@ export const isStatesMatches = (
     const actualType = actualField.type;
 
     if (!Array.isArray(type) || !Array.isArray(actualType)) {
-      return type === actualType;
+      return type.key === actualType.key;
     }
 
     return actualType.every((actualState) =>
@@ -113,36 +113,6 @@ export const isStatesMatches = (
     );
   });
 };
-
-export const serializeMetadataState = (
-  refs: Record<string, MetadataState>,
-  state: MetadataState,
-): MetadataState =>
-  refs[state.key] ??
-  (refs[state.key] = {
-    collectionName: state.collectionName,
-    key: state.key,
-    hash: state.hash,
-    fields: Object.fromEntries(
-      Object.entries(state.fields).map(
-        ([key, { fieldName, type, index, nullable, relations }]): [
-          string,
-          MetadataStateField,
-        ] => [
-          key,
-          {
-            fieldName,
-            type,
-            index,
-            nullable,
-            relations: relations.map((item) =>
-              serializeMetadataState(refs, item),
-            ),
-          },
-        ],
-      ),
-    ),
-  });
 
 const generateStateHash = (
   fields: MetadataState['fields'],
@@ -157,7 +127,7 @@ const generateStateHash = (
           relations,
         }): [number, string, boolean, string[]] => [
           index,
-          type,
+          type.key,
           nullable,
           relations.map((item) => item.hash.toString('hex')),
         ],

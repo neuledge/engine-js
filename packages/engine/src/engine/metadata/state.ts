@@ -18,6 +18,7 @@ interface StoreMetadataStateField {
 
 export const fromStoreMetadataState = (
   getState: (hash: Buffer) => MetadataState,
+  getType: (key: string) => MetadataStateField['type'],
   doc: StoreMetadataState,
 ): MetadataState =>
   Object.assign(getState(doc.hash), {
@@ -26,17 +27,18 @@ export const fromStoreMetadataState = (
     fields: Object.fromEntries(
       Object.entries(doc.fields).map(([key, field]) => [
         key,
-        fromStoreMetadataStateField(getState, field),
+        fromStoreMetadataStateField(getState, getType, field),
       ]),
     ),
   });
 
 const fromStoreMetadataStateField = (
   getState: (hash: Buffer) => MetadataState,
+  getType: (key: string) => MetadataStateField['type'],
   doc: StoreMetadataStateField,
 ): MetadataStateField => ({
   fieldName: doc.fieldName,
-  type: doc.type,
+  type: getType(doc.type),
   index: doc.index,
   nullable: doc.nullable,
   relations: doc.relations.map((hash) => getState(hash)),
@@ -52,7 +54,7 @@ export const toStoreMetadataState = (
     ([key, field]): StoreMetadataStateField => ({
       key,
       fieldName: field.fieldName,
-      type: field.type,
+      type: field.type.key,
       index: field.index,
       nullable: field.nullable,
       relations: field.relations.map((item) => item.hash),

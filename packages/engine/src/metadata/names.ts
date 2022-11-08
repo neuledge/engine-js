@@ -1,5 +1,6 @@
 import { resolveDefer, State, StateKey } from '@/generated/index.js';
 import pluralize from 'pluralize';
+import { ENTITY_METADATA_HASH_FIELD } from './constants.js';
 
 export type StateCollectionNames = Record<
   StateKey | `${StateKey}.${string}`,
@@ -142,13 +143,54 @@ const formatCollectionName = (words: string[]): string =>
 const generateStateFieldNames = (
   states: Iterable<State>,
 ): StateCollectionNames => {
-  const nameMap = new Map<string, Map<string, Set<`${string}.${string}`>>>();
+  const names: StateCollectionNames = {};
+
+  const nameMap = createNameMap(states);
+  const usedNames = new Set<string>(nameMap.keys());
+
+  for (const [name, typeMap] of nameMap) {
+    const stateFields = [...typeMap.values()].sort((a, b) => b.size - a.size);
+
+    if (name !== ENTITY_METADATA_HASH_FIELD) {
+      // pick the most common type
+      for (const key of stateFields[0]) {
+        names[key] = name;
+      }
+    } else {
+      // assign alternate name for the first field as well
+      stateFields.unshift(stateFields[0]);
+    }
+
+    // assign alternate names for the rest
+    for (let i = 1; i < stateFields.length; i++) {
+      let altName;
+      let j = i + 1;
+      do {
+        altName = `${name}_${j++}`;
+      } while (usedNames.has(altName));
+
+      usedNames.add(altName);
+
+      for (const key of stateFields[i]) {
+        names[key] = altName;
+      }
+    }
+  }
+
+  return names;
+};
+
+const createNameMap = (states: Iterable<State>) => {
+  const nameMap = new Map<
+    /* key: */ string,
+    Map</* type: */ string, Set</* state.key: */ `${string}.${string}`>>
+  >();
 
   for (const state of states) {
-    const fields = resolveDefer(state.$scalars, {});
+    const scalars = resolveDefer(state.$scalars, {});
 
-    for (const key in fields) {
-      const { type } = fields[key];
+    for (const key in scalars) {
+      const { type } = scalars[key];
 
       let name = nameMap.get(key);
       if (!name) {
@@ -166,30 +208,5 @@ const generateStateFieldNames = (
     }
   }
 
-  const names: StateCollectionNames = {};
-  const usedNames = new Set<string>(nameMap.keys());
-
-  for (const [name, typeMap] of nameMap) {
-    const states = [...typeMap.values()].sort((a, b) => b.size - a.size);
-
-    for (const key of states[0]) {
-      names[key] = name;
-    }
-
-    for (let i = 1; i < states.length; i++) {
-      let altName;
-      let j = i + 1;
-      do {
-        altName = `${name}_${j++}`;
-      } while (usedNames.has(altName));
-
-      usedNames.add(altName);
-
-      for (const key of states[i]) {
-        names[key] = altName;
-      }
-    }
-  }
-
-  return names;
+  return nameMap;
 };

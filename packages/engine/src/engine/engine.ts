@@ -29,8 +29,14 @@ import {
   UpdateUniqueOrThrowQuery,
 } from '../queries/index.js';
 import { Store } from '../store/index.js';
-import { EngineExec } from './exec.js';
+import { chooseStatesCollection } from './collection.js';
+import { toEntityOrThrow, toMaybeEntity } from './entity.js';
+import { convertLimit, toLimitedEntityList } from './limit.js';
 import { loadMetadata } from './metadata/index.js';
+import { convertSelect } from './select.js';
+import { convertSort } from './sort.js';
+import { convertFilter } from './filter.js';
+import { convertOffset } from './offset.js';
 
 export interface NeuledgeEngineOptions {
   store: Store;
@@ -39,18 +45,19 @@ export interface NeuledgeEngineOptions {
 
 export class NeuledgeEngine {
   public readonly store: Store;
-  private readonly metadata: Promise<Metadata>;
-  private readonly exec: EngineExec;
+  private readonly metadataPromise: Promise<Metadata>;
 
   constructor(options: NeuledgeEngineOptions) {
     this.store = options.store;
-    this.metadata = loadMetadata(this.store, options.metadataCollectionName);
 
-    this.metadata.catch(() => {
-      // catch unhandled promise
+    this.metadataPromise = loadMetadata(
+      this.store,
+      options.metadataCollectionName,
+    );
+
+    this.metadataPromise.catch(() => {
+      // ignore errors here and let the user handle them via the exec methods
     });
-
-    this.exec = new EngineExec(this.store, this.metadata);
   }
 
   // finds
@@ -59,7 +66,23 @@ export class NeuledgeEngine {
     return new QueryClass({
       type: 'FindMany',
       states,
-      exec: this.exec.findMany,
+      exec: async (options) => {
+        const metadata = await this.metadataPromise;
+        const collection = chooseStatesCollection(metadata, options.states);
+
+        return toLimitedEntityList(
+          metadata,
+          options,
+          await this.store.find({
+            collectionName: collection.name,
+            ...convertSelect(collection, options),
+            ...convertFilter(collection, options),
+            ...convertOffset(options),
+            ...convertLimit(options),
+            ...convertSort(collection, options),
+          }),
+        );
+      },
     });
   }
 
@@ -68,7 +91,20 @@ export class NeuledgeEngine {
       type: 'FindUnique',
       states,
       unique: true,
-      exec: this.exec.findUnique,
+      exec: async (options) => {
+        const metadata = await this.metadataPromise;
+        const collection = chooseStatesCollection(metadata, options.states);
+
+        return toMaybeEntity(
+          metadata,
+          await this.store.find({
+            collectionName: collection.name,
+            ...convertSelect(collection, options),
+            ...convertFilter(collection, options),
+            limit: 1,
+          }),
+        );
+      },
     });
   }
 
@@ -79,7 +115,20 @@ export class NeuledgeEngine {
       type: 'FindUniqueOrThrow',
       states,
       unique: true,
-      exec: this.exec.findUniqueOrThrow,
+      exec: async (options) => {
+        const metadata = await this.metadataPromise;
+        const collection = chooseStatesCollection(metadata, options.states);
+
+        return toEntityOrThrow(
+          metadata,
+          await this.store.find({
+            collectionName: collection.name,
+            ...convertSelect(collection, options),
+            ...convertFilter(collection, options),
+            limit: 1,
+          }),
+        );
+      },
     });
   }
 
@@ -87,7 +136,22 @@ export class NeuledgeEngine {
     return new QueryClass({
       type: 'FindFirst',
       states,
-      exec: this.exec.findFirst,
+      exec: async (options) => {
+        const metadata = await this.metadataPromise;
+        const collection = chooseStatesCollection(metadata, options.states);
+
+        return toMaybeEntity(
+          metadata,
+          await this.store.find({
+            collectionName: collection.name,
+            ...convertSelect(collection, options),
+            ...convertFilter(collection, options),
+            ...convertOffset(options),
+            limit: 1,
+            ...convertSort(collection, options),
+          }),
+        );
+      },
     });
   }
 
@@ -95,11 +159,26 @@ export class NeuledgeEngine {
     return new QueryClass({
       type: 'FindFirstOrThrow',
       states,
-      exec: this.exec.findFirstOrThrow,
+      exec: async (options) => {
+        const metadata = await this.metadataPromise;
+        const collection = chooseStatesCollection(metadata, options.states);
+
+        return toEntityOrThrow(
+          metadata,
+          await this.store.find({
+            collectionName: collection.name,
+            ...convertSelect(collection, options),
+            ...convertFilter(collection, options),
+            ...convertOffset(options),
+            limit: 1,
+            ...convertSort(collection, options),
+          }),
+        );
+      },
     });
   }
 
-  // mutate
+  // create
 
   createMany<
     S extends State,
@@ -111,7 +190,7 @@ export class NeuledgeEngine {
       states,
       method,
       args,
-      exec: this.exec.createMany,
+      exec: async (options) => {},
     });
   }
 
@@ -125,9 +204,11 @@ export class NeuledgeEngine {
       states,
       method,
       args: [args],
-      exec: this.exec.createOne,
+      exec: async (options) => {},
     });
   }
+
+  // update
 
   updateMany<S extends State, M extends StateUpdateWithoutArgsMutations<S>>(
     states: S[],
@@ -156,7 +237,7 @@ export class NeuledgeEngine {
       states,
       method,
       args: [args ?? ({} as A)],
-      exec: this.exec.updateMany,
+      exec: async (options) => {},
     });
   }
 
@@ -187,7 +268,7 @@ export class NeuledgeEngine {
       states,
       method,
       args: [args ?? ({} as A)],
-      exec: this.exec.updateFirst,
+      exec: async (options) => {},
     });
   }
 
@@ -221,7 +302,7 @@ export class NeuledgeEngine {
       states,
       method,
       args: [args ?? ({} as A)],
-      exec: this.exec.updateFirstOrThrow,
+      exec: async (options) => {},
     });
   }
 
@@ -253,7 +334,7 @@ export class NeuledgeEngine {
       method,
       args: [args ?? ({} as A)],
       unique: true,
-      exec: this.exec.updateUnique,
+      exec: async (options) => {},
     });
   }
 
@@ -288,9 +369,11 @@ export class NeuledgeEngine {
       method,
       args: [args ?? ({} as A)],
       unique: true,
-      exec: this.exec.updateUniqueOrThrow,
+      exec: async (options) => {},
     });
   }
+
+  // delete
 
   deleteMany<S extends State, M extends StateDeleteMutations<S>>(
     states: S[],
@@ -300,7 +383,7 @@ export class NeuledgeEngine {
       type: 'DeleteMany',
       states,
       method,
-      exec: this.exec.deleteMany,
+      exec: async (options) => {},
     });
   }
 
@@ -312,7 +395,7 @@ export class NeuledgeEngine {
       type: 'DeleteFirst',
       states,
       method,
-      exec: this.exec.deleteFirst,
+      exec: async (options) => {},
     });
   }
 
@@ -324,7 +407,7 @@ export class NeuledgeEngine {
       type: 'DeleteFirstOrThrow',
       states,
       method,
-      exec: this.exec.deleteFirstOrThrow,
+      exec: async (options) => {},
     });
   }
 
@@ -337,7 +420,7 @@ export class NeuledgeEngine {
       states,
       method,
       unique: true,
-      exec: this.exec.deleteUnique,
+      exec: async (options) => {},
     });
   }
 
@@ -350,7 +433,14 @@ export class NeuledgeEngine {
       states,
       method,
       unique: true,
-      exec: this.exec.deleteUniqueOrThrow,
+      exec: async (options) => {},
     });
+  }
+
+  // utils
+
+  async ready(): Promise<this> {
+    await this.metadataPromise;
+    return this;
   }
 }

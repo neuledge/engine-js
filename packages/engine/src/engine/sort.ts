@@ -1,12 +1,12 @@
 import { State, StateSort } from '@/generated/index.js';
 import { MetadataCollection } from '@/metadata/index.js';
-import { Sort } from '@/queries/index.js';
-import { StoreSort } from '@/store/index.js';
+import { SortQueryOptions } from '@/queries/index.js';
+import { StoreFindOptions, StoreSort } from '@/store/index.js';
 
 export const convertSort = <S extends State>(
   collection: MetadataCollection,
-  sort: Sort<S>,
-): StoreSort => {
+  { sort }: SortQueryOptions<S>,
+): Pick<StoreFindOptions, 'sort'> => {
   let reverse = false;
 
   if (typeof sort === 'string') {
@@ -24,6 +24,8 @@ export const convertSort = <S extends State>(
     if (typeof sort === 'string') {
       throw new ReferenceError(`Unknown sort key: ${key}`);
     }
+  } else if (sort == null) {
+    return {};
   }
 
   const res: StoreSort = {};
@@ -50,5 +52,5 @@ export const convertSort = <S extends State>(
     }
   }
 
-  return res;
+  return { sort: res };
 };

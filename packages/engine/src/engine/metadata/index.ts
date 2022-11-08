@@ -16,7 +16,9 @@ export const loadMetadata = async (
   await ensureStoreMetadata(store, collectionName);
 
   const metadata = Metadata.generate(stateDefinitions.values());
-  const changes = metadata.sync(await getStoreMetadata(store, collectionName));
+  const changes = metadata.sync(
+    await getStoreMetadata(metadata, store, collectionName),
+  );
 
   for (const change of changes) {
     // FIXME handle changes

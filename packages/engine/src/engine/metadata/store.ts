@@ -33,10 +33,32 @@ export const ensureStoreMetadata = async (
 };
 
 export const getStoreMetadata = async (
+  metadata: Metadata,
   store: Store,
   collectionName: string,
 ): Promise<Metadata> => {
   const entities: Record<string, MetadataState> = {};
+
+  const getState = (hash: Buffer) => {
+    const key = hash.toString(HASH_ENCODING);
+
+    let res = entities[key] as MetadataState | undefined;
+    if (!res) {
+      res = {} as never;
+      entities[key] = res;
+    }
+
+    return res;
+  };
+
+  const getType = (key: string) => {
+    const type = metadata.findType(key);
+    if (!type) {
+      throw new Error(`Can't find reference for type: ${key}`);
+    }
+
+    return type;
+  };
 
   let res: StoreList<StoreMetadataState> | undefined;
   do {
@@ -48,17 +70,8 @@ export const getStoreMetadata = async (
 
     for (const doc of res) {
       entities[doc.hash.toString(HASH_ENCODING)] = fromStoreMetadataState(
-        (hash) => {
-          const key = hash.toString(HASH_ENCODING);
-
-          let res = entities[key] as MetadataState | undefined;
-          if (!res) {
-            res = {} as never;
-            entities[key] = res;
-          }
-
-          return res;
-        },
+        getState,
+        getType,
         doc,
       );
     }
