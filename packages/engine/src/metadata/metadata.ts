@@ -1,13 +1,13 @@
 import { Scalar } from '@neuledge/scalars';
-import { State, stateDefinitions } from '@/generated/index.js';
+import { State } from '@/generated/index.js';
 import { MetadataChange } from './change.js';
 import { MetadataCollection } from './collection.js';
-import { generateStateCollectionNames } from './names.js';
+import { assignMetadataNames } from './names/index.js';
 import {
-  isMetadataStatesEquals,
   isStatesMatches,
+  MetadataOriginState,
   MetadataState,
-  syncStateCollectionNames,
+  syncMetadataStates,
   toMetadataState,
 } from './state.js';
 
@@ -16,15 +16,11 @@ const HASH_KEY_ENCODING = 'base64url';
 export class Metadata {
   private readonly typeMap: Partial<Record<string, Scalar>>;
   private readonly hashMap: Partial<Record<string, MetadataState>>;
-  private readonly keyMap: Partial<Record<string, MetadataState>>;
+  private readonly keyMap: Partial<Record<string, MetadataOriginState>>;
 
   static generate(states: Iterable<State>): Metadata {
-    const names = generateStateCollectionNames(states);
-
     return new this(
-      [...stateDefinitions.values()].map((item) =>
-        toMetadataState(names, item),
-      ),
+      assignMetadataNames([...states].map((state) => toMetadataState(state))),
     );
   }
 
@@ -36,11 +32,11 @@ export class Metadata {
     for (const entity of states) {
       this.hashMap[entity.hash.toString(HASH_KEY_ENCODING)] = entity;
 
-      if (this.keyMap[entity.key] == null) {
-        this.keyMap[entity.key] = entity;
+      if (entity.origin && this.keyMap[entity.origin.$key] == null) {
+        this.keyMap[entity.origin.$key] = entity as MetadataOriginState;
       }
 
-      for (const { type } of Object.values(entity.fields)) {
+      for (const { type } of entity.fields) {
         if (this.typeMap[type.key] == null) {
           this.typeMap[type.key] = type;
         }
@@ -52,7 +48,7 @@ export class Metadata {
     return this.typeMap[key];
   }
 
-  findStateByKey(key: string): MetadataState | undefined {
+  findStateByKey(key: string): MetadataOriginState | undefined {
     return this.keyMap[key];
   }
 
@@ -91,31 +87,31 @@ export class Metadata {
 
       let entity = this.hashMap[hashKey];
       if (entity != null) {
-        if (!isMetadataStatesEquals(entity, origin)) {
-          syncStateCollectionNames(origin, entity);
-
-          changes.push({ type: 'renamed', origin, entity });
-        }
+        syncMetadataStates(origin, entity);
         continue;
       }
 
       entity = this.keyMap[origin.key];
-      if (entity != null && isStatesMatches(origin, entity)) {
-        syncStateCollectionNames(origin, entity);
+      const deleted = { ...origin };
 
-        this.hashMap[hashKey] = entity;
-        changes.push({ type: 'updated', origin, entity });
-        continue;
+      if (entity != null) {
+        if (isStatesMatches(origin, entity)) {
+          syncMetadataStates(origin, entity);
+
+          this.hashMap[hashKey] = entity;
+          changes.push({ type: 'updated', origin, entity });
+          continue;
+        }
+
+        deleted.key = `${entity.key}_old`;
+
+        for (let i = 2; this.keyMap[deleted.key] != null; i += 1) {
+          deleted.key = `${entity.key}_old${i}`;
+        }
       }
 
-      if (!origin.origin) {
-        throw new ReferenceError(
-          `Can't find previously defined entity '${origin.key}' on the current schema definitions`,
-        );
-      }
-
-      changes.push({ type: 'deleted', origin });
-      this.hashMap[hashKey] = origin;
+      changes.push({ type: 'deleted', origin: deleted });
+      this.hashMap[hashKey] = deleted;
     }
 
     for (const hashKey in this.hashMap) {

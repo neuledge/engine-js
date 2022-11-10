@@ -5,7 +5,7 @@ export interface Either<K extends string = string, S extends State = State>
   $key: K;
 }
 
-export const createEither = <K extends string, S extends State>(
+export const createEither = <K extends string, S extends readonly State[]>(
   key: K,
-  states: S[],
-): Either<K, S> => Object.assign(states, { $key: key });
+  states: S,
+): Either<K, S[number]> => Object.assign([...states], { $key: key });

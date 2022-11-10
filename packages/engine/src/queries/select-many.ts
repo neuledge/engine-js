@@ -5,7 +5,7 @@ import { LimitQuery, LimitQueryOptions } from './limit.js';
 import { OffsetQuery, OffsetQueryOptions } from './offset.js';
 import { SelectQuery, SelectQueryOptions } from './select.js';
 import { SortQuery, SortQueryOptions } from './sort.js';
-import { TypeQueryOptions } from './type.js';
+import { ChildQueryOptions } from './type.js';
 
 export interface SelectManyQuery<S extends State, R = Entity<S>>
   extends SelectQuery<'SelectMany', S, S, R>,
@@ -15,7 +15,7 @@ export interface SelectManyQuery<S extends State, R = Entity<S>>
     OffsetQuery {}
 
 export interface SelectManyQueryOptions<I extends State, O extends State>
-  extends TypeQueryOptions<'SelectMany', I>,
+  extends ChildQueryOptions<'SelectMany', I>,
     SelectQueryOptions<O>,
     FilterQueryOptions<I>,
     SortQueryOptions<O>,

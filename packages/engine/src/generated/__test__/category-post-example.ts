@@ -1,6 +1,7 @@
 import {
   NumberScalar as Number,
   StringScalar as String,
+  DateScalar as $Date,
 } from '@neuledge/scalars';
 import {
   Entity as $,
@@ -18,20 +19,19 @@ import {
 @$State
 export class Category {
   static $key = 'Category' as const;
+  static $id = ['id'] as const;
   static $scalars = {
     id: { type: Number, index: 1 },
     name: { type: String, index: 2 },
     description: { type: String, index: 3, nullable: true },
   };
-  static $id: { id: number };
   static $find: $Where<{ id: $WhereNumber<number> }>;
   static $unique: {
     id: number;
   };
-  static $relations = () => ({
-    posts: [[...Post]] as const,
-  });
-  static $methods = {};
+  // static $relations = () => ({
+  //   posts: [[...Post]] as const,
+  // });
 
   id!: number;
   name!: string;
@@ -46,7 +46,6 @@ export class Category {
   }): $<typeof Category> {
     return {
       $state: 'Category',
-      constructor: Category,
       id: Math.round(Math.random() * 1e6),
       name,
       description,
@@ -66,7 +65,6 @@ export class Category {
     return {
       ...this,
       $state: 'Category',
-      constructor: Category,
       name: name,
       description: description,
     };
@@ -83,22 +81,13 @@ export class Category {
 @$State
 export class DraftPost {
   static $key = 'DraftPost' as const;
+  static $id = ['id'] as const;
   static $scalars = () => ({
     id: { type: Number, index: 1 },
-    category: {
-      type: {
-        key: Number.key,
-        encode: (value: $id<typeof Category>) => Number.encode(value.id),
-        decode: (value: number) => ({ id: value }),
-      },
-      index: 2,
-      nullable: true,
-      relation: [Category],
-    },
+    category: { type: [Category], index: 2, nullable: true },
     title: { type: String, index: 3 },
     content: { type: String, index: 4, nullable: true },
   });
-  static $id: { id: number };
   static $find: $Where<{ id: $WhereNumber<number> }>;
   static $unique: {
     id: number;
@@ -106,9 +95,7 @@ export class DraftPost {
   static $relations = () => ({
     category: [Category],
   });
-  static $methods = () => ({
-    publish: [PublishedPost],
-  });
+  static $states = () => [PublishedPost];
 
   id!: number;
   category?: $id<typeof Category> | null;
@@ -126,7 +113,6 @@ export class DraftPost {
   }): $<typeof DraftPost> {
     return {
       $state: 'DraftPost',
-      constructor: DraftPost,
       id: Math.round(Math.random() * 1e6),
       title,
       content,
@@ -149,7 +135,6 @@ export class DraftPost {
     return {
       ...this,
       $state: 'DraftPost',
-      constructor: DraftPost,
       title,
       content,
       category,
@@ -167,7 +152,6 @@ export class DraftPost {
     return {
       ...this,
       $state: 'PublishedPost',
-      constructor: PublishedPost,
       content: this.content,
       category: this.category,
       publishedAt: new Date(),
@@ -185,21 +169,14 @@ export class DraftPost {
 @$State
 export class PublishedPost {
   static $key = 'PublishedPost' as const;
+  static $id = ['id'] as const;
   static $scalars = () => ({
     id: { type: Number, index: 1 },
-    category: {
-      type: {
-        key: Number.key,
-        encode: (value: $id<typeof Category>) => Number.encode(value.id),
-        decode: (value: number) => ({ id: value }),
-      },
-      index: 2,
-      relation: [Category],
-    },
+    category: { type: [Category], index: 2 },
     title: { type: String, index: 3 },
     content: { type: String, index: 4 },
+    publishedAt: { type: $Date, index: 5 },
   });
-  static $id: { id: number };
   static $find: $Where<
     | { id: $WhereNumber<number> }
     | { category: $WhereObject<$id<typeof Category>> }
@@ -210,7 +187,6 @@ export class PublishedPost {
   static $relations = () => ({
     category: [Category],
   });
-  static $methods = {};
   static $indexes = {
     'category.posts': ['+category', '+title'] as const,
   };
@@ -232,7 +208,6 @@ export class PublishedPost {
     return {
       ...this,
       $state: 'PublishedPost',
-      constructor: PublishedPost,
       title,
       content,
       category,

@@ -4,7 +4,7 @@ import { ExecQuery, ExecQueryOptions } from './exec.js';
 import { FilterQuery, FilterQueryOptions } from './filter.js';
 import { SingleArgsQueryOptions } from './method.js';
 import { SelectQuery, SelectQueryOptions } from './select.js';
-import { TypeQueryOptions } from './type.js';
+import { RootQueryOptions } from './type.js';
 
 export interface UpdateFirstQuery<I extends State, O extends State>
   extends SelectQuery<'UpdateFirstAndReturn', I, O, Entity<O>>,
@@ -17,7 +17,7 @@ export interface UpdateFirstAndReturnQuery<I extends State, O extends State, R>
     ExecQuery<R | undefined> {}
 
 export interface UpdateFirstQueryOptions<I extends State, O extends State>
-  extends TypeQueryOptions<'UpdateFirst', I>,
+  extends RootQueryOptions<'UpdateFirst', I>,
     SingleArgsQueryOptions<I, StateUpdateMutations<I>>,
     SelectQueryOptions<O>,
     FilterQueryOptions<I>,

@@ -7,7 +7,7 @@ import { LimitQuery, LimitQueryOptions } from './limit.js';
 import { OffsetQuery, OffsetQueryOptions } from './offset.js';
 import { SelectQuery, SelectQueryOptions } from './select.js';
 import { SortQuery, SortQueryOptions } from './sort.js';
-import { TypeQueryOptions } from './type.js';
+import { RootQueryOptions } from './type.js';
 
 export interface FindManyQuery<S extends State, R = Entity<S>>
   extends SelectQuery<'FindMany', S, S, R>,
@@ -18,7 +18,7 @@ export interface FindManyQuery<S extends State, R = Entity<S>>
     ExecQuery<EntityList<R>> {}
 
 export interface FindManyQueryOptions<I extends State, O extends State>
-  extends TypeQueryOptions<'FindMany', I>,
+  extends RootQueryOptions<'FindMany', I>,
     SelectQueryOptions<O>,
     FilterQueryOptions<O>,
     SortQueryOptions<O>,

@@ -4,7 +4,7 @@ import { ExecQuery, ExecQueryOptions } from './exec.js';
 import { FilterQuery, FilterQueryOptions } from './filter.js';
 import { SingleArgsQueryOptions } from './method.js';
 import { SelectQuery, SelectQueryOptions } from './select.js';
-import { TypeQueryOptions } from './type.js';
+import { RootQueryOptions } from './type.js';
 
 export interface UpdateFirstOrThrowQuery<I extends State, O extends State>
   extends SelectQuery<'UpdateFirstAndReturnOrThrow', I, O, Entity<O>>,
@@ -22,7 +22,7 @@ export interface UpdateFirstAndReturnOrThrowQuery<
 export interface UpdateFirstOrThrowQueryOptions<
   I extends State,
   O extends State,
-> extends TypeQueryOptions<'UpdateFirstOrThrow', I>,
+> extends RootQueryOptions<'UpdateFirstOrThrow', I>,
     SingleArgsQueryOptions<I, StateUpdateMutations<I>>,
     SelectQueryOptions<O>,
     FilterQueryOptions<I>,

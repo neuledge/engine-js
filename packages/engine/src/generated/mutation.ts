@@ -1,5 +1,5 @@
 import { Entity } from '@/entity.js';
-import { State } from './state/index.js';
+import { State, StateType } from './state/index.js';
 
 export type MutationArguments = Record<string, unknown>;
 
@@ -22,15 +22,15 @@ export interface UpdateMutation<
   A extends MutationArguments,
   R extends State,
 > {
-  (this: InstanceType<S>, args: A): Resolveable<Entity<R>>;
+  (this: StateType<S>, args: A): Resolveable<Entity<R>>;
 }
 
 export interface TransformMutation<S extends State, R extends State> {
-  (this: InstanceType<S>): Resolveable<Entity<R>>;
+  (this: StateType<S>): Resolveable<Entity<R>>;
 }
 
 export interface DeleteMutation<S extends State = State> {
-  (this: InstanceType<S>): Resolveable<void>;
+  (this: StateType<S>): Resolveable<void>;
 }
 
 type Resolveable<T> = T | PromiseLike<T>;

@@ -42,7 +42,7 @@ describe('engine/filter', () => {
       });
     });
 
-    it('should throw on undefined field', () => {
+    it('should throw on undefined field where', () => {
       expect(() =>
         convertFilter(categoriesCollection, {
           where: { foo: { $eq: 1 } },
@@ -50,7 +50,7 @@ describe('engine/filter', () => {
       ).toThrow("Unknown field name: 'foo'");
     });
 
-    it('should convert between where', () => {
+    it('should convert between ranges where', () => {
       expect(
         convertFilter(categoriesCollection, {
           where: { id: { $gt: 5, $lte: 10 } },
@@ -70,7 +70,7 @@ describe('engine/filter', () => {
       });
     });
 
-    it('should handle renamed field in state', () => {
+    it('should handle renamed field in state where', () => {
       expect(
         convertFilter(postsCollection, {
           where: { content: { $eq: 'foo' } },
@@ -82,13 +82,39 @@ describe('engine/filter', () => {
       });
     });
 
-    it('should handle category id', () => {
+    it('should handle category id scalar where', () => {
       expect(
         convertFilter(postsCollection, {
           where: { category: { $eq: { id: 1 } } },
         }),
       ).toEqual({
         where: { category: { $eq: 1 } },
+      });
+    });
+
+    it('should handle empty filter ', () => {
+      expect(
+        convertFilter<typeof Post[number]>(postsCollection, {
+          filter: {},
+        }),
+      ).toEqual({
+        filter: {},
+      });
+    });
+
+    it('should handle filter by category', () => {
+      expect(
+        convertFilter(postsCollection, {
+          filter: { category: { where: { id: { $eq: 1 } } } },
+        }),
+      ).toEqual({
+        filter: {
+          category: {
+            collectionName: 'categories',
+            relation: { category: 'id' },
+            where: { id: { $eq: 1 } },
+          },
+        },
       });
     });
   });

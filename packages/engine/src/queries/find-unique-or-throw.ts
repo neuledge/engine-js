@@ -3,7 +3,7 @@ import { State } from '@/generated/index.js';
 import { ExecQuery, ExecQueryOptions } from './exec.js';
 import { FilterQuery, FilterQueryOptions } from './filter.js';
 import { SelectQuery, SelectQueryOptions } from './select.js';
-import { TypeQueryOptions } from './type.js';
+import { RootQueryOptions } from './type.js';
 import { UniqueQuery, UniqueQueryOptions } from './unique.js';
 
 export interface FindUniqueOrThrowQuery<S extends State, R = Entity<S>>
@@ -18,7 +18,7 @@ export interface FindUniqueWhereOrThrowQuery<S extends State, R = Entity<S>>
     ExecQuery<R> {}
 
 export interface FindUniqueOrThrowQueryOptions<I extends State, O extends State>
-  extends TypeQueryOptions<'FindUniqueOrThrow', I>,
+  extends RootQueryOptions<'FindUniqueOrThrow', I>,
     SelectQueryOptions<O>,
     FilterQueryOptions<O>,
     UniqueQueryOptions<O>,

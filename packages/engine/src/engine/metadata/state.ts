@@ -8,12 +8,10 @@ export interface StoreMetadataState {
 }
 
 interface StoreMetadataStateField {
-  key: string;
-  fieldName: string;
+  name: string;
   type: string;
-  index: number;
+  indexes: number[];
   nullable: boolean;
-  relations: Buffer[];
 }
 
 export const fromStoreMetadataState = (
@@ -24,25 +22,10 @@ export const fromStoreMetadataState = (
   Object.assign(getState(doc.hash), {
     key: doc.key,
     hash: doc.hash,
-    fields: Object.fromEntries(
-      Object.entries(doc.fields).map(([key, field]) => [
-        key,
-        fromStoreMetadataStateField(getState, getType, field),
-      ]),
+    fields: doc.fields.map((field) =>
+      fromStoreMetadataStateField(getType, field),
     ),
   });
-
-const fromStoreMetadataStateField = (
-  getState: (hash: Buffer) => MetadataState,
-  getType: (key: string) => MetadataStateField['type'],
-  doc: StoreMetadataStateField,
-): MetadataStateField => ({
-  fieldName: doc.fieldName,
-  type: getType(doc.type),
-  index: doc.index,
-  nullable: doc.nullable,
-  relations: doc.relations.map((hash) => getState(hash)),
-});
 
 export const toStoreMetadataState = (
   state: MetadataState,
@@ -50,14 +33,24 @@ export const toStoreMetadataState = (
   collectionName: state.collectionName,
   key: state.key,
   hash: state.hash,
-  fields: Object.entries(state.fields).map(
-    ([key, field]): StoreMetadataStateField => ({
-      key,
-      fieldName: field.fieldName,
-      type: field.type.key,
-      index: field.index,
-      nullable: field.nullable,
-      relations: field.relations.map((item) => item.hash),
-    }),
-  ),
+  fields: state.fields.map((field) => toStoreMetadataStateField(field)),
+});
+
+const fromStoreMetadataStateField = (
+  getType: (key: string) => MetadataStateField['type'],
+  doc: StoreMetadataStateField,
+): MetadataStateField => ({
+  name: doc.name,
+  type: getType(doc.type),
+  indexes: doc.indexes,
+  nullable: doc.nullable,
+});
+
+const toStoreMetadataStateField = (
+  field: MetadataStateField,
+): StoreMetadataStateField => ({
+  name: field.name,
+  type: field.type.key,
+  indexes: [...field.indexes],
+  nullable: field.nullable,
 });

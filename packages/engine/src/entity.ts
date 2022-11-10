@@ -2,39 +2,36 @@ import { State, StateKey } from './generated/index.js';
 import { Select } from './queries/select.js';
 
 export type Entity<S extends State> = {
-  [K in StateKey<S>]: S extends State<K> ? StateEntity<S> : never;
+  [K in StateKey<S>]: S extends State<K, infer R> ? StateEntity<S, R> : never;
 }[StateKey<S>];
 
 export type ProjectedEntity<S extends State, P extends Select<S>> = {
-  [K in StateKey<S>]: S extends State<K> ? Project<S, P & Select<S>> : never;
+  [K in StateKey<S>]: S extends State<K, infer R>
+    ? Project<S, P & Select<S>, R>
+    : never;
 }[StateKey<S>];
 
-type StateEntity<S extends State, T = InstanceType<S>> = {
+type StateEntity<S extends State, T> = T & {
   $state: StateKey<S>;
-  constructor?: S;
-} & T;
+};
 
-type Project<S extends State, P extends Select<S>> = StateEntity<
+type Project<S extends State, P extends Select<S>, T> = StateEntity<
   S,
   {
-    [K in TruthyKeys<S, P>]: InstanceType<S>[K];
+    [K in TruthyKeys<S, P, T>]: T[K];
   } & {
-    [K in BooleanKeys<S, P>]?: InstanceType<S>[K] | null;
+    [K in BooleanKeys<S, P, T>]?: T[K] | null;
   }
 >;
 
-type TruthyKeys<S extends State, P extends Select<S>> = {
-  [K in keyof InstanceType<S>]: P[K] extends true
-    ? undefined extends InstanceType<S>[K]
+type TruthyKeys<S extends State, P extends Select<S>, T> = {
+  [K in keyof T]: P[K] extends true
+    ? undefined extends T[K]
       ? never
       : K
     : never;
-}[keyof InstanceType<S>];
+}[keyof T];
 
-type BooleanKeys<S extends State, P extends Select<S>> = {
-  [K in keyof InstanceType<S>]: P[K] extends false
-    ? never
-    : P[K] extends boolean
-    ? K
-    : never;
-}[keyof InstanceType<S>];
+type BooleanKeys<S extends State, P extends Select<S>, T> = {
+  [K in keyof T]: P[K] extends false ? never : P[K] extends boolean ? K : never;
+}[keyof T];

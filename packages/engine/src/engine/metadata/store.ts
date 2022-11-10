@@ -129,7 +129,6 @@ const getStoreMetadataChanges = (changes: MetadataChange[]) => {
         break;
       }
 
-      case 'renamed':
       case 'updated': {
         updates.push(toStoreMetadataState(change.entity));
         break;

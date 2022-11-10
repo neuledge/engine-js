@@ -3,7 +3,7 @@ import {
   StateFilterKeys,
   StateRelationState,
 } from '@/generated/index.js';
-import { TypeQueryOptions } from './type.js';
+import { ChildQueryOptions } from './type.js';
 import { Where } from './where.js';
 
 export interface FilterQuery<S extends State> {
@@ -25,13 +25,15 @@ export interface FilterQuery<S extends State> {
   ): this;
 }
 
+export type Filter<S extends State> = {
+  [K in StateFilterKeys<S>]?: FilterQueryOptions<StateRelationState<S, K>>;
+};
+
 export interface FilterQueryOptions<S extends State> {
   where?: Where<S>;
-  filter?: {
-    [K in StateFilterKeys<S>]?: FilterQueryOptions<StateRelationState<S, K>>;
-  };
+  filter?: Filter<S>;
 }
 
 export interface FilterOnlyQueryOptions<S extends State>
-  extends TypeQueryOptions<'Filter', S>,
+  extends ChildQueryOptions<'Filter', S>,
     FilterQueryOptions<S> {}

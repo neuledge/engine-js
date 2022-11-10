@@ -7,6 +7,7 @@ import {
   StateUpdateWithArgsMutations,
   StateMutationsReturn,
 } from './mutation.js';
+import { StateId } from './state/index.js';
 import {
   Category,
   DraftPost,
@@ -129,7 +130,7 @@ describe('generated/mutation', () => {
       expect<{
         title: string;
         content?: string | null;
-        category?: typeof Category['$id'] | null;
+        category?: StateId<typeof Category> | null;
       }>({} as StateMutationArguments<typeof DraftPost, 'update'>);
 
       expect<Record<string, never>>(
@@ -145,7 +146,7 @@ describe('generated/mutation', () => {
       expect<{
         title: string;
         content: string;
-        category: typeof Category['$id'];
+        category: StateId<typeof Category>;
       }>({} as StateMutationArguments<typeof Post[number], 'update'>);
 
       expect<Record<string, never>>(

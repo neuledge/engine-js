@@ -1,7 +1,6 @@
 import { Entity, ProjectedEntity } from './entity.js';
 import {
   Category,
-  DraftPost,
   Post,
   PublishedPost,
 } from './generated/__test__/category-post-example.js';
@@ -14,7 +13,6 @@ describe('types/entity', () => {
       it('should accept state with missing optional fields', () => {
         expect<Entity<typeof Category>>({
           $state: 'Category',
-          constructor: Category,
           id: 1,
           name: 'str',
         });
@@ -23,7 +21,6 @@ describe('types/entity', () => {
       it('should accept state with provided optional fields', () => {
         expect<Entity<typeof Category>>({
           $state: 'Category',
-          constructor: Category,
           id: 1,
           name: 'str',
           description: 'foo bar',
@@ -34,7 +31,6 @@ describe('types/entity', () => {
         // @ts-expect-error Property 'name' is missing
         expect<Entity<typeof Category>>({
           $state: 'Category',
-          constructor: Category,
           id: 1,
           description: 'foo bar',
         });
@@ -43,7 +39,6 @@ describe('types/entity', () => {
       it('should throw on unknown field', () => {
         expect<Entity<typeof Category>>({
           $state: 'Category',
-          constructor: Category,
           id: 1,
           name: 'str',
           // @ts-expect-error Property 'foo' does not exist
@@ -56,7 +51,6 @@ describe('types/entity', () => {
       it('should accept different states with missing optional fields', () => {
         expect<Entity<typeof Post[number]>>({
           $state: 'DraftPost',
-          constructor: DraftPost,
           id: 1,
           title: 'str',
         });
@@ -64,7 +58,6 @@ describe('types/entity', () => {
 
       expect<Entity<typeof Post[number]>>({
         $state: 'PublishedPost',
-        constructor: PublishedPost,
         id: 1,
         title: 'str',
         content: 'content',
@@ -76,14 +69,12 @@ describe('types/entity', () => {
         // @ts-expect-error Property 'title' is missing
         expect<Entity<typeof Post[number]>>({
           $state: 'DraftPost',
-          constructor: DraftPost,
           id: 1,
         });
 
         // @ts-expect-error Property 'category' is missing
         expect<Entity<typeof Post[number]>>({
           $state: 'PublishedPost',
-          constructor: PublishedPost,
           id: 1,
           title: 'str',
           content: 'content',
@@ -93,7 +84,6 @@ describe('types/entity', () => {
       it('should throw on unknown field', () => {
         expect<Entity<typeof Post[number]>>({
           $state: 'DraftPost',
-          constructor: DraftPost,
           id: 1,
           title: 'str',
           // @ts-expect-error Property 'foo' does not exist
@@ -102,7 +92,6 @@ describe('types/entity', () => {
 
         expect<Entity<typeof Post[number]>>({
           $state: 'PublishedPost',
-          constructor: PublishedPost,
           id: 1,
           title: 'str',
           content: 'content',
@@ -118,11 +107,10 @@ describe('types/entity', () => {
     describe('single state', () => {
       it('should not return false selection', () => {
         type t = ProjectedEntity<typeof Category, { id: false }>;
-        expect<t>({ $state: 'Category', constructor: Category });
+        expect<t>({ $state: 'Category' });
 
         expect<t>({
           $state: 'Category',
-          constructor: Category,
           // @ts-expect-error Property 'id' does not exists
           id: undefined,
         });
@@ -130,14 +118,13 @@ describe('types/entity', () => {
 
       it('should return true field selection', () => {
         type t = ProjectedEntity<typeof Category, { id: true }>;
-        expect<t>({ $state: 'Category', constructor: Category, id: 123 });
+        expect<t>({ $state: 'Category', id: 123 });
 
         // @ts-expect-error Property 'id' is missing
-        expect<t>({ $state: 'Category', constructor: Category });
+        expect<t>({ $state: 'Category' });
 
         expect<t>({
           $state: 'Category',
-          constructor: Category,
           // @ts-expect-error Property 'id' should be number
           id: undefined,
         });
@@ -146,9 +133,9 @@ describe('types/entity', () => {
       it('should return maybe boolean field selection', () => {
         type t = ProjectedEntity<typeof Category, { id: boolean }>;
 
-        expect<t>({ $state: 'Category', constructor: Category, id: 123 });
-        expect<t>({ $state: 'Category', constructor: Category, id: null });
-        expect<t>({ $state: 'Category', constructor: Category });
+        expect<t>({ $state: 'Category', id: 123 });
+        expect<t>({ $state: 'Category', id: null });
+        expect<t>({ $state: 'Category' });
       });
 
       it('should throw on invalid selection fields', () => {
@@ -156,7 +143,6 @@ describe('types/entity', () => {
 
         expect<t>({
           $state: 'Category',
-          constructor: Category,
           id: 123,
           // @ts-expect-error Property 'name' does not exists
           name: 'str',
@@ -166,7 +152,6 @@ describe('types/entity', () => {
       it('should return multiple fields', () => {
         expect<ProjectedEntity<typeof Category, { id: true; name: true }>>({
           $state: 'Category',
-          constructor: Category,
           id: 123,
           name: 'str',
         });
@@ -180,19 +165,16 @@ describe('types/entity', () => {
 
         expect<t>({
           $state: 'Category',
-          constructor: Category,
           id: 123,
           description: 'str',
         });
         expect<t>({
           $state: 'Category',
-          constructor: Category,
           id: 123,
           description: null,
         });
         expect<t>({
           $state: 'Category',
-          constructor: Category,
           id: 123,
         });
       });
@@ -202,20 +184,17 @@ describe('types/entity', () => {
 
         expect<t>({
           $state: 'PublishedPost',
-          constructor: PublishedPost,
           category: { id: 123 },
         });
 
         expect<t>({
           $state: 'PublishedPost',
-          constructor: PublishedPost,
           // @ts-expect-error Property 'category' should be an object
           category: null,
         });
 
         expect<t>({
           $state: 'PublishedPost',
-          constructor: PublishedPost,
           category: {
             id: 123,
             // @ts-expect-error Property 'name' does not exists
@@ -229,17 +208,15 @@ describe('types/entity', () => {
 
         expect<t>({
           $state: 'PublishedPost',
-          constructor: PublishedPost,
           category: { id: 123 },
         });
 
         expect<t>({
           $state: 'PublishedPost',
-          constructor: PublishedPost,
           category: null,
         });
 
-        expect<t>({ $state: 'PublishedPost', constructor: PublishedPost });
+        expect<t>({ $state: 'PublishedPost' });
       });
     });
   });

@@ -4,7 +4,7 @@ import { ExecQuery, ExecQueryOptions } from './exec.js';
 import { FilterQuery, FilterQueryOptions } from './filter.js';
 import { SingleArgsQueryOptions } from './method.js';
 import { SelectQuery, SelectQueryOptions } from './select.js';
-import { TypeQueryOptions } from './type.js';
+import { RootQueryOptions } from './type.js';
 import { UniqueQuery, UniqueQueryOptions } from './unique.js';
 
 export interface UpdateUniqueOrThrowQuery<I extends State, O extends State>
@@ -42,7 +42,7 @@ export interface UpdateUniqueWhereAndReturnOrThrowQuery<
 export interface UpdateUniqueOrThrowQueryOptions<
   I extends State,
   O extends State,
-> extends TypeQueryOptions<'UpdateUniqueOrThrow', I>,
+> extends RootQueryOptions<'UpdateUniqueOrThrow', I>,
     SingleArgsQueryOptions<I, StateUpdateMutations<I>>,
     SelectQueryOptions<O>,
     FilterQueryOptions<I>,

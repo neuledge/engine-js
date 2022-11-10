@@ -6,7 +6,7 @@ import { FilterQuery, FilterQueryOptions } from './filter.js';
 import { LimitQuery, LimitQueryOptions } from './limit.js';
 import { SingleArgsQueryOptions } from './method.js';
 import { SelectQuery, SelectQueryOptions } from './select.js';
-import { TypeQueryOptions } from './type.js';
+import { RootQueryOptions } from './type.js';
 
 export interface UpdateManyQuery<I extends State, O extends State>
   extends SelectQuery<'UpdateManyAndReturn', I, O, Entity<O>>,
@@ -21,7 +21,7 @@ export interface UpdateManyAndReturnQuery<I extends State, O extends State, R>
     ExecQuery<EntityList<R>> {}
 
 export interface UpdateManyQueryOptions<I extends State, O extends State>
-  extends TypeQueryOptions<'UpdateMany', I>,
+  extends RootQueryOptions<'UpdateMany', I>,
     SingleArgsQueryOptions<I, StateUpdateMutations<I>>,
     SelectQueryOptions<O>,
     FilterQueryOptions<I>,

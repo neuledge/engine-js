@@ -6,7 +6,7 @@ import { FilterQuery, FilterQueryOptions } from './filter.js';
 import { LimitQuery, LimitQueryOptions } from './limit.js';
 import { MethodQueryOptions } from './method.js';
 import { SelectQuery, SelectQueryOptions } from './select.js';
-import { TypeQueryOptions } from './type.js';
+import { RootQueryOptions } from './type.js';
 
 export interface DeleteManyQuery<S extends State>
   extends SelectQuery<'DeleteManyAndReturn', S, S, Entity<S>>,
@@ -21,7 +21,7 @@ export interface DeleteManyAndReturnQuery<S extends State, R = Entity<S>>
     ExecQuery<EntityList<R>> {}
 
 export interface DeleteManyQueryOptions<I extends State, O extends State>
-  extends TypeQueryOptions<'DeleteMany', I>,
+  extends RootQueryOptions<'DeleteMany', I>,
     MethodQueryOptions<StateDeleteMutations<I>>,
     SelectQueryOptions<O>,
     FilterQueryOptions<I>,

@@ -1,4 +1,4 @@
-import { State, StateSort } from '@/generated/index.js';
+import { State, SortDefinition } from '@/generated/index.js';
 import { MetadataCollection } from '@/metadata/index.js';
 import { SortQueryOptions } from '@/queries/index.js';
 import { StoreFindOptions, StoreSort } from '@/store/index.js';
@@ -30,7 +30,7 @@ export const convertSort = <S extends State>(
 
   const res: StoreSort = {};
 
-  for (const key of sort as StateSort<S>) {
+  for (const key of sort as SortDefinition<S>) {
     let direction: 'asc' | 'desc';
     switch (key[0]) {
       case '+':

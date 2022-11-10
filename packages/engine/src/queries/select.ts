@@ -5,6 +5,7 @@ import {
   StateIncludeOneKeys,
   StateRelationState,
   StateRequireOneKeys,
+  StateType,
 } from '@/generated/index.js';
 import { EntityList } from '@/list.js';
 import { Query, QueryMode } from './query.js';
@@ -133,5 +134,5 @@ export interface SelectQueryOptions<S extends State> {
 }
 
 export type Select<S extends State> = {
-  [K in keyof Merge<InstanceType<S>>]?: boolean;
+  [K in keyof Merge<StateType<S>>]?: boolean;
 };

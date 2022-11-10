@@ -3,12 +3,8 @@ import {
   StateFilterKeys,
   StateIncludeManyKeys,
   StateIncludeOneKeys,
-  StateMutationsReturn,
-  StateMutations,
-  StateRelations,
   StateRelationState,
   StateRequireOneKeys,
-  resolveDefer,
 } from '@/generated/index.js';
 import { EntityListOffset } from '@/list.js';
 import { ExecQuery, ExecQueryOptions } from './exec.js';
@@ -37,17 +33,7 @@ export class QueryClass<
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ExecQuery<any>
 {
-  private readonly _outputStates: O[];
-
   constructor(private readonly options: QueryOptions<T, I, O>) {
-    this._outputStates =
-      'method' in options
-        ? (QueryClass.methodReturnStates(
-            options.states,
-            options.method,
-          ) as never)
-        : (options.states as never);
-
     if ('unique' in options && options.unique === true) {
       // prevent resolve this query until unique clause provided
       // eslint-disable-next-line unicorn/no-thenable
@@ -73,7 +59,7 @@ export class QueryClass<
       StateRelationState<O, K>
     > = new QueryClass({
       type: 'SelectMany',
-      states: states ?? QueryClass.relationStates(this._outputStates, key),
+      states: states ?? undefined,
     });
 
     if (query) {
@@ -107,7 +93,7 @@ export class QueryClass<
       StateRelationState<O, K>
     > = new QueryClass({
       type: 'SelectOne',
-      states: states ?? QueryClass.relationStates(this._outputStates, key),
+      states: states ?? undefined,
     });
 
     if (query) {
@@ -141,7 +127,7 @@ export class QueryClass<
       StateRelationState<O, K>
     > = new QueryClass({
       type: 'SelectOne',
-      states: states ?? QueryClass.relationStates(this._outputStates, key),
+      states: states ?? undefined,
     });
 
     if (query) {
@@ -189,7 +175,7 @@ export class QueryClass<
       StateRelationState<I, K>
     > = new QueryClass({
       type: 'Filter',
-      states: states ?? QueryClass.relationStates(this.options.states, key),
+      states: states ?? undefined,
     });
 
     if (query) {
@@ -250,45 +236,5 @@ export class QueryClass<
     ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null,
   ): Promise<TResult1 | TResult2> {
     return this.exec().then(onfulfilled, onrejected);
-  }
-
-  // helpers
-
-  private static relationStates<
-    S extends State,
-    K extends keyof StateRelations<S>,
-  >(states: S[], key: K): StateRelationState<S, K>[] {
-    return [
-      ...new Set(
-        // eslint-disable-next-line unicorn/prefer-spread
-        ([] as StateRelationState<S, K>[]).concat(
-          ...states.map((item): StateRelationState<S, K>[] => {
-            const rel = resolveDefer(item.$relations, {})[key as string];
-
-            return Array.isArray(rel) && Array.isArray(rel[0])
-              ? (rel[0] as StateRelationState<S, K>[])
-              : ((rel ?? []) as StateRelationState<S, K>[]);
-          }),
-        ),
-      ),
-    ];
-  }
-
-  private static methodReturnStates<
-    S extends State,
-    K extends StateMutations<S>,
-  >(states: S[], key: K): StateMutationsReturn<S, K>[] {
-    return [
-      ...new Set(
-        // eslint-disable-next-line unicorn/prefer-spread
-        ([] as StateMutationsReturn<S, K>[]).concat(
-          ...states.map((item): StateMutationsReturn<S, K>[] => {
-            const rel = resolveDefer(item.$methods, {})[key as string];
-
-            return (rel ?? [item]) as StateMutationsReturn<S, K>[];
-          }),
-        ),
-      ),
-    ];
   }
 }

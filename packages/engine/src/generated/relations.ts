@@ -1,4 +1,4 @@
-import { State, StateRelations } from './state/index.js';
+import { State, StateRelations, StateType } from './state/index.js';
 
 export type StateFilterKeys<S extends State> = keyof StateRelations<S>;
 
@@ -18,7 +18,7 @@ export type StateIncludeOneKeys<S extends State> = {
 
 export type StateRequireOneKeys<S extends State> = {
   [K in keyof StateRelations<S>]: StateRelations<S>[K] extends readonly State[]
-    ? undefined extends InstanceType<S>[K]
+    ? undefined extends StateType<S>[K]
       ? never
       : K
     : never;

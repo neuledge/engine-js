@@ -50,10 +50,10 @@ const toEntity = <S extends State>(
     constructor: state.origin,
   } as Entity<S>;
 
-  for (const [key, field] of Object.entries(state.fields)) {
-    if (!(field.fieldName in document)) continue;
+  for (const field of state.fields) {
+    if (!(field.name in document)) continue;
 
-    const rawValue = document[field.fieldName];
+    const rawValue = document[field.name];
     const value = field.type.decode ? field.type.decode(rawValue) : rawValue;
 
     // FIXME populate relations

@@ -7,21 +7,30 @@ import {
 } from '@/generated/index.js';
 import { MetadataCollection } from '@/metadata/index.js';
 import {
+  StoreFilter,
   StoreFindOptions,
   StoreScalarValue,
+  StoreWhere,
   StoreWhereRecord,
   StoreWhereValue,
 } from '@/store/index.js';
-import { FilterQueryOptions } from '@/queries/index.js';
+import { Filter, FilterQueryOptions, Where } from '@/queries/index.js';
 
 export const convertFilter = <S extends State>(
   collection: MetadataCollection,
   { filter, where }: FilterQueryOptions<S>,
-): Pick<StoreFindOptions, 'filter' | 'where'> => {
-  if (where == null) {
-    return {};
-  }
+): Pick<StoreFindOptions, 'filter' | 'where'> => ({
+  ...(where != null ? { where: convertFilterWhere(collection, where) } : null),
 
+  ...(filter != null
+    ? { filter: convertOnlyFilter(collection, filter) }
+    : null),
+});
+
+const convertFilterWhere = <S extends State>(
+  collection: MetadataCollection,
+  where: Where<S>,
+): StoreWhere => {
   const res: StoreWhereRecord[] = [];
 
   if (where.$or?.length > 0) {
@@ -35,7 +44,7 @@ export const convertFilter = <S extends State>(
     res.push(...convertWhereRecord(collection, where));
   }
 
-  return { where: res.length === 1 ? res[0] : { $or: res } };
+  return res.length === 1 ? res[0] : { $or: res };
 };
 
 const convertWhereRecord = (
@@ -129,4 +138,38 @@ const convertWhereValue = (
   }
 
   return res as never;
+};
+
+const convertOnlyFilter = <S extends State>(
+  collection: MetadataCollection,
+  filter: Filter<S>,
+): StoreFilter => {
+  const res: StoreFilter = {};
+
+  for (const key in filter) {
+    const filterOpts = filter[key];
+    if (filterOpts == null) continue;
+
+    const fields = collection.getFields(key);
+    if (!fields.length) continue;
+
+    for (const field of fields) {
+      const { fieldName, relation } = field;
+
+      if (relation == null) {
+        throw new Error(`Field '${key}' is not a relation`);
+      }
+
+      res[fieldName] = {
+        collectionName: relation[0].collectionName,
+        by: {},
+      };
+
+      // FIXME handle filter:
+      // - if there are more than one collection, we need to add OR to the filter.
+      // - we need to define how we populate the `by` fields in the filter.
+    }
+  }
+
+  return res;
 };

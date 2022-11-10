@@ -11,7 +11,7 @@ export interface MetadataCreatedChange {
 }
 
 export interface MetadataUpdatedChange {
-  type: 'renamed' | 'updated';
+  type: 'updated';
   origin: MetadataState;
   entity: MetadataState;
 }

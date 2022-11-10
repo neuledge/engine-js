@@ -1,4 +1,4 @@
-import { State, StateIndexes } from '@/generated/index.js';
+import { State, StateIndexes, StateType } from '@/generated/index.js';
 
 export interface SortQuery<S extends State> {
   sort(sort: SortIndex<S> | null): this;
@@ -16,7 +16,7 @@ export type SortIndex<S extends State> = SortedField<
 >;
 
 export type SortField<S extends State> = SortedField<
-  keyof InstanceType<S> & string
+  keyof StateType<S> & string
 >;
 
 type SortedField<K extends string> = `${'+' | '-'}${K}`;

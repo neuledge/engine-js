@@ -1,6 +1,5 @@
-import { resolveDefer, State } from '@/generated/index.js';
+import { resolveDefer, StateScalar, State } from '@/generated/index.js';
 import { Scalar } from '@neuledge/scalars';
-import { StateCollectionNames } from './names.js';
 import { generateHash } from './hash.js';
 
 export type MetadataStateHash = Buffer;
@@ -9,55 +8,33 @@ export interface MetadataState {
   collectionName: string;
   key: string;
   hash: MetadataStateHash;
-  fields: Record<string, MetadataStateField>;
+  fields: MetadataStateField[];
   origin?: State;
 }
 
-export interface MetadataLiveState extends MetadataState {
+export interface MetadataOriginState extends MetadataState {
   origin: State;
 }
 
 export interface MetadataStateField {
-  fieldName: string;
+  name: string;
+  indexes: number[];
   type: Scalar;
-  index: number;
   nullable: boolean;
-  relations: MetadataState[];
 }
 
-export const toMetadataState = (
-  names: StateCollectionNames,
-  state: State,
-): MetadataState => {
-  const collectionName = names[state.$key];
-  if (!collectionName) {
-    throw new ReferenceError(`Unknown state '${state.$key}'`);
-  }
+// state
 
-  const fields: MetadataState['fields'] = {};
+export const toMetadataState = (state: State): MetadataOriginState => {
+  const fields: MetadataState['fields'] = [];
 
   const scalars = resolveDefer(state.$scalars);
   for (const key in scalars) {
-    const { type, index, nullable, relation } = scalars[key];
-
-    const fieldName = names[`${state.$key}.${key}`];
-    if (!fieldName) {
-      throw new ReferenceError(
-        `Can't find unique field name for '${state.$key}.${key}'`,
-      );
-    }
-
-    fields[key] = {
-      fieldName,
-      type,
-      index,
-      nullable: !!nullable,
-      relations: relation?.map((item) => toMetadataState(names, item)) ?? [],
-    };
+    fields.push(...getScalarFields(key, scalars[key]));
   }
 
   return {
-    collectionName: names[state.$key],
+    collectionName: state.$key,
     key: state.$key,
     hash: generateStateHash(fields),
     fields,
@@ -65,52 +42,23 @@ export const toMetadataState = (
   };
 };
 
-export const isMetadataStatesEquals = (
-  a: MetadataState,
-  b: MetadataState,
-): boolean =>
-  a.key === b.key &&
-  a.hash.equals(b.hash) &&
-  Object.entries(a.fields).every(([key, { type, index, nullable }]) => {
-    const other = b.fields[key];
-    if (!other) return false;
-
-    return (
-      index === other.index &&
-      nullable === other.nullable &&
-      type.key === other.type.key
-    );
-  });
-
 export const isStatesMatches = (
   actual: MetadataState,
   target: MetadataState,
 ): boolean => {
-  if (actual === target) return true;
+  if (actual.hash.equals(target.hash)) return true;
 
   const actualFields = new Map(
-    Object.values(actual.fields).map((item) => [item.index, item]),
+    actual.fields.map((item) => [getMetadataStateFieldKey(item), item]),
   );
 
-  return Object.values(target.fields).every(({ index, type, nullable }) => {
-    const actualField = actualFields.get(index);
+  return Object.values(target.fields).every((targetField) => {
+    const actualField = actualFields.get(getMetadataStateFieldKey(targetField));
     if (!actualField) {
-      return nullable;
+      return targetField.nullable;
     }
 
-    if (actualField.nullable && !nullable) {
-      return false;
-    }
-
-    const actualType = actualField.type;
-
-    if (!Array.isArray(type) || !Array.isArray(actualType)) {
-      return type.key === actualType.key;
-    }
-
-    return actualType.every((actualState) =>
-      type.some((typeState) => isStatesMatches(actualState, typeState)),
-    );
+    return !actualField.nullable || targetField.nullable;
   });
 };
 
@@ -118,51 +66,91 @@ const generateStateHash = (
   fields: MetadataState['fields'],
 ): MetadataStateHash =>
   generateHash(
-    Object.values(fields)
-      .map(
-        ({
-          type,
-          index,
-          nullable,
-          relations,
-        }): [number, string, boolean, string[]] => [
-          index,
-          type.key,
-          nullable,
-          relations.map((item) => item.hash.toString('hex')),
-        ],
-      )
-      .sort((a, b) => a[0] - b[0]),
+    fields.map((field) => getMetadataStateFieldKey(field, true)).sort(),
   );
 
-export const syncStateCollectionNames = (
+export const syncMetadataStates = (
   origin: MetadataState,
   target: MetadataState,
 ): void => {
   target.collectionName = origin.collectionName;
 
   const targetFields = new Map(
-    Object.values(target.fields).map((item) => [item.index, item]),
+    target.fields.map((field) => [getMetadataStateFieldKey(field), field]),
   );
   const targetFieldNames = new Map(
-    Object.values(target.fields).map((item) => [item.fieldName, item]),
+    target.fields.map((field) => [field.name, field]),
   );
 
   for (const key in origin.fields) {
     const field = origin.fields[key];
-    const targetField = targetFields.get(field.index);
+    const targetField = targetFields.get(getMetadataStateFieldKey(field));
 
-    if (!targetField || targetField.fieldName === field.fieldName) continue;
+    if (!targetField || targetField.name === field.name) continue;
 
-    const oldFieldName = targetField.fieldName;
-    const overrideField = targetFieldNames.get(field.fieldName);
+    const oldFieldName = targetField.name;
+    const overrideField = targetFieldNames.get(field.name);
 
-    targetField.fieldName = field.fieldName;
-    targetFieldNames.set(targetField.fieldName, targetField);
+    targetField.name = field.name;
+    targetFieldNames.set(targetField.name, targetField);
 
     if (overrideField) {
-      overrideField.fieldName = oldFieldName;
-      targetFieldNames.set(overrideField.fieldName, overrideField);
+      overrideField.name = oldFieldName;
+      targetFieldNames.set(overrideField.name, overrideField);
     }
   }
 };
+
+// field
+
+const getScalarFields = (
+  name: string,
+  def: StateScalar,
+  parentIndexes: number[] = [],
+): MetadataStateField[] => {
+  const { type, index, nullable } = def;
+
+  const indexes = [...parentIndexes, index];
+
+  if ('length' in type) {
+    const fieldMap = new Map<string, MetadataStateField>();
+
+    for (const child of type) {
+      const childDef = resolveDefer(child.$scalars);
+
+      for (const id of child.$id) {
+        for (const item of getScalarFields(
+          `${name}_${id}`,
+          childDef[id],
+          indexes,
+        )) {
+          const mapKey = getMetadataStateFieldKey(item);
+          const value = fieldMap.get(mapKey);
+
+          if (!value?.nullable) {
+            fieldMap.set(mapKey, item);
+          }
+        }
+      }
+    }
+
+    return [...fieldMap.values()];
+  }
+
+  return [
+    {
+      name,
+      indexes,
+      type,
+      nullable: nullable ?? false,
+    },
+  ];
+};
+
+const getMetadataStateFieldKey = (
+  field: MetadataStateField,
+  strict?: boolean,
+): string =>
+  `${field.indexes.join('/')}#${field.type}${
+    strict && field.nullable ? '?' : ''
+  }`;

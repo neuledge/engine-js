@@ -3,7 +3,9 @@ import { METADATA_HASH_BYTES } from './constants.js';
 
 const HASH_ALGORITHM = 'sha512';
 
-export const generateHash = (payload: unknown): Buffer =>
+type HashPayload = string | number | boolean | HashPayload[];
+
+export const generateHash = (payload: HashPayload): Buffer =>
   createHash(HASH_ALGORITHM)
     .update(JSON.stringify(payload))
     .digest()
