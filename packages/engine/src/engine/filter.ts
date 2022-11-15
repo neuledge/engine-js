@@ -3,31 +3,37 @@ import {
   resolveDefer,
   State,
   StateWhereRecord,
-  StateWhereScalar,
+  StateWhereTerm,
 } from '@/generated/index.js';
-import { MetadataCollection } from '@/metadata/index.js';
 import {
-  StoreFilter,
+  Metadata,
+  MetadataCollection,
+  MetadataOriginStateField,
+} from '@/metadata/index.js';
+import {
+  StoreMatch,
+  StoreMatchOptions,
   StoreFindOptions,
   StoreScalarValue,
   StoreWhere,
   StoreWhereRecord,
   StoreWhereValue,
 } from '@/store/index.js';
-import { Filter, FilterQueryOptions, Where } from '@/queries/index.js';
+import { Match, FilterQueryOptions, Where } from '@/queries/index.js';
+import { getCollectionRelationStates } from './collection.js';
 
-export const convertFilter = <S extends State>(
+export const convertFilterQuery = <S extends State>(
+  metadata: Metadata,
   collection: MetadataCollection,
-  { filter, where }: FilterQueryOptions<S>,
-): Pick<StoreFindOptions, 'filter' | 'where'> => ({
-  ...(where != null ? { where: convertFilterWhere(collection, where) } : null),
-
-  ...(filter != null
-    ? { filter: convertOnlyFilter(collection, filter) }
+  { match, where }: FilterQueryOptions<S>,
+): Pick<StoreFindOptions, 'match' | 'where'> => ({
+  ...(where != null ? { where: convertWhere(collection, where) } : null),
+  ...(match != null
+    ? { match: convertMatch(metadata, collection, match) }
     : null),
 });
 
-const convertFilterWhere = <S extends State>(
+const convertWhere = <S extends State>(
   collection: MetadataCollection,
   where: Where<S>,
 ): StoreWhere => {
@@ -59,8 +65,8 @@ const convertWhereRecord = (
     res[state.key] = init;
   }
 
-  for (const [key, value] of Object.entries(where)) {
-    if (value == null) continue;
+  for (const [key, term] of Object.entries(where)) {
+    if (term == null) continue;
 
     const fieldNames = Object.entries(collection.getFieldNameStates(key));
     if (!fieldNames.length) {
@@ -73,9 +79,9 @@ const convertWhereRecord = (
       for (const state of states) {
         const record = res[state.$key];
 
-        const recordValue = convertWhereValue(
+        const recordValue = convertWhereTerm(
           resolveDefer(state.$scalars)[key].type,
-          value,
+          term,
         );
         let newRecord = newRecords.get(record);
 
@@ -92,13 +98,13 @@ const convertWhereRecord = (
   return [...new Set(Object.values(res))];
 };
 
-const convertWhereValue = (
+const convertWhereTerm = (
   scalar: Scalar,
-  where: StateWhereScalar<unknown>,
+  term: StateWhereTerm<unknown>,
 ): StoreWhereValue => {
   const res: Record<string, StoreScalarValue | StoreScalarValue[]> = {};
 
-  for (const [key, value] of Object.entries(where)) {
+  for (const [key, value] of Object.entries(term)) {
     switch (key) {
       case '$eq':
       case '$ne': {
@@ -140,36 +146,88 @@ const convertWhereValue = (
   return res as never;
 };
 
-const convertOnlyFilter = <S extends State>(
+const convertMatch = <S extends State>(
+  metadata: Metadata,
   collection: MetadataCollection,
-  filter: Filter<S>,
-): StoreFilter => {
-  const res: StoreFilter = {};
+  match: Match<S>,
+): StoreMatch => {
+  const res: StoreMatch = {};
 
-  for (const key in filter) {
-    const filterOpts = filter[key];
-    if (filterOpts == null) continue;
+  for (const key in match) {
+    const matchOpts = match[key];
+    if (matchOpts == null) continue;
 
     const fields = collection.getFields(key);
     if (!fields.length) continue;
 
-    for (const field of fields) {
-      const { fieldName, relation } = field;
+    const relCollections = metadata.getCollections(
+      matchOpts.states ?? getCollectionRelationStates(collection, key),
+    );
 
-      if (relation == null) {
-        throw new Error(`Field '${key}' is not a relation`);
-      }
+    for (const relCollection of relCollections) {
+      const relOptions = convertFilterQueryOptions(
+        metadata,
+        relCollection,
+        matchOpts,
+      );
 
-      res[fieldName] = {
-        collectionName: relation[0].collectionName,
-        by: {},
-      };
-
-      // FIXME handle filter:
-      // - if there are more than one collection, we need to add OR to the filter.
-      // - we need to define how we populate the `by` fields in the filter.
+      assginMatchFields(res, fields, relOptions);
     }
   }
 
   return res;
+};
+
+const convertFilterQueryOptions = <S extends State>(
+  metadata: Metadata,
+  collection: MetadataCollection,
+  matchOpts: FilterQueryOptions<S>,
+): Pick<StoreMatchOptions, 'where' | 'match'> => ({
+  ...(matchOpts.where
+    ? { where: convertWhere(collection, matchOpts.where) }
+    : null),
+
+  ...(matchOpts.match
+    ? { match: convertMatch(metadata, collection, matchOpts.match) }
+    : null),
+});
+
+const assginMatchFields = (
+  match: StoreMatch,
+  fields: MetadataOriginStateField[],
+  relOptions: Partial<StoreMatchOptions>,
+) => {
+  for (const field of fields) {
+    const { name, relations } = field;
+
+    if (!relations?.length) {
+      throw new Error(`Field '${name}' is not a relation`);
+    }
+
+    match[name] = [
+      ...(match[name] ?? []),
+      ...new Map(
+        relations
+          .map(({ state, path }): [string, StoreMatchOptions] | null => {
+            const relField = state.fields.find(
+              (f) => f.path?.join('.') === path.join('.'),
+            );
+
+            if (!relField) {
+              return null;
+            }
+
+            return [
+              `${state.collectionName}.${relField?.name}`,
+              {
+                collectionName: state.collectionName,
+                by: { [name]: relField?.name },
+                ...relOptions,
+              },
+            ];
+          })
+          .filter((v): v is [string, StoreMatchOptions] => v != null),
+      ).values(),
+    ];
+  }
 };

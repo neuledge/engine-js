@@ -1,5 +1,4 @@
-import { State } from '@/generated/index.js';
-import { MetadataOriginState, MetadataStateField } from './state.js';
+import { MetadataOriginState, MetadataOriginStateField } from './state.js';
 
 export class MetadataCollection {
   // private readonly fieldMap = new Map<string, MetadataStateField[]>();
@@ -17,17 +16,17 @@ export class MetadataCollection {
     // }
   }
 
-  //   getFields(key: string): MetadataStateField[] {
-  //     return this.states.flatMap((state) =>
-  //       state.fields.filter((field) => field.key === key),
-  //     );
-  //   }
-  //
-  //   getFieldNames(key: string): string[] {
-  //     return [...new Set(this.getFields(key).map((field) => field.name))];
-  //   }
-  //
-  //   getFieldNameStates(key: string): Record<MetadataStateField['name'], State[]> {
+  getFields(key: string): MetadataOriginStateField[] {
+    return this.states.flatMap((state) =>
+      state.fields.filter((field) => field.path[0] === key),
+    );
+  }
+
+  getFieldNames(key: string): string[] {
+    return [...new Set(this.getFields(key).map((field) => field.name))];
+  }
+
+  //   getFieldStates(key: string): Record<MetadataStateField['name'], State[]> {
   //     const map: Record<MetadataStateField['name'], State[]> = {};
   //
   //     for (const state of this.states) {

@@ -3,7 +3,7 @@ import { MetadataCollection } from '@/metadata/index.js';
 import { SelectQueryOptions } from '@/queries/index.js';
 import { StoreFindOptions, StoreSelect } from '@/store/index.js';
 
-export const convertSelect = <S extends State>(
+export const convertSelectQuery = <S extends State>(
   collection: MetadataCollection,
   { select, requireOne, includeOne, includeMany }: SelectQueryOptions<S>,
 ): Pick<StoreFindOptions, 'select' | 'includeFirst' | 'requireFirst'> => {

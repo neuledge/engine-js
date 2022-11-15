@@ -1,6 +1,6 @@
 import { State, StateRelations, StateType } from './state/index.js';
 
-export type StateFilterKeys<S extends State> = keyof StateRelations<S>;
+export type StateMatchKeys<S extends State> = keyof StateRelations<S>;
 
 export type StateIncludeManyKeys<S extends State> = {
   [K in keyof StateRelations<S>]: StateRelations<S>[K] extends readonly [

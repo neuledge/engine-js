@@ -31,12 +31,12 @@ import {
 import { Store } from '../store/index.js';
 import { chooseStatesCollection } from './collection.js';
 import { toEntityOrThrow, toMaybeEntity } from './entity.js';
-import { convertLimit, toLimitedEntityList } from './limit.js';
+import { convertLimitQuery, toLimitedEntityList } from './limit.js';
 import { loadMetadata } from './metadata/index.js';
-import { convertSelect } from './select.js';
-import { convertSort } from './sort.js';
-import { convertFilter } from './filter.js';
-import { convertOffset } from './offset.js';
+import { convertSelectQuery } from './select.js';
+import { convertSortQuery } from './sort.js';
+import { convertFilterQuery } from './filter.js';
+import { convertOffsetQuery } from './offset.js';
 
 export interface NeuledgeEngineOptions {
   store: Store;
@@ -75,11 +75,11 @@ export class NeuledgeEngine {
           options,
           await this.store.find({
             collectionName: collection.name,
-            ...convertSelect(collection, options),
-            ...convertFilter(collection, options),
-            ...convertOffset(options),
-            ...convertLimit(options),
-            ...convertSort(collection, options),
+            ...convertSelectQuery(collection, options),
+            ...convertFilterQuery(metadata, collection, options),
+            ...convertOffsetQuery(options),
+            ...convertLimitQuery(options),
+            ...convertSortQuery(collection, options),
           }),
         );
       },
@@ -99,8 +99,8 @@ export class NeuledgeEngine {
           metadata,
           await this.store.find({
             collectionName: collection.name,
-            ...convertSelect(collection, options),
-            ...convertFilter(collection, options),
+            ...convertSelectQuery(collection, options),
+            ...convertFilterQuery(metadata, collection, options),
             limit: 1,
           }),
         );
@@ -123,8 +123,8 @@ export class NeuledgeEngine {
           metadata,
           await this.store.find({
             collectionName: collection.name,
-            ...convertSelect(collection, options),
-            ...convertFilter(collection, options),
+            ...convertSelectQuery(collection, options),
+            ...convertFilterQuery(metadata, collection, options),
             limit: 1,
           }),
         );
@@ -144,11 +144,11 @@ export class NeuledgeEngine {
           metadata,
           await this.store.find({
             collectionName: collection.name,
-            ...convertSelect(collection, options),
-            ...convertFilter(collection, options),
-            ...convertOffset(options),
+            ...convertSelectQuery(collection, options),
+            ...convertFilterQuery(metadata, collection, options),
+            ...convertOffsetQuery(options),
             limit: 1,
-            ...convertSort(collection, options),
+            ...convertSortQuery(collection, options),
           }),
         );
       },
@@ -167,11 +167,11 @@ export class NeuledgeEngine {
           metadata,
           await this.store.find({
             collectionName: collection.name,
-            ...convertSelect(collection, options),
-            ...convertFilter(collection, options),
-            ...convertOffset(options),
+            ...convertSelectQuery(collection, options),
+            ...convertFilterQuery(metadata, collection, options),
+            ...convertOffsetQuery(options),
             limit: 1,
-            ...convertSort(collection, options),
+            ...convertSortQuery(collection, options),
           }),
         );
       },

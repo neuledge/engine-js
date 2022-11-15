@@ -8,7 +8,7 @@ export type StateWhereRecord<T> = {
   [K in keyof T]?: T[K];
 };
 
-export type StateWhereScalar<V> =
+export type StateWhereTerm<V> =
   | StateWhereNullableObject<V & object>
   | StateWhereNullableNumber<V & number>
   | StateWhereNullableString<V & string>

@@ -1,6 +1,6 @@
 import { Category, Post } from '@/generated/__test__/category-post-example.js';
 import { Metadata, MetadataCollection } from '@/metadata/index.js';
-import { convertSort } from './sort.js';
+import { convertSortQuery } from './sort.js';
 
 describe('engine/sort', () => {
   describe('convertSort', () => {
@@ -15,33 +15,37 @@ describe('engine/sort', () => {
     });
 
     it('should throw on unknown sort string', () => {
-      expect(() => convertSort(postsCollection, { sort: '+foo' })).toThrow(
+      expect(() => convertSortQuery(postsCollection, { sort: '+foo' })).toThrow(
         'Unknown sort key: foo',
       );
     });
 
     it('should convert an empty sort', () => {
-      const res = convertSort(postsCollection, {});
+      const res = convertSortQuery(postsCollection, {});
 
       expect(res).toEqual({});
     });
 
     it('should convert a sort asc string to a sort object', () => {
-      const res = convertSort(postsCollection, { sort: '+category.posts' });
+      const res = convertSortQuery(postsCollection, {
+        sort: '+category.posts',
+      });
 
       expect(res).toEqual({ sort: { category: 'asc', title: 'asc' } });
       expect(Object.keys(res.sort ?? {})).toEqual(['category', 'title']);
     });
 
     it('should convert a sort desc string to a sort object', () => {
-      const res = convertSort(postsCollection, { sort: '-category.posts' });
+      const res = convertSortQuery(postsCollection, {
+        sort: '-category.posts',
+      });
 
       expect(res).toEqual({ sort: { category: 'desc', title: 'desc' } });
       expect(Object.keys(res.sort ?? {})).toEqual(['category', 'title']);
     });
 
     it('should convert sort fields', () => {
-      const res = convertSort(categoriesCollection, {
+      const res = convertSortQuery(categoriesCollection, {
         sort: ['+name', '-description'],
       });
 
@@ -50,7 +54,7 @@ describe('engine/sort', () => {
     });
 
     it('should ignore on unknown sort field', () => {
-      const res = convertSort(categoriesCollection, {
+      const res = convertSortQuery(categoriesCollection, {
         sort: ['+name', '-foo'],
       });
 

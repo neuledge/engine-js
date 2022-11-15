@@ -47,19 +47,30 @@ const toEntity = <S extends State>(
 
   const entity = {
     $state: state.key,
-    constructor: state.origin,
   } as Entity<S>;
 
   for (const field of state.fields) {
-    if (!(field.name in document)) continue;
+    if (!(field.name in document) || !field.path) continue;
 
     const rawValue = document[field.name];
     const value = field.type.decode ? field.type.decode(rawValue) : rawValue;
 
-    // FIXME populate relations
-
-    entity[key] = (value as never) ?? null;
+    setEntityValue(entity, field.path, value);
   }
 
+  // FIXME populate relations
+
   return entity;
+};
+
+const setEntityValue = (obj: object, path: string[], value: unknown): void => {
+  for (let i = 0; i < path.length - 1; i += 1) {
+    const key = path[i];
+
+    obj = !(key in obj)
+      ? (obj[key as never] = {} as never)
+      : (obj[key as never] as object);
+  }
+
+  obj[path[path.length - 1] as never] = value as never;
 };

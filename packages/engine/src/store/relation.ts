@@ -2,27 +2,21 @@ import { StoreCollectionName } from './collection.js';
 import { StoreListOffset, StoreScalarValue, StoreSelect } from './document.js';
 import { StoreWhere } from './where.js';
 
-export type StoreFilter = NonNullable<StoreFilterOptions['filter']>;
+export type StoreMatch = Record<FieldName, StoreMatchOptions[]>;
+export type StoreIncludeFirst = Record<FieldName, StoreIncludeOptions[]>;
+export type StoreRequireFirst = Record<FieldName, StoreIncludeOptions[]>;
 
-export type StoreIncludeFirst = NonNullable<
-  StoreIncludeOptions['includeFirst']
->;
-
-export type StoreRequireFirst = NonNullable<
-  StoreIncludeOptions['requireFirst']
->;
-
-interface StoreFilterOptions {
+export interface StoreMatchOptions {
   collectionName: StoreCollectionName;
   by: StoreFilterBy;
   where?: StoreWhere;
-  filter?: Record<FieldName, StoreFilterOptions>;
+  match?: StoreMatch;
 }
 
-interface StoreIncludeOptions extends StoreFilterOptions {
+export interface StoreIncludeOptions extends StoreMatchOptions {
   select?: StoreSelect;
-  requireFirst?: Record<FieldName, StoreIncludeOptions>;
-  includeFirst?: Record<FieldName, StoreIncludeOptions>;
+  requireFirst?: StoreRequireFirst;
+  includeFirst?: StoreIncludeFirst;
   limit: number;
   offset?: StoreListOffset;
 }

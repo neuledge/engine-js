@@ -32,7 +32,6 @@ import {
   DeleteUniqueWhereAndReturnQuery,
   DeleteUniqueWhereQuery,
 } from './delete-unique.js';
-import { FilterOnlyQueryOptions } from './filter.js';
 import {
   FindFirstOrThrowQuery,
   FindFirstOrThrowQueryOptions,
@@ -49,6 +48,7 @@ import {
   FindUniqueQueryOptions,
   FindUniqueWhereQuery,
 } from './find-unique.js';
+import { MatchQueryOptions } from './match.js';
 import { SelectManyQuery, SelectManyQueryOptions } from './select-many.js';
 import { SelectOneQuery, SelectOneQueryOptions } from './select-one.js';
 import {
@@ -151,7 +151,7 @@ interface QueryOptionsTypes<I extends State, O extends State> {
   DeleteMany: DeleteManyQueryOptions<I, O>;
   DeleteUniqueOrThrow: DeleteUniqueOrThrowQueryOptions<I, O>;
   DeleteUnique: DeleteUniqueQueryOptions<I, O>;
-  Filter: FilterOnlyQueryOptions<I>;
+  Match: MatchQueryOptions<I>;
   FindFirstOrThrow: FindFirstOrThrowQueryOptions<I, O>;
   FindFirst: FindFirstQueryOptions<I, O>;
   FindMany: FindManyQueryOptions<I, O>;

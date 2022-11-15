@@ -1,6 +1,6 @@
 import {
   State,
-  StateFilterKeys,
+  StateMatchKeys,
   StateIncludeManyKeys,
   StateIncludeOneKeys,
   StateRelationState,
@@ -10,6 +10,7 @@ import { EntityListOffset } from '@/list.js';
 import { ExecQuery, ExecQueryOptions } from './exec.js';
 import { FilterQuery, FilterQueryOptions } from './filter.js';
 import { LimitQuery, LimitQueryOptions } from './limit.js';
+import { MatchQuery } from './match.js';
 import { OffsetQuery, OffsetQueryOptions } from './offset.js';
 import { QueryOptions, QueryType } from './query.js';
 import { SelectManyQuery } from './select-many.js';
@@ -162,25 +163,25 @@ export class QueryClass<
     return this;
   }
 
-  filter<K extends StateFilterKeys<I>>(
+  match<K extends StateMatchKeys<I>>(
     key: K,
     states: StateRelationState<I, K>[] | null,
     query?: (
-      query: FilterQuery<StateRelationState<I, K>>,
-    ) => FilterQuery<StateRelationState<I, K>>,
+      query: MatchQuery<StateRelationState<I, K>>,
+    ) => MatchQuery<StateRelationState<I, K>>,
   ): this {
     let rel: QueryClass<
-      'Filter',
+      'Match',
       StateRelationState<I, K>,
       StateRelationState<I, K>
     > = new QueryClass({
-      type: 'Filter',
+      type: 'Match',
       states: states ?? undefined,
     });
 
     if (query) {
       rel = query(rel) as QueryClass<
-        'Filter',
+        'Match',
         StateRelationState<I, K>,
         StateRelationState<I, K>
       >;
@@ -188,10 +189,10 @@ export class QueryClass<
 
     const options = this.options as FilterQueryOptions<I>;
 
-    if (!options.filter) {
-      options.filter = {};
+    if (!options.match) {
+      options.match = {};
     }
-    options.filter[key] = rel.options;
+    options.match[key] = rel.options;
 
     return this;
   }

@@ -5,7 +5,7 @@ import { toEntityList } from './entity.js';
 
 const DEFAULT_QUERY_LIMIT = 100;
 
-export const convertLimit = (
+export const convertLimitQuery = (
   options: LimitQueryOptions,
 ): Pick<StoreFindOptions, 'limit'> => ({
   limit: options.limit ?? DEFAULT_QUERY_LIMIT,

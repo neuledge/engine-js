@@ -1,6 +1,6 @@
 import { Category, Post } from '@/generated/__test__/category-post-example.js';
 import { Metadata, MetadataCollection } from '@/metadata/index.js';
-import { convertSelect } from './select.js';
+import { convertSelectQuery } from './select.js';
 
 describe('engine/select', () => {
   describe('convertSelect', () => {
@@ -13,13 +13,13 @@ describe('engine/select', () => {
     });
 
     it('should convert empty object', () => {
-      const res = convertSelect(postsCollection, {});
+      const res = convertSelectQuery(postsCollection, {});
 
       expect(res).toEqual({});
     });
 
     it('should convert a select object', () => {
-      const res = convertSelect(postsCollection, {
+      const res = convertSelectQuery(postsCollection, {
         select: {
           title: true,
           id: true,
@@ -31,7 +31,7 @@ describe('engine/select', () => {
     });
 
     it('should ignore unknown fields', () => {
-      const res = convertSelect(postsCollection, {
+      const res = convertSelectQuery(postsCollection, {
         select: {
           title: false,
           id: true,

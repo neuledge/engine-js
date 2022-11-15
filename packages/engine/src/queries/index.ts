@@ -12,6 +12,7 @@ export * from './find-unique-or-throw.js';
 export * from './find-unique.js';
 export * from './filter.js';
 export * from './limit.js';
+export * from './match.js';
 export * from './offset.js';
 export * from './query.js';
 export * from './query-class.js';

@@ -13,24 +13,36 @@ export interface MetadataState {
 }
 
 export interface MetadataOriginState extends MetadataState {
+  fields: MetadataOriginStateField[];
   origin: State;
 }
 
 export interface MetadataStateField {
   name: string;
+  path?: string[];
   indexes: number[];
   type: Scalar;
   nullable: boolean;
+  relations?: MetadataStateRelation[];
+}
+
+export interface MetadataOriginStateField extends MetadataStateField {
+  path: string[];
+}
+
+export interface MetadataStateRelation {
+  state: MetadataState;
+  path: string[];
 }
 
 // state
 
 export const toMetadataState = (state: State): MetadataOriginState => {
-  const fields: MetadataState['fields'] = [];
+  const fields: MetadataOriginState['fields'] = [];
 
   const scalars = resolveDefer(state.$scalars);
   for (const key in scalars) {
-    fields.push(...getScalarFields(key, scalars[key]));
+    fields.push(...getScalarFields(key, [key], scalars[key]));
   }
 
   return {
@@ -105,15 +117,16 @@ export const syncMetadataStates = (
 
 const getScalarFields = (
   name: string,
+  path: string[],
   def: StateScalar,
   parentIndexes: number[] = [],
-): MetadataStateField[] => {
+): MetadataOriginStateField[] => {
   const { type, index, nullable } = def;
 
   const indexes = [...parentIndexes, index];
 
   if ('length' in type) {
-    const fieldMap = new Map<string, MetadataStateField>();
+    const fieldMap = new Map<string, MetadataOriginStateField>();
 
     for (const child of type) {
       const childDef = resolveDefer(child.$scalars);
@@ -121,6 +134,7 @@ const getScalarFields = (
       for (const id of child.$id) {
         for (const item of getScalarFields(
           `${name}_${id}`,
+          [...path, id],
           childDef[id],
           indexes,
         )) {
@@ -140,6 +154,7 @@ const getScalarFields = (
   return [
     {
       name,
+      path,
       indexes,
       type,
       nullable: nullable ?? false,

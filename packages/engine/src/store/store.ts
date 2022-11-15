@@ -12,7 +12,7 @@ import {
   StoreSelect,
 } from './document.js';
 import {
-  StoreFilter,
+  StoreMatch,
   StoreRequireFirst,
   StoreIncludeFirst,
 } from './relation.js';
@@ -58,7 +58,7 @@ export interface StoreFindOptions {
   collectionName: StoreCollectionName;
   select?: StoreSelect;
   where?: StoreWhere;
-  filter?: StoreFilter;
+  match?: StoreMatch;
   requireFirst?: StoreRequireFirst;
   includeFirst?: StoreIncludeFirst;
   limit: number;

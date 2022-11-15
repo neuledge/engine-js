@@ -3,7 +3,7 @@ import { MetadataCollection } from '@/metadata/index.js';
 import { SortQueryOptions } from '@/queries/index.js';
 import { StoreFindOptions, StoreSort } from '@/store/index.js';
 
-export const convertSort = <S extends State>(
+export const convertSortQuery = <S extends State>(
   collection: MetadataCollection,
   { sort }: SortQueryOptions<S>,
 ): Pick<StoreFindOptions, 'sort'> => {
