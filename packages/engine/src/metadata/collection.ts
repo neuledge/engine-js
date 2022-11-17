@@ -1,4 +1,9 @@
-import { MetadataOriginState, MetadataOriginStateField } from './state.js';
+import { State } from '@/generated/index.js';
+import {
+  MetadataOriginState,
+  MetadataOriginStateField,
+  MetadataStateField,
+} from './state.js';
 
 export class MetadataCollection {
   // private readonly fieldMap = new Map<string, MetadataStateField[]>();
@@ -16,27 +21,40 @@ export class MetadataCollection {
     // }
   }
 
-  getFields(key: string): MetadataOriginStateField[] {
+  getFields(rootPath: string): MetadataOriginStateField[] {
     return this.states.flatMap((state) =>
-      state.fields.filter((field) => field.path[0] === key),
+      state.fields.filter((field) => isRootPath(rootPath, field.path)),
     );
   }
 
-  getFieldNames(key: string): string[] {
-    return [...new Set(this.getFields(key).map((field) => field.name))];
+  getFieldNames(rootPath: string): string[] {
+    return [...new Set(this.getFields(rootPath).map((field) => field.name))];
   }
 
-  //   getFieldStates(key: string): Record<MetadataStateField['name'], State[]> {
-  //     const map: Record<MetadataStateField['name'], State[]> = {};
-  //
-  //     for (const state of this.states) {
-  //       const fieldName = state.origin.$scalars[key]?.fieldName;
-  //       if (!fieldName) continue;
-  //
-  //       const stateKeys = map[fieldName] ?? (map[fieldName] = []);
-  //       stateKeys.push(state.origin);
-  //     }
-  //
-  //     return map;
-  //   }
+  getFieldStates(
+    rootPath: string,
+  ): Record<MetadataStateField['name'], State[]> {
+    const map: Record<MetadataStateField['name'], State[]> = {};
+
+    for (const state of this.states) {
+      for (const field of state.fields) {
+        if (isRootPath(rootPath, field.path)) {
+          let entry = map[field.name];
+
+          if (!entry) {
+            entry = [];
+            map[field.name] = entry;
+          }
+
+          entry.push(state.origin);
+        }
+      }
+    }
+
+    return map;
+  }
 }
+
+const isRootPath = (rootPath: string, path: string): boolean =>
+  path.startsWith(rootPath) &&
+  (path.length === rootPath.length || path[rootPath.length] === '.');

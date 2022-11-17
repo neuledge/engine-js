@@ -5,7 +5,7 @@ import { StoreFindOptions, StoreSelect } from '@/store/index.js';
 
 export const convertSelectQuery = <S extends State>(
   collection: MetadataCollection,
-  { select, requireOne, includeOne, includeMany }: SelectQueryOptions<S>,
+  { select /* , requireOne, includeOne, includeMany */ }: SelectQueryOptions<S>,
 ): Pick<StoreFindOptions, 'select' | 'includeFirst' | 'requireFirst'> => {
   if (select == null) {
     return {};

@@ -19,8 +19,12 @@ export class Metadata {
   private readonly keyMap: Partial<Record<string, MetadataOriginState>>;
 
   static generate(states: Iterable<State>): Metadata {
+    const ctx = {};
+
     return new this(
-      assignMetadataNames([...states].map((state) => toMetadataState(state))),
+      assignMetadataNames(
+        [...states].map((state) => toMetadataState(ctx, state)),
+      ),
     );
   }
 
@@ -91,7 +95,7 @@ export class Metadata {
         continue;
       }
 
-      entity = this.keyMap[origin.key];
+      entity = this.keyMap[origin.name];
       const deleted = { ...origin };
 
       if (entity != null) {
@@ -103,10 +107,10 @@ export class Metadata {
           continue;
         }
 
-        deleted.key = `${entity.key}_old`;
+        deleted.name = `${entity.name}_old`;
 
-        for (let i = 2; this.keyMap[deleted.key] != null; i += 1) {
-          deleted.key = `${entity.key}_old${i}`;
+        for (let i = 2; this.keyMap[deleted.name] != null; i += 1) {
+          deleted.name = `${entity.name}_old${i}`;
         }
       }
 

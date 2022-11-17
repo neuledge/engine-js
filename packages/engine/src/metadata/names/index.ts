@@ -10,7 +10,7 @@ export const assignMetadataNames = (
   );
 
   for (const state of metadataStates) {
-    state.collectionName = stateNames.get(state.key) ?? state.key;
+    state.collectionName = stateNames.get(state.name) ?? state.name;
     state.fields = assignFieldNames(state.fields);
   }
 

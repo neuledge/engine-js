@@ -46,7 +46,7 @@ const toEntity = <S extends State>(
   }
 
   const entity = {
-    $state: state.key,
+    $state: state.name,
   } as Entity<S>;
 
   for (const field of state.fields) {
@@ -63,14 +63,16 @@ const toEntity = <S extends State>(
   return entity;
 };
 
-const setEntityValue = (obj: object, path: string[], value: unknown): void => {
-  for (let i = 0; i < path.length - 1; i += 1) {
-    const key = path[i];
+const setEntityValue = (obj: object, path: string, value: unknown): void => {
+  const pathKeys = path.split('.');
+
+  for (let i = 0; i < pathKeys.length - 1; i += 1) {
+    const key = pathKeys[i];
 
     obj = !(key in obj)
       ? (obj[key as never] = {} as never)
       : (obj[key as never] as object);
   }
 
-  obj[path[path.length - 1] as never] = value as never;
+  obj[pathKeys[pathKeys.length - 1] as never] = value as never;
 };

@@ -62,13 +62,13 @@ const convertWhereRecord = (
 
   const init = {};
   for (const state of collection.states) {
-    res[state.key] = init;
+    res[state.name] = init;
   }
 
   for (const [key, term] of Object.entries(where)) {
     if (term == null) continue;
 
-    const fieldNames = Object.entries(collection.getFieldNameStates(key));
+    const fieldNames = Object.entries(collection.getFieldStates(key));
     if (!fieldNames.length) {
       throw new Error(`Unknown field name: '${key}'`);
     }
@@ -209,9 +209,7 @@ const assginMatchFields = (
       ...new Map(
         relations
           .map(({ state, path }): [string, StoreMatchOptions] | null => {
-            const relField = state.fields.find(
-              (f) => f.path?.join('.') === path.join('.'),
-            );
+            const relField = state.fields.find((f) => f.path === path);
 
             if (!relField) {
               return null;

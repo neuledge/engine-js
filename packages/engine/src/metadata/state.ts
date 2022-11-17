@@ -1,4 +1,9 @@
-import { resolveDefer, StateScalar, State } from '@/generated/index.js';
+import {
+  resolveDefer,
+  StateScalar,
+  State,
+  StateKey,
+} from '@/generated/index.js';
 import { Scalar } from '@neuledge/scalars';
 import { generateHash } from './hash.js';
 
@@ -6,52 +11,74 @@ export type MetadataStateHash = Buffer;
 
 export interface MetadataState {
   collectionName: string;
-  key: string;
+  name: string;
   hash: MetadataStateHash;
   fields: MetadataStateField[];
   origin?: State;
+  relations: MetadataStateRelation[];
 }
 
 export interface MetadataOriginState extends MetadataState {
   fields: MetadataOriginStateField[];
   origin: State;
+  relations: MetadataOriginStateRelation[];
 }
 
 export interface MetadataStateField {
   name: string;
-  path?: string[];
+  path?: string;
   indexes: number[];
   type: Scalar;
   nullable: boolean;
-  relations?: MetadataStateRelation[];
 }
 
 export interface MetadataOriginStateField extends MetadataStateField {
-  path: string[];
+  path: string;
 }
 
 export interface MetadataStateRelation {
-  state: MetadataState;
-  path: string[];
+  states: MetadataState[];
+  path?: string;
+  index: number;
+}
+
+export interface MetadataOriginStateRelation extends MetadataStateRelation {
+  states: MetadataOriginState[];
+  path: string;
 }
 
 // state
 
-export const toMetadataState = (state: State): MetadataOriginState => {
-  const fields: MetadataOriginState['fields'] = [];
+type MetadataStateContext = Partial<Record<StateKey, MetadataOriginState>>;
 
-  const scalars = resolveDefer(state.$scalars);
-  for (const key in scalars) {
-    fields.push(...getScalarFields(key, [key], scalars[key]));
+export const toMetadataState = (
+  ctx: MetadataStateContext,
+  state: State,
+): MetadataOriginState => {
+  let ref = ctx[state.$key];
+  if (ref) return ref;
+
+  ref = ctx[state.$key] = {
+    collectionName: state.$key,
+    name: state.$key,
+    hash: null as never,
+    fields: [],
+    origin: state,
+    relations: [],
+  };
+
+  const scalars = Object.entries(resolveDefer(state.$scalars));
+
+  for (const [key, def] of scalars) {
+    ref.fields.push(...getScalarFields(key, key, def));
   }
 
-  return {
-    collectionName: state.$key,
-    key: state.$key,
-    hash: generateStateHash(fields),
-    fields,
-    origin: state,
-  };
+  for (const [key, def] of scalars) {
+    ref.relations.push(...getScalarRelations(ctx, key, def));
+  }
+
+  ref.hash = generateStateHash(ref);
+  return ref;
 };
 
 export const isStatesMatches = (
@@ -75,11 +102,14 @@ export const isStatesMatches = (
 };
 
 const generateStateHash = (
-  fields: MetadataState['fields'],
+  state: Pick<MetadataState, 'fields' | 'relations'>,
 ): MetadataStateHash =>
-  generateHash(
-    fields.map((field) => getMetadataStateFieldKey(field, true)).sort(),
-  );
+  generateHash([
+    state.fields.map((field) => getMetadataStateFieldKey(field, true)).sort(),
+    state.relations
+      .map((relation) => getMetadataStateRelationKey(relation))
+      .sort(),
+  ]);
 
 export const syncMetadataStates = (
   origin: MetadataState,
@@ -117,7 +147,7 @@ export const syncMetadataStates = (
 
 const getScalarFields = (
   name: string,
-  path: string[],
+  path: string,
   def: StateScalar,
   parentIndexes: number[] = [],
 ): MetadataOriginStateField[] => {
@@ -134,7 +164,7 @@ const getScalarFields = (
       for (const id of child.$id) {
         for (const item of getScalarFields(
           `${name}_${id}`,
-          [...path, id],
+          `${path}.${id}`,
           childDef[id],
           indexes,
         )) {
@@ -166,6 +196,32 @@ const getMetadataStateFieldKey = (
   field: MetadataStateField,
   strict?: boolean,
 ): string =>
-  `${field.indexes.join('/')}#${field.type}${
+  `${field.indexes.join(':')}#${field.type}${
     strict && field.nullable ? '?' : ''
   }`;
+
+// relation
+
+const getScalarRelations = (
+  ctx: MetadataStateContext,
+  key: string,
+  def: StateScalar,
+): MetadataOriginStateRelation[] =>
+  Array.isArray(def.type)
+    ? [
+        {
+          states: def.type.map((state) => toMetadataState(ctx, state)),
+          path: key,
+          index: def.index,
+        },
+      ]
+    : [];
+
+const getMetadataStateRelationKey = (relation: MetadataStateRelation): string =>
+  `${relation.index}#${relation.states
+    .map((state) =>
+      generateStateHash({ fields: state.fields, relations: [] }).toString(
+        'base64url',
+      ),
+    )
+    .join('|')}`;
