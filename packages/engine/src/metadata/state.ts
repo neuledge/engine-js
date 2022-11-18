@@ -1,9 +1,9 @@
 import {
   resolveDefer,
-  StateScalar,
-  State,
-  StateKey,
-} from '@/generated/index.js';
+  StateDefintionScalar,
+  StateDefinition,
+  StateDefinitionName,
+} from '@/definitions/index.js';
 import { Scalar } from '@neuledge/scalars';
 import { generateHash } from './hash.js';
 
@@ -14,13 +14,13 @@ export interface MetadataState {
   name: string;
   hash: MetadataStateHash;
   fields: MetadataStateField[];
-  origin?: State;
+  origin?: StateDefinition;
   relations: MetadataStateRelation[];
 }
 
 export interface MetadataOriginState extends MetadataState {
   fields: MetadataOriginStateField[];
-  origin: State;
+  origin: StateDefinition;
   relations: MetadataOriginStateRelation[];
 }
 
@@ -49,18 +49,20 @@ export interface MetadataOriginStateRelation extends MetadataStateRelation {
 
 // state
 
-type MetadataStateContext = Partial<Record<StateKey, MetadataOriginState>>;
+type MetadataStateContext = Partial<
+  Record<StateDefinitionName, MetadataOriginState>
+>;
 
 export const toMetadataState = (
   ctx: MetadataStateContext,
-  state: State,
+  state: StateDefinition,
 ): MetadataOriginState => {
-  let ref = ctx[state.$key];
+  let ref = ctx[state.$name];
   if (ref) return ref;
 
-  ref = ctx[state.$key] = {
-    collectionName: state.$key,
-    name: state.$key,
+  ref = ctx[state.$name] = {
+    collectionName: state.$name,
+    name: state.$name,
     hash: null as never,
     fields: [],
     origin: state,
@@ -148,7 +150,7 @@ export const syncMetadataStates = (
 const getScalarFields = (
   name: string,
   path: string,
-  def: StateScalar,
+  def: StateDefintionScalar,
   parentIndexes: number[] = [],
 ): MetadataOriginStateField[] => {
   const { type, index, nullable } = def;
@@ -205,7 +207,7 @@ const getMetadataStateFieldKey = (
 const getScalarRelations = (
   ctx: MetadataStateContext,
   key: string,
-  def: StateScalar,
+  def: StateDefintionScalar,
 ): MetadataOriginStateRelation[] =>
   Array.isArray(def.type)
     ? [

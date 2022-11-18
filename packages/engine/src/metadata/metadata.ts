@@ -1,5 +1,5 @@
 import { Scalar } from '@neuledge/scalars';
-import { State } from '@/generated/index.js';
+import { StateDefinition } from '@/definitions/index.js';
 import { MetadataChange } from './change.js';
 import { MetadataCollection } from './collection.js';
 import { assignMetadataNames } from './names/index.js';
@@ -18,7 +18,7 @@ export class Metadata {
   private readonly hashMap: Partial<Record<string, MetadataState>>;
   private readonly keyMap: Partial<Record<string, MetadataOriginState>>;
 
-  static generate(states: Iterable<State>): Metadata {
+  static generate(states: Iterable<StateDefinition>): Metadata {
     const ctx = {};
 
     return new this(
@@ -36,8 +36,8 @@ export class Metadata {
     for (const entity of states) {
       this.hashMap[entity.hash.toString(HASH_KEY_ENCODING)] = entity;
 
-      if (entity.origin && this.keyMap[entity.origin.$key] == null) {
-        this.keyMap[entity.origin.$key] = entity as MetadataOriginState;
+      if (entity.origin && this.keyMap[entity.origin.$name] == null) {
+        this.keyMap[entity.origin.$name] = entity as MetadataOriginState;
       }
 
       for (const { type } of entity.fields) {
@@ -60,14 +60,14 @@ export class Metadata {
     return this.hashMap[hash.toString(HASH_KEY_ENCODING)];
   }
 
-  getCollections(states: State[]): MetadataCollection[] {
+  getCollections(states: StateDefinition[]): MetadataCollection[] {
     const collections = new Map<
       MetadataCollection['name'],
       MetadataCollection
     >();
 
     for (const state of states) {
-      const entity = this.keyMap[state.$key];
+      const entity = this.keyMap[state.$name];
       if (!entity) continue;
 
       let collection = collections.get(entity.collectionName);

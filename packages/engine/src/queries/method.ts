@@ -1,23 +1,23 @@
 import {
-  State,
-  StateMutationArguments,
-  StateMutations,
-} from '@/generated/index.js';
+  StateDefinition,
+  StateDefinitionMutationArguments,
+  StateDefintionMutations,
+} from '@/definitions/index.js';
 
 export interface MethodQueryOptions<M extends string | number | symbol> {
   method: M;
 }
 
 export interface SingleArgsQueryOptions<
-  I extends State,
-  M extends StateMutations<I>,
+  I extends StateDefinition,
+  M extends StateDefintionMutations<I>,
 > extends MethodQueryOptions<M> {
-  args: [StateMutationArguments<I, M>];
+  args: [StateDefinitionMutationArguments<I, M>];
 }
 
 export interface MultiArgsQueryOptions<
-  I extends State,
-  M extends StateMutations<I>,
+  I extends StateDefinition,
+  M extends StateDefintionMutations<I>,
 > extends MethodQueryOptions<M> {
-  args: StateMutationArguments<I, M>[];
+  args: StateDefinitionMutationArguments<I, M>[];
 }

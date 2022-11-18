@@ -3,7 +3,7 @@ import {
   Category,
   Post,
   PublishedPost,
-} from './generated/__test__/category-post-example.js';
+} from './definitions/__test__/category-post-example.js';
 
 /* eslint-disable max-lines-per-function */
 

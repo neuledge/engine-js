@@ -1,5 +1,5 @@
 import { Entity } from '@/entity.js';
-import { State } from '@/generated/index.js';
+import { StateDefinition } from '@/definitions/index.js';
 import {
   CreateManyAndReturnQuery,
   CreateManyQueryOptions,
@@ -78,21 +78,21 @@ import {
 
 export type Query<
   M extends QueryMode,
-  I extends State,
-  O extends State,
+  I extends StateDefinition,
+  O extends StateDefinition,
   R = Entity<O>,
 > = QueryModes<I, O, R>[M];
 
 export type QueryOptions<
   T extends QueryType,
-  I extends State,
-  O extends State,
+  I extends StateDefinition,
+  O extends StateDefinition,
 > = QueryOptionsTypes<I, O>[T];
 
 export type QueryType = keyof QueryOptionsTypes<never, never>;
 export type QueryMode = keyof QueryModes<never, never, never>;
 
-interface QueryModes<I extends State, O extends State, R> {
+interface QueryModes<I extends StateDefinition, O extends StateDefinition, R> {
   // CreateMany: never,
   CreateManyAndReturn: CreateManyAndReturnQuery<O, R>;
   // CreateOne: never;
@@ -143,7 +143,10 @@ interface QueryModes<I extends State, O extends State, R> {
   >;
 }
 
-interface QueryOptionsTypes<I extends State, O extends State> {
+interface QueryOptionsTypes<
+  I extends StateDefinition,
+  O extends StateDefinition,
+> {
   CreateMany: CreateManyQueryOptions<I, O>;
   CreateOne: CreateOneQueryOptions<I, O>;
   DeleteFirstOrThrow: DeleteFirstOrThrowQueryOptions<I, O>;

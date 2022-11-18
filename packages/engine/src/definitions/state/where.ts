@@ -1,20 +1,35 @@
-export type StateWhere<T> = StateWhereRecord<T> | StateWhereOr<T>;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type StateDefinitionWhere<T = any> =
+  | StateDefinitionWhereRecord<T>
+  | StateDefinitionWhereOr<T>;
 
-interface StateWhereOr<T> {
-  $or: StateWhereRecord<T>[];
+interface StateDefinitionWhereOr<T> {
+  $or: StateDefinitionWhereRecord<T>[];
 }
 
-export type StateWhereRecord<T> = {
+export type StateDefinitionWhereRecord<T> = {
   [K in keyof T]?: T[K];
 };
 
-export type StateWhereTerm<V> =
-  | StateWhereNullableObject<V & object>
-  | StateWhereNullableNumber<V & number>
-  | StateWhereNullableString<V & string>
-  | StateWhereNullableBoolean<V & boolean>;
+export type StateDefinitionWhereTerm<V> =
+  | StateDefinitionWhereNullableObject<V & object>
+  | StateDefinitionWhereNullableNumber<V & number>
+  | StateDefinitionWhereNullableString<V & string>
+  | StateDefinitionWhereNullableBoolean<V & boolean>;
 
-export type StateWhereObject<V extends object> =
+export type StateDefinitionWhereId<V extends object> =
+  | WhereEqualsFilter<V>
+  | WhereNotEqualsFilter<V>
+  | WhereInFilter<V>
+  | WhereNotInFilter<V>;
+
+export type StateDefinitionWhereNullableId<V extends object> =
+  | WhereEqualsFilter<V | null>
+  | WhereNotEqualsFilter<V | null>
+  | WhereInFilter<V | null>
+  | WhereNotInFilter<V | null>;
+
+export type StateDefinitionWhereObject<V extends object> =
   | WhereEqualsFilter<V>
   | WhereNotEqualsFilter<V>
   | WhereLowerThenFilter<V>
@@ -24,7 +39,7 @@ export type StateWhereObject<V extends object> =
   | WhereInFilter<V>
   | WhereNotInFilter<V>;
 
-export type StateWhereNullableObject<V extends object> =
+export type StateDefinitionWhereNullableObject<V extends object> =
   | WhereEqualsFilter<V | null>
   | WhereNotEqualsFilter<V | null>
   | WhereLowerThenFilter<V>
@@ -34,7 +49,7 @@ export type StateWhereNullableObject<V extends object> =
   | WhereInFilter<V | null>
   | WhereNotInFilter<V | null>;
 
-export type StateWhereNumber<V extends number> =
+export type StateDefinitionWhereNumber<V extends number> =
   | WhereEqualsFilter<V>
   | WhereNotEqualsFilter<V>
   | WhereLowerThenFilter<V>
@@ -44,7 +59,7 @@ export type StateWhereNumber<V extends number> =
   | WhereInFilter<V>
   | WhereNotInFilter<V>;
 
-export type StateWhereNullableNumber<V extends number> =
+export type StateDefinitionWhereNullableNumber<V extends number> =
   | WhereEqualsFilter<V | null>
   | WhereNotEqualsFilter<V | null>
   | WhereLowerThenFilter<V>
@@ -67,7 +82,7 @@ export type StateWhereString<V extends string> =
   | WhereInFilter<V>
   | WhereNotInFilter<V>;
 
-export type StateWhereNullableString<V extends string> =
+export type StateDefinitionWhereNullableString<V extends string> =
   | WhereEqualsFilter<V | null>
   | WhereNotEqualsFilter<V | null>
   | WhereLowerThenFilter<V>
@@ -80,11 +95,11 @@ export type StateWhereNullableString<V extends string> =
   | WhereInFilter<V | null>
   | WhereNotInFilter<V | null>;
 
-export type StateWhereBoolean<V extends boolean> =
+export type StateDefinitionWhereBoolean<V extends boolean> =
   | WhereEqualsFilter<V>
   | WhereNotEqualsFilter<V>;
 
-export type StateWhereNullableBoolean<V extends boolean> =
+export type StateDefinitionWhereNullableBoolean<V extends boolean> =
   | WhereEqualsFilter<V | null>
   | WhereNotEqualsFilter<V | null>;
 
@@ -150,7 +165,7 @@ interface WhereInFilter<V> {
   $eq?: never;
 }
 
-export interface WhereNotInFilter<V> {
+interface WhereNotInFilter<V> {
   $nin: V[];
   $eq?: never;
 }

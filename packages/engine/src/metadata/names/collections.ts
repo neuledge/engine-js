@@ -1,9 +1,13 @@
-import { resolveDefer, State, StateKey } from '@/generated/index.js';
+import {
+  resolveDefer,
+  StateDefinition,
+  StateDefinitionName,
+} from '@/definitions/index.js';
 import pluralize from 'pluralize';
 
 export const getCollectionNames = (
-  states: Iterable<State>,
-): Map<StateKey, string> => {
+  states: Iterable<StateDefinition>,
+): Map<StateDefinitionName, string> => {
   const groups = getStateGroups(states);
 
   const suggestions: StatesNameSuggestion[] = [];
@@ -13,7 +17,10 @@ export const getCollectionNames = (
 
   suggestions.sort((a, b) => a.name.localeCompare(b.name) || b.rank - a.rank);
 
-  const selectedName = new Map<Iterable<State>, StatesNameSuggestion>();
+  const selectedName = new Map<
+    Iterable<StateDefinition>,
+    StatesNameSuggestion
+  >();
 
   for (const [index, suggestion] of suggestions.entries()) {
     // ignore name collisions with last suggestion
@@ -27,32 +34,34 @@ export const getCollectionNames = (
 
   return new Map(
     [...selectedName.entries()].flatMap(([states, { name }]) =>
-      [...states].map((state) => [state.$key, name]),
+      [...states].map((state) => [state.$name, name]),
     ),
   );
 };
 
-const getStateGroups = (states: Iterable<State>): Set<Set<State>> => {
-  const groups: Map<StateKey, Set<State>> = new Map();
+const getStateGroups = (
+  states: Iterable<StateDefinition>,
+): Set<Set<StateDefinition>> => {
+  const groups: Map<StateDefinitionName, Set<StateDefinition>> = new Map();
 
   for (const state of states) {
-    let set = groups.get(state.$key);
+    let set = groups.get(state.$name);
     if (!set) {
       set = new Set([state]);
-      groups.set(state.$key, set);
+      groups.set(state.$name, set);
     }
 
     const relatedStates = resolveDefer(state.$states, []);
     for (const relatedState of relatedStates) {
       set.add(relatedState);
 
-      for (const item of groups.get(relatedState.$key) ?? []) {
+      for (const item of groups.get(relatedState.$name) ?? []) {
         set.add(item);
       }
     }
 
     for (const state of set) {
-      groups.set(state.$key, set);
+      groups.set(state.$name, set);
     }
   }
 
@@ -60,13 +69,13 @@ const getStateGroups = (states: Iterable<State>): Set<Set<State>> => {
 };
 
 type StatesNameSuggestion = {
-  states: Iterable<State>;
+  states: Iterable<StateDefinition>;
   name: string;
   rank: number;
 };
 
 const suggestStatesCollectionNames = (
-  states: Iterable<State>,
+  states: Iterable<StateDefinition>,
 ): StatesNameSuggestion[] => {
   const suggestions: StatesNameSuggestion[] = [];
   const phrase: string[] = [];
@@ -74,7 +83,7 @@ const suggestStatesCollectionNames = (
   let first: string[] | undefined;
   for (const state of states) {
     // split by camel case or snake case with separate numbers
-    const words = state.$key
+    const words = state.$name
       .split(/(?=[A-Z])|_|(?<=[a-z])(?=\d)/)
       .map((word) => word.toLowerCase());
 

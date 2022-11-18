@@ -1,4 +1,5 @@
-export * from './definition.js';
+export * from './decorator.js';
+export * from './defer.js';
 export * from './sort.js';
 export * from './scalar.js';
 export * from './state.js';

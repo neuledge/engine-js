@@ -1,11 +1,11 @@
 import { Entity } from '@/entity.js';
-import { State } from '@/generated/index.js';
+import { StateDefinition } from '@/definitions/index.js';
 import { EntityList } from '@/list.js';
 import { ENTITY_METADATA_HASH_FIELD } from '@/metadata/constants.js';
 import { Metadata } from '@/metadata/metadata.js';
 import { StoreDocument, StoreList } from '@/store/index.js';
 
-export const toEntityList = <S extends State>(
+export const toEntityList = <S extends StateDefinition>(
   metadata: Metadata,
   list: StoreList,
 ): EntityList<Entity<S>> =>
@@ -14,7 +14,7 @@ export const toEntityList = <S extends State>(
     { nextOffset: list.nextOffset },
   );
 
-export const toMaybeEntity = <S extends State>(
+export const toMaybeEntity = <S extends StateDefinition>(
   metadata: Metadata,
   list: StoreList,
 ): Entity<S> | undefined => {
@@ -22,7 +22,7 @@ export const toMaybeEntity = <S extends State>(
   return document && toEntity<S>(metadata, document);
 };
 
-export const toEntityOrThrow = <S extends State>(
+export const toEntityOrThrow = <S extends StateDefinition>(
   metadata: Metadata,
   list: StoreList,
 ): Entity<S> => {
@@ -34,7 +34,7 @@ export const toEntityOrThrow = <S extends State>(
   return toEntity<S>(metadata, document);
 };
 
-const toEntity = <S extends State>(
+const toEntity = <S extends StateDefinition>(
   metadata: Metadata,
   document: StoreDocument,
 ): Entity<S> => {

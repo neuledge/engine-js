@@ -1,4 +1,4 @@
-import { State } from '@/generated/index.js';
+import { StateDefinition } from '@/definitions/index.js';
 import {
   MetadataOriginState,
   MetadataOriginStateField,
@@ -33,8 +33,8 @@ export class MetadataCollection {
 
   getFieldStates(
     rootPath: string,
-  ): Record<MetadataStateField['name'], State[]> {
-    const map: Record<MetadataStateField['name'], State[]> = {};
+  ): Record<MetadataStateField['name'], StateDefinition[]> {
+    const map: Record<MetadataStateField['name'], StateDefinition[]> = {};
 
     for (const state of this.states) {
       for (const field of state.fields) {

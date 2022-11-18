@@ -1,11 +1,11 @@
 import {
-  State,
-  StateMatchKeys,
-  StateIncludeManyKeys,
-  StateIncludeOneKeys,
-  StateRelationState,
-  StateRequireOneKeys,
-} from '@/generated/index.js';
+  StateDefinition,
+  StateDefinitionMatchKeys,
+  StateDefinitionIncludeManyKeys,
+  StateDefinitionIncludeOneKeys,
+  StateDefinitionRelationState,
+  StateDefinitionRequireOneKeys,
+} from '@/definitions/index.js';
 import { EntityListOffset } from '@/list.js';
 import { ExecQuery, ExecQueryOptions } from './exec.js';
 import { FilterQuery, FilterQueryOptions } from './filter.js';
@@ -23,8 +23,8 @@ import { UniqueWhere, Where } from './where.js';
 
 export class QueryClass<
   T extends QueryType,
-  I extends State,
-  O extends State,
+  I extends StateDefinition,
+  O extends StateDefinition,
 > implements
     SelectQuery<any, I, O, any>, // eslint-disable-line @typescript-eslint/no-explicit-any
     FilterQuery<I>,
@@ -47,17 +47,17 @@ export class QueryClass<
     return this;
   }
 
-  includeMany<K extends StateIncludeManyKeys<O>>(
+  includeMany<K extends StateDefinitionIncludeManyKeys<O>>(
     key: K,
-    states?: StateRelationState<O, K>[] | null,
+    states?: StateDefinitionRelationState<O, K>[] | null,
     query?: (
-      query: SelectManyQuery<StateRelationState<O, K>>,
-    ) => SelectManyQuery<StateRelationState<O, K>, unknown>,
+      query: SelectManyQuery<StateDefinitionRelationState<O, K>>,
+    ) => SelectManyQuery<StateDefinitionRelationState<O, K>, unknown>,
   ): this {
     let rel: QueryClass<
       'SelectMany',
-      StateRelationState<O, K>,
-      StateRelationState<O, K>
+      StateDefinitionRelationState<O, K>,
+      StateDefinitionRelationState<O, K>
     > = new QueryClass({
       type: 'SelectMany',
       states: states ?? undefined,
@@ -66,8 +66,8 @@ export class QueryClass<
     if (query) {
       rel = query(rel) as QueryClass<
         'SelectMany',
-        StateRelationState<O, K>,
-        StateRelationState<O, K>
+        StateDefinitionRelationState<O, K>,
+        StateDefinitionRelationState<O, K>
       >;
     }
 
@@ -81,17 +81,17 @@ export class QueryClass<
     return this;
   }
 
-  includeOne<K extends StateIncludeOneKeys<O>>(
+  includeOne<K extends StateDefinitionIncludeOneKeys<O>>(
     key: K,
-    states?: StateRelationState<O, K>[] | null,
+    states?: StateDefinitionRelationState<O, K>[] | null,
     query?: (
-      rel: SelectOneQuery<StateRelationState<O, K>>,
-    ) => SelectOneQuery<StateRelationState<O, K>, unknown>,
+      rel: SelectOneQuery<StateDefinitionRelationState<O, K>>,
+    ) => SelectOneQuery<StateDefinitionRelationState<O, K>, unknown>,
   ): this {
     let rel: QueryClass<
       'SelectOne',
-      StateRelationState<O, K>,
-      StateRelationState<O, K>
+      StateDefinitionRelationState<O, K>,
+      StateDefinitionRelationState<O, K>
     > = new QueryClass({
       type: 'SelectOne',
       states: states ?? undefined,
@@ -100,8 +100,8 @@ export class QueryClass<
     if (query) {
       rel = query(rel) as QueryClass<
         'SelectOne',
-        StateRelationState<O, K>,
-        StateRelationState<O, K>
+        StateDefinitionRelationState<O, K>,
+        StateDefinitionRelationState<O, K>
       >;
     }
 
@@ -115,17 +115,17 @@ export class QueryClass<
     return this;
   }
 
-  requireOne<K extends StateRequireOneKeys<O>>(
+  requireOne<K extends StateDefinitionRequireOneKeys<O>>(
     key: K,
-    states?: StateRelationState<O, K>[] | null,
+    states?: StateDefinitionRelationState<O, K>[] | null,
     query?: (
-      rel: SelectOneQuery<StateRelationState<O, K>>,
-    ) => SelectOneQuery<StateRelationState<O, K>, unknown>,
+      rel: SelectOneQuery<StateDefinitionRelationState<O, K>>,
+    ) => SelectOneQuery<StateDefinitionRelationState<O, K>, unknown>,
   ): this {
     let rel: QueryClass<
       'SelectOne',
-      StateRelationState<O, K>,
-      StateRelationState<O, K>
+      StateDefinitionRelationState<O, K>,
+      StateDefinitionRelationState<O, K>
     > = new QueryClass({
       type: 'SelectOne',
       states: states ?? undefined,
@@ -134,8 +134,8 @@ export class QueryClass<
     if (query) {
       rel = query(rel) as QueryClass<
         'SelectOne',
-        StateRelationState<O, K>,
-        StateRelationState<O, K>
+        StateDefinitionRelationState<O, K>,
+        StateDefinitionRelationState<O, K>
       >;
     }
 
@@ -163,17 +163,17 @@ export class QueryClass<
     return this;
   }
 
-  match<K extends StateMatchKeys<I>>(
+  match<K extends StateDefinitionMatchKeys<I>>(
     key: K,
-    states: StateRelationState<I, K>[] | null,
+    states: StateDefinitionRelationState<I, K>[] | null,
     query?: (
-      query: MatchQuery<StateRelationState<I, K>>,
-    ) => MatchQuery<StateRelationState<I, K>>,
+      query: MatchQuery<StateDefinitionRelationState<I, K>>,
+    ) => MatchQuery<StateDefinitionRelationState<I, K>>,
   ): this {
     let rel: QueryClass<
       'Match',
-      StateRelationState<I, K>,
-      StateRelationState<I, K>
+      StateDefinitionRelationState<I, K>,
+      StateDefinitionRelationState<I, K>
     > = new QueryClass({
       type: 'Match',
       states: states ?? undefined,
@@ -182,8 +182,8 @@ export class QueryClass<
     if (query) {
       rel = query(rel) as QueryClass<
         'Match',
-        StateRelationState<I, K>,
-        StateRelationState<I, K>
+        StateDefinitionRelationState<I, K>,
+        StateDefinitionRelationState<I, K>
       >;
     }
 

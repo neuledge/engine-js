@@ -1,31 +1,23 @@
 import {
   NumberScalar as Number,
   StringScalar as String,
-  DateScalar as $Date,
+  DateScalar as Date,
 } from '@neuledge/scalars';
-import {
-  Entity as $,
-  StateDefinition as $State,
-  StateWhere as $Where,
-  StateWhereNumber as $WhereNumber,
-  StateWhereObject as $WhereObject,
-  StateId as $id,
-  createEither as $either,
-} from '@neuledge/engine';
+import { $ } from '@neuledge/engine';
 
 /**
  * Basic category
  */
-@$State
+@$.State
 export class Category {
-  static $key = 'Category' as const;
-  static $id = ['id'] as const;
+  static $name = 'Category' as const;
+  static $id = ['+id'] as const;
   static $scalars = {
     id: { type: Number, index: 1 },
     name: { type: String, index: 2 },
     description: { type: String, index: 3, nullable: true },
   };
-  static $find: $Where<{ id: $WhereNumber<number> }>;
+  static $find: $.Where<{ id: $.WhereNumber<number> }>;
   static $unique: {
     id: number;
   };
@@ -43,7 +35,7 @@ export class Category {
   }: {
     name: string;
     description?: string | null;
-  }): $<typeof Category> {
+  }): $.Entity<typeof Category> {
     return {
       $state: 'Category',
       id: Math.round(Math.random() * 1e6),
@@ -61,7 +53,7 @@ export class Category {
       name: string;
       description?: string | null;
     },
-  ): $<typeof Category> {
+  ): $.Entity<typeof Category> {
     return {
       ...this,
       $state: 'Category',
@@ -78,17 +70,17 @@ export class Category {
 /**
  * Post in draft state
  */
-@$State
+@$.State
 export class DraftPost {
-  static $key = 'DraftPost' as const;
-  static $id = ['id'] as const;
+  static $name = 'DraftPost' as const;
+  static $id = ['+id'] as const;
   static $scalars = () => ({
     id: { type: Number, index: 1 },
     category: { type: [Category], index: 2, nullable: true },
     title: { type: String, index: 3 },
     content: { type: String, index: 4, nullable: true },
   });
-  static $find: $Where<{ id: $WhereNumber<number> }>;
+  static $find: $.Where<{ id: $.WhereNumber<number> }>;
   static $unique: {
     id: number;
   };
@@ -98,7 +90,7 @@ export class DraftPost {
   static $states = () => [PublishedPost];
 
   id!: number;
-  category?: $id<typeof Category> | null;
+  category?: $.Id<typeof Category> | null;
   title!: string;
   content?: string | null;
 
@@ -109,8 +101,8 @@ export class DraftPost {
   }: {
     title: string;
     content?: string | null;
-    category?: $id<typeof Category> | null;
-  }): $<typeof DraftPost> {
+    category?: $.Id<typeof Category> | null;
+  }): $.Entity<typeof DraftPost> {
     return {
       $state: 'DraftPost',
       id: Math.round(Math.random() * 1e6),
@@ -129,9 +121,9 @@ export class DraftPost {
     }: {
       title: string;
       content?: string | null;
-      category?: $id<typeof Category> | null;
+      category?: $.Id<typeof Category> | null;
     },
-  ): $<typeof DraftPost> {
+  ): $.Entity<typeof DraftPost> {
     return {
       ...this,
       $state: 'DraftPost',
@@ -141,7 +133,7 @@ export class DraftPost {
     };
   }
 
-  static publish(this: DraftPost): $<typeof PublishedPost> {
+  static publish(this: DraftPost): $.Entity<typeof PublishedPost> {
     if (!this.category) {
       throw new TypeError(`Expect category to exists`);
     }
@@ -154,7 +146,7 @@ export class DraftPost {
       $state: 'PublishedPost',
       content: this.content,
       category: this.category,
-      publishedAt: new Date(),
+      publishedAt: new $.Date(),
     };
   }
 
@@ -166,20 +158,20 @@ export class DraftPost {
 /**
  * Post in published state
  */
-@$State
+@$.State
 export class PublishedPost {
-  static $key = 'PublishedPost' as const;
-  static $id = ['id'] as const;
+  static $name = 'PublishedPost' as const;
+  static $id = ['+id'] as const;
   static $scalars = () => ({
     id: { type: Number, index: 1 },
     category: { type: [Category], index: 2 },
     title: { type: String, index: 3 },
     content: { type: String, index: 4 },
-    publishedAt: { type: $Date, index: 5 },
+    publishedAt: { type: Date, index: 5 },
   });
-  static $find: $Where<
-    | { id: $WhereNumber<number> }
-    | { category: $WhereObject<$id<typeof Category>> }
+  static $find: $.Where<
+    | { id: $.WhereNumber<number> }
+    | { category: $.WhereObject<$.Id<typeof Category>> }
   >;
   static $unique: {
     id: number;
@@ -193,7 +185,7 @@ export class PublishedPost {
 
   id!: number;
   title!: string;
-  category!: $id<typeof Category>;
+  category!: $.Id<typeof Category>;
   content!: string;
   publishedAt!: Date;
 
@@ -203,8 +195,8 @@ export class PublishedPost {
       title,
       content,
       category,
-    }: { title: string; content: string; category: $id<typeof Category> },
-  ): $<typeof PublishedPost> {
+    }: { title: string; content: string; category: $.Id<typeof Category> },
+  ): $.Entity<typeof PublishedPost> {
     return {
       ...this,
       $state: 'PublishedPost',
@@ -220,4 +212,4 @@ export class PublishedPost {
 }
 
 export type Post = DraftPost | PublishedPost;
-export const Post = $either('Post', [DraftPost, PublishedPost]);
+export const Post = $.either('Post', [DraftPost, PublishedPost]);

@@ -1,10 +1,10 @@
 import { Scalar } from '@neuledge/scalars';
 import {
   resolveDefer,
-  State,
-  StateWhereRecord,
-  StateWhereTerm,
-} from '@/generated/index.js';
+  StateDefinition,
+  StateDefinitionWhereRecord,
+  StateDefinitionWhereTerm,
+} from '@/definitions/index.js';
 import {
   Metadata,
   MetadataCollection,
@@ -22,7 +22,7 @@ import {
 import { Match, FilterQueryOptions, Where } from '@/queries/index.js';
 import { getCollectionRelationStates } from './collection.js';
 
-export const convertFilterQuery = <S extends State>(
+export const convertFilterQuery = <S extends StateDefinition>(
   metadata: Metadata,
   collection: MetadataCollection,
   { match, where }: FilterQueryOptions<S>,
@@ -33,7 +33,7 @@ export const convertFilterQuery = <S extends State>(
     : null),
 });
 
-const convertWhere = <S extends State>(
+const convertWhere = <S extends StateDefinition>(
   collection: MetadataCollection,
   where: Where<S>,
 ): StoreWhere => {
@@ -42,7 +42,7 @@ const convertWhere = <S extends State>(
   if (where.$or?.length > 0) {
     res.push(
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ...where.$or.flatMap((w: StateWhereRecord<any>) =>
+      ...where.$or.flatMap((w: StateDefinitionWhereRecord<any>) =>
         convertWhereRecord(collection, w),
       ),
     );
@@ -56,7 +56,7 @@ const convertWhere = <S extends State>(
 const convertWhereRecord = (
   collection: MetadataCollection,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  where: StateWhereRecord<any>,
+  where: StateDefinitionWhereRecord<any>,
 ): StoreWhereRecord[] => {
   const res: Record<string, StoreWhereRecord> = {};
 
@@ -68,16 +68,16 @@ const convertWhereRecord = (
   for (const [key, term] of Object.entries(where)) {
     if (term == null) continue;
 
-    const fieldNames = Object.entries(collection.getFieldStates(key));
-    if (!fieldNames.length) {
+    const fieldStates = Object.entries(collection.getFieldStates(key));
+    if (!fieldStates.length) {
       throw new Error(`Unknown field name: '${key}'`);
     }
 
-    for (const [fieldName, states] of fieldNames) {
+    for (const [fieldName, states] of fieldStates) {
       const newRecords = new Map();
 
       for (const state of states) {
-        const record = res[state.$key];
+        const record = res[state.$name];
 
         const recordValue = convertWhereTerm(
           resolveDefer(state.$scalars)[key].type,
@@ -90,7 +90,7 @@ const convertWhereRecord = (
           newRecords.set(record, newRecord);
         }
 
-        res[state.$key] = newRecord;
+        res[state.$name] = newRecord;
       }
     }
   }
@@ -100,7 +100,7 @@ const convertWhereRecord = (
 
 const convertWhereTerm = (
   scalar: Scalar,
-  term: StateWhereTerm<unknown>,
+  term: StateDefinitionWhereTerm<unknown>,
 ): StoreWhereValue => {
   const res: Record<string, StoreScalarValue | StoreScalarValue[]> = {};
 
@@ -146,7 +146,7 @@ const convertWhereTerm = (
   return res as never;
 };
 
-const convertMatch = <S extends State>(
+const convertMatch = <S extends StateDefinition>(
   metadata: Metadata,
   collection: MetadataCollection,
   match: Match<S>,
@@ -178,7 +178,7 @@ const convertMatch = <S extends State>(
   return res;
 };
 
-const convertFilterQueryOptions = <S extends State>(
+const convertFilterQueryOptions = <S extends StateDefinition>(
   metadata: Metadata,
   collection: MetadataCollection,
   matchOpts: FilterQueryOptions<S>,

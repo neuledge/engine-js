@@ -1,7 +1,7 @@
-import { resolveDefer, State } from '@/generated/index.js';
+import { resolveDefer, StateDefinition } from '@/definitions/index.js';
 import { Metadata, MetadataCollection } from '@/metadata/index.js';
 
-export const chooseStatesCollection = <S extends State>(
+export const chooseStatesCollection = <S extends StateDefinition>(
   metadata: Metadata,
   states: S[],
 ): MetadataCollection => {
@@ -17,19 +17,19 @@ export const chooseStatesCollection = <S extends State>(
 export const getCollectionRelationStates = (
   collection: MetadataCollection,
   key: string,
-): State[] => [
+): StateDefinition[] => [
   ...new Map(
     collection.states
-      .flatMap((s): State[] => {
+      .flatMap((s): StateDefinition[] => {
         const relations = resolveDefer(s.origin.$relations, {})[key];
         if (!relations) {
           return [];
         }
 
         return Array.isArray(relations[0])
-          ? (relations[0] as State[])
-          : (relations as State[]);
+          ? (relations[0] as StateDefinition[])
+          : (relations as StateDefinition[]);
       })
-      .map((s) => [s.$key, s]),
+      .map((s) => [s.$name, s]),
   ).values(),
 ];

@@ -1,13 +1,13 @@
 import { Metadata } from '@/metadata/metadata.js';
 import {
-  State,
-  StateCreateMutations,
-  StateDeleteMutations,
-  StateMutationArguments,
-  StateMutationsReturn,
-  StateUpdateWithoutArgsMutations,
-  StateUpdateMutations,
-} from '../generated/index.js';
+  StateDefinition,
+  StateDefinitionCreateMutations,
+  StateDefinitionDeleteMutations,
+  StateDefinitionMutationArguments,
+  StateDefinitionMutationsReturn,
+  StateDefinitionUpdateWithoutArgsMutations,
+  StateDefinitionUpdateMutations,
+} from '../definitions/index.js';
 import {
   FindFirstOrThrowQuery,
   FindFirstQuery,
@@ -62,7 +62,7 @@ export class NeuledgeEngine {
 
   // finds
 
-  findMany<S extends State>(...states: S[]): FindManyQuery<S> {
+  findMany<S extends StateDefinition>(...states: S[]): FindManyQuery<S> {
     return new QueryClass({
       type: 'FindMany',
       states,
@@ -86,7 +86,7 @@ export class NeuledgeEngine {
     });
   }
 
-  findUnique<S extends State>(...states: S[]): FindUniqueQuery<S> {
+  findUnique<S extends StateDefinition>(...states: S[]): FindUniqueQuery<S> {
     return new QueryClass({
       type: 'FindUnique',
       states,
@@ -108,7 +108,7 @@ export class NeuledgeEngine {
     });
   }
 
-  findUniqueOrThrow<S extends State>(
+  findUniqueOrThrow<S extends StateDefinition>(
     ...states: S[]
   ): FindUniqueOrThrowQuery<S> {
     return new QueryClass({
@@ -132,7 +132,7 @@ export class NeuledgeEngine {
     });
   }
 
-  findFirst<S extends State>(...states: S[]): FindFirstQuery<S> {
+  findFirst<S extends StateDefinition>(...states: S[]): FindFirstQuery<S> {
     return new QueryClass({
       type: 'FindFirst',
       states,
@@ -155,7 +155,9 @@ export class NeuledgeEngine {
     });
   }
 
-  findFirstOrThrow<S extends State>(...states: S[]): FindFirstOrThrowQuery<S> {
+  findFirstOrThrow<S extends StateDefinition>(
+    ...states: S[]
+  ): FindFirstOrThrowQuery<S> {
     return new QueryClass({
       type: 'FindFirstOrThrow',
       states,
@@ -181,9 +183,9 @@ export class NeuledgeEngine {
   // create
 
   createMany<
-    S extends State,
-    M extends StateCreateMutations<S>,
-    A extends StateMutationArguments<S, M>,
+    S extends StateDefinition,
+    M extends StateDefinitionCreateMutations<S>,
+    A extends StateDefinitionMutationArguments<S, M>,
   >(states: S[], method: M, ...args: A[]): CreateManyQuery<S> {
     return new QueryClass<'CreateMany', S, S>({
       type: 'CreateMany',
@@ -195,9 +197,9 @@ export class NeuledgeEngine {
   }
 
   createOne<
-    S extends State,
-    M extends StateCreateMutations<S>,
-    A extends StateMutationArguments<S, M>,
+    S extends StateDefinition,
+    M extends StateDefinitionCreateMutations<S>,
+    A extends StateDefinitionMutationArguments<S, M>,
   >(states: S[], method: M, args: A): CreateOneQuery<S> {
     return new QueryClass<'CreateOne', S, S>({
       type: 'CreateOne',
@@ -210,28 +212,31 @@ export class NeuledgeEngine {
 
   // update
 
-  updateMany<S extends State, M extends StateUpdateWithoutArgsMutations<S>>(
+  updateMany<
+    S extends StateDefinition,
+    M extends StateDefinitionUpdateWithoutArgsMutations<S>,
+  >(
     states: S[],
     method: M,
-  ): UpdateManyQuery<S, StateMutationsReturn<S, M>>;
+  ): UpdateManyQuery<S, StateDefinitionMutationsReturn<S, M>>;
   updateMany<
-    S extends State,
-    M extends StateUpdateMutations<S>,
-    A extends StateMutationArguments<S, M>,
+    S extends StateDefinition,
+    M extends StateDefinitionUpdateMutations<S>,
+    A extends StateDefinitionMutationArguments<S, M>,
   >(
     states: S[],
     method: M,
     args: A,
-  ): UpdateManyQuery<S, StateMutationsReturn<S, M>>;
+  ): UpdateManyQuery<S, StateDefinitionMutationsReturn<S, M>>;
   updateMany<
-    S extends State,
-    M extends StateUpdateMutations<S>,
-    A extends StateMutationArguments<S, M>,
+    S extends StateDefinition,
+    M extends StateDefinitionUpdateMutations<S>,
+    A extends StateDefinitionMutationArguments<S, M>,
   >(
     states: S[],
     method: M,
     args?: A,
-  ): UpdateManyQuery<S, StateMutationsReturn<S, M>> {
+  ): UpdateManyQuery<S, StateDefinitionMutationsReturn<S, M>> {
     return new QueryClass({
       type: 'UpdateMany',
       states,
@@ -241,28 +246,31 @@ export class NeuledgeEngine {
     });
   }
 
-  updateFirst<S extends State, M extends StateUpdateWithoutArgsMutations<S>>(
+  updateFirst<
+    S extends StateDefinition,
+    M extends StateDefinitionUpdateWithoutArgsMutations<S>,
+  >(
     states: S[],
     method: M,
-  ): UpdateFirstQuery<S, StateMutationsReturn<S, M>>;
+  ): UpdateFirstQuery<S, StateDefinitionMutationsReturn<S, M>>;
   updateFirst<
-    S extends State,
-    M extends StateUpdateMutations<S>,
-    A extends StateMutationArguments<S, M>,
+    S extends StateDefinition,
+    M extends StateDefinitionUpdateMutations<S>,
+    A extends StateDefinitionMutationArguments<S, M>,
   >(
     states: S[],
     method: M,
     args: A,
-  ): UpdateFirstQuery<S, StateMutationsReturn<S, M>>;
+  ): UpdateFirstQuery<S, StateDefinitionMutationsReturn<S, M>>;
   updateFirst<
-    S extends State,
-    M extends StateUpdateMutations<S>,
-    A extends StateMutationArguments<S, M>,
+    S extends StateDefinition,
+    M extends StateDefinitionUpdateMutations<S>,
+    A extends StateDefinitionMutationArguments<S, M>,
   >(
     states: S[],
     method: M,
     args?: A,
-  ): UpdateFirstQuery<S, StateMutationsReturn<S, M>> {
+  ): UpdateFirstQuery<S, StateDefinitionMutationsReturn<S, M>> {
     return new QueryClass({
       type: 'UpdateFirst',
       states,
@@ -273,30 +281,30 @@ export class NeuledgeEngine {
   }
 
   updateFirstOrThrow<
-    S extends State,
-    M extends StateUpdateWithoutArgsMutations<S>,
+    S extends StateDefinition,
+    M extends StateDefinitionUpdateWithoutArgsMutations<S>,
   >(
     states: S[],
     method: M,
-  ): UpdateFirstOrThrowQuery<S, StateMutationsReturn<S, M>>;
+  ): UpdateFirstOrThrowQuery<S, StateDefinitionMutationsReturn<S, M>>;
   updateFirstOrThrow<
-    S extends State,
-    M extends StateUpdateMutations<S>,
-    A extends StateMutationArguments<S, M>,
+    S extends StateDefinition,
+    M extends StateDefinitionUpdateMutations<S>,
+    A extends StateDefinitionMutationArguments<S, M>,
   >(
     states: S[],
     method: M,
     args: A,
-  ): UpdateFirstOrThrowQuery<S, StateMutationsReturn<S, M>>;
+  ): UpdateFirstOrThrowQuery<S, StateDefinitionMutationsReturn<S, M>>;
   updateFirstOrThrow<
-    S extends State,
-    M extends StateUpdateMutations<S>,
-    A extends StateMutationArguments<S, M>,
+    S extends StateDefinition,
+    M extends StateDefinitionUpdateMutations<S>,
+    A extends StateDefinitionMutationArguments<S, M>,
   >(
     states: S[],
     method: M,
     args?: A,
-  ): UpdateFirstOrThrowQuery<S, StateMutationsReturn<S, M>> {
+  ): UpdateFirstOrThrowQuery<S, StateDefinitionMutationsReturn<S, M>> {
     return new QueryClass({
       type: 'UpdateFirstOrThrow',
       states,
@@ -306,28 +314,31 @@ export class NeuledgeEngine {
     });
   }
 
-  updateUnique<S extends State, M extends StateUpdateWithoutArgsMutations<S>>(
+  updateUnique<
+    S extends StateDefinition,
+    M extends StateDefinitionUpdateWithoutArgsMutations<S>,
+  >(
     states: S[],
     method: M,
-  ): UpdateUniqueQuery<S, StateMutationsReturn<S, M>>;
+  ): UpdateUniqueQuery<S, StateDefinitionMutationsReturn<S, M>>;
   updateUnique<
-    S extends State,
-    M extends StateUpdateMutations<S>,
-    A extends StateMutationArguments<S, M>,
+    S extends StateDefinition,
+    M extends StateDefinitionUpdateMutations<S>,
+    A extends StateDefinitionMutationArguments<S, M>,
   >(
     states: S[],
     method: M,
     args: A,
-  ): UpdateUniqueQuery<S, StateMutationsReturn<S, M>>;
+  ): UpdateUniqueQuery<S, StateDefinitionMutationsReturn<S, M>>;
   updateUnique<
-    S extends State,
-    M extends StateUpdateMutations<S>,
-    A extends StateMutationArguments<S, M>,
+    S extends StateDefinition,
+    M extends StateDefinitionUpdateMutations<S>,
+    A extends StateDefinitionMutationArguments<S, M>,
   >(
     states: S[],
     method: M,
     args?: A,
-  ): UpdateUniqueQuery<S, StateMutationsReturn<S, M>> {
+  ): UpdateUniqueQuery<S, StateDefinitionMutationsReturn<S, M>> {
     return new QueryClass({
       type: 'UpdateUnique',
       states,
@@ -339,30 +350,30 @@ export class NeuledgeEngine {
   }
 
   updateUniqueOrThrow<
-    S extends State,
-    M extends StateUpdateWithoutArgsMutations<S>,
+    S extends StateDefinition,
+    M extends StateDefinitionUpdateWithoutArgsMutations<S>,
   >(
     states: S[],
     method: M,
-  ): UpdateUniqueOrThrowQuery<S, StateMutationsReturn<S, M>>;
+  ): UpdateUniqueOrThrowQuery<S, StateDefinitionMutationsReturn<S, M>>;
   updateUniqueOrThrow<
-    S extends State,
-    M extends StateUpdateMutations<S>,
-    A extends StateMutationArguments<S, M>,
+    S extends StateDefinition,
+    M extends StateDefinitionUpdateMutations<S>,
+    A extends StateDefinitionMutationArguments<S, M>,
   >(
     states: S[],
     method: M,
     args: A,
-  ): UpdateUniqueOrThrowQuery<S, StateMutationsReturn<S, M>>;
+  ): UpdateUniqueOrThrowQuery<S, StateDefinitionMutationsReturn<S, M>>;
   updateUniqueOrThrow<
-    S extends State,
-    M extends StateUpdateMutations<S>,
-    A extends StateMutationArguments<S, M>,
+    S extends StateDefinition,
+    M extends StateDefinitionUpdateMutations<S>,
+    A extends StateDefinitionMutationArguments<S, M>,
   >(
     states: S[],
     method: M,
     args?: A,
-  ): UpdateUniqueOrThrowQuery<S, StateMutationsReturn<S, M>> {
+  ): UpdateUniqueOrThrowQuery<S, StateDefinitionMutationsReturn<S, M>> {
     return new QueryClass({
       type: 'UpdateUniqueOrThrow',
       states,
@@ -375,10 +386,10 @@ export class NeuledgeEngine {
 
   // delete
 
-  deleteMany<S extends State, M extends StateDeleteMutations<S>>(
-    states: S[],
-    method: M,
-  ): DeleteManyQuery<S> {
+  deleteMany<
+    S extends StateDefinition,
+    M extends StateDefinitionDeleteMutations<S>,
+  >(states: S[], method: M): DeleteManyQuery<S> {
     return new QueryClass({
       type: 'DeleteMany',
       states,
@@ -387,10 +398,10 @@ export class NeuledgeEngine {
     });
   }
 
-  deleteFirst<S extends State, M extends StateDeleteMutations<S>>(
-    states: S[],
-    method: M,
-  ): DeleteFirstQuery<S> {
+  deleteFirst<
+    S extends StateDefinition,
+    M extends StateDefinitionDeleteMutations<S>,
+  >(states: S[], method: M): DeleteFirstQuery<S> {
     return new QueryClass({
       type: 'DeleteFirst',
       states,
@@ -399,10 +410,10 @@ export class NeuledgeEngine {
     });
   }
 
-  deleteFirstOrThrow<S extends State, M extends StateDeleteMutations<S>>(
-    states: S[],
-    method: M,
-  ): DeleteFirstOrThrowQuery<S> {
+  deleteFirstOrThrow<
+    S extends StateDefinition,
+    M extends StateDefinitionDeleteMutations<S>,
+  >(states: S[], method: M): DeleteFirstOrThrowQuery<S> {
     return new QueryClass({
       type: 'DeleteFirstOrThrow',
       states,
@@ -411,10 +422,10 @@ export class NeuledgeEngine {
     });
   }
 
-  deleteUnique<S extends State, M extends StateDeleteMutations<S>>(
-    states: S[],
-    method: M,
-  ): DeleteUniqueQuery<S> {
+  deleteUnique<
+    S extends StateDefinition,
+    M extends StateDefinitionDeleteMutations<S>,
+  >(states: S[], method: M): DeleteUniqueQuery<S> {
     return new QueryClass({
       type: 'DeleteUnique',
       states,
@@ -424,10 +435,10 @@ export class NeuledgeEngine {
     });
   }
 
-  deleteUniqueOrThrow<S extends State, M extends StateDeleteMutations<S>>(
-    states: S[],
-    method: M,
-  ): DeleteUniqueOrThrowQuery<S> {
+  deleteUniqueOrThrow<
+    S extends StateDefinition,
+    M extends StateDefinitionDeleteMutations<S>,
+  >(states: S[], method: M): DeleteUniqueOrThrowQuery<S> {
     return new QueryClass({
       type: 'DeleteUniqueOrThrow',
       states,

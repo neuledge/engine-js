@@ -2,7 +2,7 @@ import {
   Category,
   DraftPost,
   PublishedPost,
-} from '@/generated/__test__/category-post-example.js';
+} from '@/definitions/__test__/category-post-example.js';
 import { getCollectionNames } from './collections.js';
 
 describe('metadata/names', () => {

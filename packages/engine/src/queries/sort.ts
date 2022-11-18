@@ -1,22 +1,28 @@
-import { State, StateIndexes, StateType } from '@/generated/index.js';
+import {
+  StateDefinition,
+  StateDefinitionIndexes,
+  StateDefinitionType,
+} from '@/definitions/index.js';
 
-export interface SortQuery<S extends State> {
+export interface SortQuery<S extends StateDefinition> {
   sort(sort: SortIndex<S> | null): this;
   sort(sort: '*', ...fields: SortField<S>[]): this;
 }
 
-export interface SortQueryOptions<S extends State> {
+export interface SortQueryOptions<S extends StateDefinition> {
   sort?: Sort<S>;
 }
 
-export type Sort<S extends State> = SortIndex<S> | readonly SortField<S>[];
+export type Sort<S extends StateDefinition> =
+  | SortIndex<S>
+  | readonly SortField<S>[];
 
-export type SortIndex<S extends State> = SortedField<
-  keyof StateIndexes<S> & string
+export type SortIndex<S extends StateDefinition> = SortedField<
+  keyof StateDefinitionIndexes<S> & string
 >;
 
-export type SortField<S extends State> = SortedField<
-  keyof StateType<S> & string
+export type SortField<S extends StateDefinition> = SortedField<
+  keyof StateDefinitionType<S> & string
 >;
 
 type SortedField<K extends string> = `${'+' | '-'}${K}`;

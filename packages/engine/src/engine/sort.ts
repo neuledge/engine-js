@@ -1,9 +1,9 @@
-import { State, SortDefinition } from '@/generated/index.js';
+import { StateDefinition, SortDefinition } from '@/definitions/index.js';
 import { MetadataCollection } from '@/metadata/index.js';
 import { SortQueryOptions } from '@/queries/index.js';
 import { StoreFindOptions, StoreSort } from '@/store/index.js';
 
-export const convertSortQuery = <S extends State>(
+export const convertSortQuery = <S extends StateDefinition>(
   collection: MetadataCollection,
   { sort }: SortQueryOptions<S>,
 ): Pick<StoreFindOptions, 'sort'> => {

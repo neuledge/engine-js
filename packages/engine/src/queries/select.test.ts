@@ -1,4 +1,7 @@
-import { Category, Post } from '@/generated/__test__/category-post-example.js';
+import {
+  Category,
+  Post,
+} from '@/definitions/__test__/category-post-example.js';
 import { Select } from './select.js';
 
 /* eslint-disable max-lines-per-function */
