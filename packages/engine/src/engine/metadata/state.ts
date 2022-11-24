@@ -1,7 +1,7 @@
 import {
-  MetadataState,
-  MetadataStateField,
-  MetadataStateRelation,
+  MetadataGhostState,
+  MetadataGhostStateField,
+  MetadataGhostStateRelation,
 } from '@/metadata/index.js';
 
 export interface StoreMetadataState {
@@ -30,15 +30,15 @@ interface StoreMetadataStateRelation {
 }
 
 export const fromStoreMetadataState = (
-  getState: (hash: Buffer) => MetadataState,
-  getType: (key: string) => MetadataStateField['type'],
+  getState: (hash: Buffer) => MetadataGhostState,
+  getType: (key: string) => MetadataGhostStateField['type'],
   doc: StoreMetadataState,
-): MetadataState => {
+): MetadataGhostState => {
   if (doc.v !== StoreMetadataStateVersion.V0) {
     throw new Error(`Unsupported metadata version: ${doc.v}`);
   }
 
-  return Object.assign(getState(doc.hash) as object, {
+  return getState(doc.hash).assign({
     collectionName: doc.collectionName,
     name: doc.name,
     hash: doc.hash,
@@ -52,7 +52,7 @@ export const fromStoreMetadataState = (
 };
 
 export const toStoreMetadataState = (
-  state: MetadataState,
+  state: MetadataGhostState,
 ): StoreMetadataState => ({
   collectionName: state.collectionName,
   name: state.name,
@@ -65,9 +65,9 @@ export const toStoreMetadataState = (
 });
 
 const fromStoreMetadataStateField = (
-  getType: (key: string) => MetadataStateField['type'],
+  getType: (key: string) => MetadataGhostStateField['type'],
   doc: StoreMetadataStateField,
-): MetadataStateField => ({
+): MetadataGhostStateField => ({
   name: doc.name,
   type: getType(doc.type),
   indexes: doc.indexes,
@@ -75,7 +75,7 @@ const fromStoreMetadataStateField = (
 });
 
 const toStoreMetadataStateField = (
-  field: MetadataStateField,
+  field: MetadataGhostStateField,
 ): StoreMetadataStateField => ({
   name: field.name,
   type: field.type.key,
@@ -84,15 +84,15 @@ const toStoreMetadataStateField = (
 });
 
 const fromStoreMetadataStateRelation = (
-  getState: (hash: Buffer) => MetadataState,
+  getState: (hash: Buffer) => MetadataGhostState,
   relation: StoreMetadataStateRelation,
-): MetadataStateRelation => ({
+): MetadataGhostStateRelation => ({
   states: relation.stateHashes.map((hash) => getState(hash)),
   index: relation.index,
 });
 
 const toStoreMetadataStateRelation = (
-  relation: MetadataStateRelation,
+  relation: MetadataGhostStateRelation,
 ): StoreMetadataStateRelation => ({
   stateHashes: relation.states.map((state) => state.hash),
   index: relation.index,

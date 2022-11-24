@@ -1,16 +1,19 @@
-import { StateDefinition } from '@/definitions/index.js';
-import {
-  MetadataOriginState,
-  MetadataOriginStateField,
-  MetadataStateField,
-} from './state.js';
+import { MetadataState, MetadataStateField } from './state/index.js';
+
+export type MetadataCollectionFieldMap = Record<
+  MetadataStateField['path'],
+  {
+    fields: Map<MetadataStateField['name'], MetadataStateField>;
+    children: Set<MetadataStateField['path']>;
+  }
+>;
 
 export class MetadataCollection {
   // private readonly fieldMap = new Map<string, MetadataStateField[]>();
 
   constructor(
     public readonly name: string,
-    public readonly states: MetadataOriginState[],
+    public readonly states: MetadataState[],
   ) {
     // for (const state of states) {
     //   for (const field of state.fields) {
@@ -21,7 +24,7 @@ export class MetadataCollection {
     // }
   }
 
-  getFields(rootPath: string): MetadataOriginStateField[] {
+  getFields(rootPath: string): MetadataStateField[] {
     return this.states.flatMap((state) =>
       state.fields.filter((field) => isRootPath(rootPath, field.path)),
     );
@@ -31,28 +34,61 @@ export class MetadataCollection {
     return [...new Set(this.getFields(rootPath).map((field) => field.name))];
   }
 
-  getFieldStates(
-    rootPath: string,
-  ): Record<MetadataStateField['name'], StateDefinition[]> {
-    const map: Record<MetadataStateField['name'], StateDefinition[]> = {};
+  getFieldMap(): MetadataCollectionFieldMap {
+    const fields: Record<
+      MetadataStateField['path'],
+      {
+        fields: Map<MetadataStateField['name'], MetadataStateField>;
+        children: Set<MetadataStateField['path']>;
+      }
+    > = {};
 
     for (const state of this.states) {
       for (const field of state.fields) {
-        if (isRootPath(rootPath, field.path)) {
-          let entry = map[field.name];
+        const entry =
+          fields[field.path] ??
+          (fields[field.path] = { fields: new Map(), children: new Set() });
 
-          if (!entry) {
-            entry = [];
-            map[field.name] = entry;
-          }
+        entry.fields.set(field.name, field);
 
-          entry.push(state.origin);
+        const parts = field.path.split('.');
+        for (parts.pop(); parts.length; parts.pop()) {
+          const path = parts.join('.');
+
+          const entry =
+            fields[path] ??
+            (fields[path] = { fields: new Map(), children: new Set() });
+
+          entry.children.add(field.path);
         }
       }
     }
 
-    return map;
+    return fields;
   }
+
+  //   getFieldStates(
+  //     rootPath: string,
+  //   ): Record<MetadataGhostStateField['name'], StateDefinition[]> {
+  //     const map: Record<MetadataGhostStateField['name'], StateDefinition[]> = {};
+  //
+  //     for (const state of this.states) {
+  //       for (const field of state.fields) {
+  //         if (isRootPath(rootPath, field.path)) {
+  //           let entry = map[field.name];
+  //
+  //           if (!entry) {
+  //             entry = [];
+  //             map[field.name] = entry;
+  //           }
+  //
+  //           entry.push(state.instance);
+  //         }
+  //       }
+  //     }
+  //
+  //     return map;
+  //   }
 }
 
 const isRootPath = (rootPath: string, path: string): boolean =>

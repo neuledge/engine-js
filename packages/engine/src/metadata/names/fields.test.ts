@@ -6,19 +6,21 @@ import { assignFieldNames } from './fields.js';
 describe('metadata/names', () => {
   describe('assignFieldNames()', () => {
     it('should generate field names for single field', () => {
-      expect(assignFieldNames([{ name: 'id', type: NumberScalar }])).toEqual([
-        { name: 'id', type: NumberScalar },
-      ]);
+      const fields = [{ name: 'id', type: NumberScalar }];
+      assignFieldNames(fields);
+
+      expect(fields).toEqual([{ name: 'id', type: NumberScalar }]);
     });
 
     it('should generate field names for unique fields', () => {
-      expect(
-        assignFieldNames([
-          { name: 'id', type: NumberScalar },
-          { name: 'name', type: StringScalar },
-          { name: 'description', type: StringScalar },
-        ]),
-      ).toEqual([
+      const fields = [
+        { name: 'id', type: NumberScalar },
+        { name: 'name', type: StringScalar },
+        { name: 'description', type: StringScalar },
+      ];
+      assignFieldNames(fields);
+
+      expect(fields).toEqual([
         { name: 'id', type: NumberScalar },
         { name: 'name', type: StringScalar },
         { name: 'description', type: StringScalar },
@@ -26,13 +28,14 @@ describe('metadata/names', () => {
     });
 
     it('should generate field names for duplicate fields', () => {
-      expect(
-        assignFieldNames([
-          { name: 'id', type: NumberScalar },
-          { name: 'category_id', type: NumberScalar },
-          { name: 'category_id', type: StringScalar },
-        ]),
-      ).toEqual([
+      const fields = [
+        { name: 'id', type: NumberScalar },
+        { name: 'category_id', type: NumberScalar },
+        { name: 'category_id', type: StringScalar },
+      ];
+      assignFieldNames(fields);
+
+      expect(fields).toEqual([
         { name: 'id', type: NumberScalar },
         { name: 'category_id_number', type: NumberScalar },
         { name: 'category_id_string', type: StringScalar },
@@ -40,13 +43,14 @@ describe('metadata/names', () => {
     });
 
     it('should generate field names for duplicate equal fields', () => {
-      expect(
-        assignFieldNames([
-          { name: 'id', type: NumberScalar },
-          { name: 'id', type: NumberScalar },
-          { name: 'id', type: NumberScalar },
-        ]),
-      ).toEqual([
+      const fields = [
+        { name: 'id', type: NumberScalar },
+        { name: 'id', type: NumberScalar },
+        { name: 'id', type: NumberScalar },
+      ];
+      assignFieldNames(fields);
+
+      expect(fields).toEqual([
         { name: 'id_1', type: NumberScalar },
         { name: 'id_2', type: NumberScalar },
         { name: 'id_3', type: NumberScalar },

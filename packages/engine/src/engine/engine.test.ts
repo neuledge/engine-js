@@ -116,7 +116,7 @@ describe('engine/engine', () => {
       expect(engine.store.find).toHaveBeenCalledTimes(1);
       expect(engine.store.find).toBeCalledWith({
         collectionName: 'posts',
-        sort: { category: 'desc', title: 'desc' },
+        sort: { category_id: 'desc', title: 'desc' },
         limit: 10,
       });
 

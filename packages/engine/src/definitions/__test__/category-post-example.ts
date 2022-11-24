@@ -1,9 +1,9 @@
+import { $ } from '@neuledge/engine';
 import {
   NumberScalar as Number,
   StringScalar as String,
   DateScalar as Date,
 } from '@neuledge/scalars';
-import { $ } from '@neuledge/engine';
 
 /**
  * Basic category

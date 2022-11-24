@@ -14,7 +14,7 @@ export const convertSortQuery = <S extends StateDefinition>(
 
     const key = sort.slice(1);
     for (const state of collection.states) {
-      const index = state.origin.$indexes?.[key];
+      const index = state.instance.$indexes?.[key];
       if (index != null) {
         sort = index;
         break;

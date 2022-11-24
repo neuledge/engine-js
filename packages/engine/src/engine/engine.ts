@@ -35,7 +35,7 @@ import { convertLimitQuery, toLimitedEntityList } from './limit.js';
 import { loadMetadata } from './metadata/index.js';
 import { convertSelectQuery } from './select.js';
 import { convertSortQuery } from './sort.js';
-import { convertFilterQuery } from './filter.js';
+import { convertFilterQuery } from './filter/index.js';
 import { convertOffsetQuery } from './offset.js';
 
 export interface NeuledgeEngineOptions {

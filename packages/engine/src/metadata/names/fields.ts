@@ -1,34 +1,43 @@
-import { MetadataStateField } from '../state.js';
+import { MetadataGhostStateField } from '../state/index.js';
 
 export const assignFieldNames = <
-  Field extends Pick<MetadataStateField, 'name' | 'type'>,
+  Field extends Pick<MetadataGhostStateField, 'name' | 'type'>,
 >(
   fields: Field[],
-): Field[] => {
+): void => {
   const duplicates = new Map<string, Field[]>();
-  const assigned = new Map<string, Field>();
 
-  // assign and find all duplicates
+  // list duplicates
   for (const field of fields) {
-    const exists = assigned.get(field.name);
+    let list = duplicates.get(field.name);
 
-    if (!exists) {
-      assigned.set(field.name, field);
-      continue;
+    if (!list) {
+      list = [];
+      duplicates.set(field.name, list);
     }
 
-    const list = duplicates.get(field.name);
-    duplicates.set(field.name, list ? [...list, field] : [exists, field]);
+    list.push(field);
+  }
+
+  const assigned = new Map<string, Field>();
+
+  // assign single names
+  for (const [name, list] of duplicates) {
+    if (list.length !== 1) continue;
+
+    assigned.set(name, list[0]);
+    duplicates.delete(name);
   }
 
   for (const [name, list] of duplicates) {
+    const names = list.map((field) => `${name}_${toSnakeCase(field.type.key)}`);
+
     if (
-      list.every(
-        (field) => !assigned.has(`${name}_${toSnakeCase(field.type.key)}`),
-      )
+      names.every((item) => !assigned.has(item)) &&
+      new Set(names).size === names.length
     ) {
-      for (const field of list) {
-        assigned.set(`${name}_${toSnakeCase(field.type.key)}`, field);
+      for (const [i, field] of list.entries()) {
+        assigned.set(names[i], field);
       }
       continue;
     }
@@ -47,8 +56,6 @@ export const assignFieldNames = <
   for (const [name, field] of assigned) {
     field.name = name;
   }
-
-  return [...assigned.values()];
 };
 
 const toSnakeCase = (str: string): string =>

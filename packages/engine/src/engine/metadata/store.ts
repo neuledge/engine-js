@@ -1,7 +1,7 @@
 import {
   Metadata,
   MetadataChange,
-  MetadataState,
+  MetadataGhostState,
   METADATA_HASH_BYTES,
 } from '@/metadata/index.js';
 import { Store, StoreList } from '@/store/index.js';
@@ -37,14 +37,14 @@ export const getStoreMetadata = async (
   store: Store,
   collectionName: string,
 ): Promise<Metadata> => {
-  const entities: Record<string, MetadataState> = {};
+  const entities: Record<string, MetadataGhostState> = {};
 
   const getState = (hash: Buffer) => {
     const key = hash.toString(HASH_ENCODING);
 
-    let res = entities[key] as MetadataState | undefined;
+    let res = entities[key] as MetadataGhostState | undefined;
     if (!res) {
-      res = {} as never;
+      res = new MetadataGhostState() as never;
       entities[key] = res;
     }
 

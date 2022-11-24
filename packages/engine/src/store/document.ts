@@ -7,7 +7,8 @@ export type StoreScalarValue =
   | bigint
   | boolean
   | Buffer
-  | { [key in string]?: StoreScalarValue };
+  | { [key in string]?: StoreScalarValue }
+  | StoreScalarValue[];
 
 export type StoreListOffset = string | number | Buffer;
 

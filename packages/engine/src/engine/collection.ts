@@ -21,7 +21,7 @@ export const getCollectionRelationStates = (
   ...new Map(
     collection.states
       .flatMap((s): StateDefinition[] => {
-        const relations = resolveDefer(s.origin.$relations, {})[key];
+        const relations = resolveDefer(s.instance.$relations, {})[key];
         if (!relations) {
           return [];
         }

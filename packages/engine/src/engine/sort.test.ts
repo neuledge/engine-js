@@ -34,8 +34,8 @@ describe('engine/sort', () => {
         sort: '+category.posts',
       });
 
-      expect(res).toEqual({ sort: { category: 'asc', title: 'asc' } });
-      expect(Object.keys(res.sort ?? {})).toEqual(['category', 'title']);
+      expect(res).toEqual({ sort: { category_id: 'asc', title: 'asc' } });
+      expect(Object.keys(res.sort ?? {})).toEqual(['category_id', 'title']);
     });
 
     it('should convert a sort desc string to a sort object', () => {
@@ -43,8 +43,8 @@ describe('engine/sort', () => {
         sort: '-category.posts',
       });
 
-      expect(res).toEqual({ sort: { category: 'desc', title: 'desc' } });
-      expect(Object.keys(res.sort ?? {})).toEqual(['category', 'title']);
+      expect(res).toEqual({ sort: { category_id: 'desc', title: 'desc' } });
+      expect(Object.keys(res.sort ?? {})).toEqual(['category_id', 'title']);
     });
 
     it('should convert sort fields', () => {
