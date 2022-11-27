@@ -56,7 +56,7 @@ describe('engine/filter', () => {
         convertFilterQuery(metadata, categoriesCollection, {
           where: { foo: { $eq: 1 } },
         }),
-      ).toThrow("Unknown where path: 'foo'");
+      ).toThrow("Unknown where key: 'foo'");
     });
 
     it('should convert between ranges where', () => {
@@ -101,7 +101,7 @@ describe('engine/filter', () => {
       });
     });
 
-    it('should handle empty filter ', () => {
+    it('should handle empty filter', () => {
       expect(
         convertFilterQuery<typeof Post[number]>(metadata, postsCollection, {
           match: {},

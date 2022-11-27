@@ -15,7 +15,7 @@ export class MetadataCollection {
     public readonly states: MetadataState[],
   ) {}
 
-  schema(): MetadataSchema {
+  get schema(): MetadataSchema {
     return getMetadataSchema(this.states);
   }
 

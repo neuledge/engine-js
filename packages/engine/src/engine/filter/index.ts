@@ -10,7 +10,7 @@ export const convertFilterQuery = <S extends StateDefinition>(
   collection: MetadataCollection,
   { match, where }: FilterQueryOptions<S>,
 ): Pick<StoreFindOptions, 'match' | 'where'> => ({
-  ...(where != null ? { where: convertWhere(collection, where) } : null),
+  ...(where != null ? { where: convertWhere(collection.schema, where) } : null),
   ...(match != null
     ? { match: convertMatch(metadata, collection, match) }
     : null),

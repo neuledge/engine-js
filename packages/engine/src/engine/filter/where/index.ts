@@ -2,16 +2,15 @@ import {
   StateDefinition,
   StateDefinitionWhereRecord,
 } from '@/definitions/index.js';
-import { MetadataCollection } from '@/metadata/index.js';
+import { MetadataSchema } from '@/metadata/index.js';
 import { StoreWhere, StoreWhereRecord } from '@/store/index.js';
 import { Where } from '@/queries/index.js';
 import { convertWhereRecord } from './record.js';
 
 export const convertWhere = <S extends StateDefinition>(
-  collection: MetadataCollection,
+  schema: MetadataSchema,
   where: Where<S>,
 ): StoreWhere => {
-  const schema = {}; // FIXME set choicesMap
   const res: StoreWhereRecord[] = [];
 
   if (where.$or?.length > 0) {
