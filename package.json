@@ -29,7 +29,7 @@
     "run-all": "yarn run wsrun"
   },
   "devDependencies": {
-    "@neuledge/eslint-config": "^1.0.0-alpha.6",
+    "@neuledge/eslint-config": "^1.0.0-alpha.7",
     "@types/node": "^16",
     "concurrently": "^7.3.0",
     "eslint": "^8.20.0",

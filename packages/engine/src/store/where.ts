@@ -2,11 +2,11 @@ import { StoreScalarValue } from './document.js';
 
 export type StoreWhere = StoreWhereRecord | StoreWhereOr;
 
-export type StoreWhereRecord = Record<FieldName, StoreWhereValue>;
+export type StoreWhereRecord = Record<FieldName, StoreWhereTerm>;
 
 type FieldName = string;
 
-export type StoreWhereValue =
+export type StoreWhereTerm =
   | StoreWhereEquals
   | StoreWhereNotEquals
   | StoreWhereLowerThen

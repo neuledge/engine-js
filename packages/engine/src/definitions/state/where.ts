@@ -1,13 +1,13 @@
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type StateDefinitionWhere<T = any> =
-  | StateDefinitionWhereFields<T>
+  | StateDefinitionWhereRecord<T>
   | StateDefinitionWhereOr<T>;
 
 interface StateDefinitionWhereOr<T> {
-  $or: StateDefinitionWhereFields<T>[];
+  $or: StateDefinitionWhereRecord<T>[];
 }
 
-export type StateDefinitionWhereFields<T> = {
+export type StateDefinitionWhereRecord<T> = {
   [K in keyof T]?: T[K];
 };
 
