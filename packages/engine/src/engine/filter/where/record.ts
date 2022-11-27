@@ -2,20 +2,12 @@ import {
   StateDefinitionWhereRecord,
   StateDefinitionWhereTerm,
 } from '@/definitions/index.js';
-import { MetadataStateField } from '@/metadata/index.js';
+import { MetadataSchema, MetadataStateField } from '@/metadata/index.js';
 import { StoreWhereRecord } from '@/store/index.js';
 import { applyWhereOperatorTerm, convertWhereScalarTerm } from './term.js';
 
-export type WhereChoicesMap = {
-  [Key in string]?: WhereChoice[];
-};
-
-export type WhereChoice =
-  | { field: MetadataStateField; state?: never }
-  | { field?: never; state: WhereChoicesMap };
-
 export const convertWhereRecord = (
-  choicesMap: WhereChoicesMap,
+  schema: MetadataSchema,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   where: StateDefinitionWhereRecord<any>,
 ): StoreWhereRecord[] => {
@@ -24,7 +16,7 @@ export const convertWhereRecord = (
   for (const [key, term] of Object.entries(where)) {
     if (term == null) continue;
 
-    const choices = choicesMap[key];
+    const choices = schema[key];
     if (!choices?.length) {
       throw new Error(`Unknown where key: '${key}'`);
     }
@@ -36,7 +28,7 @@ export const convertWhereRecord = (
       records.push(
         ...(choice.field
           ? applyWhereRecordTerm(base, choice.field, term)
-          : applyWhereState(base, choice.state, term)),
+          : applyWhereState(base, choice.schema, term)),
       );
     }
   }
@@ -64,7 +56,7 @@ const applyWhereRecordTerm = (
 
 const applyWhereState = (
   records: StoreWhereRecord[],
-  choicesMap: WhereChoicesMap,
+  schema: MetadataSchema,
   term: StateDefinitionWhereTerm,
 ): StoreWhereRecord[] => {
   for (const [operator, where] of Object.entries(term)) {
@@ -72,7 +64,7 @@ const applyWhereState = (
       throw new Error(`Invalid where operator: '${operator}'`);
     }
 
-    records = applyWhereOperatorRecord(records, choicesMap, operator, where);
+    records = applyWhereOperatorRecord(records, schema, operator, where);
   }
 
   return records;
@@ -80,7 +72,7 @@ const applyWhereState = (
 
 const applyWhereOperatorRecord = (
   records: StoreWhereRecord[],
-  choicesMap: WhereChoicesMap,
+  schema: MetadataSchema,
   operator: string,
   where: object,
 ): StoreWhereRecord[] => {
@@ -93,24 +85,19 @@ const applyWhereOperatorRecord = (
     case '$contains':
     case '$startsWith':
     case '$endsWith': {
-      return applyWhereEveryOperatorRecord(
-        records,
-        choicesMap,
-        operator,
-        where,
-      );
+      return applyWhereEveryOperatorRecord(records, schema, operator, where);
     }
 
     case '$ne': {
-      return applyWhereNotEqualRecord(records, choicesMap, where);
+      return applyWhereNotEqualRecord(records, schema, where);
     }
 
     case '$in': {
-      return applyWhereInOperatorRecord(records, choicesMap, where);
+      return applyWhereInOperatorRecord(records, schema, where);
     }
 
     case '$nin': {
-      return applyWhereNotInOperatorRecord(records, choicesMap, where);
+      return applyWhereNotInOperatorRecord(records, schema, where);
     }
 
     default: {
@@ -121,14 +108,14 @@ const applyWhereOperatorRecord = (
 
 const applyWhereEveryOperatorRecord = (
   records: StoreWhereRecord[],
-  choicesMap: WhereChoicesMap,
+  schema: MetadataSchema,
   operator: string,
   where: object,
 ) => {
   for (const [key, value] of Object.entries(where)) {
     records = applyWhereOperatorRecordValue(
       records,
-      choicesMap,
+      schema,
       operator,
       key,
       value,
@@ -140,18 +127,16 @@ const applyWhereEveryOperatorRecord = (
 
 const applyWhereNotEqualRecord = (
   records: StoreWhereRecord[],
-  choicesMap: WhereChoicesMap,
+  schema: MetadataSchema,
   where: object,
 ) => {
   let base = records;
   const res = [];
 
   for (const [key, value] of Object.entries(where)) {
-    res.push(
-      ...applyWhereOperatorRecordValue(base, choicesMap, '$ne', key, value),
-    );
+    res.push(...applyWhereOperatorRecordValue(base, schema, '$ne', key, value));
 
-    base = applyWhereOperatorRecordValue(base, choicesMap, '$eq', key, value);
+    base = applyWhereOperatorRecordValue(base, schema, '$eq', key, value);
   }
 
   return res;
@@ -159,7 +144,7 @@ const applyWhereNotEqualRecord = (
 
 const applyWhereInOperatorRecord = (
   records: StoreWhereRecord[],
-  choicesMap: WhereChoicesMap,
+  schema: MetadataSchema,
   where: object,
 ) => {
   if (!Array.isArray(where)) {
@@ -168,9 +153,7 @@ const applyWhereInOperatorRecord = (
 
   const res = [];
   for (const value of where) {
-    res.push(
-      ...applyWhereEveryOperatorRecord(records, choicesMap, '$eq', value),
-    );
+    res.push(...applyWhereEveryOperatorRecord(records, schema, '$eq', value));
   }
 
   return res;
@@ -178,7 +161,7 @@ const applyWhereInOperatorRecord = (
 
 const applyWhereNotInOperatorRecord = (
   records: StoreWhereRecord[],
-  choicesMap: WhereChoicesMap,
+  schema: MetadataSchema,
   where: object,
 ) => {
   if (!Array.isArray(where)) {
@@ -186,7 +169,7 @@ const applyWhereNotInOperatorRecord = (
   }
 
   for (const value of where) {
-    records = applyWhereNotEqualRecord(records, choicesMap, value);
+    records = applyWhereNotEqualRecord(records, schema, value);
   }
 
   return records;
@@ -194,12 +177,12 @@ const applyWhereNotInOperatorRecord = (
 
 const applyWhereOperatorRecordValue = (
   records: StoreWhereRecord[],
-  choicesMap: WhereChoicesMap,
+  schema: MetadataSchema,
   operator: string,
   key: string,
   value: unknown,
 ): StoreWhereRecord[] => {
-  const choices = choicesMap[key];
+  const choices = schema[key];
   if (!choices?.length) {
     throw new Error(`Unknown where key: '${key}'`);
   }
@@ -219,7 +202,7 @@ const applyWhereOperatorRecordValue = (
       );
     } else if (typeof value === 'object' && value != null) {
       res.push(
-        ...applyWhereOperatorRecord(records, choice.state, operator, value),
+        ...applyWhereOperatorRecord(records, choice.schema, operator, value),
       );
     } else {
       throw new Error(`Invalid where operator: '${operator}'`);

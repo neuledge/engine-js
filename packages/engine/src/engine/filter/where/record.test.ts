@@ -1,6 +1,6 @@
-import { MetadataStateField } from '@/metadata/index.js';
+import { MetadataSchema, MetadataStateField } from '@/metadata/index.js';
 import { NumberScalar } from '@neuledge/scalars';
-import { convertWhereRecord, WhereChoicesMap } from './record.js';
+import { convertWhereRecord } from './record.js';
 
 /* eslint-disable max-lines-per-function */
 
@@ -41,12 +41,12 @@ describe('engine/filter/where/record', () => {
       nullable: false,
       indexes: [3, 2],
     };
-    const basicMap: WhereChoicesMap = {
+    const basicMap: MetadataSchema = {
       foo: [{ field: foo }],
       bar: [{ field: bar }],
       entity: [
         {
-          state: {
+          schema: {
             id: [{ field: entityId }],
             subId: [{ field: entitySubId }],
           },
@@ -55,7 +55,7 @@ describe('engine/filter/where/record', () => {
       'entity.id': [{ field: entityId }],
       'entity.subId': [{ field: entitySubId }],
     };
-    const renamedMap: WhereChoicesMap = {
+    const renamedMap: MetadataSchema = {
       foo: [{ field: foo }, { field: oldFoo }],
     };
 
