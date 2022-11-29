@@ -33,7 +33,7 @@ import { chooseStatesCollection } from './collection.js';
 import { toEntityOrThrow, toMaybeEntity } from './entity.js';
 import { convertLimitQuery, toLimitedEntityList } from './limit.js';
 import { loadMetadata } from './metadata/index.js';
-import { convertSelectQuery } from './select.js';
+import { convertRetriveQuery } from './retrive/index.js';
 import { convertSortQuery } from './sort.js';
 import { convertFilterQuery } from './filter/index.js';
 import { convertOffsetQuery } from './offset.js';
@@ -75,7 +75,7 @@ export class NeuledgeEngine {
           options,
           await this.store.find({
             collectionName: collection.name,
-            ...convertSelectQuery(collection, options),
+            ...convertRetriveQuery(collection, options),
             ...convertFilterQuery(metadata, collection, options),
             ...convertOffsetQuery(options),
             ...convertLimitQuery(options),
@@ -99,7 +99,7 @@ export class NeuledgeEngine {
           metadata,
           await this.store.find({
             collectionName: collection.name,
-            ...convertSelectQuery(collection, options),
+            ...convertRetriveQuery(collection, options),
             ...convertFilterQuery(metadata, collection, options),
             limit: 1,
           }),
@@ -123,7 +123,7 @@ export class NeuledgeEngine {
           metadata,
           await this.store.find({
             collectionName: collection.name,
-            ...convertSelectQuery(collection, options),
+            ...convertRetriveQuery(collection, options),
             ...convertFilterQuery(metadata, collection, options),
             limit: 1,
           }),
@@ -144,7 +144,7 @@ export class NeuledgeEngine {
           metadata,
           await this.store.find({
             collectionName: collection.name,
-            ...convertSelectQuery(collection, options),
+            ...convertRetriveQuery(collection, options),
             ...convertFilterQuery(metadata, collection, options),
             ...convertOffsetQuery(options),
             limit: 1,
@@ -169,7 +169,7 @@ export class NeuledgeEngine {
           metadata,
           await this.store.find({
             collectionName: collection.name,
-            ...convertSelectQuery(collection, options),
+            ...convertRetriveQuery(collection, options),
             ...convertFilterQuery(metadata, collection, options),
             ...convertOffsetQuery(options),
             limit: 1,

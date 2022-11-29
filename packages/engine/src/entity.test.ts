@@ -54,15 +54,15 @@ describe('types/entity', () => {
           id: 1,
           title: 'str',
         });
-      });
 
-      expect<Entity<typeof Post[number]>>({
-        $state: 'PublishedPost',
-        id: 1,
-        title: 'str',
-        content: 'content',
-        category: { id: 123 },
-        publishedAt: new Date(),
+        expect<Entity<typeof Post[number]>>({
+          $state: 'PublishedPost',
+          id: 1,
+          title: 'str',
+          content: 'content',
+          category: { id: 123 },
+          publishedAt: new Date(),
+        });
       });
 
       it('should throw on missing field', () => {

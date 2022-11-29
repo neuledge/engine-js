@@ -16,6 +16,7 @@ export * from './match.js';
 export * from './offset.js';
 export * from './query.js';
 export * from './query-class.js';
+export * from './retrive.js';
 export * from './select.js';
 export * from './sort.js';
 export * from './type.js';

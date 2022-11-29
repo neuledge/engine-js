@@ -5,8 +5,8 @@ import {
 import { Metadata, MetadataCollection } from '@/metadata/index.js';
 import { convertSelectQuery } from './select.js';
 
-describe('engine/select', () => {
-  describe('convertSelect', () => {
+describe('engine/retrive/select', () => {
+  describe('convertSelectQuery', () => {
     let postsCollection: MetadataCollection;
 
     beforeAll(() => {
@@ -15,34 +15,29 @@ describe('engine/select', () => {
       postsCollection = metadata.getCollections(Post)[0];
     });
 
-    it('should convert empty object', () => {
-      const res = convertSelectQuery(postsCollection, {});
-
-      expect(res).toEqual({});
-    });
-
     it('should convert a select object', () => {
       const res = convertSelectQuery(postsCollection, {
-        select: {
-          title: true,
-          id: true,
-          content: false,
-        },
+        title: true,
+        id: true,
+        content: false,
       });
 
-      expect(res).toEqual({ select: { title: true, id: true } });
+      expect(res).toEqual({
+        title: true,
+        id: true,
+      });
     });
 
     it('should ignore unknown fields', () => {
       const res = convertSelectQuery(postsCollection, {
-        select: {
-          title: false,
-          id: true,
-          foo: true,
-        },
+        title: false,
+        id: true,
+        foo: true,
       });
 
-      expect(res).toEqual({ select: { id: true } });
+      expect(res).toEqual({
+        id: true,
+      });
     });
   });
 });

@@ -6,17 +6,17 @@ import {
 import { EntityList } from '@/list.js';
 import { ExecQuery, ExecQueryOptions } from './exec.js';
 import { MultiArgsQueryOptions } from './method.js';
-import { SelectQuery, SelectQueryOptions } from './select.js';
+import { RetriveQuery, RetriveQueryOptions } from './retrive.js';
 import { RootQueryOptions } from './type.js';
 
 export interface CreateManyQuery<S extends StateDefinition>
-  extends SelectQuery<'CreateManyAndReturn', S, S, Entity<S>>,
+  extends RetriveQuery<'CreateManyAndReturn', S, S, Entity<S>>,
     ExecQuery<void> {}
 
 export interface CreateManyAndReturnQuery<
   S extends StateDefinition,
   R = Entity<S>,
-> extends SelectQuery<'CreateManyAndReturn', S, S, R>,
+> extends RetriveQuery<'CreateManyAndReturn', S, S, R>,
     ExecQuery<EntityList<R>> {}
 
 export interface CreateManyQueryOptions<
@@ -24,5 +24,5 @@ export interface CreateManyQueryOptions<
   O extends StateDefinition,
 > extends RootQueryOptions<'CreateMany', I>,
     MultiArgsQueryOptions<I, StateDefinitionCreateMutations<I>>,
-    SelectQueryOptions<O>,
+    RetriveQueryOptions<O>,
     ExecQueryOptions<'CreateMany', I, O> {}

@@ -5,12 +5,12 @@ import { ExecQuery, ExecQueryOptions } from './exec.js';
 import { FilterQuery, FilterQueryOptions } from './filter.js';
 import { LimitQuery, LimitQueryOptions } from './limit.js';
 import { OffsetQuery, OffsetQueryOptions } from './offset.js';
-import { SelectQuery, SelectQueryOptions } from './select.js';
+import { RetriveQuery, RetriveQueryOptions } from './retrive.js';
 import { SortQuery, SortQueryOptions } from './sort.js';
 import { RootQueryOptions } from './type.js';
 
 export interface FindManyQuery<S extends StateDefinition, R = Entity<S>>
-  extends SelectQuery<'FindMany', S, S, R>,
+  extends RetriveQuery<'FindMany', S, S, R>,
     FilterQuery<S>,
     SortQuery<S>,
     LimitQuery,
@@ -21,7 +21,7 @@ export interface FindManyQueryOptions<
   I extends StateDefinition,
   O extends StateDefinition,
 > extends RootQueryOptions<'FindMany', I>,
-    SelectQueryOptions<O>,
+    RetriveQueryOptions<O>,
     FilterQueryOptions<O>,
     SortQueryOptions<O>,
     LimitQueryOptions,

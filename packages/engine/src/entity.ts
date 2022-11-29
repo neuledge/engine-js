@@ -1,5 +1,5 @@
 import { StateDefinition, StateDefinitionName } from './definitions/index.js';
-import { Select } from './queries/select.js';
+import { Select } from './queries/index.js';
 
 export type Entity<S extends StateDefinition> = {
   [N in StateDefinitionName<S>]: S extends StateDefinition<N, infer R>

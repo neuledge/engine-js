@@ -5,17 +5,17 @@ import {
 } from '@/definitions/index.js';
 import { ExecQuery, ExecQueryOptions } from './exec.js';
 import { SingleArgsQueryOptions } from './method.js';
-import { SelectQuery, SelectQueryOptions } from './select.js';
+import { RetriveQuery, RetriveQueryOptions } from './retrive.js';
 import { RootQueryOptions } from './type.js';
 
 export interface CreateOneQuery<S extends StateDefinition>
-  extends SelectQuery<'CreateOneAndReturn', S, S, Entity<S>>,
+  extends RetriveQuery<'CreateOneAndReturn', S, S, Entity<S>>,
     ExecQuery<void> {}
 
 export interface CreateOneAndReturnQuery<
   S extends StateDefinition,
   R = Entity<S>,
-> extends SelectQuery<'CreateOneAndReturn', S, S, R>,
+> extends RetriveQuery<'CreateOneAndReturn', S, S, R>,
     ExecQuery<R> {}
 
 export interface CreateOneQueryOptions<
@@ -23,5 +23,5 @@ export interface CreateOneQueryOptions<
   O extends StateDefinition,
 > extends RootQueryOptions<'CreateOne', I>,
     SingleArgsQueryOptions<I, StateDefinitionCreateMutations<I>>,
-    SelectQueryOptions<O>,
+    RetriveQueryOptions<O>,
     ExecQueryOptions<'CreateOne', I, O> {}

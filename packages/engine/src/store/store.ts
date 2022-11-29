@@ -15,6 +15,7 @@ import {
   StoreMatch,
   StoreRequireFirst,
   StoreIncludeFirst,
+  StoreIncludeMany,
 } from './relation.js';
 import { StoreSort } from './sort.js';
 import { StoreWhere } from './where.js';
@@ -61,6 +62,7 @@ export interface StoreFindOptions {
   match?: StoreMatch;
   requireFirst?: StoreRequireFirst;
   includeFirst?: StoreIncludeFirst;
+  includeMany?: StoreIncludeMany;
   limit: number;
   offset?: StoreListOffset;
   sort?: StoreSort;

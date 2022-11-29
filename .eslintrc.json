@@ -1,3 +1,7 @@
 {
-  "extends": "@neuledge"
+  "extends": "@neuledge",
+  "rules": {
+    // https://github.com/jest-community/eslint-plugin-jest/issues/1299
+    "jest/valid-expect": "off"
+  }
 }

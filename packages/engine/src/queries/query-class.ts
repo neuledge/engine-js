@@ -15,18 +15,19 @@ import { OffsetQuery, OffsetQueryOptions } from './offset.js';
 import { QueryOptions, QueryType } from './query.js';
 import { SelectManyQuery } from './select-many.js';
 import { SelectOneQuery } from './select-one.js';
-import { Select, SelectQuery, SelectQueryOptions } from './select.js';
+import { RetriveQuery, RetriveQueryOptions } from './retrive.js';
 import { SortField, SortIndex, SortQueryOptions } from './sort.js';
 import { UniqueQuery, UniqueQueryOptions } from './unique.js';
 import { Subset } from './utils.js';
 import { UniqueWhere, Where } from './where.js';
+import { Select } from './select.js';
 
 export class QueryClass<
   T extends QueryType,
   I extends StateDefinition,
   O extends StateDefinition,
 > implements
-    SelectQuery<any, I, O, any>, // eslint-disable-line @typescript-eslint/no-explicit-any
+    RetriveQuery<any, I, O, any>, // eslint-disable-line @typescript-eslint/no-explicit-any
     FilterQuery<I>,
     UniqueQuery<any, I, O, any>, // eslint-disable-line @typescript-eslint/no-explicit-any
     LimitQuery,
@@ -43,7 +44,7 @@ export class QueryClass<
   }
 
   select<P extends Select<O>>(select?: Subset<P, Select<O>>): this {
-    (this.options as SelectQueryOptions<O>).select = select;
+    (this.options as RetriveQueryOptions<O>).select = select;
     return this;
   }
 
@@ -71,7 +72,7 @@ export class QueryClass<
       >;
     }
 
-    const options = this.options as SelectQueryOptions<O>;
+    const options = this.options as RetriveQueryOptions<O>;
 
     if (!options.includeMany) {
       options.includeMany = {};
@@ -105,7 +106,7 @@ export class QueryClass<
       >;
     }
 
-    const options = this.options as SelectQueryOptions<O>;
+    const options = this.options as RetriveQueryOptions<O>;
 
     if (!options.includeOne) {
       options.includeOne = {};
@@ -139,7 +140,7 @@ export class QueryClass<
       >;
     }
 
-    const options = this.options as SelectQueryOptions<O>;
+    const options = this.options as RetriveQueryOptions<O>;
 
     if (!options.requireOne) {
       options.requireOne = {};
