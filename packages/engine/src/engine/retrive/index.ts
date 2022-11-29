@@ -6,11 +6,8 @@ import { convertSelectQuery } from './select.js';
 
 export const convertRetriveQuery = <S extends StateDefinition>(
   collection: MetadataCollection,
-  { select, requireOne, includeOne, includeMany }: RetriveQueryOptions<S>,
-): Pick<
-  StoreFindOptions,
-  'select' | 'includeMany' | 'includeFirst' | 'requireFirst'
-> => ({
+  { select }: RetriveQueryOptions<S>,
+): Pick<StoreFindOptions, 'select'> => ({
   ...(select != null
     ? { select: convertSelectQuery(collection, select) }
     : null),

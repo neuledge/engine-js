@@ -27,12 +27,10 @@ export const resolvers = {
       { limit, offset }: CategoryPostsArgs,
     ): Promise<PublishedPost[]> =>
       engine
-        .findUniqueOrThrow(Category)
-        .unique({ id })
-        .includeMany('posts', [PublishedPost], (rel) =>
-          rel.limit(limit ?? null).offset(offset ?? null),
-        )
-        .then((res) => res.posts),
+        .findMany(PublishedPost)
+        .where({ category: { $eq: { id } } })
+        .limit(limit ?? null)
+        .offset(offset ?? null),
   },
 
   Query: {

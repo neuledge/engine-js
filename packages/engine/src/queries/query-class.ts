@@ -1,10 +1,7 @@
 import {
   StateDefinition,
   StateDefinitionMatchKeys,
-  StateDefinitionIncludeManyKeys,
-  StateDefinitionIncludeOneKeys,
   StateDefinitionRelationState,
-  StateDefinitionRequireOneKeys,
 } from '@/definitions/index.js';
 import { EntityListOffset } from '@/list.js';
 import { ExecQuery, ExecQueryOptions } from './exec.js';
@@ -13,8 +10,6 @@ import { LimitQuery, LimitQueryOptions } from './limit.js';
 import { MatchQuery } from './match.js';
 import { OffsetQuery, OffsetQueryOptions } from './offset.js';
 import { QueryOptions, QueryType } from './query.js';
-import { SelectManyQuery } from './select-many.js';
-import { SelectOneQuery } from './select-one.js';
 import { RetriveQuery, RetriveQueryOptions } from './retrive.js';
 import { SortField, SortIndex, SortQueryOptions } from './sort.js';
 import { UniqueQuery, UniqueQueryOptions } from './unique.js';
@@ -48,107 +43,107 @@ export class QueryClass<
     return this;
   }
 
-  includeMany<K extends StateDefinitionIncludeManyKeys<O>>(
-    key: K,
-    states?: StateDefinitionRelationState<O, K>[] | null,
-    query?: (
-      query: SelectManyQuery<StateDefinitionRelationState<O, K>>,
-    ) => SelectManyQuery<StateDefinitionRelationState<O, K>, unknown>,
-  ): this {
-    let rel: QueryClass<
-      'SelectMany',
-      StateDefinitionRelationState<O, K>,
-      StateDefinitionRelationState<O, K>
-    > = new QueryClass({
-      type: 'SelectMany',
-      states: states ?? undefined,
-    });
+  //   includeMany<K extends StateDefinitionIncludeManyKeys<O>>(
+  //     key: K,
+  //     states?: StateDefinitionRelationState<O, K>[] | null,
+  //     query?: (
+  //       query: SelectManyQuery<StateDefinitionRelationState<O, K>>,
+  //     ) => SelectManyQuery<StateDefinitionRelationState<O, K>, unknown>,
+  //   ): this {
+  //     let rel: QueryClass<
+  //       'SelectMany',
+  //       StateDefinitionRelationState<O, K>,
+  //       StateDefinitionRelationState<O, K>
+  //     > = new QueryClass({
+  //       type: 'SelectMany',
+  //       states: states ?? undefined,
+  //     });
+  //
+  //     if (query) {
+  //       rel = query(rel) as QueryClass<
+  //         'SelectMany',
+  //         StateDefinitionRelationState<O, K>,
+  //         StateDefinitionRelationState<O, K>
+  //       >;
+  //     }
+  //
+  //     const options = this.options as RetriveQueryOptions<O>;
+  //
+  //     if (!options.includeMany) {
+  //       options.includeMany = {};
+  //     }
+  //     options.includeMany[key] = rel.options;
+  //
+  //     return this;
+  //   }
 
-    if (query) {
-      rel = query(rel) as QueryClass<
-        'SelectMany',
-        StateDefinitionRelationState<O, K>,
-        StateDefinitionRelationState<O, K>
-      >;
-    }
+  //   includeOne<K extends StateDefinitionIncludeOneKeys<O>>(
+  //     key: K,
+  //     states?: StateDefinitionRelationState<O, K>[] | null,
+  //     query?: (
+  //       rel: SelectOneQuery<StateDefinitionRelationState<O, K>>,
+  //     ) => SelectOneQuery<StateDefinitionRelationState<O, K>, unknown>,
+  //   ): this {
+  //     let rel: QueryClass<
+  //       'SelectOne',
+  //       StateDefinitionRelationState<O, K>,
+  //       StateDefinitionRelationState<O, K>
+  //     > = new QueryClass({
+  //       type: 'SelectOne',
+  //       states: states ?? undefined,
+  //     });
+  //
+  //     if (query) {
+  //       rel = query(rel) as QueryClass<
+  //         'SelectOne',
+  //         StateDefinitionRelationState<O, K>,
+  //         StateDefinitionRelationState<O, K>
+  //       >;
+  //     }
+  //
+  //     const options = this.options as RetriveQueryOptions<O>;
+  //
+  //     if (!options.includeOne) {
+  //       options.includeOne = {};
+  //     }
+  //     options.includeOne[key] = rel.options;
+  //
+  //     return this;
+  //   }
 
-    const options = this.options as RetriveQueryOptions<O>;
-
-    if (!options.includeMany) {
-      options.includeMany = {};
-    }
-    options.includeMany[key] = rel.options;
-
-    return this;
-  }
-
-  includeOne<K extends StateDefinitionIncludeOneKeys<O>>(
-    key: K,
-    states?: StateDefinitionRelationState<O, K>[] | null,
-    query?: (
-      rel: SelectOneQuery<StateDefinitionRelationState<O, K>>,
-    ) => SelectOneQuery<StateDefinitionRelationState<O, K>, unknown>,
-  ): this {
-    let rel: QueryClass<
-      'SelectOne',
-      StateDefinitionRelationState<O, K>,
-      StateDefinitionRelationState<O, K>
-    > = new QueryClass({
-      type: 'SelectOne',
-      states: states ?? undefined,
-    });
-
-    if (query) {
-      rel = query(rel) as QueryClass<
-        'SelectOne',
-        StateDefinitionRelationState<O, K>,
-        StateDefinitionRelationState<O, K>
-      >;
-    }
-
-    const options = this.options as RetriveQueryOptions<O>;
-
-    if (!options.includeOne) {
-      options.includeOne = {};
-    }
-    options.includeOne[key] = rel.options;
-
-    return this;
-  }
-
-  requireOne<K extends StateDefinitionRequireOneKeys<O>>(
-    key: K,
-    states?: StateDefinitionRelationState<O, K>[] | null,
-    query?: (
-      rel: SelectOneQuery<StateDefinitionRelationState<O, K>>,
-    ) => SelectOneQuery<StateDefinitionRelationState<O, K>, unknown>,
-  ): this {
-    let rel: QueryClass<
-      'SelectOne',
-      StateDefinitionRelationState<O, K>,
-      StateDefinitionRelationState<O, K>
-    > = new QueryClass({
-      type: 'SelectOne',
-      states: states ?? undefined,
-    });
-
-    if (query) {
-      rel = query(rel) as QueryClass<
-        'SelectOne',
-        StateDefinitionRelationState<O, K>,
-        StateDefinitionRelationState<O, K>
-      >;
-    }
-
-    const options = this.options as RetriveQueryOptions<O>;
-
-    if (!options.requireOne) {
-      options.requireOne = {};
-    }
-    options.requireOne[key] = rel.options;
-
-    return this;
-  }
+  //   requireOne<K extends StateDefinitionRequireOneKeys<O>>(
+  //     key: K,
+  //     states?: StateDefinitionRelationState<O, K>[] | null,
+  //     query?: (
+  //       rel: SelectOneQuery<StateDefinitionRelationState<O, K>>,
+  //     ) => SelectOneQuery<StateDefinitionRelationState<O, K>, unknown>,
+  //   ): this {
+  //     let rel: QueryClass<
+  //       'SelectOne',
+  //       StateDefinitionRelationState<O, K>,
+  //       StateDefinitionRelationState<O, K>
+  //     > = new QueryClass({
+  //       type: 'SelectOne',
+  //       states: states ?? undefined,
+  //     });
+  //
+  //     if (query) {
+  //       rel = query(rel) as QueryClass<
+  //         'SelectOne',
+  //         StateDefinitionRelationState<O, K>,
+  //         StateDefinitionRelationState<O, K>
+  //       >;
+  //     }
+  //
+  //     const options = this.options as RetriveQueryOptions<O>;
+  //
+  //     if (!options.requireOne) {
+  //       options.requireOne = {};
+  //     }
+  //     options.requireOne[key] = rel.options;
+  //
+  //     return this;
+  //   }
 
   unique(where: UniqueWhere<I>): this {
     (this.options as UniqueQueryOptions<I>).unique = where;

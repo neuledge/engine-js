@@ -11,12 +11,7 @@ import {
   StoreListOffset,
   StoreSelect,
 } from './document.js';
-import {
-  StoreMatch,
-  StoreRequireFirst,
-  StoreIncludeFirst,
-  StoreIncludeMany,
-} from './relation.js';
+import { StoreMatch } from './relation.js';
 import { StoreSort } from './sort.js';
 import { StoreWhere } from './where.js';
 
@@ -60,9 +55,9 @@ export interface StoreFindOptions {
   select?: StoreSelect;
   where?: StoreWhere;
   match?: StoreMatch;
-  requireFirst?: StoreRequireFirst;
-  includeFirst?: StoreIncludeFirst;
-  includeMany?: StoreIncludeMany;
+  // requireFirst?: StoreRequireFirst;
+  // includeFirst?: StoreIncludeFirst;
+  // includeMany?: StoreIncludeMany;
   limit: number;
   offset?: StoreListOffset;
   sort?: StoreSort;
