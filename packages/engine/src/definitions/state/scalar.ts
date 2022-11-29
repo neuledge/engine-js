@@ -1,7 +1,8 @@
 import { Scalar } from '@neuledge/scalars';
 import { StateDefinition } from './state.js';
 
-export type StateDefintionScalar<V = unknown> = {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type StateDefintionScalar<V = any> = {
   type: StateDefinitionScalarType<NonNullable<V>>;
   index: number;
   nullable?: boolean;
@@ -13,7 +14,8 @@ export type StateDefinitionScalarType<V> =
 
 export const isStateDefinitionScalarTypeScalar = <V>(
   type: StateDefinitionScalarType<V>,
-): type is Scalar<V> => !Array.isArray(type);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+): type is Scalar<V, any, any> => !Array.isArray(type);
 
 export const isStateDefinitionScalarTypeStates = <V>(
   type: StateDefinitionScalarType<V>,

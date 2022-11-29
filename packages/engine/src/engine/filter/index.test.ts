@@ -118,12 +118,13 @@ describe('engine/filter', () => {
         }),
       ).toEqual({
         match: {
-          // FIXME return match
-          // category: {
-          //   collectionName: 'categories',
-          //   relation: { category: 'id' },
-          //   where: { id: { $eq: 1 } },
-          // },
+          category: [
+            {
+              collectionName: 'categories',
+              by: { category_id: 'id' },
+              where: { id: { $eq: 1 } },
+            },
+          ],
         },
       });
     });

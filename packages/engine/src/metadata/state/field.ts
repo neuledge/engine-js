@@ -1,5 +1,6 @@
 import {
-  isStateDefinitionScalarTypeStates,
+  fromSortedField,
+  isStateDefinitionScalarTypeScalar,
   resolveDefer,
   StateDefintionScalar,
 } from '@/definitions/index.js';
@@ -28,49 +29,64 @@ export const getMetadataStateFieldKey = (
 export const getScalarFields = (
   name: string,
   path: string,
-  def: StateDefintionScalar,
+  scalarDef: StateDefintionScalar,
   parentIndexes: number[] = [],
 ): MetadataStateField[] => {
-  const { type, index, nullable } = def;
+  const { type, index, nullable } = scalarDef;
 
   const indexes = [...parentIndexes, index];
 
-  if (isStateDefinitionScalarTypeStates(type)) {
-    const fieldMap = new Map<string, MetadataStateField>();
-
-    for (const child of type) {
-      const childDef = resolveDefer(child.$scalars);
-
-      for (const sortKey of child.$id) {
-        // FIXME use function from metadata/state/field.ts
-        const id = (sortKey as string).slice(1);
-
-        for (const item of getScalarFields(
-          `${name}_${id}`,
-          `${path}.${id}`,
-          childDef[id as never],
-          indexes,
-        )) {
-          const mapKey = getMetadataStateFieldKey(item);
-          const value = fieldMap.get(mapKey);
-
-          if (!value?.nullable) {
-            fieldMap.set(mapKey, item);
-          }
-        }
-      }
-    }
-
-    return [...fieldMap.values()];
+  if (isStateDefinitionScalarTypeScalar(type)) {
+    return [
+      {
+        name,
+        path,
+        indexes,
+        type,
+        nullable: nullable ?? false,
+      },
+    ];
   }
 
-  return [
-    {
-      name,
-      path,
-      indexes,
-      type,
-      nullable: nullable ?? false,
-    },
-  ];
+  const fieldMap = new Map<string, MetadataStateField>();
+  const refCount = new Map<string, number>();
+
+  for (const childState of type) {
+    const scalars = resolveDefer(childState.$scalars);
+
+    for (const sortKey of childState.$id) {
+      const id = fromSortedField(sortKey);
+      const childScalarDef = scalars[id];
+
+      const scalarFields = getScalarFields(
+        `${name}_${id}`,
+        `${path}.${id}`,
+        childScalarDef,
+        indexes,
+      );
+
+      for (const item of scalarFields) {
+        const mapKey = getMetadataStateFieldKey(item);
+        const value = fieldMap.get(mapKey);
+
+        if (!value || (!value.nullable && item.nullable)) {
+          // prefer nullable fields
+          fieldMap.set(mapKey, item);
+        }
+
+        refCount.set(mapKey, (refCount.get(mapKey) ?? 0) + 1);
+      }
+    }
+  }
+
+  // set field to nullable if it is not referenced by all states
+  for (const [key, field] of fieldMap) {
+    if (field.nullable || refCount.get(key) === type.length) {
+      continue;
+    }
+
+    field.nullable = true;
+  }
+
+  return [...fieldMap.values()];
 };
