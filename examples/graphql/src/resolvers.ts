@@ -1,5 +1,10 @@
-import { Category, DraftPost, Post, PublishedPost } from './states/states.js';
-import { engine } from './states/engine.js';
+import {
+  Category,
+  DraftPost,
+  engine,
+  Post,
+  PublishedPost,
+} from './states/index.js';
 import {
   CategoryPostsArgs,
   MutationCreateCategoryArgs,

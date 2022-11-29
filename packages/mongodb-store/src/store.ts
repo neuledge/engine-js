@@ -2,7 +2,6 @@ import {
   Store,
   StoreDeleteOptions,
   StoreUpdateOptions,
-  StoreStatus,
   StoreList,
   StoreMutationResponse,
   StoreInsertOptions,
@@ -35,7 +34,6 @@ export interface MongoDBStoreDbOptions extends DbOptions {
 export class MongoDBStore implements Store {
   private readonly client: MongoClient;
   private readonly db: Db;
-  private _status: StoreStatus = StoreStatus.DISCONNECTED;
 
   constructor(
     client: string | MongoDBStoreClientOptions,
@@ -61,36 +59,12 @@ export class MongoDBStore implements Store {
         : db;
   }
 
-  get status(): StoreStatus {
-    return this._status;
-  }
-
   async connect(): Promise<void> {
-    const prev = this._status;
-    this._status = StoreStatus.CONNECTING;
-
-    try {
-      await this.client.connect();
-    } catch (error) {
-      this._status = prev;
-      throw error;
-    }
-
-    this._status = StoreStatus.CONNECTED;
+    await this.client.connect();
   }
 
   async close(): Promise<void> {
-    const prev = this._status;
-    this._status = StoreStatus.DISCONNECTING;
-
-    try {
-      await this.client.close();
-    } catch (error) {
-      this._status = prev;
-      throw error;
-    }
-
-    this._status = StoreStatus.DISCONNECTED;
+    await this.client.close();
   }
 
   async listCollections(): Promise<StoreCollection_Slim[]> {

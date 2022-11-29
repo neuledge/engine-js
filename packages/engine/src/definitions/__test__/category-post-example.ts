@@ -21,9 +21,9 @@ export class Category {
   static $unique: {
     id: number;
   };
-  // static $relations = () => ({
-  //   posts: [[...Post]] as const,
-  // });
+  static $relations = () => ({
+    posts: [[...Post]] as const,
+  });
 
   id!: number;
   name!: string;
