@@ -37,8 +37,11 @@ export const toEntityOrThrow = <S extends StateDefinition>(
 const toEntity = <S extends StateDefinition>(
   metadata: Metadata,
   document: StoreDocument,
+  prefix = '',
 ): Entity<S> => {
-  const stateHash = document[ENTITY_METADATA_HASH_FIELD] as Buffer;
+  const stateHash = document[
+    `${prefix}${ENTITY_METADATA_HASH_FIELD}`
+  ] as Buffer;
 
   const state = metadata.findStateByHash(stateHash);
   if (!state) {
@@ -50,15 +53,23 @@ const toEntity = <S extends StateDefinition>(
   } as Entity<S>;
 
   for (const field of state.fields) {
-    if (!(field.name in document) || !field.path) continue;
+    const key = `${prefix}${field.name}`;
+    if (!(key in document) || !field.path) continue;
 
-    const rawValue = document[field.name];
+    const rawValue = document[key];
     const value = field.type.decode ? field.type.decode(rawValue) : rawValue;
 
     setEntityValue(entity, field.path, value);
   }
 
-  // FIXME populate relations
+  for (const relation of state.relations) {
+    const key = `${prefix}${relation.name}`;
+    if (!(key in document) || !relation.path) continue;
+
+    const childEntity = toEntity(metadata, document, `${key}_`);
+
+    setEntityValue(entity, relation.path, childEntity);
+  }
 
   return entity;
 };

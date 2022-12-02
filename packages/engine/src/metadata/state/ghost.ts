@@ -5,6 +5,7 @@ import { getMetadataStateFieldKey, MetadataGhostStateField } from './field.js';
 export type MetadataStateHash = Buffer;
 
 export interface MetadataGhostStateRelation {
+  name: string;
   states: MetadataGhostState[];
   path?: string;
   index: number;

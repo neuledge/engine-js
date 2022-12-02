@@ -25,6 +25,7 @@ interface StoreMetadataStateField {
 }
 
 interface StoreMetadataStateRelation {
+  name: string;
   stateHashes: Buffer[];
   index: number;
 }
@@ -87,6 +88,7 @@ const fromStoreMetadataStateRelation = (
   getState: (hash: Buffer) => MetadataGhostState,
   relation: StoreMetadataStateRelation,
 ): MetadataGhostStateRelation => ({
+  name: relation.name,
   states: relation.stateHashes.map((hash) => getState(hash)),
   index: relation.index,
 });
@@ -94,6 +96,7 @@ const fromStoreMetadataStateRelation = (
 const toStoreMetadataStateRelation = (
   relation: MetadataGhostStateRelation,
 ): StoreMetadataStateRelation => ({
+  name: relation.name,
   stateHashes: relation.states.map((state) => state.hash),
   index: relation.index,
 });

@@ -71,6 +71,7 @@ const getScalarRelations = (
   Array.isArray(def.type)
     ? [
         {
+          name: key,
           states: def.type.map((state) =>
             MetadataState.fromDefinition(ctx, state),
           ),

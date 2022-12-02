@@ -3,7 +3,7 @@ import { LimitQueryOptions } from '@/queries/index.js';
 import { StoreFindOptions, StoreList } from '@/store/index.js';
 import { toEntityList } from './entity.js';
 
-const DEFAULT_QUERY_LIMIT = 100;
+const DEFAULT_QUERY_LIMIT = 1000;
 
 export const convertLimitQuery = (
   options: LimitQueryOptions,
@@ -17,9 +17,12 @@ export const toLimitedEntityList = (
   list: StoreList,
 ) => {
   if (options.limit == null && list.length >= DEFAULT_QUERY_LIMIT) {
-    throw new RangeError(
-      "Too many documents found without a predefined limit. If that's intentional, please set the limit option with a high enough value.",
-    );
+    // eslint-disable-next-line no-console
+    console.warn(`Warning: Too many documents found without an explicit limit. A default limit of ${DEFAULT_QUERY_LIMIT} 
+    was applied. Consider adding a limit to your query.`);
+
+    // eslint-disable-next-line no-console
+    console.trace(`Your query can be found here:`);
   }
 
   return toEntityList(metadata, list);
