@@ -37,12 +37,18 @@ export const toEntityOrThrow = <S extends StateDefinition>(
 const toEntity = <S extends StateDefinition>(
   metadata: Metadata,
   document: StoreDocument,
+): Entity<S> => {
+  const stateHash = document[ENTITY_METADATA_HASH_FIELD] as Buffer;
+
+  return getStateEntity(metadata, stateHash, document);
+};
+
+const getStateEntity = <S extends StateDefinition>(
+  metadata: Metadata,
+  stateHash: Buffer,
+  document: StoreDocument,
   prefix = '',
 ): Entity<S> => {
-  const stateHash = document[
-    `${prefix}${ENTITY_METADATA_HASH_FIELD}`
-  ] as Buffer;
-
   const state = metadata.findStateByHash(stateHash);
   if (!state) {
     throw new Error(`Entity state not found: ${stateHash.toString('base64')}`);
@@ -64,9 +70,20 @@ const toEntity = <S extends StateDefinition>(
 
   for (const relation of state.relations) {
     const key = `${prefix}${relation.name}`;
-    if (!(key in document) || !relation.path) continue;
+    if (!relation.path) continue;
 
-    const childEntity = toEntity(metadata, document, `${key}_`);
+    const stateHash = document[`${key}_${ENTITY_METADATA_HASH_FIELD}`] as
+      | Buffer
+      | undefined;
+
+    if (!stateHash) continue;
+
+    const childEntity = getStateEntity(
+      metadata,
+      stateHash,
+      document,
+      `${key}_`,
+    );
 
     setEntityValue(entity, relation.path, childEntity);
   }
