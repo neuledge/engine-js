@@ -2076,10 +2076,10 @@
     "@jridgewell/resolve-uri" "3.1.0"
     "@jridgewell/sourcemap-codec" "1.4.14"
 
-"@neuledge/eslint-config@^1.0.0-alpha.7":
-  version "1.0.0-alpha.7"
-  resolved "https://registry.yarnpkg.com/@neuledge/eslint-config/-/eslint-config-1.0.0-alpha.7.tgz#36b1994f136d3b13370a31f118cc45d6d2016766"
-  integrity sha512-7UqhL8tTrvZcvAKsezVdI4DC7Hl4nooelmQuiB3pwUCPGzC9HsK0TR4XE5eARSLfs03NivLFtY0NErroGnpX5Q==
+"@neuledge/eslint-config@^1.0.0-alpha.9":
+  version "1.0.0-alpha.9"
+  resolved "https://registry.yarnpkg.com/@neuledge/eslint-config/-/eslint-config-1.0.0-alpha.9.tgz#8c88d5f940c827d48a4ce81477538a65405404e4"
+  integrity sha512-M9LqPWX7HKYLWm9DAFUHotRVZRehK4is6XNF+JuR5IyE+8aXJ7dyt4ObTZ/ngR1l1MFbeDgZJjHTpHaFV/ngOQ==
   dependencies:
     "@typescript-eslint/eslint-plugin" "^5.30.7"
     "@typescript-eslint/parser" "^5.30.7"
@@ -2089,6 +2089,18 @@
     eslint-plugin-prefer-arrow "^1.2.3"
     eslint-plugin-prettier "^4.2.1"
     eslint-plugin-unicorn "^43.0.2"
+
+"@neuledge/jest-preset@^1.0.0-alpha.9":
+  version "1.0.0-alpha.9"
+  resolved "https://registry.yarnpkg.com/@neuledge/jest-preset/-/jest-preset-1.0.0-alpha.9.tgz#9c09714c00498bef8a63c032858c9fc978506028"
+  integrity sha512-RAIM/v4RcWcj6XV9SGkgN3fYgStG58qA8x380t4JFJmP5mkuYa0LXYyCbcGn4xBsK5uiWWGaMV6DXjtkHDcxyA==
+  dependencies:
+    ts-jest ">= 29.0.3"
+
+"@neuledge/tsconfig@^1.0.0-alpha.9":
+  version "1.0.0-alpha.9"
+  resolved "https://registry.yarnpkg.com/@neuledge/tsconfig/-/tsconfig-1.0.0-alpha.9.tgz#166efdb3b6049bfd30591814b0f2a256e1c78066"
+  integrity sha512-itxTrMs+5WR2e/ivgBpKZE75W71zPlEMSrAVrp4rJ8TOFUO7Yx2kJ1s0gzDHfTkqXYqgXfGXzFNftnhc9RSGvA==
 
 "@nodelib/fs.scandir@2.1.5":
   version "2.1.5"
@@ -7186,7 +7198,7 @@ ts-interface-checker@^0.1.9:
   resolved "https://registry.yarnpkg.com/ts-interface-checker/-/ts-interface-checker-0.1.13.tgz#784fd3d679722bc103b1b4b8030bcddb5db2a699"
   integrity sha512-Y/arvbn+rrz3JCKl9C4kVNfTfSm2/mEp5FSz5EsZSANGPSlQrpRI5M4PKF+mJnE52jOO90PnPSc3Ur3bTQw0gA==
 
-ts-jest@^29.0.3:
+"ts-jest@>= 29.0.3":
   version "29.0.3"
   resolved "https://registry.yarnpkg.com/ts-jest/-/ts-jest-29.0.3.tgz#63ea93c5401ab73595440733cefdba31fcf9cb77"
   integrity sha512-Ibygvmuyq1qp/z3yTh9QTwVVAbFdDy/+4BtIQR2sp6baF2SJU/8CKK/hhnGIDY2L90Az2jIqTwZPnN2p+BweiQ==

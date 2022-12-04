@@ -1,8 +1,0 @@
-{
-  "name": "@neuledge/tsconfig",
-  "version": "0.0.0",
-  "private": true,
-  "peerDependencies": {
-    "typescript": ">= 4.5"
-  }
-}

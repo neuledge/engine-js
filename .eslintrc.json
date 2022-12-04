@@ -1,6 +1,5 @@
 {
   "extends": "@neuledge",
-  "ignorePatterns": ["dist", "node_modules", "__ignore__", "*.codegen.ts"],
   "rules": {
     // https://github.com/jest-community/eslint-plugin-jest/issues/1299
     "jest/valid-expect": "off"
