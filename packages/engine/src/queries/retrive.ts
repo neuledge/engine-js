@@ -1,8 +1,8 @@
-import { ProjectedEntity } from '@/entity.js';
-import { StateDefinition } from '@/definitions/index.js';
-import { Query, QueryMode } from './query.js';
-import { Subset } from './utils.js';
-import { Select } from './select.js';
+import { ProjectedEntity } from '@/entity';
+import { StateDefinition } from '@/definitions';
+import { Query, QueryMode } from './query';
+import { Subset } from './utils';
+import { Select } from './select';
 
 // TODO retrive query: support 'includeMany', 'includeOne' and 'requireOne'
 

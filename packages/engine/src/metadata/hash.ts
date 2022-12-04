@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto';
-import { METADATA_HASH_BYTES } from './constants.js';
+import { METADATA_HASH_BYTES } from './constants';
 
 const HASH_ALGORITHM = 'sha512';
 

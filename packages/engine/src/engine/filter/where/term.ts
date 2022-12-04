@@ -1,7 +1,7 @@
 import { Scalar } from '@neuledge/scalars';
 import equal from 'fast-deep-equal/es6';
-import { StateDefinitionWhereTerm } from '@/definitions/index.js';
-import { StoreWhereRecord, StoreWhereTerm } from '@/store/index.js';
+import { StateDefinitionWhereTerm } from '@/definitions';
+import { StoreWhereRecord, StoreWhereTerm } from '@/store';
 
 export const convertWhereScalarTerm = (
   scalar: Scalar,

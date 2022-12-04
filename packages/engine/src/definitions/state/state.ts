@@ -1,7 +1,7 @@
-import { Defer, Deferred } from './defer.js';
-import { StateDefintionScalar } from './scalar.js';
-import { SortDefinition, SortDefinitionKey } from './sort.js';
-import { StateDefinitionWhere } from './where.js';
+import { Defer, Deferred } from './defer';
+import { StateDefintionScalar } from './scalar';
+import { SortDefinition, SortDefinitionKey } from './sort';
+import { StateDefinitionWhere } from './where';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export interface StateDefinition<N extends string = string, T = any> {

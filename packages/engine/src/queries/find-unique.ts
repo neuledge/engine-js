@@ -1,10 +1,10 @@
-import { Entity } from '@/entity.js';
-import { StateDefinition } from '@/definitions/index.js';
-import { ExecQuery, ExecQueryOptions } from './exec.js';
-import { RetriveQuery, RetriveQueryOptions } from './retrive.js';
-import { FilterQuery, FilterQueryOptions } from './filter.js';
-import { UniqueQuery, UniqueQueryOptions } from './unique.js';
-import { RootQueryOptions } from './type.js';
+import { Entity } from '@/entity';
+import { StateDefinition } from '@/definitions';
+import { ExecQuery, ExecQueryOptions } from './exec';
+import { RetriveQuery, RetriveQueryOptions } from './retrive';
+import { FilterQuery, FilterQueryOptions } from './filter';
+import { UniqueQuery, UniqueQueryOptions } from './unique';
+import { RootQueryOptions } from './type';
 
 export interface FindUniqueQuery<S extends StateDefinition, R = Entity<S>>
   extends RetriveQuery<'FindUnique', S, S, R>,

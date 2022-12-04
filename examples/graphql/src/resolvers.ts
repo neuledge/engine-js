@@ -1,10 +1,4 @@
-import {
-  Category,
-  DraftPost,
-  engine,
-  Post,
-  PublishedPost,
-} from './states/index.js';
+import { Category, DraftPost, Post, PublishedPost } from './states.codegen';
 import {
   CategoryPostsArgs,
   MutationCreateCategoryArgs,
@@ -16,7 +10,8 @@ import {
   MutationUpdatePostArgs,
   QueryCategoryArgs,
   QueryPostArgs,
-} from './schema.codegen.js';
+} from './schema.codegen';
+import { engine } from './engine';
 
 type P = unknown;
 

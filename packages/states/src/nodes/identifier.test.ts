@@ -1,5 +1,5 @@
-import { Tokenizer } from '@/tokenizer.js';
-import { IdentifierNode, parseIdentifierNode } from './identifier.js';
+import { Tokenizer } from '@/tokenizer';
+import { IdentifierNode, parseIdentifierNode } from './identifier';
 
 describe('ast/identifier', () => {
   describe('parseIdentifierNode()', () => {
@@ -12,7 +12,7 @@ describe('ast/identifier', () => {
         end: 3,
         name: 'foo',
       });
-      expect(cursor.current).toBe(undefined);
+      expect(cursor.current).toBeUndefined();
     });
 
     it('should throw on number token', () => {

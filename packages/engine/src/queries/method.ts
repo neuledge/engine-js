@@ -2,7 +2,7 @@ import {
   StateDefinition,
   StateDefinitionMutationArguments,
   StateDefintionMutations,
-} from '@/definitions/index.js';
+} from '@/definitions';
 
 export interface MethodQueryOptions<M extends string | number | symbol> {
   method: M;

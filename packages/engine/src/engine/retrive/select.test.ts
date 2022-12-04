@@ -1,9 +1,6 @@
-import {
-  Category,
-  Post,
-} from '@/definitions/__test__/category-post-example.js';
-import { Metadata, MetadataCollection } from '@/metadata/index.js';
-import { convertSelectQuery } from './select.js';
+import { Category, Post } from '@/definitions/__test__/category-post-example';
+import { Metadata, MetadataCollection } from '@/metadata';
+import { convertSelectQuery } from './select';
 
 describe('engine/retrive/select', () => {
   describe('convertSelectQuery', () => {

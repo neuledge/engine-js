@@ -1,6 +1,6 @@
-import { MetadataSchema, MetadataStateField } from '@/metadata/index.js';
+import { MetadataSchema, MetadataStateField } from '@/metadata';
 import { NumberScalar } from '@neuledge/scalars';
-import { convertWhereRecord } from './record.js';
+import { convertWhereRecord } from './record';
 
 /* eslint-disable max-lines-per-function */
 

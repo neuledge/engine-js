@@ -2,7 +2,7 @@ import {
   StateDefinition,
   StateDefinitionRelations,
   StateDefinitionType,
-} from './state/index.js';
+} from './state';
 
 export type StateDefinitionMatchKeys<S extends StateDefinition> =
   keyof StateDefinitionRelations<S>;

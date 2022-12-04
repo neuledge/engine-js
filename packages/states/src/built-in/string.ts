@@ -1,4 +1,4 @@
-import { BuiltInScalar } from './scalar.js';
+import { BuiltInScalar } from './scalar';
 
 export const StringScalar: BuiltInScalar<'String'> = {
   type: 'BuiltInScalar',

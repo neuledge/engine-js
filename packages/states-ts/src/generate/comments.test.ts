@@ -1,4 +1,4 @@
-import { generateDescriptionComment } from './comments.js';
+import { generateDescriptionComment } from './comments';
 
 /* eslint-disable max-lines-per-function */
 

@@ -1,4 +1,4 @@
-import { MetadataCollectionFieldMap } from '@/metadata/index.js';
+import { MetadataCollectionFieldMap } from '@/metadata';
 
 export const getRecursiveWhereFields = function* (
   fieldMap: MetadataCollectionFieldMap,

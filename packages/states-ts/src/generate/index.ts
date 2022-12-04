@@ -1,5 +1,5 @@
 import { EntityNode, States } from '@neuledge/states';
-import { generateState } from './state.js';
+import { generateState } from './state';
 
 // TODO escape conflicted helper names like `$id<>`, etc.
 

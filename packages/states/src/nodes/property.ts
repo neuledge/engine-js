@@ -1,6 +1,6 @@
-import { AbstractNode } from './abstract.js';
-import { ExpressionNode, MemberExpressionNode } from './expressions/index.js';
-import { IdentifierNode } from './identifier.js';
+import { AbstractNode } from './abstract';
+import { ExpressionNode, MemberExpressionNode } from './expressions';
+import { IdentifierNode } from './identifier';
 
 export type ReturnBodyNode = PropertyNode | SpreadElementNode;
 

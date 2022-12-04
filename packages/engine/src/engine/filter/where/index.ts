@@ -1,11 +1,8 @@
-import {
-  StateDefinition,
-  StateDefinitionWhereRecord,
-} from '@/definitions/index.js';
-import { MetadataSchema } from '@/metadata/index.js';
-import { StoreWhere, StoreWhereRecord } from '@/store/index.js';
-import { Where } from '@/queries/index.js';
-import { convertWhereRecord } from './record.js';
+import { StateDefinition, StateDefinitionWhereRecord } from '@/definitions';
+import { MetadataSchema } from '@/metadata';
+import { StoreWhere, StoreWhereRecord } from '@/store';
+import { Where } from '@/queries';
+import { convertWhereRecord } from './record';
 
 export const convertWhere = <S extends StateDefinition>(
   schema: MetadataSchema,

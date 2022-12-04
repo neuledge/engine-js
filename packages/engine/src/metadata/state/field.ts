@@ -3,7 +3,7 @@ import {
   isStateDefinitionScalarTypeScalar,
   resolveDefer,
   StateDefintionScalar,
-} from '@/definitions/index.js';
+} from '@/definitions';
 import { Scalar } from '@neuledge/scalars';
 
 export interface MetadataGhostStateField {

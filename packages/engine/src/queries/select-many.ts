@@ -1,11 +1,11 @@
-import { Entity } from '@/entity.js';
-import { StateDefinition } from '@/definitions/index.js';
-import { FilterQuery, FilterQueryOptions } from './filter.js';
-import { LimitQuery, LimitQueryOptions } from './limit.js';
-import { OffsetQuery, OffsetQueryOptions } from './offset.js';
-import { RetriveQuery, RetriveQueryOptions } from './retrive.js';
-import { SortQuery, SortQueryOptions } from './sort.js';
-import { ChildQueryOptions } from './type.js';
+import { Entity } from '@/entity';
+import { StateDefinition } from '@/definitions';
+import { FilterQuery, FilterQueryOptions } from './filter';
+import { LimitQuery, LimitQueryOptions } from './limit';
+import { OffsetQuery, OffsetQueryOptions } from './offset';
+import { RetriveQuery, RetriveQueryOptions } from './retrive';
+import { SortQuery, SortQueryOptions } from './sort';
+import { ChildQueryOptions } from './type';
 
 export interface SelectManyQuery<S extends StateDefinition, R = Entity<S>>
   extends RetriveQuery<'SelectMany', S, S, R>,

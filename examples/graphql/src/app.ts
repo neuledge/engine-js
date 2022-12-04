@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import mercurius from 'mercurius';
 import { fileURLToPath } from 'node:url';
 import { resolve } from 'node:path';
-import { resolvers } from './resolvers.js';
+import { resolvers } from './resolvers';
 
 const app = Fastify();
 
@@ -13,7 +13,7 @@ const schemaFile = resolve(
 );
 const schema = fs.readFileSync(schemaFile, { encoding: 'utf8' });
 
-app.register(mercurius.default, {
+app.register(mercurius, {
   schema,
   resolvers,
 });

@@ -1,5 +1,5 @@
-import { resolveDefer, StateDefinition } from '@/definitions/index.js';
-import { Metadata, MetadataCollection } from '@/metadata/index.js';
+import { resolveDefer, StateDefinition } from '@/definitions';
+import { Metadata, MetadataCollection } from '@/metadata';
 
 export const chooseStatesCollection = <S extends StateDefinition>(
   metadata: Metadata,

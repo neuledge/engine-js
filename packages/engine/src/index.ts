@@ -1,8 +1,8 @@
-export * from './definitions/index.js';
-export * from './queries/index.js';
-export * from './engine/index.js';
-export * from './entity.js';
-export * from './list.js';
-export * from './store/index.js';
+export * from './definitions';
+export * from './queries';
+export * from './engine';
+export * from './entity';
+export * from './list';
+export * from './store';
 
-export * as $ from './escaped.js';
+export * as $ from './escaped';

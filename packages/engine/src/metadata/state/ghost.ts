@@ -1,6 +1,6 @@
-import { StateDefinition } from '@/definitions/index.js';
-import { generateHash } from '../hash.js';
-import { getMetadataStateFieldKey, MetadataGhostStateField } from './field.js';
+import { StateDefinition } from '@/definitions';
+import { generateHash } from '../hash';
+import { getMetadataStateFieldKey, MetadataGhostStateField } from './field';
 
 export type MetadataStateHash = Buffer;
 

@@ -1,6 +1,6 @@
-import { StoreCollectionName } from './collection.js';
-import { StoreScalarValue } from './document.js';
-import { StoreWhere } from './where.js';
+import { StoreCollectionName } from './collection';
+import { StoreScalarValue } from './document';
+import { StoreWhere } from './where';
 
 export type StoreMatch = Record<string, StoreMatchOptions[]>;
 

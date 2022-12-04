@@ -1,5 +1,5 @@
-import { Tokenizer } from '@/tokenizer.js';
-import { ImportNode, parseImportNodes } from './import.js';
+import { Tokenizer } from '@/tokenizer';
+import { ImportNode, parseImportNodes } from './import';
 
 /* eslint-disable max-lines-per-function */
 

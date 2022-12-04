@@ -1,4 +1,4 @@
-import { Scalar } from '@/scalar.js';
+import { Scalar } from '@/scalar';
 
 export const BooleanScalar: Scalar<boolean> = {
   key: 'Boolean',

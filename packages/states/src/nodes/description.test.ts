@@ -1,5 +1,5 @@
-import { Tokenizer } from '@/tokenizer.js';
-import { DescriptionNode, parseMaybeDescriptionNode } from './description.js';
+import { Tokenizer } from '@/tokenizer';
+import { DescriptionNode, parseMaybeDescriptionNode } from './description';
 
 describe('ast/description', () => {
   describe('parseMaybeDescriptionNode()', () => {
@@ -37,7 +37,7 @@ describe('ast/description', () => {
     it('should ignore non-string tokens', () => {
       const cursor = new Tokenizer(`test "Hello World!"`);
 
-      expect(parseMaybeDescriptionNode(cursor)).toBe(undefined);
+      expect(parseMaybeDescriptionNode(cursor)).toBeUndefined();
       expect(cursor.index).toBe(0);
     });
   });

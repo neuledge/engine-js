@@ -2,9 +2,9 @@ import {
   StateDefinition,
   StateDefinitionMatchKeys,
   StateDefinitionRelationState,
-} from '@/definitions/index.js';
-import { FilterQuery, FilterQueryOptions } from './filter.js';
-import { ChildQueryOptions } from './type.js';
+} from '@/definitions';
+import { FilterQuery, FilterQueryOptions } from './filter';
+import { ChildQueryOptions } from './type';
 
 export type MatchQuery<S extends StateDefinition> = FilterQuery<S>;
 

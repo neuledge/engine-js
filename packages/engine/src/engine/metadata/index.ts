@@ -1,11 +1,11 @@
-import { stateDefinitions } from '@/index.js';
-import { Metadata } from '@/metadata/index.js';
-import { Store } from '@/store/index.js';
+import { stateDefinitions } from '@/definitions';
+import { Metadata } from '@/metadata';
+import { Store } from '@/store';
 import {
   ensureStoreMetadata,
   getStoreMetadata,
   syncStoreMetadata,
-} from './store.js';
+} from './store';
 
 const DEFAULT_COLLECTION_NAME = '__neuledge_metadata';
 

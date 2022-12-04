@@ -1,80 +1,77 @@
-import { Entity } from '@/entity.js';
-import { StateDefinition } from '@/definitions/index.js';
+import { Entity } from '@/entity';
+import { StateDefinition } from '@/definitions';
 import {
   CreateManyAndReturnQuery,
   CreateManyQueryOptions,
-} from './create-many.js';
-import {
-  CreateOneAndReturnQuery,
-  CreateOneQueryOptions,
-} from './create-one.js';
+} from './create-many';
+import { CreateOneAndReturnQuery, CreateOneQueryOptions } from './create-one';
 import {
   DeleteFirstAndReturnOrThrowQuery,
   DeleteFirstOrThrowQueryOptions,
-} from './delete-first-or-throw.js';
+} from './delete-first-or-throw';
 import {
   DeleteFirstAndReturnQuery,
   DeleteFirstQueryOptions,
-} from './delete-first.js';
+} from './delete-first';
 import {
   DeleteManyAndReturnQuery,
   DeleteManyQueryOptions,
-} from './delete-many.js';
+} from './delete-many';
 import {
   DeleteUniqueAndReturnOrThrowQuery,
   DeleteUniqueOrThrowQueryOptions,
   DeleteUniqueWhereAndReturnOrThrowQuery,
   DeleteUniqueWhereOrThrowQuery,
-} from './delete-unique-or-throw.js';
+} from './delete-unique-or-throw';
 import {
   DeleteUniqueAndReturnQuery,
   DeleteUniqueQueryOptions,
   DeleteUniqueWhereAndReturnQuery,
   DeleteUniqueWhereQuery,
-} from './delete-unique.js';
+} from './delete-unique';
 import {
   FindFirstOrThrowQuery,
   FindFirstOrThrowQueryOptions,
-} from './find-first-or-throw.js';
-import { FindFirstQuery, FindFirstQueryOptions } from './find-first.js';
-import { FindManyQuery, FindManyQueryOptions } from './find-many.js';
+} from './find-first-or-throw';
+import { FindFirstQuery, FindFirstQueryOptions } from './find-first';
+import { FindManyQuery, FindManyQueryOptions } from './find-many';
 import {
   FindUniqueOrThrowQuery,
   FindUniqueOrThrowQueryOptions,
   FindUniqueWhereOrThrowQuery,
-} from './find-unique-or-throw.js';
+} from './find-unique-or-throw';
 import {
   FindUniqueQuery,
   FindUniqueQueryOptions,
   FindUniqueWhereQuery,
-} from './find-unique.js';
-import { MatchQueryOptions } from './match.js';
-import { SelectManyQuery, SelectManyQueryOptions } from './select-many.js';
-import { SelectOneQuery, SelectOneQueryOptions } from './select-one.js';
+} from './find-unique';
+import { MatchQueryOptions } from './match';
+import { SelectManyQuery, SelectManyQueryOptions } from './select-many';
+import { SelectOneQuery, SelectOneQueryOptions } from './select-one';
 import {
   UpdateFirstAndReturnOrThrowQuery,
   UpdateFirstOrThrowQueryOptions,
-} from './update-first-or-throw.js';
+} from './update-first-or-throw';
 import {
   UpdateFirstAndReturnQuery,
   UpdateFirstQueryOptions,
-} from './update-first.js';
+} from './update-first';
 import {
   UpdateManyAndReturnQuery,
   UpdateManyQueryOptions,
-} from './update-many.js';
+} from './update-many';
 import {
   UpdateUniqueAndReturnOrThrowQuery,
   UpdateUniqueOrThrowQueryOptions,
   UpdateUniqueWhereAndReturnOrThrowQuery,
   UpdateUniqueWhereOrThrowQuery,
-} from './update-unique-or-throw.js';
+} from './update-unique-or-throw';
 import {
   UpdateUniqueAndReturnQuery,
   UpdateUniqueQueryOptions,
   UpdateUniqueWhereAndReturnQuery,
   UpdateUniqueWhereQuery,
-} from './update-unique.js';
+} from './update-unique';
 
 export type Query<
   M extends QueryMode,

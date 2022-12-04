@@ -2,7 +2,7 @@ import {
   resolveDefer,
   StateDefinition,
   StateDefinitionName,
-} from '@/definitions/index.js';
+} from '@/definitions';
 import pluralize from 'pluralize';
 
 export const getCollectionNames = (

@@ -1,9 +1,9 @@
-import { StateDefinition } from '@/definitions/index.js';
-import { Metadata, MetadataCollection } from '@/metadata/index.js';
-import { StoreFindOptions } from '@/store/index.js';
-import { FilterQueryOptions } from '@/queries/index.js';
-import { convertMatch } from './match.js';
-import { convertWhere } from './where/index.js';
+import { StateDefinition } from '@/definitions';
+import { Metadata, MetadataCollection } from '@/metadata';
+import { StoreFindOptions } from '@/store';
+import { FilterQueryOptions } from '@/queries';
+import { convertMatch } from './match';
+import { convertWhere } from './where';
 
 export const convertFilterQuery = <S extends StateDefinition>(
   metadata: Metadata,

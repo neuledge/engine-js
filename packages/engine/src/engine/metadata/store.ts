@@ -3,14 +3,14 @@ import {
   MetadataChange,
   MetadataGhostState,
   METADATA_HASH_BYTES,
-} from '@/metadata/index.js';
-import { Store, StoreList } from '@/store/index.js';
+} from '@/metadata';
+import { Store, StoreList } from '@/store';
 import pLimit from 'p-limit';
 import {
   fromStoreMetadataState,
   StoreMetadataState,
   toStoreMetadataState,
-} from './state.js';
+} from './state';
 
 const HASH_ENCODING = 'base64url';
 const COLLECTION_FIND_LIMIT = 1000;

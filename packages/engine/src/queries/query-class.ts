@@ -2,20 +2,20 @@ import {
   StateDefinition,
   StateDefinitionMatchKeys,
   StateDefinitionRelationState,
-} from '@/definitions/index.js';
-import { EntityListOffset } from '@/list.js';
-import { ExecQuery, ExecQueryOptions } from './exec.js';
-import { FilterQuery, FilterQueryOptions } from './filter.js';
-import { LimitQuery, LimitQueryOptions } from './limit.js';
-import { MatchQuery } from './match.js';
-import { OffsetQuery, OffsetQueryOptions } from './offset.js';
-import { QueryOptions, QueryType } from './query.js';
-import { RetriveQuery, RetriveQueryOptions } from './retrive.js';
-import { SortField, SortIndex, SortQueryOptions } from './sort.js';
-import { UniqueQuery, UniqueQueryOptions } from './unique.js';
-import { Subset } from './utils.js';
-import { UniqueWhere, Where } from './where.js';
-import { Select } from './select.js';
+} from '@/definitions';
+import { EntityListOffset } from '@/list';
+import { ExecQuery, ExecQueryOptions } from './exec';
+import { FilterQuery, FilterQueryOptions } from './filter';
+import { LimitQuery, LimitQueryOptions } from './limit';
+import { MatchQuery } from './match';
+import { OffsetQuery, OffsetQueryOptions } from './offset';
+import { QueryOptions, QueryType } from './query';
+import { RetriveQuery, RetriveQueryOptions } from './retrive';
+import { SortField, SortIndex, SortQueryOptions } from './sort';
+import { UniqueQuery, UniqueQueryOptions } from './unique';
+import { Subset } from './utils';
+import { UniqueWhere, Where } from './where';
+import { Select } from './select';
 
 export class QueryClass<
   T extends QueryType,

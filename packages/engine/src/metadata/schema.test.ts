@@ -1,10 +1,7 @@
-import {
-  Category,
-  Post,
-} from '@/definitions/__test__/category-post-example.js';
-import { MetadataCollection } from './collection.js';
-import { Metadata } from './metadata.js';
-import { getMetadataSchema } from './schema.js';
+import { Category, Post } from '@/definitions/__test__/category-post-example';
+import { MetadataCollection } from './collection';
+import { Metadata } from './metadata';
+import { getMetadataSchema } from './schema';
 
 describe('engine/metadata/schema', () => {
   describe('getMetadataSchema()', () => {

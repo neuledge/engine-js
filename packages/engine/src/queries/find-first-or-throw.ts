@@ -1,11 +1,11 @@
-import { Entity } from '@/entity.js';
-import { StateDefinition } from '@/definitions/index.js';
-import { ExecQuery, ExecQueryOptions } from './exec.js';
-import { OffsetQuery, OffsetQueryOptions } from './offset.js';
-import { RetriveQuery, RetriveQueryOptions } from './retrive.js';
-import { FilterQuery, FilterQueryOptions } from './filter.js';
-import { RootQueryOptions } from './type.js';
-import { SortQuery, SortQueryOptions } from './sort.js';
+import { Entity } from '@/entity';
+import { StateDefinition } from '@/definitions';
+import { ExecQuery, ExecQueryOptions } from './exec';
+import { OffsetQuery, OffsetQueryOptions } from './offset';
+import { RetriveQuery, RetriveQueryOptions } from './retrive';
+import { FilterQuery, FilterQueryOptions } from './filter';
+import { RootQueryOptions } from './type';
+import { SortQuery, SortQueryOptions } from './sort';
 
 export interface FindFirstOrThrowQuery<S extends StateDefinition, R = Entity<S>>
   extends RetriveQuery<'FindFirstOrThrow', S, S, R>,

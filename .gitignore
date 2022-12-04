@@ -12,8 +12,8 @@ pids
 *.pid.lock
 
 # build files
-lib
-/.build
+dist/
+*.codegen.ts
 *.tsbuildinfo
 
 # misc
@@ -73,13 +73,5 @@ typings/
 # next.js build output
 .next
 
-# scripts build files
-/*.js
-/*.js.map
-/*.d.ts
-/packages/*/*.js
-/packages/*/*.js.map
-/packages/*/*.d.ts
-/packages/*/scripts/*.js
-/packages/*/scripts/*.js.map
-/packages/*/scripts/*.d.ts
+# turbo repo
+.turbo

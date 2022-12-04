@@ -1,5 +1,5 @@
-import { StateDefinition } from '@/definitions/index.js';
-import { QueryType } from './query.js';
+import { StateDefinition } from '@/definitions';
+import { QueryType } from './query';
 
 export interface RootQueryOptions<
   T extends QueryType,

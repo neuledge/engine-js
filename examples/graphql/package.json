@@ -1,13 +1,15 @@
 {
   "name": "graphql-example",
   "version": "0.0.0",
-  "type": "module",
   "private": true,
   "scripts": {
     "generate:states": "states build --basepath src/states \"*.states\"",
     "generate:codegen": "graphql-codegen",
     "generate": "yarn generate:states && yarn generate:codegen",
-    "start": "node lib/app.js"
+    "compile": "tsup src/app.ts --format cjs --dts",
+    "lint": "eslint . --ext \"js,jsx,ts,tsx,mjs,cjs\"",
+    "lint:strict": "yarn lint --max-warnings 0",
+    "start": "node dist/app.js"
   },
   "dependencies": {
     "@neuledge/scalars": "^0.1.0-alpha.1",

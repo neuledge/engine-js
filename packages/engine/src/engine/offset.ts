@@ -1,5 +1,5 @@
-import { OffsetQueryOptions } from '@/queries/index.js';
-import { StoreFindOptions } from '@/store/index.js';
+import { OffsetQueryOptions } from '@/queries';
+import { StoreFindOptions } from '@/store';
 
 export const convertOffsetQuery = ({
   offset,

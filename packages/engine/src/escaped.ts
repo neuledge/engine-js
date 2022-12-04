@@ -5,11 +5,11 @@ export {
   type StateDefinitionWhereId as WhereId,
   type StateDefinitionWhereNumber as WhereNumber,
   type StateDefinitionWhereObject as WhereObject,
-} from './definitions/state/index.js';
+} from './definitions/state';
 
-export { createEitherDefintion as either } from './definitions/either.js';
+export { createEitherDefintion as either } from './definitions/either';
 
-export { type Entity } from '@/entity.js';
+export { type Entity } from '@/entity';
 
 const $Date = Date;
 export { $Date as Date };

@@ -1,5 +1,5 @@
 import { NumberScalar, StringScalar } from '@neuledge/scalars';
-import { assignFieldNames } from './fields.js';
+import { assignFieldNames } from './fields';
 
 /* eslint-disable max-lines-per-function */
 

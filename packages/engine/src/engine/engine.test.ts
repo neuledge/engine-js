@@ -1,9 +1,9 @@
 import {
   Category,
   PublishedPost,
-} from '@/definitions/__test__/category-post-example.js';
-import { DummyStore } from '@/store/__test__/dummy-store.js';
-import { NeuledgeEngine } from './engine.js';
+} from '@/definitions/__test__/category-post-example';
+import { DummyStore } from '@/store/__test__/dummy-store';
+import { NeuledgeEngine } from './engine';
 import { jest } from '@jest/globals';
 
 /* eslint-disable max-lines-per-function */

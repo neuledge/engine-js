@@ -1,3 +1,3 @@
-export * from './ghost.js';
-export * from './field.js';
-export * from './state.js';
+export * from './ghost';
+export * from './field';
+export * from './state';

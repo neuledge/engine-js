@@ -1,7 +1,7 @@
-import { tokenize } from './tokenize.js';
-import { ParsingError } from '@/parsing-error.js';
-import { PunctuationToken, Token, WordToken } from './tokens/index.js';
-import { AbstractToken } from './tokens/abstract.js';
+import { tokenize } from './tokenize';
+import { ParsingError } from '@/parsing-error';
+import { PunctuationToken, Token, WordToken } from './tokens';
+import { AbstractToken } from './tokens/abstract';
 
 export class Tokenizer {
   public readonly tokens: Token[];

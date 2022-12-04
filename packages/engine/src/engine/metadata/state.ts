@@ -2,7 +2,7 @@ import {
   MetadataGhostState,
   MetadataGhostStateField,
   MetadataGhostStateRelation,
-} from '@/metadata/index.js';
+} from '@/metadata';
 
 export interface StoreMetadataState {
   collectionName: string;

@@ -1,8 +1,8 @@
-import { Entity } from '@/entity.js';
-import { StateDefinition } from '@/definitions/index.js';
-import { FilterQuery, FilterQueryOptions } from './filter.js';
-import { RetriveQuery, RetriveQueryOptions } from './retrive.js';
-import { ChildQueryOptions } from './type.js';
+import { Entity } from '@/entity';
+import { StateDefinition } from '@/definitions';
+import { FilterQuery, FilterQueryOptions } from './filter';
+import { RetriveQuery, RetriveQueryOptions } from './retrive';
+import { ChildQueryOptions } from './type';
 
 export interface SelectOneQuery<S extends StateDefinition, R = Entity<S>>
   extends RetriveQuery<'SelectOne', S, S, R>,

@@ -1,8 +1,8 @@
-import { Tokenizer } from '@/tokenizer.js';
-import { AbstractNode } from './abstract.js';
-import { ArgumentNode, parseMaybeArgumentNodes } from './argument.js';
-import { IdentifierNode, parseIdentifierNode } from './identifier.js';
-import { LiteralNode, parseLiteralNode } from './literal.js';
+import { Tokenizer } from '@/tokenizer';
+import { AbstractNode } from './abstract';
+import { ArgumentNode, parseMaybeArgumentNodes } from './argument';
+import { IdentifierNode, parseIdentifierNode } from './identifier';
+import { LiteralNode, parseLiteralNode } from './literal';
 
 export type TypeNode = TypeGeneratorNode | TypeExpressionNode;
 

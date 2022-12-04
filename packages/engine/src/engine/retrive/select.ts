@@ -1,7 +1,7 @@
-import { StateDefinition } from '@/definitions/index.js';
-import { MetadataCollection } from '@/metadata/index.js';
-import { Select } from '@/queries/index.js';
-import { StoreSelect } from '@/store/index.js';
+import { StateDefinition } from '@/definitions';
+import { MetadataCollection } from '@/metadata';
+import { Select } from '@/queries';
+import { StoreSelect } from '@/store';
 
 export const convertSelectQuery = <S extends StateDefinition>(
   collection: MetadataCollection,

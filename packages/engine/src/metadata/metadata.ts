@@ -1,9 +1,9 @@
 import { Scalar } from '@neuledge/scalars';
-import { StateDefinition } from '@/definitions/index.js';
-import { MetadataChange } from './change.js';
-import { MetadataCollection } from './collection.js';
-import { assignMetadataNames } from './names/index.js';
-import { MetadataState, MetadataGhostState } from './state/index.js';
+import { StateDefinition } from '@/definitions';
+import { MetadataChange } from './change';
+import { MetadataCollection } from './collection';
+import { assignMetadataNames } from './names';
+import { MetadataState, MetadataGhostState } from './state';
 
 const HASH_KEY_ENCODING = 'base64url';
 

@@ -6,14 +6,14 @@ import {
   StateDefinitionUpdateWithoutArgsMutations,
   StateDefinitionUpdateWithArgsMutations,
   StateDefinitionMutationsReturn,
-} from './mutation.js';
-import { StateDefinitionId } from './state/index.js';
+} from './mutation';
+import { StateDefinitionId } from './state';
 import {
   Category,
   DraftPost,
   Post,
   PublishedPost,
-} from './__test__/category-post-example.js';
+} from './__test__/category-post-example';
 
 /* eslint-disable max-lines-per-function */
 

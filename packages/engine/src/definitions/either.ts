@@ -1,4 +1,4 @@
-import { StateDefinition } from './state/index.js';
+import { StateDefinition } from './state';
 
 export interface EitherDefintion<
   K extends string = string,

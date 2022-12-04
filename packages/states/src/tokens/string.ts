@@ -1,4 +1,4 @@
-import { AbstractToken } from './abstract.js';
+import { AbstractToken } from './abstract';
 
 export interface StringToken extends AbstractToken<'String'> {
   kind: '"' | "'" | '"""';

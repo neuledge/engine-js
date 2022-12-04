@@ -1,7 +1,7 @@
-import { AbstractNode } from '../abstract.js';
-import { ArgumentNode } from '../argument.js';
-import { IdentifierNode } from '../identifier.js';
-import { ExpressionNode } from './expression.js';
+import { AbstractNode } from '../abstract';
+import { ArgumentNode } from '../argument';
+import { IdentifierNode } from '../identifier';
+import { ExpressionNode } from './expression';
 
 export interface CallExpressionNode extends AbstractNode<'CallExpression'> {
   callee: IdentifierNode;

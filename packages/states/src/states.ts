@@ -13,11 +13,11 @@ import {
   StateNode,
   STATE_FIELD_INDEX_MAX_INPUT_VALUE,
   TypeNode,
-} from '@/nodes/index.js';
+} from '@/nodes';
 import { resolve, dirname } from 'node:path';
-import { Tokenizer } from '@/tokenizer.js';
-import { ParsingError } from '@/parsing-error.js';
-import { BuiltInScalar, builtInScalars } from './built-in/index.js';
+import { Tokenizer } from '@/tokenizer';
+import { ParsingError } from '@/parsing-error';
+import { BuiltInScalar, builtInScalars } from './built-in';
 
 export class States {
   private readonly entityMap: Partial<

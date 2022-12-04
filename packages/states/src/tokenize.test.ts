@@ -1,5 +1,5 @@
-import { tokenize } from './tokenize.js';
-import { Token } from './tokens/index.js';
+import { tokenize } from './tokenize';
+import { Token } from './tokens';
 
 /* eslint-disable max-lines */
 /* eslint-disable max-lines-per-function */

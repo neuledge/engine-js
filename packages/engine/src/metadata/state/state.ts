@@ -3,13 +3,13 @@ import {
   StateDefinition,
   StateDefinitionName,
   StateDefintionScalar,
-} from '@/definitions/index.js';
-import { getScalarFields, MetadataStateField } from './field.js';
+} from '@/definitions';
+import { getScalarFields, MetadataStateField } from './field';
 import {
   generateStateHash,
   MetadataGhostState,
   MetadataGhostStateRelation,
-} from './ghost.js';
+} from './ghost';
 
 export type MetadataStateContext = Partial<
   Record<StateDefinitionName, MetadataState>

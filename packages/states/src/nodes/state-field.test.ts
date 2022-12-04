@@ -1,5 +1,5 @@
-import { Tokenizer } from '@/tokenizer.js';
-import { parseStateFieldNodes, StateFieldNode } from './state-field.js';
+import { Tokenizer } from '@/tokenizer';
+import { parseStateFieldNodes, StateFieldNode } from './state-field';
 
 /* eslint-disable max-lines-per-function */
 
@@ -9,7 +9,7 @@ describe('ast/state-field', () => {
       const cursor = new Tokenizer(`{}`);
 
       expect(parseStateFieldNodes(cursor)).toEqual([]);
-      expect(cursor.index).toEqual(2);
+      expect(cursor.index).toBe(2);
     });
 
     it('should parse basic field', () => {

@@ -1,9 +1,5 @@
-import { Tokenizer } from '@/tokenizer.js';
-import {
-  parseTypeNode,
-  TypeExpressionNode,
-  TypeGeneratorNode,
-} from './type.js';
+import { Tokenizer } from '@/tokenizer';
+import { parseTypeNode, TypeExpressionNode, TypeGeneratorNode } from './type';
 
 /* eslint-disable max-lines-per-function */
 

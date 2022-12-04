@@ -1,4 +1,4 @@
-import { MetadataGhostState } from './state/index.js';
+import { MetadataGhostState } from './state';
 
 export type MetadataChange =
   | MetadataCreatedChange

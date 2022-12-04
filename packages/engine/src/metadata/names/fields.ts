@@ -1,4 +1,4 @@
-import { MetadataGhostStateField } from '../state/index.js';
+import { MetadataGhostStateField } from '../state';
 
 export const assignFieldNames = <
   Field extends Pick<MetadataGhostStateField, 'name' | 'type'>,

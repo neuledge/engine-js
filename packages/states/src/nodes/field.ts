@@ -1,9 +1,9 @@
-import { AbstractNode } from './abstract.js';
-import { DecoratorNode } from './decorator.js';
-import { DescriptionNode } from './description.js';
-import { IdentifierNode } from './identifier.js';
-import { LiteralNode } from './literal.js';
-import { TypeNode } from './type.js';
+import { AbstractNode } from './abstract';
+import { DecoratorNode } from './decorator';
+import { DescriptionNode } from './description';
+import { IdentifierNode } from './identifier';
+import { LiteralNode } from './literal';
+import { TypeNode } from './type';
 
 export interface FieldNode extends AbstractNode<'Field'> {
   key: IdentifierNode;

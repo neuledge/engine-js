@@ -1,4 +1,4 @@
-import { Metadata } from '@/metadata/metadata.js';
+import { Metadata } from '@/metadata/metadata';
 import {
   StateDefinition,
   StateDefinitionCreateMutations,
@@ -7,7 +7,7 @@ import {
   StateDefinitionMutationsReturn,
   StateDefinitionUpdateWithoutArgsMutations,
   StateDefinitionUpdateMutations,
-} from '../definitions/index.js';
+} from '../definitions';
 import {
   FindFirstOrThrowQuery,
   FindFirstQuery,
@@ -27,16 +27,16 @@ import {
   UpdateFirstOrThrowQuery,
   UpdateUniqueQuery,
   UpdateUniqueOrThrowQuery,
-} from '../queries/index.js';
-import { Store } from '../store/index.js';
-import { chooseStatesCollection } from './collection.js';
-import { toEntityOrThrow, toMaybeEntity } from './entity.js';
-import { convertLimitQuery, toLimitedEntityList } from './limit.js';
-import { loadMetadata } from './metadata/index.js';
-import { convertRetriveQuery } from './retrive/index.js';
-import { convertSortQuery } from './sort.js';
-import { convertFilterQuery } from './filter/index.js';
-import { convertOffsetQuery } from './offset.js';
+} from '../queries';
+import { Store } from '../store';
+import { chooseStatesCollection } from './collection';
+import { toEntityOrThrow, toMaybeEntity } from './entity';
+import { convertLimitQuery, toLimitedEntityList } from './limit';
+import { loadMetadata } from './metadata';
+import { convertRetriveQuery } from './retrive';
+import { convertSortQuery } from './sort';
+import { convertFilterQuery } from './filter';
+import { convertOffsetQuery } from './offset';
 
 export interface NeuledgeEngineOptions {
   store: Store;

@@ -1,8 +1,16 @@
 {
   "name": "@neuledge/states-ts",
   "version": "0.1.0-alpha.2",
-  "type": "module",
-  "main": "lib/index",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.js",
+  "exports": {
+    ".": {
+      "require": "./dist/index.js",
+      "import": "./dist/index.mjs",
+      "types": "./dist/index.d.ts"
+    }
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/neuledge/engine-js.git"
@@ -14,21 +22,14 @@
   "engines": {
     "node": ">= 16"
   },
-  "exports": {
-    ".": "./lib/index.js",
-    "./*": "./lib/*"
-  },
   "scripts": {
-    "clean": "rm -rf lib *.tsbuildinfo",
-    "test": "yarn run jest",
-    "jest": "NODE_OPTIONS=--experimental-vm-modules NODE_NO_WARNINGS=1 jest"
-  },
-  "devDependencies": {
-    "@types/jest": "^28.1.6",
-    "jest": "^28.1.3"
+    "build": "tsup",
+    "watch": "tsup --watch",
+    "test": "jest",
+    "lint": "eslint . --ext \"js,jsx,ts,tsx,mjs,cjs\"",
+    "lint:strict": "yarn lint --max-warnings 0"
   },
   "dependencies": {
-    "@neuledge/states": "^0.1.0-alpha.1",
-    "commander": "^9.4.1"
+    "@neuledge/states": "^0.1.0-alpha.1"
   }
 }

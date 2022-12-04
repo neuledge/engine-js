@@ -1,10 +1,10 @@
-import { IdentifierNode } from '../identifier.js';
-import { LiteralNode } from '../literal.js';
-import { BinaryExpressionNode } from './binary.js';
-import { CallExpressionNode } from './call.js';
-import { LogicalExpressionNode } from './logical.js';
-import { MemberExpressionNode } from './member.js';
-import { UnaryExpressionNode } from './unary.js';
+import { IdentifierNode } from '../identifier';
+import { LiteralNode } from '../literal';
+import { BinaryExpressionNode } from './binary';
+import { CallExpressionNode } from './call';
+import { LogicalExpressionNode } from './logical';
+import { MemberExpressionNode } from './member';
+import { UnaryExpressionNode } from './unary';
 
 export type ExpressionNode =
   | MemberExpressionNode

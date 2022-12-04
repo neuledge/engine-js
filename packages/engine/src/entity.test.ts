@@ -1,9 +1,9 @@
-import { Entity, ProjectedEntity } from './entity.js';
+import { Entity, ProjectedEntity } from './entity';
 import {
   Category,
   Post,
   PublishedPost,
-} from './definitions/__test__/category-post-example.js';
+} from './definitions/__test__/category-post-example';
 
 /* eslint-disable max-lines-per-function */
 

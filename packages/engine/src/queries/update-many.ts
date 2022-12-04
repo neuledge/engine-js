@@ -1,15 +1,12 @@
-import { Entity } from '@/entity.js';
-import {
-  StateDefinition,
-  StateDefinitionUpdateMutations,
-} from '@/definitions/index.js';
-import { EntityList } from '@/list.js';
-import { ExecQuery, ExecQueryOptions } from './exec.js';
-import { FilterQuery, FilterQueryOptions } from './filter.js';
-import { LimitQuery, LimitQueryOptions } from './limit.js';
-import { SingleArgsQueryOptions } from './method.js';
-import { RetriveQuery, RetriveQueryOptions } from './retrive.js';
-import { RootQueryOptions } from './type.js';
+import { Entity } from '@/entity';
+import { StateDefinition, StateDefinitionUpdateMutations } from '@/definitions';
+import { EntityList } from '@/list';
+import { ExecQuery, ExecQueryOptions } from './exec';
+import { FilterQuery, FilterQueryOptions } from './filter';
+import { LimitQuery, LimitQueryOptions } from './limit';
+import { SingleArgsQueryOptions } from './method';
+import { RetriveQuery, RetriveQueryOptions } from './retrive';
+import { RootQueryOptions } from './type';
 
 export interface UpdateManyQuery<
   I extends StateDefinition,

@@ -1,5 +1,5 @@
-import { createScalarGeneratorScalar } from '@/generator.js';
-import { Scalar } from '@/scalar.js';
+import { createScalarGeneratorScalar } from '@/generator';
+import { Scalar } from '@/scalar';
 
 export const StringScalar = createScalarGeneratorScalar(
   ({

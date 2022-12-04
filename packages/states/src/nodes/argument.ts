@@ -1,6 +1,6 @@
-import { Tokenizer } from '@/tokenizer.js';
-import { AbstractNode } from './abstract.js';
-import { IdentifierNode, parseIdentifierNode } from './identifier.js';
+import { Tokenizer } from '@/tokenizer';
+import { AbstractNode } from './abstract';
+import { IdentifierNode, parseIdentifierNode } from './identifier';
 
 export interface ArgumentNode<Value> extends AbstractNode<'Argument'> {
   key: IdentifierNode;

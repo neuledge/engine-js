@@ -1,6 +1,6 @@
-import { MetadataState } from '../state/index.js';
-import { getCollectionNames } from './collections.js';
-import { assignFieldNames } from './fields.js';
+import { MetadataState } from '../state';
+import { getCollectionNames } from './collections';
+import { assignFieldNames } from './fields';
 
 export const assignMetadataNames = (
   metadataStates: MetadataState[],

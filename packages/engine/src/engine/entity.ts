@@ -1,9 +1,9 @@
-import { Entity } from '@/entity.js';
-import { StateDefinition } from '@/definitions/index.js';
-import { EntityList } from '@/list.js';
-import { ENTITY_METADATA_HASH_FIELD } from '@/metadata/constants.js';
-import { Metadata } from '@/metadata/metadata.js';
-import { StoreDocument, StoreList } from '@/store/index.js';
+import { Entity } from '@/entity';
+import { StateDefinition } from '@/definitions';
+import { EntityList } from '@/list';
+import { ENTITY_METADATA_HASH_FIELD } from '@/metadata/constants';
+import { Metadata } from '@/metadata/metadata';
+import { StoreDocument, StoreList } from '@/store';
 
 export const toEntityList = <S extends StateDefinition>(
   metadata: Metadata,

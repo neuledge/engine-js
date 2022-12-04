@@ -1,4 +1,4 @@
-import { PunctuationToken, StringToken, Token } from './tokens/index.js';
+import { PunctuationToken, StringToken, Token } from './tokens';
 
 const TokenCharMap: Record<string, Token['type'] | 0 | -1> = {
   '"': 'String',

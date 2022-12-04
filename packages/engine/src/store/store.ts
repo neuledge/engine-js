@@ -4,16 +4,16 @@ import {
   StoreCollectionName,
   StoreField,
   StoreIndex,
-} from './collection.js';
+} from './collection';
 import {
   StoreDocument,
   StoreList,
   StoreListOffset,
   StoreSelect,
-} from './document.js';
-import { StoreMatch } from './relation.js';
-import { StoreSort } from './sort.js';
-import { StoreWhere } from './where.js';
+} from './document';
+import { StoreMatch } from './relation';
+import { StoreSort } from './sort';
+import { StoreWhere } from './where';
 
 export interface Store {
   listCollections(): Promise<StoreCollection_Slim[]>;

@@ -1,13 +1,10 @@
-import { Entity } from '@/entity.js';
-import {
-  StateDefinition,
-  StateDefinitionDeleteMutations,
-} from '@/definitions/index.js';
-import { ExecQuery, ExecQueryOptions } from './exec.js';
-import { FilterQuery, FilterQueryOptions } from './filter.js';
-import { MethodQueryOptions } from './method.js';
-import { RetriveQuery, RetriveQueryOptions } from './retrive.js';
-import { RootQueryOptions } from './type.js';
+import { Entity } from '@/entity';
+import { StateDefinition, StateDefinitionDeleteMutations } from '@/definitions';
+import { ExecQuery, ExecQueryOptions } from './exec';
+import { FilterQuery, FilterQueryOptions } from './filter';
+import { MethodQueryOptions } from './method';
+import { RetriveQuery, RetriveQueryOptions } from './retrive';
+import { RootQueryOptions } from './type';
 
 export interface DeleteFirstOrThrowQuery<S extends StateDefinition>
   extends RetriveQuery<'DeleteFirstAndReturnOrThrow', S, S, Entity<S>>,

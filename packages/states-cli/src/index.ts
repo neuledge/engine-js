@@ -1,7 +1,7 @@
 import { Command } from 'commander';
 import { readFileSync } from 'node:fs';
-import { build } from './build.js';
-import { catchExceptions } from './error.js';
+import { build } from './build';
+import { catchExceptions } from './error';
 
 const { version }: { version: string } = JSON.parse(
   readFileSync(new URL('../package.json', import.meta.url)).toString(),

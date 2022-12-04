@@ -1,8 +1,8 @@
-import { StateDefinition } from '@/definitions/index.js';
-import { MetadataCollection } from '@/metadata/collection.js';
-import { RetriveQueryOptions } from '@/queries/index.js';
-import { StoreFindOptions } from '@/store/index.js';
-import { convertSelectQuery } from './select.js';
+import { StateDefinition } from '@/definitions';
+import { MetadataCollection } from '@/metadata/collection';
+import { RetriveQueryOptions } from '@/queries';
+import { StoreFindOptions } from '@/store';
+import { convertSelectQuery } from './select';
 
 export const convertRetriveQuery = <S extends StateDefinition>(
   collection: MetadataCollection,

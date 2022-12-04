@@ -1,4 +1,4 @@
-import { Store } from '../store.js';
+import { Store } from '../store';
 
 export class DummyStore implements Store {
   async listCollections() {

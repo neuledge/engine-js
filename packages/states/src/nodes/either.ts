@@ -1,5 +1,5 @@
-import { IdentifierNode } from './identifier.js';
-import { NamedNode } from './named.js';
+import { IdentifierNode } from './identifier';
+import { NamedNode } from './named';
 
 export interface EitherNode extends NamedNode<'Either'> {
   states: IdentifierNode[];

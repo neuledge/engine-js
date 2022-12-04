@@ -1,9 +1,6 @@
-import {
-  Category,
-  Post,
-} from '@/definitions/__test__/category-post-example.js';
-import { Metadata, MetadataCollection } from '@/metadata/index.js';
-import { convertFilterQuery } from './index.js';
+import { Category, Post } from '@/definitions/__test__/category-post-example';
+import { Metadata, MetadataCollection } from '@/metadata';
+import { convertFilterQuery } from './index';
 
 /* eslint-disable max-lines-per-function */
 

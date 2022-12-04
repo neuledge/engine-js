@@ -1,5 +1,5 @@
-import { getMetadataSchema, MetadataSchema } from './schema.js';
-import { MetadataState, MetadataStateField } from './state/index.js';
+import { getMetadataSchema, MetadataSchema } from './schema';
+import { MetadataState, MetadataStateField } from './state';
 
 export type MetadataCollectionFieldMap = Record<
   MetadataStateField['path'],

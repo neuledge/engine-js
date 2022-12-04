@@ -1,12 +1,8 @@
-import { resolveDefer, StateDefinition } from '@/definitions/index.js';
-import {
-  Metadata,
-  MetadataCollection,
-  MetadataStateField,
-} from '@/metadata/index.js';
-import { Match } from '@/queries/index.js';
-import { StoreMatch, StoreMatchBy, StoreMatchOptions } from '@/store/index.js';
-import { convertFilterQuery } from './index.js';
+import { resolveDefer, StateDefinition } from '@/definitions';
+import { Metadata, MetadataCollection, MetadataStateField } from '@/metadata';
+import { Match } from '@/queries';
+import { StoreMatch, StoreMatchBy, StoreMatchOptions } from '@/store';
+import { convertFilterQuery } from './index';
 
 export const convertMatch = <S extends StateDefinition>(
   metadata: Metadata,

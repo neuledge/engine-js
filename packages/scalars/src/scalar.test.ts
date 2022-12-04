@@ -5,7 +5,7 @@ import {
   ScalarInput,
   ScalarType,
   ScalarValue,
-} from './scalar.js';
+} from './scalar';
 
 /* eslint-disable max-lines-per-function */
 
@@ -27,7 +27,7 @@ describe('Scalar', () => {
       expect<Scalar<string, unknown, string>>(scalar);
 
       expect(scalar.encode(123)).toBe('123');
-      expect(scalar.decode).toBe(undefined);
+      expect(scalar.decode).toBeUndefined();
       expect(scalar.key).toBe('String');
     });
   });

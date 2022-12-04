@@ -2,9 +2,9 @@ import {
   StateDefinition,
   StateDefinitionMatchKeys,
   StateDefinitionRelationState,
-} from '@/definitions/index.js';
-import { Match, MatchQuery } from './match.js';
-import { Where } from './where.js';
+} from '@/definitions';
+import { Match, MatchQuery } from './match';
+import { Where } from './where';
 
 export interface FilterQuery<S extends StateDefinition> {
   where(where: Where<S> | null): this;

@@ -1,5 +1,5 @@
-import { Entity } from '@/entity.js';
-import { StateDefinition, StateDefinitionType } from './state/index.js';
+import { Entity } from '@/entity';
+import { StateDefinition, StateDefinitionType } from './state';
 
 export type MutationDefinitionArguments = Record<string, unknown>;
 

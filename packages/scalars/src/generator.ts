@@ -1,4 +1,4 @@
-import { Scalar } from './scalar.js';
+import { Scalar } from './scalar';
 
 export type ScalarGenerator<
   Args extends Record<string, unknown> = any, // eslint-disable-line @typescript-eslint/no-explicit-any

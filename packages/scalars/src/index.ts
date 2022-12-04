@@ -1,3 +1,3 @@
-export * from './built-in/index.js';
-export * from './generator.js';
-export * from './scalar.js';
+export * from './built-in';
+export * from './generator';
+export * from './scalar';

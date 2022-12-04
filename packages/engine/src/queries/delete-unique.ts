@@ -1,14 +1,11 @@
-import { Entity } from '@/entity.js';
-import {
-  StateDefinition,
-  StateDefinitionDeleteMutations,
-} from '@/definitions/index.js';
-import { ExecQuery, ExecQueryOptions } from './exec.js';
-import { FilterQuery, FilterQueryOptions } from './filter.js';
-import { MethodQueryOptions } from './method.js';
-import { RetriveQuery, RetriveQueryOptions } from './retrive.js';
-import { RootQueryOptions } from './type.js';
-import { UniqueQuery, UniqueQueryOptions } from './unique.js';
+import { Entity } from '@/entity';
+import { StateDefinition, StateDefinitionDeleteMutations } from '@/definitions';
+import { ExecQuery, ExecQueryOptions } from './exec';
+import { FilterQuery, FilterQueryOptions } from './filter';
+import { MethodQueryOptions } from './method';
+import { RetriveQuery, RetriveQueryOptions } from './retrive';
+import { RootQueryOptions } from './type';
+import { UniqueQuery, UniqueQueryOptions } from './unique';
 
 export interface DeleteUniqueQuery<S extends StateDefinition>
   extends RetriveQuery<'DeleteUniqueAndReturn', S, S, Entity<S>>,

@@ -1,5 +1,5 @@
-import { Tokenizer } from '@/tokenizer.js';
-import { AbstractNode } from './abstract.js';
+import { Tokenizer } from '@/tokenizer';
+import { AbstractNode } from './abstract';
 
 export interface LiteralNode<T extends LiteralValue = LiteralValue>
   extends AbstractNode<'Literal'> {

@@ -1,6 +1,0 @@
-__ignore__
-build
-lib
-dist
-node_modules
-*.codegen.ts

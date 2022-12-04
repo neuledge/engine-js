@@ -1,4 +1,4 @@
-import { EntityListOffset } from '@/list.js';
+import { EntityListOffset } from '@/list';
 
 export interface OffsetQuery {
   offset(offset: EntityListOffset | null): this;

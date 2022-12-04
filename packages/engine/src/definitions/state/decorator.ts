@@ -1,4 +1,4 @@
-import { StateDefinition, StateDefinitionName } from './index.js';
+import { StateDefinition, StateDefinitionName } from './index';
 
 export const stateDefinitions = new Map<StateDefinitionName, StateDefinition>();
 

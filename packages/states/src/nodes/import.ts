@@ -1,6 +1,6 @@
-import { Tokenizer } from '@/tokenizer.js';
-import { AbstractNode } from './abstract.js';
-import { LiteralNode, parseLiteralNode } from './literal.js';
+import { Tokenizer } from '@/tokenizer';
+import { AbstractNode } from './abstract';
+import { LiteralNode, parseLiteralNode } from './literal';
 
 export interface ImportNode extends AbstractNode<'Import'> {
   source: LiteralNode<string>;

@@ -1,5 +1,5 @@
-import { AbstractNode } from '../abstract.js';
-import { ExpressionNode } from './expression.js';
+import { AbstractNode } from '../abstract';
+import { ExpressionNode } from './expression';
 
 export interface LogicalExpressionNode
   extends AbstractNode<'LogicalExpression'> {

@@ -1,13 +1,10 @@
 {
-  "extends": "../../tsconfig.base.json",
+  "extends": "@neuledge/tsconfig/base.json",
   "compilerOptions": {
     "baseUrl": "src",
-    "rootDir": "src",
-    "outDir": "lib",
     "paths": {
       "@/*": ["./*"]
     }
   },
-  "include": ["src"],
-  "exclude": ["node_modules", "**/__ignore__/**"]
+  "include": ["src"]
 }

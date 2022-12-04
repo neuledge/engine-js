@@ -1,8 +1,8 @@
-import { AbstractNode } from './abstract.js';
-import { DecoratorNode } from './decorator.js';
-import { DescriptionNode } from './description.js';
-import { IdentifierNode } from './identifier.js';
-import { TypeNode } from './type.js';
+import { AbstractNode } from './abstract';
+import { DecoratorNode } from './decorator';
+import { DescriptionNode } from './description';
+import { IdentifierNode } from './identifier';
+import { TypeNode } from './type';
 
 export interface ParameterNode extends AbstractNode<'Parameter'> {
   key: IdentifierNode;

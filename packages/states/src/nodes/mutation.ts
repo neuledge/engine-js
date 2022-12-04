@@ -1,9 +1,9 @@
-import { AbstractNode } from './abstract.js';
-import { DecoratorNode } from './decorator.js';
-import { DescriptionNode } from './description.js';
-import { IdentifierNode } from './identifier.js';
-import { ParameterNode } from './parameter.js';
-import { ReturnBodyNode } from './property.js';
+import { AbstractNode } from './abstract';
+import { DecoratorNode } from './decorator';
+import { DescriptionNode } from './description';
+import { IdentifierNode } from './identifier';
+import { ParameterNode } from './parameter';
+import { ReturnBodyNode } from './property';
 
 export interface MutationNode extends AbstractNode<'Mutation'> {
   key: IdentifierNode;

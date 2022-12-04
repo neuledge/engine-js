@@ -1,5 +1,5 @@
-import { Tokenizer } from '@/tokenizer.js';
-import { DecoratorNode, parseDecoratorNodes } from './decorator.js';
+import { Tokenizer } from '@/tokenizer';
+import { DecoratorNode, parseDecoratorNodes } from './decorator';
 
 /* eslint-disable max-lines-per-function */
 

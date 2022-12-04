@@ -1,5 +1,5 @@
-import { StateDefinition } from '@/definitions/index.js';
-import { QueryOptions, QueryType } from './query.js';
+import { StateDefinition } from '@/definitions';
+import { QueryOptions, QueryType } from './query';
 
 export interface ExecQuery<T> {
   exec(): Promise<T>;

@@ -1,5 +1,5 @@
-import { NamedNode } from './named.js';
-import { TypeGeneratorNode } from './type.js';
+import { NamedNode } from './named';
+import { TypeGeneratorNode } from './type';
 
 export interface ScalarNode extends NamedNode<'Scalar'> {
   from: TypeGeneratorNode[];

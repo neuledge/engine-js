@@ -1,6 +1,6 @@
-import { AbstractNode } from './abstract.js';
-import { IdentifierNode } from './identifier.js';
-import { LiteralNode } from './literal.js';
+import { AbstractNode } from './abstract';
+import { IdentifierNode } from './identifier';
+import { LiteralNode } from './literal';
 
 export interface ReferenceFieldNode extends AbstractNode<'ReferenceField'> {
   state: IdentifierNode;

@@ -1,6 +1,6 @@
-import { Tokenizer } from '@/tokenizer.js';
-import { ArgumentNode, parseMaybeArgumentNodes } from './argument.js';
-import { LiteralNode, parseLiteralNode } from './literal.js';
+import { Tokenizer } from '@/tokenizer';
+import { ArgumentNode, parseMaybeArgumentNodes } from './argument';
+import { LiteralNode, parseLiteralNode } from './literal';
 
 /* eslint-disable max-lines-per-function */
 

@@ -1,0 +1,12 @@
+{
+  "roots": ["<rootDir>"],
+  "transform": {
+    "^.+\\.tsx?$": "ts-jest"
+  },
+  "moduleFileExtensions": ["ts", "tsx", "js", "jsx", "json", "node"],
+  "moduleNameMapper": {
+    "^@/(.*)$": "<rootDir>/src/$1"
+  },
+  "modulePathIgnorePatterns": ["<rootDir>/node_modules", "<rootDir>/dist"],
+  "preset": "ts-jest"
+}

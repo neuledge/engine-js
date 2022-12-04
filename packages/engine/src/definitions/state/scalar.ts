@@ -1,5 +1,5 @@
 import { Scalar } from '@neuledge/scalars';
-import { StateDefinition } from './state.js';
+import { StateDefinition } from './state';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type StateDefintionScalar<V = any> = {

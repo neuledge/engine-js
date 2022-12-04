@@ -2,7 +2,7 @@ import {
   StateDefinition,
   StateDefinitionIndexes,
   StateDefinitionType,
-} from '@/definitions/index.js';
+} from '@/definitions';
 
 export interface SortQuery<S extends StateDefinition> {
   sort(sort: SortIndex<S> | null): this;

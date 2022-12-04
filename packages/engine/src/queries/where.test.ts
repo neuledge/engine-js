@@ -1,8 +1,5 @@
-import {
-  Category,
-  Post,
-} from '@/definitions/__test__/category-post-example.js';
-import { UniqueWhere, Where } from './where.js';
+import { Category, Post } from '@/definitions/__test__/category-post-example';
+import { UniqueWhere, Where } from './where';
 
 describe('queries/where', () => {
   describe('Where<>', () => {

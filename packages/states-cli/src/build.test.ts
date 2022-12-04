@@ -1,6 +1,6 @@
 import fs from 'node:fs/promises';
 import { jest } from '@jest/globals';
-import { build } from './build.js';
+import { build } from './build';
 
 describe('build', () => {
   describe('build()', () => {

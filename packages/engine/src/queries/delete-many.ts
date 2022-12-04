@@ -1,15 +1,12 @@
-import { Entity } from '@/entity.js';
-import {
-  StateDefinition,
-  StateDefinitionDeleteMutations,
-} from '@/definitions/index.js';
-import { EntityList } from '@/list.js';
-import { ExecQuery, ExecQueryOptions } from './exec.js';
-import { FilterQuery, FilterQueryOptions } from './filter.js';
-import { LimitQuery, LimitQueryOptions } from './limit.js';
-import { MethodQueryOptions } from './method.js';
-import { RetriveQuery, RetriveQueryOptions } from './retrive.js';
-import { RootQueryOptions } from './type.js';
+import { Entity } from '@/entity';
+import { StateDefinition, StateDefinitionDeleteMutations } from '@/definitions';
+import { EntityList } from '@/list';
+import { ExecQuery, ExecQueryOptions } from './exec';
+import { FilterQuery, FilterQueryOptions } from './filter';
+import { LimitQuery, LimitQueryOptions } from './limit';
+import { MethodQueryOptions } from './method';
+import { RetriveQuery, RetriveQueryOptions } from './retrive';
+import { RootQueryOptions } from './type';
 
 export interface DeleteManyQuery<S extends StateDefinition>
   extends RetriveQuery<'DeleteManyAndReturn', S, S, Entity<S>>,

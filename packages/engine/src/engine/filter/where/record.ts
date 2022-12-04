@@ -1,10 +1,10 @@
 import {
   StateDefinitionWhereRecord,
   StateDefinitionWhereTerm,
-} from '@/definitions/index.js';
-import { MetadataSchema, MetadataStateField } from '@/metadata/index.js';
-import { StoreWhereRecord } from '@/store/index.js';
-import { applyWhereOperatorTerm, convertWhereScalarTerm } from './term.js';
+} from '@/definitions';
+import { MetadataSchema, MetadataStateField } from '@/metadata';
+import { StoreWhereRecord } from '@/store';
+import { applyWhereOperatorTerm, convertWhereScalarTerm } from './term';
 
 export const convertWhereRecord = (
   schema: MetadataSchema,

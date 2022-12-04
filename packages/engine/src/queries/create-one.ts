@@ -1,12 +1,9 @@
-import { Entity } from '@/entity.js';
-import {
-  StateDefinition,
-  StateDefinitionCreateMutations,
-} from '@/definitions/index.js';
-import { ExecQuery, ExecQueryOptions } from './exec.js';
-import { SingleArgsQueryOptions } from './method.js';
-import { RetriveQuery, RetriveQueryOptions } from './retrive.js';
-import { RootQueryOptions } from './type.js';
+import { Entity } from '@/entity';
+import { StateDefinition, StateDefinitionCreateMutations } from '@/definitions';
+import { ExecQuery, ExecQueryOptions } from './exec';
+import { SingleArgsQueryOptions } from './method';
+import { RetriveQuery, RetriveQueryOptions } from './retrive';
+import { RootQueryOptions } from './type';
 
 export interface CreateOneQuery<S extends StateDefinition>
   extends RetriveQuery<'CreateOneAndReturn', S, S, Entity<S>>,

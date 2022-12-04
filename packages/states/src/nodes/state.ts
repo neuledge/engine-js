@@ -1,9 +1,9 @@
-import { Tokenizer } from '@/tokenizer.js';
-import { parseDecoratorNodes } from './decorator.js';
-import { parseMaybeDescriptionNode } from './description.js';
-import { IdentifierNode, parseIdentifierNode } from './identifier.js';
-import { NamedNode } from './named.js';
-import { parseStateFieldNodes, StateFieldNode } from './state-field.js';
+import { Tokenizer } from '@/tokenizer';
+import { parseDecoratorNodes } from './decorator';
+import { parseMaybeDescriptionNode } from './description';
+import { IdentifierNode, parseIdentifierNode } from './identifier';
+import { NamedNode } from './named';
+import { parseStateFieldNodes, StateFieldNode } from './state-field';
 
 export interface StateNode extends NamedNode<'State'> {
   from?: IdentifierNode;

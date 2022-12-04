@@ -1,7 +1,7 @@
-import { Metadata } from '@/metadata/index.js';
-import { LimitQueryOptions } from '@/queries/index.js';
-import { StoreFindOptions, StoreList } from '@/store/index.js';
-import { toEntityList } from './entity.js';
+import { Metadata } from '@/metadata';
+import { LimitQueryOptions } from '@/queries';
+import { StoreFindOptions, StoreList } from '@/store';
+import { toEntityList } from './entity';
 
 const DEFAULT_QUERY_LIMIT = 1000;
 

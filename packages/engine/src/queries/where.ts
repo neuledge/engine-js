@@ -3,8 +3,8 @@ import {
   StateDefinitionName,
   StateDefinitionFind,
   StateDefinitionUnique,
-} from '@/definitions/index.js';
-import { AllKeys } from './utils.js';
+} from '@/definitions';
+import { AllKeys } from './utils';
 
 export type Where<S extends StateDefinition> = StateDefinitionFind<S> & {
   [K in NonCommonQueryKeys<S>]?: never;

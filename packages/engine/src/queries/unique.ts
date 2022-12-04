@@ -1,7 +1,7 @@
-import { StateDefinition } from '@/definitions/index.js';
-import { QueryMode } from './query.js';
-import { Query } from './query.js';
-import { UniqueWhere } from './where.js';
+import { StateDefinition } from '@/definitions';
+import { QueryMode } from './query';
+import { Query } from './query';
+import { UniqueWhere } from './where';
 
 export interface UniqueQuery<
   M extends QueryMode,

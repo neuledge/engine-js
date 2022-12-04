@@ -1,10 +1,10 @@
-import { Tokenizer } from '@/tokenizer.js';
-import { AbstractNode } from './abstract.js';
-import { EntityNode } from './entity.js';
-import { ImportNode, parseImportNodes } from './import.js';
-import { MigrationNode } from './migration.js';
-import { MutationNode } from './mutation.js';
-import { parseStateNode } from './state.js';
+import { Tokenizer } from '@/tokenizer';
+import { AbstractNode } from './abstract';
+import { EntityNode } from './entity';
+import { ImportNode, parseImportNodes } from './import';
+import { MigrationNode } from './migration';
+import { MutationNode } from './mutation';
+import { parseStateNode } from './state';
 
 export interface DocumentNode extends AbstractNode<'Root'> {
   imports: ImportNode[];

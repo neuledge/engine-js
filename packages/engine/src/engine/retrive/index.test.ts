@@ -1,9 +1,6 @@
-import {
-  Category,
-  Post,
-} from '@/definitions/__test__/category-post-example.js';
-import { Metadata, MetadataCollection } from '@/metadata/index.js';
-import { convertRetriveQuery } from './index.js';
+import { Category, Post } from '@/definitions/__test__/category-post-example';
+import { Metadata, MetadataCollection } from '@/metadata';
+import { convertRetriveQuery } from './index';
 
 describe('engine/retrive', () => {
   describe('convertRetriveQuery', () => {

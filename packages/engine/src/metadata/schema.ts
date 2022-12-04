@@ -1,4 +1,4 @@
-import { MetadataState, MetadataStateField } from './state/index.js';
+import { MetadataState, MetadataStateField } from './state';
 
 export type MetadataSchema = {
   [Key in string]?: MetadataSchemaChoice[];

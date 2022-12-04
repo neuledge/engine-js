@@ -1,13 +1,13 @@
-import { Tokenizer } from '@/tokenizer.js';
-import { parseDecoratorNodes } from './decorator.js';
-import { parseMaybeDescriptionNode } from './description.js';
-import { ExcludedFieldNode } from './excluded-field.js';
-import { ReferenceFieldNode } from './reference-field.js';
-import { FieldNode } from './field.js';
-import { parseIdentifierNode } from './identifier.js';
-import { LiteralNode, parseUInt8LiteralNode } from './literal.js';
-import { parseTypeNode } from './type.js';
-import { ParsingError } from '@/parsing-error.js';
+import { Tokenizer } from '@/tokenizer';
+import { parseDecoratorNodes } from './decorator';
+import { parseMaybeDescriptionNode } from './description';
+import { ExcludedFieldNode } from './excluded-field';
+import { ReferenceFieldNode } from './reference-field';
+import { FieldNode } from './field';
+import { parseIdentifierNode } from './identifier';
+import { LiteralNode, parseUInt8LiteralNode } from './literal';
+import { parseTypeNode } from './type';
+import { ParsingError } from '@/parsing-error';
 
 export const STATE_FIELD_INDEX_MAX_INPUT_VALUE = 255;
 

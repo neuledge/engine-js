@@ -1,7 +1,7 @@
-import { StateDefinition, SortDefinition } from '@/definitions/index.js';
-import { MetadataCollection } from '@/metadata/index.js';
-import { SortQueryOptions } from '@/queries/index.js';
-import { StoreFindOptions, StoreSort } from '@/store/index.js';
+import { StateDefinition, SortDefinition } from '@/definitions';
+import { MetadataCollection } from '@/metadata';
+import { SortQueryOptions } from '@/queries';
+import { StoreFindOptions, StoreSort } from '@/store';
 
 export const convertSortQuery = <S extends StateDefinition>(
   collection: MetadataCollection,

@@ -1,13 +1,10 @@
-import { Entity } from '@/entity.js';
-import {
-  StateDefinition,
-  StateDefinitionCreateMutations,
-} from '@/definitions/index.js';
-import { EntityList } from '@/list.js';
-import { ExecQuery, ExecQueryOptions } from './exec.js';
-import { MultiArgsQueryOptions } from './method.js';
-import { RetriveQuery, RetriveQueryOptions } from './retrive.js';
-import { RootQueryOptions } from './type.js';
+import { Entity } from '@/entity';
+import { StateDefinition, StateDefinitionCreateMutations } from '@/definitions';
+import { EntityList } from '@/list';
+import { ExecQuery, ExecQueryOptions } from './exec';
+import { MultiArgsQueryOptions } from './method';
+import { RetriveQuery, RetriveQueryOptions } from './retrive';
+import { RootQueryOptions } from './type';
 
 export interface CreateManyQuery<S extends StateDefinition>
   extends RetriveQuery<'CreateManyAndReturn', S, S, Entity<S>>,

@@ -1,13 +1,10 @@
-import { Entity } from '@/entity.js';
-import {
-  StateDefinition,
-  StateDefinitionUpdateMutations,
-} from '@/definitions/index.js';
-import { ExecQuery, ExecQueryOptions } from './exec.js';
-import { FilterQuery, FilterQueryOptions } from './filter.js';
-import { SingleArgsQueryOptions } from './method.js';
-import { RetriveQuery, RetriveQueryOptions } from './retrive.js';
-import { RootQueryOptions } from './type.js';
+import { Entity } from '@/entity';
+import { StateDefinition, StateDefinitionUpdateMutations } from '@/definitions';
+import { ExecQuery, ExecQueryOptions } from './exec';
+import { FilterQuery, FilterQueryOptions } from './filter';
+import { SingleArgsQueryOptions } from './method';
+import { RetriveQuery, RetriveQueryOptions } from './retrive';
+import { RootQueryOptions } from './type';
 
 export interface UpdateFirstOrThrowQuery<
   I extends StateDefinition,
