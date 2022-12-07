@@ -2090,12 +2090,12 @@
     eslint-plugin-prettier "^4.2.1"
     eslint-plugin-unicorn "^43.0.2"
 
-"@neuledge/jest-preset@^1.0.0-alpha.9":
-  version "1.0.0-alpha.9"
-  resolved "https://registry.yarnpkg.com/@neuledge/jest-preset/-/jest-preset-1.0.0-alpha.9.tgz#9c09714c00498bef8a63c032858c9fc978506028"
-  integrity sha512-RAIM/v4RcWcj6XV9SGkgN3fYgStG58qA8x380t4JFJmP5mkuYa0LXYyCbcGn4xBsK5uiWWGaMV6DXjtkHDcxyA==
+"@neuledge/jest-ts-preset@^1.0.0-alpha.10":
+  version "1.0.0-alpha.10"
+  resolved "https://registry.yarnpkg.com/@neuledge/jest-ts-preset/-/jest-ts-preset-1.0.0-alpha.10.tgz#e6877a323ddfe1a3c8b96d5dd6ff5eca07a9b9b8"
+  integrity sha512-C7AOBtVMWlHo8F4VqII69XE8QStMU992/nwaYQIK7oKmPyWEdZhHtEep8oyoqu3DasYnYERnnYgXOerYbpxi3Q==
   dependencies:
-    ts-jest ">= 29.0.3"
+    ts-jest "^29.0.3"
 
 "@neuledge/tsconfig@^1.0.0-alpha.9":
   version "1.0.0-alpha.9"
@@ -7198,7 +7198,7 @@ ts-interface-checker@^0.1.9:
   resolved "https://registry.yarnpkg.com/ts-interface-checker/-/ts-interface-checker-0.1.13.tgz#784fd3d679722bc103b1b4b8030bcddb5db2a699"
   integrity sha512-Y/arvbn+rrz3JCKl9C4kVNfTfSm2/mEp5FSz5EsZSANGPSlQrpRI5M4PKF+mJnE52jOO90PnPSc3Ur3bTQw0gA==
 
-"ts-jest@>= 29.0.3":
+ts-jest@^29.0.3:
   version "29.0.3"
   resolved "https://registry.yarnpkg.com/ts-jest/-/ts-jest-29.0.3.tgz#63ea93c5401ab73595440733cefdba31fcf9cb77"
   integrity sha512-Ibygvmuyq1qp/z3yTh9QTwVVAbFdDy/+4BtIQR2sp6baF2SJU/8CKK/hhnGIDY2L90Az2jIqTwZPnN2p+BweiQ==
