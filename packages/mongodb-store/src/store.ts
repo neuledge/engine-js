@@ -21,6 +21,8 @@ import {
   Document,
   MongoClient,
   MongoClientOptions,
+  Collection,
+  CollectionOptions,
 } from 'mongodb';
 
 export type MongoDBStoreOptions =
@@ -45,7 +47,7 @@ export type MongoDBStoreOptions =
 
 export class MongoDBStore implements Store {
   private readonly client: MongoClient;
-  private readonly db: Db;
+  private readonly db: Promise<Db>;
 
   constructor({ url, client, name, db }: MongoDBStoreOptions) {
     this.client =
@@ -55,12 +57,14 @@ export class MongoDBStore implements Store {
 
     this.db =
       typeof name === 'string'
-        ? this.client.db(name, db as DbOptions | undefined)
-        : (db as Db);
-  }
+        ? this.client
+            .connect()
+            .then((client) => client.db(name, db as DbOptions | undefined))
+        : Promise.resolve(db as Db);
 
-  async connect(): Promise<void> {
-    await this.client.connect();
+    this.db.catch(() => {
+      // catch error to prevent unhandled promise rejection
+    });
   }
 
   async close(): Promise<void> {
@@ -68,7 +72,8 @@ export class MongoDBStore implements Store {
   }
 
   async listCollections(): Promise<StoreCollection_Slim[]> {
-    const res = await this.db.listCollections({}, { nameOnly: true }).toArray();
+    const db = await this.db;
+    const res = await db.listCollections({}, { nameOnly: true }).toArray();
 
     return res.map((item): StoreCollection_Slim => ({ name: item.name }));
   }
@@ -80,11 +85,43 @@ export class MongoDBStore implements Store {
   }
 
   async ensureCollection(options: StoreEnsureCollectionOptions): Promise<void> {
-    throw new Error('Method not implemented.');
+    const db = await this.db;
+    const collection = await db
+      .createCollection(options.name)
+      .catch(() => db.collection(options.name));
+
+    if (options.dropIndexes?.length) {
+      await Promise.all(
+        options.dropIndexes.map((index) => collection.dropIndex(index)),
+      );
+    }
+
+    if (options.indexes?.length) {
+      const exists = await collection.listIndexes().toArray();
+      const existMap = new Map(exists.map((item) => [item.name, item]));
+
+      // FIXME handle primary index as an '_id' field
+
+      for (const index of options.indexes) {
+        if (existMap.has(index.name)) continue;
+
+        const indexSpec: Record<string, 1 | -1> = {};
+        for (const field of index.fields) {
+          indexSpec[field.name] = field.order === 'asc' ? 1 : -1;
+        }
+
+        await collection.createIndex(indexSpec, {
+          name: index.name,
+          unique: index.unique || index.primary,
+          background: true,
+        });
+      }
+    }
   }
 
   async dropCollection(options: StoreDropCollectionOptions): Promise<void> {
-    await this.db.dropCollection(options.name);
+    const db = await this.db;
+    await db.dropCollection(options.name);
   }
 
   async find<T = StoreDocument>(
@@ -106,7 +143,7 @@ export class MongoDBStore implements Store {
   }
 
   async delete(options: StoreDeleteOptions): Promise<StoreMutationResponse> {
-    const collection = this.db.collection(options.collectionName);
+    const collection = await this.collection(options.collectionName);
 
     const ids = await collection
       // unicon issue: https://github.com/sindresorhus/eslint-plugin-unicorn/issues/1947
@@ -126,6 +163,16 @@ export class MongoDBStore implements Store {
     });
 
     return { affectedCount: res.deletedCount };
+  }
+
+  // private helpers
+
+  private async collection(
+    collectionName: string,
+    options?: CollectionOptions,
+  ): Promise<Collection> {
+    const db = await this.db;
+    return db.collection(collectionName, options);
   }
 
   private where(where: StoreWhere): Filter<Document> {
