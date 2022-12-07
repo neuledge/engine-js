@@ -2,9 +2,9 @@
   "extends": "@neuledge/tsconfig/base.json",
   "compilerOptions": {
     "baseUrl": "src",
-    "paths": {
-      "@/*": ["./*"]
-    }
+    "rootDir": "src",
+    "outDir": "dist"
   },
-  "include": ["src"]
+  "include": ["src"],
+  "exclude": ["node_modules", "**/__ignore__/**"]
 }

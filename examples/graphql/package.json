@@ -1,22 +1,27 @@
 {
-  "name": "graphql-example",
+  "name": "graphql-app",
   "version": "0.0.0",
   "private": true,
   "scripts": {
+    "build": "yarn compile",
     "generate:states": "states build --basepath src/states \"*.states\"",
     "generate:codegen": "graphql-codegen",
     "generate": "yarn generate:states && yarn generate:codegen",
-    "compile": "tsup src/app.ts --format cjs --dts",
+    "compile": "tsup",
     "lint": "eslint . --ext \"js,jsx,ts,tsx,mjs,cjs\"",
     "lint:strict": "yarn lint --max-warnings 0",
-    "start": "node dist/app.js"
+    "watch": "yarn compile --watch",
+    "dev": "nodemon --enable-source-maps dist/app.js",
+    "start": "node --enable-source-maps dist/app.js"
   },
   "dependencies": {
-    "@neuledge/scalars": "^0.1.0-alpha.1",
     "@neuledge/engine": "^0.1.0-alpha.1",
+    "@neuledge/mongodb-store": "^0.1.0-alpha.1",
+    "@neuledge/scalars": "^0.1.0-alpha.1",
     "fastify": "^4.8.1",
     "graphql": "^16.6.0",
-    "mercurius": "^11.0.1"
+    "mercurius": "^11.0.1",
+    "nodemon": "^2.0.20"
   },
   "devDependencies": {
     "@graphql-codegen/cli": "^2.13.7",

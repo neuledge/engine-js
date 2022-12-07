@@ -26,8 +26,8 @@
     "node": ">= 16"
   },
   "scripts": {
-    "build": "tsup",
-    "watch": "tsup --watch",
+    "types": "rimraf dist/**/*.d.ts dist/**/*.d.ts.map && tsc --emitDeclarationOnly",
+    "build": "rimraf dist/**/*.js dist/**/*.js.map && tsup",
     "test": "jest",
     "lint": "eslint . --ext \"js,jsx,ts,tsx,mjs,cjs\"",
     "lint:strict": "yarn lint --max-warnings 0"

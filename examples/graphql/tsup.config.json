@@ -1,0 +1,6 @@
+{
+  "entry": ["src/app.ts"],
+  "format": ["cjs"],
+  "sourcemap": true,
+  "shims": true
+}

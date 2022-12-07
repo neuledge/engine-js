@@ -23,40 +23,40 @@ import {
   MongoClientOptions,
 } from 'mongodb';
 
-export interface MongoDBStoreClientOptions extends MongoClientOptions {
-  url: string;
-}
-
-export interface MongoDBStoreDbOptions extends DbOptions {
-  name: string;
-}
+export type MongoDBStoreOptions =
+  | {
+      url: string;
+      client?: MongoClientOptions;
+      name: string;
+      db?: DbOptions;
+    }
+  | {
+      url?: never;
+      client: MongoClient;
+      name: string;
+      db?: DbOptions;
+    }
+  | {
+      url?: never;
+      client: MongoClient;
+      name?: never;
+      db: Db;
+    };
 
 export class MongoDBStore implements Store {
   private readonly client: MongoClient;
   private readonly db: Db;
 
-  constructor(
-    client: string | MongoDBStoreClientOptions,
-    db: string | MongoDBStoreDbOptions,
-  );
-  constructor(client: MongoClient, db: string | Db | MongoDBStoreDbOptions);
-  constructor(
-    client: string | MongoClient | MongoDBStoreClientOptions,
-    db: string | Db | MongoDBStoreDbOptions,
-  ) {
+  constructor({ url, client, name, db }: MongoDBStoreOptions) {
     this.client =
-      typeof client === 'string'
-        ? new MongoClient(client)
-        : 'url' in client
-        ? new MongoClient(client.url, client)
-        : client;
+      typeof url === 'string'
+        ? new MongoClient(url, client)
+        : (client as MongoClient);
 
     this.db =
-      typeof db === 'string'
-        ? this.client.db(db)
-        : 'name' in db
-        ? this.client.db(db.name, db)
-        : db;
+      typeof name === 'string'
+        ? this.client.db(name, db as DbOptions | undefined)
+        : (db as Db);
   }
 
   async connect(): Promise<void> {
