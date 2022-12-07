@@ -5,9 +5,8 @@ export {
   type StateDefinitionWhereId as WhereId,
   type StateDefinitionWhereNumber as WhereNumber,
   type StateDefinitionWhereObject as WhereObject,
-} from './definitions/state';
-
-export { createEitherDefintion as either } from './definitions/either';
+  createEitherDefintion as either,
+} from './definitions';
 
 export { type Entity } from '@/entity';
 

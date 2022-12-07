@@ -18,11 +18,13 @@ describe('build', () => {
 
       await build(['foo.states'], { basepath: '/' });
 
-      expect(readFile).toBeCalledTimes(1);
-      expect(readFile).toBeCalledWith('/foo.states', { encoding: 'utf8' });
+      expect(readFile).toHaveBeenCalledTimes(1);
+      expect(readFile).toHaveBeenCalledWith('/foo.states', {
+        encoding: 'utf8',
+      });
 
-      expect(writeFile).toBeCalledTimes(1);
-      expect(writeFile).toBeCalledWith(
+      expect(writeFile).toHaveBeenCalledTimes(1);
+      expect(writeFile).toHaveBeenCalledWith(
         '/states.ts',
         `export class Foo {
   static $key = 'Foo' as const;

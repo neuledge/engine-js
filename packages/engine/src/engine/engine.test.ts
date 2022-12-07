@@ -32,9 +32,9 @@ describe('engine/engine', () => {
       const result = await engine.findMany(Category);
 
       expect(engine.store.find).toHaveBeenCalledTimes(1);
-      expect(engine.store.find).toBeCalledWith({
+      expect(engine.store.find).toHaveBeenCalledWith({
         collectionName: 'categories',
-        limit: 100,
+        limit: 1000,
       });
 
       expect(result).toEqual([]);
@@ -46,7 +46,7 @@ describe('engine/engine', () => {
       const result = await engine.findMany(Category).limit(10);
 
       expect(engine.store.find).toHaveBeenCalledTimes(1);
-      expect(engine.store.find).toBeCalledWith({
+      expect(engine.store.find).toHaveBeenCalledWith({
         collectionName: 'categories',
         limit: 10,
       });
@@ -60,7 +60,7 @@ describe('engine/engine', () => {
       const result = await engine.findMany(Category).limit(10).offset('foo');
 
       expect(engine.store.find).toHaveBeenCalledTimes(1);
-      expect(engine.store.find).toBeCalledWith({
+      expect(engine.store.find).toHaveBeenCalledWith({
         collectionName: 'categories',
         limit: 10,
         offset: 'foo',
@@ -78,7 +78,7 @@ describe('engine/engine', () => {
         .limit(10);
 
       expect(engine.store.find).toHaveBeenCalledTimes(1);
-      expect(engine.store.find).toBeCalledWith({
+      expect(engine.store.find).toHaveBeenCalledWith({
         collectionName: 'categories',
         where: { id: { $gt: 3 } },
         limit: 10,
@@ -96,7 +96,7 @@ describe('engine/engine', () => {
         .limit(10);
 
       expect(engine.store.find).toHaveBeenCalledTimes(1);
-      expect(engine.store.find).toBeCalledWith({
+      expect(engine.store.find).toHaveBeenCalledWith({
         collectionName: 'categories',
         select: { id: true, name: true },
         limit: 10,
@@ -114,7 +114,7 @@ describe('engine/engine', () => {
         .limit(10);
 
       expect(engine.store.find).toHaveBeenCalledTimes(1);
-      expect(engine.store.find).toBeCalledWith({
+      expect(engine.store.find).toHaveBeenCalledWith({
         collectionName: 'posts',
         sort: { category_id: 'desc', title: 'desc' },
         limit: 10,
@@ -132,7 +132,7 @@ describe('engine/engine', () => {
         .limit(10);
 
       expect(engine.store.find).toHaveBeenCalledTimes(1);
-      expect(engine.store.find).toBeCalledWith({
+      expect(engine.store.find).toHaveBeenCalledWith({
         collectionName: 'posts',
         sort: { content: 'desc', id: 'asc' },
         limit: 10,

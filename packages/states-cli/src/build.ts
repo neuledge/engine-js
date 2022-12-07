@@ -18,7 +18,7 @@ export const build = async (
     options.basepath,
   );
 
-  const resolvedFiles = await fg(files, { cwd: options.basepath });
+  const resolvedFiles = await resolveFiles(files, options.basepath);
   await Promise.all(resolvedFiles.map((file) => states.import(file)));
 
   const outputFile = resolve(
@@ -27,4 +27,29 @@ export const build = async (
   );
 
   await fs.writeFile(outputFile, generate(states));
+};
+
+const resolveFiles = async (
+  files: string[],
+  basepath?: string,
+): Promise<string[]> => {
+  const resolvedFiles = [];
+  const dynamicFiles = [];
+
+  for (const file of files) {
+    if (fg.isDynamicPattern(file)) {
+      dynamicFiles.push(file);
+    } else {
+      resolvedFiles.push(resolve(basepath ?? '', file));
+    }
+  }
+
+  return [
+    ...resolvedFiles,
+    ...(await fg(dynamicFiles, {
+      cwd: basepath,
+      onlyFiles: true,
+      unique: true,
+    })),
+  ];
 };

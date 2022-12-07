@@ -21,9 +21,9 @@ export interface MetadataStateRelation extends MetadataGhostStateRelation {
 }
 
 export class MetadataState extends MetadataGhostState {
-  fields!: MetadataStateField[];
-  instance!: StateDefinition;
-  relations!: MetadataStateRelation[];
+  fields: MetadataStateField[];
+  instance: StateDefinition;
+  relations: MetadataStateRelation[];
 
   private constructor(ctx: MetadataStateContext, state: StateDefinition) {
     super();

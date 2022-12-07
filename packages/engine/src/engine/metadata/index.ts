@@ -1,4 +1,4 @@
-import { stateDefinitions } from '@/definitions';
+import { stateDefinitions } from '@neuledge/engine';
 import { Metadata } from '@/metadata';
 import { Store } from '@/store';
 import {
