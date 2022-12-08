@@ -18,7 +18,7 @@ import {
 /* eslint-disable max-lines-per-function */
 
 describe('generated/mutation', () => {
-  describe('StateMethods<>', () => {
+  describe('StateDefintionMutations<>', () => {
     it('should have single state methods', () => {
       expect<{ create: 1; update: 1; delete: 1 }>(
         {} as Record<StateDefintionMutations<typeof Category>, 1>,
@@ -40,7 +40,7 @@ describe('generated/mutation', () => {
     });
   });
 
-  describe('StateCreateMethods<>', () => {
+  describe('StateDefinitionCreateMutations<>', () => {
     it('should have single state methods', () => {
       expect<{ create: 1 }>(
         {} as Record<StateDefinitionCreateMutations<typeof Category>, 1>,
@@ -60,7 +60,7 @@ describe('generated/mutation', () => {
     });
   });
 
-  describe('StateUpdateMethods<>', () => {
+  describe('StateDefinitionUpdateWithArgsMutations<>', () => {
     it('should have single state methods', () => {
       expect<{ update: 1 }>(
         {} as Record<
@@ -92,7 +92,7 @@ describe('generated/mutation', () => {
     });
   });
 
-  describe('StateTransformMethods<>', () => {
+  describe('StateDefinitionUpdateWithoutArgsMutations<>', () => {
     it('should have single state methods', () => {
       expect<Record<never, 1>>(
         {} as Record<
@@ -115,16 +115,16 @@ describe('generated/mutation', () => {
     });
 
     it('should have multiple state methods', () => {
-      expect<Record<never, 1>>(
-        {} as Record<
-          StateDefinitionUpdateWithoutArgsMutations<typeof Post[number]>,
-          1
-        >,
+      expect<StateDefinitionUpdateWithoutArgsMutations<typeof Post[number]>>(
+        {} as never,
+      );
+      expect<never>(
+        {} as StateDefinitionUpdateWithoutArgsMutations<typeof Post[number]>,
       );
     });
   });
 
-  describe('StateDeleteMethods<>', () => {
+  describe('StateDefinitionDeleteMutations<>', () => {
     it('should have single state methods', () => {
       expect<{ delete: 1 }>(
         {} as Record<StateDefinitionDeleteMutations<typeof Category>, 1>,
@@ -144,7 +144,7 @@ describe('generated/mutation', () => {
     });
   });
 
-  describe('StateMethodArguments<>', () => {
+  describe('StateDefinitionMutationArguments<>', () => {
     it('should have single state method arguments', () => {
       expect<{
         name: string;
@@ -179,32 +179,48 @@ describe('generated/mutation', () => {
     });
   });
 
-  describe('StateMethodReturn<>', () => {
+  describe('StateDefinitionMutationsReturn<>', () => {
     it('should have single state method return', () => {
-      expect<typeof Category>(
-        {} as StateDefinitionMutationsReturn<typeof Category, 'create'>,
+      expect<StateDefinitionMutationsReturn<typeof Category, 'create'>>(
+        Category,
       );
 
-      expect<typeof DraftPost>(
-        {} as StateDefinitionMutationsReturn<typeof DraftPost, 'update'>,
+      expect<StateDefinitionMutationsReturn<typeof Category, 'update'>>(
+        Category,
       );
 
-      expect<typeof PublishedPost>(
-        {} as StateDefinitionMutationsReturn<typeof DraftPost, 'publish'>,
+      expect<StateDefinitionMutationsReturn<typeof Category, 'delete'>>(
+        null as never,
       );
 
-      expect<never>(
-        {} as StateDefinitionMutationsReturn<typeof PublishedPost, 'delete'>,
+      expect<StateDefinitionMutationsReturn<typeof DraftPost, 'update'>>(
+        DraftPost,
+      );
+
+      expect<StateDefinitionMutationsReturn<typeof DraftPost, 'publish'>>(
+        PublishedPost,
+      );
+
+      expect<StateDefinitionMutationsReturn<typeof DraftPost, 'delete'>>(
+        null as never,
+      );
+
+      expect<StateDefinitionMutationsReturn<typeof PublishedPost, 'update'>>(
+        PublishedPost,
+      );
+
+      expect<StateDefinitionMutationsReturn<typeof PublishedPost, 'delete'>>(
+        null as never,
       );
     });
 
     it('should have multiple states method return', () => {
-      expect<typeof DraftPost | typeof PublishedPost>(
-        {} as StateDefinitionMutationsReturn<typeof Post[number], 'update'>,
+      expect<StateDefinitionMutationsReturn<typeof Post[number], 'update'>>(
+        DraftPost as typeof Post[number],
       );
 
-      expect<never>(
-        {} as StateDefinitionMutationsReturn<typeof Post[number], 'delete'>,
+      expect<StateDefinitionMutationsReturn<typeof Post[number], 'delete'>>(
+        null as never,
       );
     });
   });

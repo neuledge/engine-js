@@ -12,7 +12,7 @@ export interface DeleteManyQuery<S extends StateDefinition>
   extends RetriveQuery<'DeleteManyAndReturn', S, S, Entity<S>>,
     FilterQuery<S>,
     LimitQuery,
-    ExecQuery<null> {}
+    ExecQuery<void> {}
 
 export interface DeleteManyAndReturnQuery<
   S extends StateDefinition,

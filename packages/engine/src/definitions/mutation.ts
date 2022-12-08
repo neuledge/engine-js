@@ -1,5 +1,9 @@
 import { Entity } from '@/entity';
-import { StateDefinition, StateDefinitionType } from './state';
+import {
+  StateDefinition,
+  StateDefinitionName,
+  StateDefinitionType,
+} from './state';
 
 export type MutationDefinitionArguments = Record<string, unknown>;
 
@@ -102,16 +106,19 @@ export type StateDefinitionMutationArguments<
 export type StateDefinitionMutationsReturn<
   S extends StateDefinition,
   M extends keyof S,
+> = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-> = S[M] extends DeleteMutationDefinition<any>
-  ? never
-  : // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  S[M] extends CreateMutationDefinition<S, any>
-  ? S
-  : // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  S[M] extends UpdateMutationDefinition<any, any, infer R>
-  ? R
-  : // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  S[M] extends TransformMutationDefinition<any, infer R>
-  ? R
-  : never;
+  [N in StateDefinitionName<S>]: S extends StateDefinition<N, any>
+    ? S[M] extends DeleteMutationDefinition<S>
+      ? never
+      : // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      S[M] extends CreateMutationDefinition<S, any>
+      ? S
+      : // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      S[M] extends UpdateMutationDefinition<S, any, infer R>
+      ? R
+      : S[M] extends TransformMutationDefinition<S, infer R>
+      ? R
+      : never
+    : never;
+}[StateDefinitionName<S>];

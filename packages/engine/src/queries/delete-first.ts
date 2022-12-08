@@ -9,7 +9,7 @@ import { RootQueryOptions } from './type';
 export interface DeleteFirstQuery<S extends StateDefinition>
   extends RetriveQuery<'DeleteFirstAndReturn', S, S, Entity<S>>,
     FilterQuery<S>,
-    ExecQuery<null> {}
+    ExecQuery<void> {}
 
 export interface DeleteFirstAndReturnQuery<
   S extends StateDefinition,

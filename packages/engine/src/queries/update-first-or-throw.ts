@@ -11,7 +11,7 @@ export interface UpdateFirstOrThrowQuery<
   O extends StateDefinition,
 > extends RetriveQuery<'UpdateFirstAndReturnOrThrow', I, O, Entity<O>>,
     FilterQuery<I>,
-    ExecQuery<null> {}
+    ExecQuery<void> {}
 
 export interface UpdateFirstAndReturnOrThrowQuery<
   I extends StateDefinition,

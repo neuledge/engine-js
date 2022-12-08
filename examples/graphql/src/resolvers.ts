@@ -50,7 +50,10 @@ export const resolvers: Resolvers = {
         .select(),
 
     deletePost: async (_, { id }) =>
-      engine.deleteUniqueOrThrow([...Post], 'delete').unique({ id }),
+      engine
+        .deleteUniqueOrThrow([...Post], 'delete')
+        .unique({ id })
+        .then(() => null),
 
     createCategory: async (_, { data }) =>
       engine.createOne([Category], 'create', data).select(),
@@ -62,6 +65,9 @@ export const resolvers: Resolvers = {
         .select(),
 
     deleteCategory: async (_, { id }) =>
-      engine.deleteUniqueOrThrow([Category], 'delete').unique({ id }),
+      engine
+        .deleteUniqueOrThrow([Category], 'delete')
+        .unique({ id })
+        .then(() => null),
   },
 };

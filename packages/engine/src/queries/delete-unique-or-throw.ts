@@ -25,7 +25,7 @@ export interface DeleteUniqueWhereOrThrowQuery<
 > extends RetriveQuery<'DeleteUniqueWhereAndReturnOrThrow', S, S, Entity<S>>,
     FilterQuery<S>,
     UniqueQuery<'DeleteUniqueWhereOrThrow', S, S, R>,
-    ExecQuery<null> {}
+    ExecQuery<void> {}
 
 export interface DeleteUniqueWhereAndReturnOrThrowQuery<
   S extends StateDefinition,
