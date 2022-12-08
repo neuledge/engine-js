@@ -10,7 +10,17 @@ export const toEntityList = <S extends StateDefinition>(
   list: StoreList,
 ): EntityList<Entity<S>> =>
   Object.assign(
-    list.map((item) => toEntity<S>(metadata, item)),
+    list
+      .filter((document) =>
+        Buffer.isBuffer(document[ENTITY_METADATA_HASH_FIELD]),
+      )
+      .map((document) =>
+        getStateEntity<S>(
+          metadata,
+          document[ENTITY_METADATA_HASH_FIELD] as Buffer,
+          document,
+        ),
+      ),
     { nextOffset: list.nextOffset },
   );
 
@@ -19,7 +29,13 @@ export const toMaybeEntity = <S extends StateDefinition>(
   list: StoreList,
 ): Entity<S> | undefined => {
   const document = list[0];
-  return document && toEntity<S>(metadata, document);
+  return document && Buffer.isBuffer(document[ENTITY_METADATA_HASH_FIELD])
+    ? getStateEntity<S>(
+        metadata,
+        document[ENTITY_METADATA_HASH_FIELD],
+        document,
+      )
+    : undefined;
 };
 
 export const toEntityOrThrow = <S extends StateDefinition>(
@@ -27,20 +43,15 @@ export const toEntityOrThrow = <S extends StateDefinition>(
   list: StoreList,
 ): Entity<S> => {
   const document = list[0];
-  if (!document) {
+  if (!document || !Buffer.isBuffer(document[ENTITY_METADATA_HASH_FIELD])) {
     throw new Error('Document not found');
   }
 
-  return toEntity<S>(metadata, document);
-};
-
-const toEntity = <S extends StateDefinition>(
-  metadata: Metadata,
-  document: StoreDocument,
-): Entity<S> => {
-  const stateHash = document[ENTITY_METADATA_HASH_FIELD] as Buffer;
-
-  return getStateEntity(metadata, stateHash, document);
+  return getStateEntity<S>(
+    metadata,
+    document[ENTITY_METADATA_HASH_FIELD],
+    document,
+  );
 };
 
 const getStateEntity = <S extends StateDefinition>(

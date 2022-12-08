@@ -10,20 +10,24 @@ import {
   StoreDescribeCollectionOptions,
   StoreDropCollectionOptions,
   StoreEnsureCollectionOptions,
-  StoreWhere,
   StoreCollection_Slim,
   StoreCollection,
 } from '@neuledge/engine';
 import {
   Db,
   DbOptions,
-  Filter,
   Document,
   MongoClient,
   MongoClientOptions,
   Collection,
   CollectionOptions,
 } from 'mongodb';
+import { escapeDocument, unescapeDocument } from './documents';
+import { findFilter } from './filter';
+import { dropIndexes, ensureIndexes } from './indexes';
+import { projectFilter } from './project';
+import { sortFilter } from './sort';
+import { updateFilter } from './update';
 
 export type MongoDBStoreOptions =
   | {
@@ -82,6 +86,16 @@ export class MongoDBStore implements Store {
     options: StoreDescribeCollectionOptions,
   ): Promise<StoreCollection> {
     throw new Error('Method not implemented.');
+
+    //     const collection = await this.collection(options.name);
+    //
+    //     const indexes = await collection.indexes();
+    //
+    //     return {
+    //       name: collection.collectionName,
+    //       indexes: [],
+    //       fields: [],
+    //     };
   }
 
   async ensureCollection(options: StoreEnsureCollectionOptions): Promise<void> {
@@ -91,31 +105,11 @@ export class MongoDBStore implements Store {
       .catch(() => db.collection(options.name));
 
     if (options.dropIndexes?.length) {
-      await Promise.all(
-        options.dropIndexes.map((index) => collection.dropIndex(index)),
-      );
+      await dropIndexes(collection, options.dropIndexes);
     }
 
     if (options.indexes?.length) {
-      const exists = await collection.listIndexes().toArray();
-      const existMap = new Map(exists.map((item) => [item.name, item]));
-
-      // FIXME handle primary index as an '_id' field
-
-      for (const index of options.indexes) {
-        if (existMap.has(index.name)) continue;
-
-        const indexSpec: Record<string, 1 | -1> = {};
-        for (const field of index.fields) {
-          indexSpec[field.name] = field.order === 'asc' ? 1 : -1;
-        }
-
-        await collection.createIndex(indexSpec, {
-          name: index.name,
-          unique: index.unique || index.primary,
-          background: true,
-        });
-      }
+      await ensureIndexes(collection, options.indexes);
     }
   }
 
@@ -127,40 +121,116 @@ export class MongoDBStore implements Store {
   async find<T = StoreDocument>(
     options: StoreFindOptions,
   ): Promise<StoreList<T>> {
-    throw new Error('Method not implemented.');
+    const collection = await this.collection(options.collectionName);
+
+    let query = collection
+      // unicon issue: https://github.com/sindresorhus/eslint-plugin-unicorn/issues/1947
+      // eslint-disable-next-line unicorn/no-array-callback-reference
+      .find(options.where ? findFilter(options.where) : {})
+      .limit(options.limit);
+
+    if (options.select) {
+      query = query.project(projectFilter(options.select));
+    }
+
+    // FIXME support `match`
+
+    if (options.offset != null) {
+      query = query.skip(options.offset as number);
+    }
+
+    if (options.sort) {
+      query = query.sort(sortFilter(options.sort));
+    }
+
+    const docs = await query.toArray();
+
+    return Object.assign(
+      docs.map((doc) => unescapeDocument<T>(doc)),
+      {
+        nextOffset:
+          docs.length < options.limit
+            ? null
+            : ((options.offset ?? 0) as number) + docs.length,
+      },
+    );
   }
 
   async insert<T = StoreDocument>(
-    items: StoreInsertOptions<T>,
+    options: StoreInsertOptions<T>,
   ): Promise<StoreMutationResponse> {
-    throw new Error('Method not implemented.');
+    const collection = await this.collection(options.collectionName);
+
+    const res = await collection.insertMany(
+      options.documents.map((doc) => escapeDocument(doc)),
+    );
+
+    return { affectedCount: res.insertedCount };
   }
 
   async update<T = StoreDocument>(
     options: StoreUpdateOptions<T>,
   ): Promise<StoreMutationResponse> {
-    throw new Error('Method not implemented.');
+    const collection = await this.collection(options.collectionName);
+
+    const filter = options.where ? findFilter(options.where) : {};
+    const update = updateFilter(options.set as Document);
+    let res;
+
+    if (options.limit === 1) {
+      res = await collection.updateOne(filter, update);
+    } else {
+      const ids = await collection
+        // unicon issue: https://github.com/sindresorhus/eslint-plugin-unicorn/issues/1947
+        // eslint-disable-next-line unicorn/no-array-callback-reference, unicorn/no-array-method-this-argument
+        .find(filter, {
+          limit: options.limit,
+          projection: { _id: 1 },
+        })
+        .toArray();
+
+      if (!ids.length) {
+        return { affectedCount: 0 };
+      }
+
+      res = await collection.updateMany(
+        { ...filter, _id: { $in: ids.map((id) => id._id) } },
+        update,
+      );
+    }
+
+    return {
+      affectedCount: res.modifiedCount,
+    };
   }
 
   async delete(options: StoreDeleteOptions): Promise<StoreMutationResponse> {
     const collection = await this.collection(options.collectionName);
 
-    const ids = await collection
-      // unicon issue: https://github.com/sindresorhus/eslint-plugin-unicorn/issues/1947
-      // eslint-disable-next-line unicorn/no-array-callback-reference, unicorn/no-array-method-this-argument
-      .find(options.where ? this.where(options.where) : {}, {
-        limit: options.limit,
-        projection: { _id: 1 },
-      })
-      .toArray();
+    const filter = options.where ? findFilter(options.where) : {};
+    let res;
 
-    if (!ids.length) {
-      return { affectedCount: 0 };
+    if (options.limit === 1) {
+      res = await collection.deleteOne(filter);
+    } else {
+      const ids = await collection
+        // unicon issue: https://github.com/sindresorhus/eslint-plugin-unicorn/issues/1947
+        // eslint-disable-next-line unicorn/no-array-callback-reference, unicorn/no-array-method-this-argument
+        .find(filter, {
+          limit: options.limit,
+          projection: { _id: 1 },
+        })
+        .toArray();
+
+      if (!ids.length) {
+        return { affectedCount: 0 };
+      }
+
+      res = await collection.deleteMany({
+        ...filter,
+        _id: { $in: ids.map((id) => id._id) },
+      });
     }
-
-    const res = await collection.deleteMany({
-      _id: { $in: ids.map((id) => id._id) },
-    });
 
     return { affectedCount: res.deletedCount };
   }
@@ -173,9 +243,5 @@ export class MongoDBStore implements Store {
   ): Promise<Collection> {
     const db = await this.db;
     return db.collection(collectionName, options);
-  }
-
-  private where(where: StoreWhere): Filter<Document> {
-    throw new Error('Method not implemented.');
   }
 }

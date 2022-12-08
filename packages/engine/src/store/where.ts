@@ -48,15 +48,15 @@ export interface StoreWhereGreaterThenEqual {
 }
 
 export interface StoreWhereContains {
-  $contains: StoreScalarValue;
+  $contains: string;
 }
 
 export interface StoreWhereStartsWith {
-  $startsWith: StoreScalarValue;
+  $startsWith: string;
 }
 
 export interface StoreWhereEndsWith {
-  $endsWith: StoreScalarValue;
+  $endsWith: string;
 }
 
 export interface StoreWhereIn {
