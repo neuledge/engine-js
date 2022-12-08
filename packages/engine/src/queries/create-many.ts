@@ -8,7 +8,7 @@ import { RootQueryOptions } from './type';
 
 export interface CreateManyQuery<S extends StateDefinition>
   extends RetriveQuery<'CreateManyAndReturn', S, S, Entity<S>>,
-    ExecQuery<void> {}
+    ExecQuery<null> {}
 
 export interface CreateManyAndReturnQuery<
   S extends StateDefinition,

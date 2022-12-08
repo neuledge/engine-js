@@ -14,7 +14,7 @@ export interface UpdateManyQuery<
 > extends RetriveQuery<'UpdateManyAndReturn', I, O, Entity<O>>,
     FilterQuery<I>,
     LimitQuery,
-    ExecQuery<void> {}
+    ExecQuery<null> {}
 
 export interface UpdateManyAndReturnQuery<
   I extends StateDefinition,

@@ -23,7 +23,7 @@ export interface DeleteUniqueWhereQuery<S extends StateDefinition, R>
   extends RetriveQuery<'DeleteUniqueWhereAndReturn', S, S, R>,
     FilterQuery<S>,
     UniqueQuery<'DeleteUniqueWhere', S, S, R>,
-    ExecQuery<void> {}
+    ExecQuery<null> {}
 
 export interface DeleteUniqueWhereAndReturnQuery<
   S extends StateDefinition,

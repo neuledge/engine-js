@@ -1,5 +1,13 @@
 schema: schema.graphql
 generates:
   src/schema.codegen.ts:
+    config:
+      mapperTypeSuffix: 'State'
+      mappers:
+        Category: ./states.codegen#Category
+        Post: ./states.codegen#Post
+        DraftPost: ./states.codegen#DraftPost
+        PublishedPost: ./states.codegen#PublishedPost
     plugins:
       - typescript
+      - typescript-resolvers

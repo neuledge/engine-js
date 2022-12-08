@@ -5,8 +5,8 @@
   "scripts": {
     "build": "yarn compile",
     "generate:states": "states build --basepath src/states \"*.states\"",
-    "generate:codegen": "graphql-codegen",
-    "generate": "yarn generate:states && yarn generate:codegen",
+    "generate:schema": "graphql-codegen",
+    "generate": "yarn generate:states && yarn generate:schema",
     "compile": "tsup",
     "lint": "eslint . --ext \"js,jsx,ts,tsx,mjs,cjs\"",
     "lint:strict": "yarn lint --max-warnings 0",

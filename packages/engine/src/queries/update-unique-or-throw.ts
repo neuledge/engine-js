@@ -13,7 +13,7 @@ export interface UpdateUniqueOrThrowQuery<
 > extends RetriveQuery<'UpdateUniqueAndReturnOrThrow', I, O, Entity<O>>,
     FilterQuery<I>,
     UniqueQuery<'UpdateUniqueWhereOrThrow', I, O, Entity<O>>,
-    ExecQuery<void> {}
+    ExecQuery<null> {}
 
 export interface UpdateUniqueAndReturnOrThrowQuery<
   I extends StateDefinition,
@@ -30,7 +30,7 @@ export interface UpdateUniqueWhereOrThrowQuery<
 > extends RetriveQuery<'UpdateUniqueWhereAndReturnOrThrow', I, O, R>,
     FilterQuery<I>,
     UniqueQuery<'UpdateUniqueWhereOrThrow', I, O, R>,
-    ExecQuery<void> {}
+    ExecQuery<null> {}
 
 export interface UpdateUniqueWhereAndReturnOrThrowQuery<
   I extends StateDefinition,

@@ -1,26 +1,10 @@
 import { Category, DraftPost, Post, PublishedPost } from './states.codegen';
-import {
-  CategoryPostsArgs,
-  MutationCreateCategoryArgs,
-  MutationCreatePostArgs,
-  MutationDeleteCategoryArgs,
-  MutationDeletePostArgs,
-  MutationPublishPostArgs,
-  MutationUpdateCategoryArgs,
-  MutationUpdatePostArgs,
-  QueryCategoryArgs,
-  QueryPostArgs,
-} from './schema.codegen';
+import { Resolvers } from './schema.codegen';
 import { engine } from './engine';
 
-type P = unknown;
-
-export const resolvers = {
+export const resolvers: Resolvers = {
   Category: {
-    posts: async (
-      { id }: Category,
-      { limit, offset }: CategoryPostsArgs,
-    ): Promise<PublishedPost[]> =>
+    posts: async ({ id }, { limit, offset }) =>
       engine
         .findMany(PublishedPost)
         .where({ category: { $eq: { id } } })
@@ -29,23 +13,18 @@ export const resolvers = {
   },
 
   Query: {
-    category: async (_: P, { id }: QueryCategoryArgs): Promise<Category> =>
+    category: async (_, { id }) =>
       engine.findUniqueOrThrow(Category).unique({ id }),
 
-    categories: async (): Promise<Category[]> =>
-      engine.findMany(Category).exec(),
+    categories: async () => engine.findMany(Category),
 
-    post: async (_: P, { id }: QueryPostArgs): Promise<Post> =>
-      engine.findUniqueOrThrow(...Post).unique({ id }),
+    post: async (_, { id }) => engine.findUniqueOrThrow(...Post).unique({ id }),
 
-    draftPosts: async (): Promise<DraftPost[]> => engine.findMany(DraftPost),
+    draftPosts: async () => engine.findMany(DraftPost),
   },
 
   Mutation: {
-    createPost: async (
-      _: P,
-      { data }: MutationCreatePostArgs,
-    ): Promise<DraftPost> =>
+    createPost: async (_, { data }) =>
       engine
         .createOne([DraftPost], 'create', {
           title: data.title,
@@ -54,10 +33,7 @@ export const resolvers = {
         })
         .select(),
 
-    updatePost: async (
-      _: P,
-      { id, data }: MutationUpdatePostArgs,
-    ): Promise<Post> =>
+    updatePost: async (_, { id, data }) =>
       engine
         .updateUniqueOrThrow([...Post], 'update', {
           title: data.title,
@@ -67,37 +43,25 @@ export const resolvers = {
         .unique({ id })
         .select(),
 
-    publishPost: async (
-      _: P,
-      { id }: MutationPublishPostArgs,
-    ): Promise<PublishedPost> =>
+    publishPost: async (_, { id }) =>
       engine
         .updateUniqueOrThrow([DraftPost], 'publish')
         .unique({ id })
         .select(),
 
-    deletePost: async (_: P, { id }: MutationDeletePostArgs): Promise<void> =>
+    deletePost: async (_, { id }) =>
       engine.deleteUniqueOrThrow([...Post], 'delete').unique({ id }),
 
-    createCategory: async (
-      _: P,
-      { data }: MutationCreateCategoryArgs,
-    ): Promise<Category> =>
+    createCategory: async (_, { data }) =>
       engine.createOne([Category], 'create', data).select(),
 
-    updateCategory: async (
-      _: P,
-      { id, data }: MutationUpdateCategoryArgs,
-    ): Promise<Category> =>
+    updateCategory: async (_, { id, data }) =>
       engine
         .updateUniqueOrThrow([Category], 'update', data)
         .unique({ id })
         .select(),
 
-    deleteCategory: async (
-      _: P,
-      { id }: MutationDeleteCategoryArgs,
-    ): Promise<void> =>
+    deleteCategory: async (_, { id }) =>
       engine.deleteUniqueOrThrow([Category], 'delete').unique({ id }),
   },
 };
