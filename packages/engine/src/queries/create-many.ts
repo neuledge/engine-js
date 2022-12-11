@@ -22,4 +22,6 @@ export interface CreateManyQueryOptions<
 > extends RootQueryOptions<'CreateMany', I>,
     MultiArgsQueryOptions<I, StateDefinitionCreateMutations<I>>,
     RetriveQueryOptions<O>,
-    ExecQueryOptions<'CreateMany', I, O> {}
+    ExecQueryOptions<'CreateMany', I, O> {
+  states: [I];
+}

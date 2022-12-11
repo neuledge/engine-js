@@ -39,7 +39,7 @@ export class QueryClass<
   }
 
   select<P extends Select<O>>(select?: Subset<P, Select<O>>): this {
-    (this.options as RetriveQueryOptions<O>).select = select;
+    (this.options as RetriveQueryOptions<O>).select = select ?? true;
     return this;
   }
 

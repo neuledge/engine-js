@@ -1,3 +1,4 @@
+import { fromSortedField } from '@/definitions';
 import { getMetadataSchema, MetadataSchema } from './schema';
 import { MetadataState, MetadataStateField } from './state';
 
@@ -14,6 +15,10 @@ export class MetadataCollection {
     public readonly name: string,
     public readonly states: MetadataState[],
   ) {}
+
+  get primaryKeys(): string[] {
+    return this.states[0].instance.$id.map((key) => fromSortedField(key));
+  }
 
   get schema(): MetadataSchema {
     return getMetadataSchema(this.states);

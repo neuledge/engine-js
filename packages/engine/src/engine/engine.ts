@@ -29,14 +29,22 @@ import {
   UpdateUniqueOrThrowQuery,
 } from '../queries';
 import { Store } from '../store';
-import { chooseStatesCollection } from './collection';
-import { toEntityOrThrow, toMaybeEntity } from './entity';
-import { convertLimitQuery, toLimitedEntityList } from './limit';
 import { loadMetadata } from './metadata';
-import { convertRetriveQuery } from './retrive';
-import { convertSortQuery } from './sort';
-import { convertFilterQuery } from './filter';
-import { convertOffsetQuery } from './offset';
+import {
+  execCreateMany,
+  execCreateOne,
+  execDeleteEntityOrThrow,
+  execDeleteMany,
+  execDeleteMaybeEntity,
+  execFindFirst,
+  execFindFirstOrThrow,
+  execFindMany,
+  execFindUnique,
+  execFindUniqueOrThrow,
+  execUpdateEntityOrThrow,
+  execUpdateMany,
+  execUpdateMaybeEntity,
+} from './exec';
 
 export interface NeuledgeEngineOptions {
   store: Store;
@@ -45,17 +53,14 @@ export interface NeuledgeEngineOptions {
 
 export class NeuledgeEngine {
   public readonly store: Store;
-  private readonly metadataPromise: Promise<Metadata>;
+  public readonly metadata: Promise<Metadata>;
 
   constructor(options: NeuledgeEngineOptions) {
     this.store = options.store;
 
-    this.metadataPromise = loadMetadata(
-      this.store,
-      options.metadataCollectionName,
-    );
+    this.metadata = loadMetadata(this.store, options.metadataCollectionName);
 
-    this.metadataPromise.catch(() => {
+    this.metadata.catch(() => {
       // ignore errors here and let the user handle them via the exec methods
     });
   }
@@ -66,23 +71,7 @@ export class NeuledgeEngine {
     return new QueryClass({
       type: 'FindMany',
       states,
-      exec: async (options) => {
-        const metadata = await this.metadataPromise;
-        const collection = chooseStatesCollection(metadata, options.states);
-
-        return toLimitedEntityList(
-          metadata,
-          options,
-          await this.store.find({
-            collectionName: collection.name,
-            ...convertRetriveQuery(collection, options),
-            ...convertFilterQuery(metadata, collection, options),
-            ...convertOffsetQuery(options),
-            ...convertLimitQuery(options),
-            ...convertSortQuery(collection, options),
-          }),
-        );
-      },
+      exec: (options) => execFindMany(this, options),
     });
   }
 
@@ -91,20 +80,7 @@ export class NeuledgeEngine {
       type: 'FindUnique',
       states,
       unique: true,
-      exec: async (options) => {
-        const metadata = await this.metadataPromise;
-        const collection = chooseStatesCollection(metadata, options.states);
-
-        return toMaybeEntity(
-          metadata,
-          await this.store.find({
-            collectionName: collection.name,
-            ...convertRetriveQuery(collection, options),
-            ...convertFilterQuery(metadata, collection, options),
-            limit: 1,
-          }),
-        );
-      },
+      exec: (options) => execFindUnique(this, options),
     });
   }
 
@@ -115,20 +91,7 @@ export class NeuledgeEngine {
       type: 'FindUniqueOrThrow',
       states,
       unique: true,
-      exec: async (options) => {
-        const metadata = await this.metadataPromise;
-        const collection = chooseStatesCollection(metadata, options.states);
-
-        return toEntityOrThrow(
-          metadata,
-          await this.store.find({
-            collectionName: collection.name,
-            ...convertRetriveQuery(collection, options),
-            ...convertFilterQuery(metadata, collection, options),
-            limit: 1,
-          }),
-        );
-      },
+      exec: (options) => execFindUniqueOrThrow(this, options),
     });
   }
 
@@ -136,22 +99,7 @@ export class NeuledgeEngine {
     return new QueryClass({
       type: 'FindFirst',
       states,
-      exec: async (options) => {
-        const metadata = await this.metadataPromise;
-        const collection = chooseStatesCollection(metadata, options.states);
-
-        return toMaybeEntity(
-          metadata,
-          await this.store.find({
-            collectionName: collection.name,
-            ...convertRetriveQuery(collection, options),
-            ...convertFilterQuery(metadata, collection, options),
-            ...convertOffsetQuery(options),
-            limit: 1,
-            ...convertSortQuery(collection, options),
-          }),
-        );
-      },
+      exec: (options) => execFindFirst(this, options),
     });
   }
 
@@ -161,22 +109,7 @@ export class NeuledgeEngine {
     return new QueryClass({
       type: 'FindFirstOrThrow',
       states,
-      exec: async (options) => {
-        const metadata = await this.metadataPromise;
-        const collection = chooseStatesCollection(metadata, options.states);
-
-        return toEntityOrThrow(
-          metadata,
-          await this.store.find({
-            collectionName: collection.name,
-            ...convertRetriveQuery(collection, options),
-            ...convertFilterQuery(metadata, collection, options),
-            ...convertOffsetQuery(options),
-            limit: 1,
-            ...convertSortQuery(collection, options),
-          }),
-        );
-      },
+      exec: (options) => execFindFirstOrThrow(this, options),
     });
   }
 
@@ -186,13 +119,13 @@ export class NeuledgeEngine {
     S extends StateDefinition,
     M extends StateDefinitionCreateMutations<S>,
     A extends StateDefinitionMutationArguments<S, M>,
-  >(states: S[], method: M, ...args: A[]): CreateManyQuery<S> {
+  >(state: S, method: M, ...args: A[]): CreateManyQuery<S> {
     return new QueryClass<'CreateMany', S, S>({
       type: 'CreateMany',
-      states,
+      states: [state],
       method,
       args,
-      exec: async (options) => {},
+      exec: (options) => execCreateMany(this, options),
     });
   }
 
@@ -200,13 +133,13 @@ export class NeuledgeEngine {
     S extends StateDefinition,
     M extends StateDefinitionCreateMutations<S>,
     A extends StateDefinitionMutationArguments<S, M>,
-  >(states: S[], method: M, args: A): CreateOneQuery<S> {
+  >(state: S, method: M, args: A): CreateOneQuery<S> {
     return new QueryClass<'CreateOne', S, S>({
       type: 'CreateOne',
-      states,
+      states: [state],
       method,
       args: [args],
-      exec: async (options) => {},
+      exec: (options) => execCreateOne(this, options),
     });
   }
 
@@ -242,7 +175,7 @@ export class NeuledgeEngine {
       states,
       method,
       args: [args ?? ({} as A)],
-      exec: async (options) => {},
+      exec: (options) => execUpdateMany(this, options),
     });
   }
 
@@ -276,7 +209,7 @@ export class NeuledgeEngine {
       states,
       method,
       args: [args ?? ({} as A)],
-      exec: async (options) => {},
+      exec: (options) => execUpdateMaybeEntity(this, options),
     });
   }
 
@@ -310,7 +243,7 @@ export class NeuledgeEngine {
       states,
       method,
       args: [args ?? ({} as A)],
-      exec: async (options) => {},
+      exec: (options) => execUpdateEntityOrThrow(this, options),
     });
   }
 
@@ -345,7 +278,7 @@ export class NeuledgeEngine {
       method,
       args: [args ?? ({} as A)],
       unique: true,
-      exec: async (options) => {},
+      exec: (options) => execUpdateMaybeEntity(this, options),
     });
   }
 
@@ -380,7 +313,7 @@ export class NeuledgeEngine {
       method,
       args: [args ?? ({} as A)],
       unique: true,
-      exec: async (options) => {},
+      exec: (options) => execUpdateEntityOrThrow(this, options),
     });
   }
 
@@ -394,7 +327,7 @@ export class NeuledgeEngine {
       type: 'DeleteMany',
       states,
       method,
-      exec: async (options) => {},
+      exec: (options) => execDeleteMany(this, options),
     });
   }
 
@@ -406,7 +339,7 @@ export class NeuledgeEngine {
       type: 'DeleteFirst',
       states,
       method,
-      exec: async (options) => {},
+      exec: (options) => execDeleteMaybeEntity(this, options),
     });
   }
 
@@ -418,7 +351,7 @@ export class NeuledgeEngine {
       type: 'DeleteFirstOrThrow',
       states,
       method,
-      exec: async (options) => {},
+      exec: (options) => execDeleteEntityOrThrow(this, options),
     });
   }
 
@@ -431,7 +364,7 @@ export class NeuledgeEngine {
       states,
       method,
       unique: true,
-      exec: async (options) => {},
+      exec: (options) => execDeleteMaybeEntity(this, options),
     });
   }
 
@@ -444,14 +377,14 @@ export class NeuledgeEngine {
       states,
       method,
       unique: true,
-      exec: async (options) => {},
+      exec: (options) => execDeleteEntityOrThrow(this, options),
     });
   }
 
   // utils
 
   async ready(): Promise<this> {
-    await this.metadataPromise;
+    await this.metadata;
     return this;
   }
 }

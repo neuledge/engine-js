@@ -21,7 +21,7 @@ export interface CreateMutationDefinition<
   S extends StateDefinition,
   A extends MutationDefinitionArguments,
 > {
-  (this: null, args: A): Resolveable<Entity<S>>;
+  (this: void, args: A): Resolveable<Entity<S>>;
 }
 
 export interface UpdateMutationDefinition<

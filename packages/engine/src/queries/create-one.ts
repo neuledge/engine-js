@@ -21,4 +21,6 @@ export interface CreateOneQueryOptions<
 > extends RootQueryOptions<'CreateOne', I>,
     SingleArgsQueryOptions<I, StateDefinitionCreateMutations<I>>,
     RetriveQueryOptions<O>,
-    ExecQueryOptions<'CreateOne', I, O> {}
+    ExecQueryOptions<'CreateOne', I, O> {
+  states: [I];
+}

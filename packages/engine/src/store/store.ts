@@ -26,7 +26,7 @@ export interface Store {
   find<T = StoreDocument>(options: StoreFindOptions): Promise<StoreList<T>>;
 
   insert<T = StoreDocument>(
-    items: StoreInsertOptions<T>,
+    options: StoreInsertOptions<T>,
   ): Promise<StoreMutationResponse>;
   update<T = StoreDocument>(
     options: StoreUpdateOptions<T>,

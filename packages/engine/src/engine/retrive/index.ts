@@ -8,7 +8,7 @@ export const convertRetriveQuery = <S extends StateDefinition>(
   collection: MetadataCollection,
   { select }: RetriveQueryOptions<S>,
 ): Pick<StoreFindOptions, 'select'> => ({
-  ...(select != null
+  ...(select != null && select !== true
     ? { select: convertSelectQuery(collection, select) }
     : null),
 });

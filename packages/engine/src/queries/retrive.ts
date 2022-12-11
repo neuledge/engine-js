@@ -115,7 +115,7 @@ export interface RetriveQuery<
 }
 
 export interface RetriveQueryOptions<S extends StateDefinition> {
-  select?: Select<S>;
+  select?: Select<S> | true;
 
   // includeMany?: {
   //   [K in StateDefinitionIncludeManyKeys<S>]?: SelectManyQueryOptions<
