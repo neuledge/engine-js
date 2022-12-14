@@ -14,7 +14,7 @@ import {
   UpdateUniqueQueryOptions,
 } from '@/queries';
 import { chooseStatesCollection } from '../collection';
-import { toDocuments } from '../document';
+import { toDocument, toDocuments } from '../document';
 import { NeuledgeEngine } from '../engine';
 import {
   projectEntities,
@@ -26,11 +26,15 @@ import { convertFilterQuery } from '../filter';
 import { convertLimitQuery, toLimitedEntityList } from '../limit';
 import { convertRetriveQuery } from '../retrive';
 import {
+  getStateDefinitionMap,
   updateEntity,
   updateEntityList,
+  updateStoreDocument,
   updateStoreDocuments,
-} from '../mutations/index';
-import { getStateDefinitionMap } from '../mutations/states';
+} from '../mutations';
+import { NeuledgeError, NeuledgeErrorCode } from '@/error';
+
+const UPDATE_VERSION_RETRIES = 3;
 
 type ReturnState<S extends StateDefinition> = StateDefinitionMutationsReturn<
   S,
@@ -72,18 +76,29 @@ export const execUpdateMany = async <S extends StateDefinition>(
     args,
   );
 
-  await updateStoreDocuments(
+  const success = await updateStoreDocuments(
     engine.store,
     collection,
     documents,
     toDocuments(metadata, collection, updated),
   );
 
+  const res = Object.assign(
+    updated.filter((_, index) => success[index]),
+    { nextOffset: updated.nextOffset },
+  );
+
+  // TODO we better want to check for version mismatch here and retry only
+  // for the affected entities. This is a bit tricky because we need to
+  // decide what to do if the retry fails again. We could either throw
+  // an error or return the entities that were updated successfully and omit
+  // the entities that failed to update. The latter is probably the better.
+
   if (!options.select) {
     return;
   }
 
-  return projectEntities(updated, options.select);
+  return projectEntities(res, options.select);
 };
 
 export const execUpdateMaybeEntity = async <S extends StateDefinition>(
@@ -99,38 +114,46 @@ export const execUpdateMaybeEntity = async <S extends StateDefinition>(
   const metadata = await engine.metadata;
   const collection = chooseStatesCollection(metadata, options.states);
 
-  const documents = await engine.store.find({
-    collectionName: collection.name,
-    ...convertRetriveQuery(collection, options),
-    ...convertFilterQuery(metadata, collection, options),
-    limit: 1,
-  });
+  for (let retries = 1; retries < UPDATE_VERSION_RETRIES; retries++) {
+    const [document] = await engine.store.find({
+      collectionName: collection.name,
+      ...convertRetriveQuery(collection, options),
+      ...convertFilterQuery(metadata, collection, options),
+      limit: 1,
+    });
 
-  const entity = toMaybeEntity(metadata, collection, documents);
-  if (!entity) return;
+    const entity = toMaybeEntity(metadata, collection, document);
+    if (!entity) return;
 
-  const states = getStateDefinitionMap(options.states);
-  const [args] = options.args;
+    const states = getStateDefinitionMap(options.states);
+    const [args] = options.args;
 
-  const updated: Entity<ReturnState<S>> = await updateEntity(
-    states,
-    entity,
-    options.method,
-    args,
-  );
+    const updated: Entity<ReturnState<S>> = await updateEntity(
+      states,
+      entity,
+      options.method,
+      args,
+    );
 
-  await updateStoreDocuments(
-    engine.store,
-    collection,
-    documents,
-    toDocuments(metadata, collection, [updated]),
-  );
+    const success = await updateStoreDocument(
+      engine.store,
+      collection,
+      document,
+      toDocument(metadata, collection, updated),
+    );
+    if (!success) continue;
 
-  if (!options.select) {
-    return;
+    if (!options.select) {
+      return;
+    }
+
+    return projectEntity(updated, options.select);
   }
 
-  return projectEntity(updated, options.select);
+  throw new NeuledgeError(
+    NeuledgeErrorCode.VERSION_MISMATCH,
+    'Version mismatch while updating entity',
+  );
 };
 
 export const execUpdateEntityOrThrow = async <S extends StateDefinition>(
@@ -146,34 +169,42 @@ export const execUpdateEntityOrThrow = async <S extends StateDefinition>(
   const metadata = await engine.metadata;
   const collection = chooseStatesCollection(metadata, options.states);
 
-  const documents = await engine.store.find({
-    collectionName: collection.name,
-    ...convertRetriveQuery(collection, options),
-    ...convertFilterQuery(metadata, collection, options),
-    limit: 1,
-  });
+  for (let retries = 1; retries < UPDATE_VERSION_RETRIES; retries++) {
+    const [document] = await engine.store.find({
+      collectionName: collection.name,
+      ...convertRetriveQuery(collection, options),
+      ...convertFilterQuery(metadata, collection, options),
+      limit: 1,
+    });
 
-  const entity = toEntityOrThrow(metadata, collection, documents);
-  const states = getStateDefinitionMap(options.states);
+    const entity = toEntityOrThrow(metadata, collection, document);
+    const states = getStateDefinitionMap(options.states);
 
-  const [args] = options.args;
-  const updated: Entity<ReturnState<S>> = await updateEntity(
-    states,
-    entity,
-    options.method,
-    args,
-  );
+    const [args] = options.args;
+    const updated: Entity<ReturnState<S>> = await updateEntity(
+      states,
+      entity,
+      options.method,
+      args,
+    );
 
-  await updateStoreDocuments(
-    engine.store,
-    collection,
-    documents,
-    toDocuments(metadata, collection, [updated]),
-  );
+    const success = await updateStoreDocument(
+      engine.store,
+      collection,
+      document,
+      toDocument(metadata, collection, updated),
+    );
+    if (!success) continue;
 
-  if (!options.select) {
-    return;
+    if (!options.select) {
+      return;
+    }
+
+    return projectEntity(updated, options.select);
   }
 
-  return projectEntity(updated, options.select);
+  throw new NeuledgeError(
+    NeuledgeErrorCode.VERSION_MISMATCH,
+    'Version mismatch while updating entity',
+  );
 };

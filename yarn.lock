@@ -2050,10 +2050,10 @@
     "@jridgewell/resolve-uri" "3.1.0"
     "@jridgewell/sourcemap-codec" "1.4.14"
 
-"@neuledge/eslint-config@^1.0.0-alpha.13":
-  version "1.0.0-alpha.13"
-  resolved "https://registry.yarnpkg.com/@neuledge/eslint-config/-/eslint-config-1.0.0-alpha.13.tgz#0490f331459a6c521d1713e13694784fd40a464f"
-  integrity sha512-WaLQ5xuwdqcHiOduHdz3uJTPjAGgcbQAVMfHwxRkCsSQz7Z2dt4YMFLUxxTyo9Dj2gIDIvM+RrwgNXFHCKEfFw==
+"@neuledge/eslint-config@^1.0.0-alpha.14":
+  version "1.0.0-alpha.14"
+  resolved "https://registry.yarnpkg.com/@neuledge/eslint-config/-/eslint-config-1.0.0-alpha.14.tgz#558e64f58d68fd991efcefb59bdfce867f810449"
+  integrity sha512-g7QX/qQnJ4QvlZluyRE2KJOO7vxuRoMQenk+/lzgAJT9Mfc+ZWJm9DSy45x0Gcf19373HiSRa92/fCO22CPYng==
   dependencies:
     "@typescript-eslint/eslint-plugin" "^5.30.7"
     "@typescript-eslint/parser" "^5.30.7"

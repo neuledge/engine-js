@@ -16,7 +16,7 @@ describe('engine/sort', () => {
 
     it('should throw on unknown sort string', () => {
       expect(() => convertSortQuery(postsCollection, { sort: '+foo' })).toThrow(
-        'Unknown sort key: foo',
+        'Unknown sort index: foo',
       );
     });
 

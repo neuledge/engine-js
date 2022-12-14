@@ -2,6 +2,7 @@ import { Scalar } from '@neuledge/scalars';
 import equal from 'fast-deep-equal/es6';
 import { StateDefinitionWhereTerm } from '@/definitions';
 import { StoreWhereRecord, StoreWhereTerm } from '@/store';
+import { NeuledgeError, NeuledgeErrorCode } from '@/error';
 
 export const convertWhereScalarTerm = (
   scalar: Scalar,
@@ -96,7 +97,10 @@ const assignWhereScalarOperator = (
     case '$in':
     case '$nin': {
       if (!Array.isArray(value)) {
-        throw new TypeError(`Expected array for '${operator}' operator`);
+        throw new NeuledgeError(
+          NeuledgeErrorCode.QUERY_PARSING_ERROR,
+          `Expected array for '${operator}' operator`,
+        );
       }
 
       res[operator as never] = value.map((v) =>
@@ -106,7 +110,10 @@ const assignWhereScalarOperator = (
     }
 
     default: {
-      throw new Error(`Invalid operator: ${operator}`);
+      throw new NeuledgeError(
+        NeuledgeErrorCode.QUERY_PARSING_ERROR,
+        `Invalid operator: ${operator}`,
+      );
     }
   }
 };

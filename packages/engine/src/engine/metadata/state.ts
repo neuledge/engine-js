@@ -1,3 +1,4 @@
+import { NeuledgeError, NeuledgeErrorCode } from '@/error';
 import {
   MetadataGhostState,
   MetadataGhostStateField,
@@ -36,7 +37,10 @@ export const fromStoreMetadataState = (
   doc: StoreMetadataState,
 ): MetadataGhostState => {
   if (doc.v !== StoreMetadataStateVersion.V0) {
-    throw new Error(`Unsupported metadata version: ${doc.v}`);
+    throw new NeuledgeError(
+      NeuledgeErrorCode.UNSUPPORTED_METADATA,
+      `Unsupported metadata version: ${doc.v}`,
+    );
   }
 
   return getState(doc.hash).assign({

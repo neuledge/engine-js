@@ -11,10 +11,10 @@ import {
 import { chooseStatesCollection } from '../collection';
 import { NeuledgeEngine } from '../engine';
 import { toEntityOrThrow, toMaybeEntity } from '../entity';
-import { convertFilterQuery } from '../filter/index';
+import { convertFilterQuery } from '../filter';
 import { convertLimitQuery, toLimitedEntityList } from '../limit';
 import { convertOffsetQuery } from '../offset';
-import { convertRetriveQuery } from '../retrive/index';
+import { convertRetriveQuery } from '../retrive';
 import { convertSortQuery } from '../sort';
 
 export const execFindMany = async <S extends StateDefinition>(
@@ -46,16 +46,14 @@ export const execFindUnique = async <S extends StateDefinition>(
   const metadata = await engine.metadata;
   const collection = chooseStatesCollection(metadata, options.states);
 
-  return toMaybeEntity(
-    metadata,
-    collection,
-    await engine.store.find({
-      collectionName: collection.name,
-      ...convertRetriveQuery(collection, options),
-      ...convertFilterQuery(metadata, collection, options),
-      limit: 1,
-    }),
-  );
+  const [document] = await engine.store.find({
+    collectionName: collection.name,
+    ...convertRetriveQuery(collection, options),
+    ...convertFilterQuery(metadata, collection, options),
+    limit: 1,
+  });
+
+  return toMaybeEntity(metadata, collection, document);
 };
 
 export const execFindUniqueOrThrow = async <S extends StateDefinition>(
@@ -65,16 +63,14 @@ export const execFindUniqueOrThrow = async <S extends StateDefinition>(
   const metadata = await engine.metadata;
   const collection = chooseStatesCollection(metadata, options.states);
 
-  return toEntityOrThrow(
-    metadata,
-    collection,
-    await engine.store.find({
-      collectionName: collection.name,
-      ...convertRetriveQuery(collection, options),
-      ...convertFilterQuery(metadata, collection, options),
-      limit: 1,
-    }),
-  );
+  const [document] = await engine.store.find({
+    collectionName: collection.name,
+    ...convertRetriveQuery(collection, options),
+    ...convertFilterQuery(metadata, collection, options),
+    limit: 1,
+  });
+
+  return toEntityOrThrow(metadata, collection, document);
 };
 
 export const execFindFirst = async <S extends StateDefinition>(
@@ -84,18 +80,16 @@ export const execFindFirst = async <S extends StateDefinition>(
   const metadata = await engine.metadata;
   const collection = chooseStatesCollection(metadata, options.states);
 
-  return toMaybeEntity(
-    metadata,
-    collection,
-    await engine.store.find({
-      collectionName: collection.name,
-      ...convertRetriveQuery(collection, options),
-      ...convertFilterQuery(metadata, collection, options),
-      ...convertOffsetQuery(options),
-      limit: 1,
-      ...convertSortQuery(collection, options),
-    }),
-  );
+  const [document] = await engine.store.find({
+    collectionName: collection.name,
+    ...convertRetriveQuery(collection, options),
+    ...convertFilterQuery(metadata, collection, options),
+    ...convertOffsetQuery(options),
+    limit: 1,
+    ...convertSortQuery(collection, options),
+  });
+
+  return toMaybeEntity(metadata, collection, document);
 };
 
 export const execFindFirstOrThrow = async <S extends StateDefinition>(
@@ -105,16 +99,14 @@ export const execFindFirstOrThrow = async <S extends StateDefinition>(
   const metadata = await engine.metadata;
   const collection = chooseStatesCollection(metadata, options.states);
 
-  return toEntityOrThrow(
-    metadata,
-    collection,
-    await engine.store.find({
-      collectionName: collection.name,
-      ...convertRetriveQuery(collection, options),
-      ...convertFilterQuery(metadata, collection, options),
-      ...convertOffsetQuery(options),
-      limit: 1,
-      ...convertSortQuery(collection, options),
-    }),
-  );
+  const [document] = await engine.store.find({
+    collectionName: collection.name,
+    ...convertRetriveQuery(collection, options),
+    ...convertFilterQuery(metadata, collection, options),
+    ...convertOffsetQuery(options),
+    limit: 1,
+    ...convertSortQuery(collection, options),
+  });
+
+  return toEntityOrThrow(metadata, collection, document);
 };

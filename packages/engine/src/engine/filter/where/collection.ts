@@ -1,3 +1,4 @@
+import { NeuledgeError, NeuledgeErrorCode } from '@/error';
 import { MetadataCollectionFieldMap } from '@/metadata';
 
 export const getRecursiveWhereFields = function* (
@@ -25,7 +26,10 @@ const lookupWherePath = (
 ): [self: boolean, value: object[] | null] => {
   const pathFields = fieldMap[path];
   if (pathFields == null) {
-    throw new Error(`Unknown where path: '${path}'`);
+    throw new NeuledgeError(
+      NeuledgeErrorCode.QUERY_PARSING_ERROR,
+      `Unknown where path: '${path}'`,
+    );
   }
 
   return [

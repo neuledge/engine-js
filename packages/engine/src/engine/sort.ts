@@ -1,4 +1,5 @@
 import { StateDefinition, SortDefinition } from '@/definitions';
+import { NeuledgeError, NeuledgeErrorCode } from '@/error';
 import { MetadataCollection } from '@/metadata';
 import { SortQueryOptions } from '@/queries';
 import { StoreFindOptions, StoreSort } from '@/store';
@@ -12,9 +13,9 @@ export const convertSortQuery = <S extends StateDefinition>(
   if (typeof sort === 'string') {
     reverse = sort[0] === '-';
 
-    const key = sort.slice(1);
+    const indexKey = sort.slice(1);
     for (const state of collection.states) {
-      const index = state.instance.$indexes?.[key];
+      const index = state.instance.$indexes?.[indexKey];
       if (index != null) {
         sort = index;
         break;
@@ -22,7 +23,10 @@ export const convertSortQuery = <S extends StateDefinition>(
     }
 
     if (typeof sort === 'string') {
-      throw new ReferenceError(`Unknown sort key: ${key}`);
+      throw new NeuledgeError(
+        NeuledgeErrorCode.UNKNOWN_SORT_INDEX,
+        `Unknown sort index: ${indexKey}`,
+      );
     }
   } else if (sort == null) {
     return {};
@@ -42,7 +46,10 @@ export const convertSortQuery = <S extends StateDefinition>(
         break;
 
       default:
-        throw new ReferenceError(`Unknown sort direction: '${key}'`);
+        throw new NeuledgeError(
+          NeuledgeErrorCode.UNKNOWN_SORT_DIRECTION,
+          `Unknown sort direction: '${key}'`,
+        );
     }
 
     const field = key.slice(1);

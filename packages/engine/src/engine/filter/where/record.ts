@@ -2,6 +2,7 @@ import {
   StateDefinitionWhereRecord,
   StateDefinitionWhereTerm,
 } from '@/definitions';
+import { NeuledgeError, NeuledgeErrorCode } from '@/error';
 import {
   MetadataCollection,
   MetadataSchema,
@@ -28,7 +29,10 @@ export const convertWhereRecord = (
 
     const choices = collection.schema[key];
     if (!choices?.length) {
-      throw new Error(`Unknown where key: '${key}'`);
+      throw new NeuledgeError(
+        NeuledgeErrorCode.QUERY_PARSING_ERROR,
+        `Unknown where key: '${key}'`,
+      );
     }
 
     const base = records;
@@ -57,7 +61,10 @@ const applyWhereRecordTerm = (
     if (record[field.name] == null) {
       record[field.name] = convertWhereScalarTerm(field.type, term);
     } else {
-      throw new Error(`Duplicate where key: '${field.path}'`);
+      throw new NeuledgeError(
+        NeuledgeErrorCode.QUERY_PARSING_ERROR,
+        `Duplicate where key: '${field.path}'`,
+      );
     }
   }
 
@@ -71,7 +78,10 @@ const applyWhereState = (
 ): StoreWhereRecord[] => {
   for (const [operator, where] of Object.entries(term)) {
     if (typeof where !== 'object' || where == null) {
-      throw new Error(`Invalid where operator: '${operator}'`);
+      throw new NeuledgeError(
+        NeuledgeErrorCode.QUERY_PARSING_ERROR,
+        `Invalid where operator: '${operator}'`,
+      );
     }
 
     records = applyWhereOperatorRecord(records, schema, operator, where);
@@ -111,7 +121,10 @@ const applyWhereOperatorRecord = (
     }
 
     default: {
-      throw new Error(`Invalid operator: ${operator}`);
+      throw new NeuledgeError(
+        NeuledgeErrorCode.QUERY_PARSING_ERROR,
+        `Invalid operator: ${operator}`,
+      );
     }
   }
 };
@@ -158,7 +171,10 @@ const applyWhereInOperatorRecord = (
   where: object,
 ) => {
   if (!Array.isArray(where)) {
-    throw new TypeError(`Invalid where operator: '$in'`);
+    throw new NeuledgeError(
+      NeuledgeErrorCode.QUERY_PARSING_ERROR,
+      `Invalid where operator: '$in'`,
+    );
   }
 
   const res = [];
@@ -175,7 +191,10 @@ const applyWhereNotInOperatorRecord = (
   where: object,
 ) => {
   if (!Array.isArray(where)) {
-    throw new TypeError(`Invalid where operator: '$nin'`);
+    throw new NeuledgeError(
+      NeuledgeErrorCode.QUERY_PARSING_ERROR,
+      `Invalid where operator: '$nin'`,
+    );
   }
 
   for (const value of where) {
@@ -194,7 +213,10 @@ const applyWhereOperatorRecordValue = (
 ): StoreWhereRecord[] => {
   const choices = schema[key];
   if (!choices?.length) {
-    throw new Error(`Unknown where key: '${key}'`);
+    throw new NeuledgeError(
+      NeuledgeErrorCode.QUERY_PARSING_ERROR,
+      `Unknown where key: '${key}'`,
+    );
   }
 
   const res = [];
@@ -215,7 +237,10 @@ const applyWhereOperatorRecordValue = (
         ...applyWhereOperatorRecord(records, choice.schema, operator, value),
       );
     } else {
-      throw new Error(`Invalid where operator: '${operator}'`);
+      throw new NeuledgeError(
+        NeuledgeErrorCode.QUERY_PARSING_ERROR,
+        `Invalid where operator: '${operator}'`,
+      );
     }
   }
 

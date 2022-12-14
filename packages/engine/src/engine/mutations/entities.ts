@@ -8,6 +8,7 @@ import {
   UpdateMutationDefinition,
 } from '@/definitions';
 import { Entity, MutatedEntity } from '@/entity';
+import { NeuledgeError, NeuledgeErrorCode } from '@/error';
 import { EntityList } from '@/list';
 import { StateDefinitionMap } from './states';
 
@@ -42,7 +43,10 @@ export const updateEntity = async <
 
   const state = states[$state];
   if (!state) {
-    throw new Error(`State ${$state} not found`);
+    throw new NeuledgeError(
+      NeuledgeErrorCode.INTERNAL_ERROR,
+      `State ${$state} not found`,
+    );
   }
 
   const fn = state[method] as UpdateMutationDefinition<
@@ -85,7 +89,10 @@ export const deleteEntity = async <
 
   const state = states[$state];
   if (!state) {
-    throw new Error(`State ${$state} not found`);
+    throw new NeuledgeError(
+      NeuledgeErrorCode.INTERNAL_ERROR,
+      `State ${$state} not found`,
+    );
   }
 
   const fn = state[method] as DeleteMutationDefinition<S>;

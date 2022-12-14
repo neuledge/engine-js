@@ -10,7 +10,7 @@ export const toDocuments = <S extends StateDefinition>(
 ): StoreDocument[] =>
   entities.map((entity) => toDocument(metadata, collection, entity));
 
-const toDocument = <S extends StateDefinition>(
+export const toDocument = <S extends StateDefinition>(
   metadata: Metadata,
   collection: MetadataCollection,
   entity: Entity<S>,

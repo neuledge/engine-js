@@ -1,4 +1,5 @@
 import { resolveDefer, StateDefinition } from '@/definitions';
+import { NeuledgeError, NeuledgeErrorCode } from '@/error';
 import { Metadata, MetadataCollection, MetadataStateField } from '@/metadata';
 import { Match } from '@/queries';
 import { StoreMatch, StoreMatchBy, StoreMatchOptions } from '@/store';
@@ -72,7 +73,8 @@ const getStoreMatchBy = (
     }
   }
 
-  throw new Error(
+  throw new NeuledgeError(
+    NeuledgeErrorCode.RELATION_FIELD_NOT_FOUND,
     `Could not find matching fields for '${key}': ${[...fieldMap.keys()].join(
       ', ',
     )}`,

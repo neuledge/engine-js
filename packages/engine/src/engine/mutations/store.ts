@@ -6,6 +6,7 @@ import {
   StoreWhereEquals,
   StoreWhereRecord,
 } from '@/store';
+import pLimit from 'p-limit';
 
 // update
 
@@ -14,31 +15,39 @@ export const updateStoreDocuments = async (
   collection: MetadataCollection,
   documents: StoreDocument[],
   updated: StoreDocument[],
-): Promise<void> => {
-  await Promise.all(
+): Promise<boolean[]> => {
+  const asyncLimit = pLimit(10);
+
+  return await Promise.all(
     documents.map((document, index) =>
-      updateStoreDocument(store, collection, document, updated[index]),
+      asyncLimit(() =>
+        updateStoreDocument(store, collection, document, updated[index]),
+      ),
     ),
   );
 };
 
-const updateStoreDocument = async (
+export const updateStoreDocument = async (
   store: Store,
   collection: MetadataCollection,
   document: StoreDocument,
   updated: StoreDocument,
-): Promise<void> => {
+): Promise<boolean> => {
   const setEntries = Object.entries(updated).filter(
     ([key, value]) => value !== document[key],
   );
-  if (!setEntries.length) return;
+  if (!setEntries.length) {
+    return true;
+  }
 
-  await store.update({
+  const res = await store.update({
     collectionName: collection.name,
-    where: getWhereRecord(collection, document),
+    where: getWhereRecordByPrimaryKeys(collection, document),
     set: Object.fromEntries(setEntries),
     limit: 1,
   });
+
+  return !!res.affectedCount;
 };
 
 // delete
@@ -50,7 +59,7 @@ export const deleteStoreDocuments = async (
 ): Promise<void> => {
   await store.delete({
     collectionName: collection.name,
-    where: getWhere(collection, documents),
+    where: getWhereByPrimaryKeys(collection, documents),
     limit: documents.length,
   });
 };
@@ -69,14 +78,16 @@ export const deleteStoreDocuments = async (
 
 // store where
 
-const getWhere = (
+const getWhereByPrimaryKeys = (
   collection: MetadataCollection,
   documents: StoreDocument[],
 ): StoreWhere => ({
-  $or: documents.map((document) => getWhereRecord(collection, document)),
+  $or: documents.map((document) =>
+    getWhereRecordByPrimaryKeys(collection, document),
+  ),
 });
 
-const getWhereRecord = (
+const getWhereRecordByPrimaryKeys = (
   collection: MetadataCollection,
   document: StoreDocument,
 ): StoreWhereRecord =>

@@ -80,17 +80,17 @@ export const execDeleteMaybeEntity = async <S extends StateDefinition>(
   const metadata = await engine.metadata;
   const collection = chooseStatesCollection(metadata, options.states);
 
-  const documents = await engine.store.find({
+  const [document] = await engine.store.find({
     collectionName: collection.name,
     ...convertRetriveQuery(collection, options),
     ...convertFilterQuery(metadata, collection, options),
     limit: 1,
   });
 
-  const entity = toMaybeEntity(metadata, collection, documents);
+  const entity = toMaybeEntity(metadata, collection, document);
   if (!entity) return;
 
-  return deleteOne(engine, collection, entity, documents[0], options);
+  return deleteOne(engine, collection, entity, document, options);
 };
 
 export const execDeleteEntityOrThrow = async <S extends StateDefinition>(
@@ -102,17 +102,17 @@ export const execDeleteEntityOrThrow = async <S extends StateDefinition>(
   const metadata = await engine.metadata;
   const collection = chooseStatesCollection(metadata, options.states);
 
-  const documents = await engine.store.find({
+  const [document] = await engine.store.find({
     collectionName: collection.name,
     ...convertRetriveQuery(collection, options),
     ...convertFilterQuery(metadata, collection, options),
     limit: 1,
   });
 
-  const entity = toEntityOrThrow(metadata, collection, documents);
+  const entity = toEntityOrThrow(metadata, collection, document);
   if (!entity) return;
 
-  return deleteOne(engine, collection, entity, documents[0], options);
+  return deleteOne(engine, collection, entity, document, options);
 };
 
 // delete helpers

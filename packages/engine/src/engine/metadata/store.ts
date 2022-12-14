@@ -1,3 +1,4 @@
+import { NeuledgeError, NeuledgeErrorCode } from '@/error';
 import {
   Metadata,
   MetadataChange,
@@ -54,7 +55,10 @@ export const getStoreMetadata = async (
   const getType = (key: string) => {
     const type = metadata.findType(key);
     if (!type) {
-      throw new Error(`Can't find reference for type: ${key}`);
+      throw new NeuledgeError(
+        NeuledgeErrorCode.CORRUPTED_METADATA,
+        `Can't find reference for type: ${key}`,
+      );
     }
 
     return type;
@@ -140,8 +144,11 @@ const getStoreMetadataChanges = (changes: MetadataChange[]) => {
       }
 
       default: {
-        // @ts-expect-error change type is `never`
-        throw new Error(`Unknown metadata change type: ${change.type}`);
+        throw new NeuledgeError(
+          NeuledgeErrorCode.METADATA_SAVE_ERROR,
+          // @ts-expect-error change type is `never`
+          `Unknown metadata change type: ${change.type}`,
+        );
       }
     }
   }

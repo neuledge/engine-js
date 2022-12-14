@@ -5,6 +5,7 @@ import { Metadata } from '@/metadata/metadata';
 import { StoreDocument, StoreList } from '@/store';
 import { Select } from '@/queries';
 import { MetadataCollection } from '@/metadata';
+import { NeuledgeError, NeuledgeErrorCode } from '@/error';
 
 export const toEntityList = <S extends StateDefinition>(
   metadata: Metadata,
@@ -27,29 +28,40 @@ export const toEntityList = <S extends StateDefinition>(
 export const toMaybeEntity = <S extends StateDefinition>(
   metadata: Metadata,
   collection: MetadataCollection,
-  list: StoreList,
+  document: StoreDocument | undefined,
 ): Entity<S> | undefined => {
-  const document = list[0];
   const stateHash = document?.[collection.reservedNames.hash];
 
   return Buffer.isBuffer(stateHash)
-    ? getStateEntity<S>(metadata, collection, stateHash, document)
+    ? getStateEntity<S>(
+        metadata,
+        collection,
+        stateHash,
+        document as StoreDocument,
+      )
     : undefined;
 };
 
 export const toEntityOrThrow = <S extends StateDefinition>(
   metadata: Metadata,
   collection: MetadataCollection,
-  list: StoreList,
+  document: StoreDocument | undefined,
 ): Entity<S> => {
-  const document = list[0];
   const stateHash = document?.[collection.reservedNames.hash];
 
   if (!Buffer.isBuffer(stateHash)) {
-    throw new TypeError('Document not found');
+    throw new NeuledgeError(
+      NeuledgeErrorCode.DOCUMENT_NOT_FOUND,
+      'Document not found',
+    );
   }
 
-  return getStateEntity<S>(metadata, collection, stateHash, document);
+  return getStateEntity<S>(
+    metadata,
+    collection,
+    stateHash,
+    document as StoreDocument,
+  );
 };
 
 const getStateEntity = <S extends StateDefinition>(
@@ -61,7 +73,10 @@ const getStateEntity = <S extends StateDefinition>(
 ): Entity<S> => {
   const state = metadata.findStateByHash(stateHash);
   if (!state) {
-    throw new Error(`Entity state not found: ${stateHash.toString('base64')}`);
+    throw new NeuledgeError(
+      NeuledgeErrorCode.ENTITY_STATE_NOT_FOUND,
+      `Entity state not found: ${stateHash.toString('base64')}`,
+    );
   }
 
   const entity = {
@@ -83,17 +98,13 @@ const getStateEntity = <S extends StateDefinition>(
     const key = `${prefix}${relation.name}`;
     if (!relation.path) continue;
 
-    // FIXME don't store relation hash on document
-    const stateHash = document[`${key}_${collection.reservedNames.hash}`] as
-      | Buffer
-      | undefined;
-
-    if (!stateHash) continue;
+    const childStateHash = document[`${key}_${collection.reservedNames.hash}`];
+    if (!Buffer.isBuffer(childStateHash)) continue;
 
     const childEntity = getStateEntity(
       metadata,
       collection,
-      stateHash,
+      childStateHash,
       document,
       `${key}_`,
     );

@@ -1,4 +1,5 @@
 import { resolveDefer, StateDefinition } from '@/definitions';
+import { NeuledgeError, NeuledgeErrorCode } from '@/error';
 import { Metadata, MetadataCollection } from '@/metadata';
 
 export const chooseStatesCollection = <S extends StateDefinition>(
@@ -8,7 +9,12 @@ export const chooseStatesCollection = <S extends StateDefinition>(
   const collections = metadata.getCollections(states);
 
   if (collections.length !== 1) {
-    throw new Error('FindMany can only be used with one collection');
+    throw new NeuledgeError(
+      NeuledgeErrorCode.MULTIPLE_COLLECTIONS,
+      `Engine operations can only be used with one collection, got request for ${
+        collections.length
+      } collections: ${collections.map((c) => c.name).join(', ')}`,
+    );
   }
 
   return collections[0];

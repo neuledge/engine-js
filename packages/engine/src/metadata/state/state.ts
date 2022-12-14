@@ -4,6 +4,7 @@ import {
   StateDefinitionName,
   StateDefintionScalar,
 } from '@/definitions';
+import { NeuledgeError, NeuledgeErrorCode } from '@/index';
 import { getScalarFields, MetadataStateField } from './field';
 import {
   generateStateHash,
@@ -59,7 +60,8 @@ export class MetadataState extends MetadataGhostState {
           field.name === this.reservedNames.hash ||
           field.name === this.reservedNames.version
         ) {
-          throw new Error(
+          throw new NeuledgeError(
+            NeuledgeErrorCode.RESERVED_FIELD_NAME,
             `State "${this.name}" has a scalar field named "${field.name}" which is reserved for internal use.`,
           );
         }
