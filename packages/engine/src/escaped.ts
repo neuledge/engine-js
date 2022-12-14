@@ -8,7 +8,7 @@ export {
   createEitherDefintion as either,
 } from './definitions';
 
-export { type Entity } from '@/entity';
+export { type MutatedEntity as Entity } from '@/entity';
 
 const $Date = Date;
 export { $Date as Date };

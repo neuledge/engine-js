@@ -1,5 +1,7 @@
 import { escapeFieldName, unescapeFieldName } from './fields';
 
+/* eslint-disable max-lines-per-function */
+
 describe('fields', () => {
   describe('escapeFieldName', () => {
     it('should keep id', () => {
@@ -15,11 +17,15 @@ describe('fields', () => {
     });
 
     it('should escape v', () => {
-      expect(escapeFieldName('v')).toBe('v_org');
+      expect(escapeFieldName('v')).toBe('v');
     });
 
     it('should escape _org', () => {
       expect(escapeFieldName('_org')).toBe('_org_org');
+    });
+
+    it('should escape foo_org', () => {
+      expect(escapeFieldName('foo_org')).toBe('foo_org_org');
     });
 
     it('should escape _org_org', () => {
@@ -50,6 +56,10 @@ describe('fields', () => {
 
     it('should unescape v_org', () => {
       expect(unescapeFieldName('v_org')).toBe('v');
+    });
+
+    it('should unescape foo_org', () => {
+      expect(unescapeFieldName('foo_org')).toBe('foo');
     });
 
     it('should unescape _org_org', () => {

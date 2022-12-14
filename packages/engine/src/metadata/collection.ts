@@ -1,6 +1,10 @@
 import { fromSortedField } from '@/definitions';
 import { getMetadataSchema, MetadataSchema } from './schema';
-import { MetadataState, MetadataStateField } from './state';
+import {
+  MetadataState,
+  MetadataStateField,
+  MetadataStateReservedNames,
+} from './state';
 
 export type MetadataCollectionFieldMap = Record<
   MetadataStateField['path'],
@@ -11,13 +15,18 @@ export type MetadataCollectionFieldMap = Record<
 >;
 
 export class MetadataCollection {
+  readonly reservedNames: MetadataStateReservedNames;
+  readonly primaryKeys: string[];
+
   constructor(
     public readonly name: string,
     public readonly states: MetadataState[],
-  ) {}
+  ) {
+    this.primaryKeys = this.states[0].instance.$id.map((key) =>
+      fromSortedField(key),
+    );
 
-  get primaryKeys(): string[] {
-    return this.states[0].instance.$id.map((key) => fromSortedField(key));
+    this.reservedNames = this.states[0].reservedNames;
   }
 
   get schema(): MetadataSchema {

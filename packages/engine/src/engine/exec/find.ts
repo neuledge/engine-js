@@ -26,6 +26,7 @@ export const execFindMany = async <S extends StateDefinition>(
 
   return toLimitedEntityList(
     metadata,
+    collection,
     options,
     await engine.store.find({
       collectionName: collection.name,
@@ -47,6 +48,7 @@ export const execFindUnique = async <S extends StateDefinition>(
 
   return toMaybeEntity(
     metadata,
+    collection,
     await engine.store.find({
       collectionName: collection.name,
       ...convertRetriveQuery(collection, options),
@@ -65,6 +67,7 @@ export const execFindUniqueOrThrow = async <S extends StateDefinition>(
 
   return toEntityOrThrow(
     metadata,
+    collection,
     await engine.store.find({
       collectionName: collection.name,
       ...convertRetriveQuery(collection, options),
@@ -83,6 +86,7 @@ export const execFindFirst = async <S extends StateDefinition>(
 
   return toMaybeEntity(
     metadata,
+    collection,
     await engine.store.find({
       collectionName: collection.name,
       ...convertRetriveQuery(collection, options),
@@ -103,6 +107,7 @@ export const execFindFirstOrThrow = async <S extends StateDefinition>(
 
   return toEntityOrThrow(
     metadata,
+    collection,
     await engine.store.find({
       collectionName: collection.name,
       ...convertRetriveQuery(collection, options),

@@ -54,7 +54,12 @@ export const execUpdateMany = async <S extends StateDefinition>(
     ...convertLimitQuery(options),
   });
 
-  const entities = toLimitedEntityList(metadata, options, documents);
+  const entities = toLimitedEntityList(
+    metadata,
+    collection,
+    options,
+    documents,
+  );
 
   const [args] = options.args;
   const updated = await updateEntityList(
@@ -68,7 +73,7 @@ export const execUpdateMany = async <S extends StateDefinition>(
     engine.store,
     collection,
     documents,
-    toDocuments(metadata, updated),
+    toDocuments(metadata, collection, updated),
   );
 
   if (!options.select) {
@@ -98,7 +103,7 @@ export const execUpdateMaybeEntity = async <S extends StateDefinition>(
     limit: 1,
   });
 
-  const entity = toMaybeEntity(metadata, documents);
+  const entity = toMaybeEntity(metadata, collection, documents);
   if (!entity) return;
 
   const [args] = options.args;
@@ -113,7 +118,7 @@ export const execUpdateMaybeEntity = async <S extends StateDefinition>(
     engine.store,
     collection,
     documents,
-    toDocuments(metadata, [updated]),
+    toDocuments(metadata, collection, [updated]),
   );
 
   if (!options.select) {
@@ -143,7 +148,7 @@ export const execUpdateEntityOrThrow = async <S extends StateDefinition>(
     limit: 1,
   });
 
-  const entity = toEntityOrThrow(metadata, documents);
+  const entity = toEntityOrThrow(metadata, collection, documents);
 
   const [args] = options.args;
   const updated: Entity<ReturnState<S>> = await updateEntity(
@@ -157,7 +162,7 @@ export const execUpdateEntityOrThrow = async <S extends StateDefinition>(
     engine.store,
     collection,
     documents,
-    toDocuments(metadata, [updated]),
+    toDocuments(metadata, collection, [updated]),
   );
 
   if (!options.select) {

@@ -7,7 +7,7 @@ import {
   StateDefinitionUpdateMutations,
   UpdateMutationDefinition,
 } from '@/definitions';
-import { Entity } from '@/entity';
+import { Entity, MutatedEntity } from '@/entity';
 import { EntityList } from '@/list';
 
 export const updateEntityList = async <
@@ -37,7 +37,7 @@ export const updateEntity = async <
   method: M,
   args: A,
 ): Promise<Entity<StateDefinitionMutationsReturn<S, M>>> => {
-  const { $state, ...thisArg } = entity as Entity<StateDefinition>;
+  const { $state, $version, ...thisArg } = entity as Entity<StateDefinition>;
 
   const state = states.find((state) => state.$name === $state);
   if (!state) {
@@ -50,7 +50,12 @@ export const updateEntity = async <
     StateDefinitionMutationsReturn<S, M>
   >;
 
-  return fn.call(thisArg, args);
+  const mutated = await fn.call(thisArg, args);
+
+  return {
+    ...(mutated as MutatedEntity<StateDefinition>),
+    $version: $version + 1,
+  };
 };
 
 export const deleteEntityList = async <

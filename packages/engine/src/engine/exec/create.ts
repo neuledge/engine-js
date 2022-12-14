@@ -4,7 +4,7 @@ import {
   StateDefinitionCreateMutations,
   StateDefinitionMutationArguments,
 } from '@/definitions';
-import { Entity, ProjectedEntity } from '@/entity';
+import { Entity, MutatedEntity, ProjectedEntity } from '@/entity';
 import { EntityList } from '@/list';
 import {
   CreateManyQueryOptions,
@@ -31,13 +31,20 @@ export const execCreateMany = async <S extends StateDefinition>(
     StateDefinitionMutationArguments<S, StateDefinitionCreateMutations<S>>
   >;
 
-  const entities: Entity<S>[] = await Promise.all(
+  const newEntities: MutatedEntity<S>[] = await Promise.all(
     options.args.map((args) => fn(args)),
+  );
+
+  const entities = newEntities.map(
+    (entity): Entity<S> => ({
+      ...(entity as MutatedEntity<StateDefinition>),
+      $version: 0,
+    }),
   );
 
   await engine.store.insert({
     collectionName: collection.name,
-    documents: toDocuments(metadata, entities),
+    documents: toDocuments(metadata, collection, entities),
   });
 
   if (!options.select) {
@@ -61,11 +68,16 @@ export const execCreateOne = async <S extends StateDefinition>(
   >;
 
   const [args] = options.args;
-  const entity: Entity<S> = await fn(args);
+  const mutatedEntity: MutatedEntity<S> = await fn(args);
+
+  const entity: Entity<S> = {
+    ...(mutatedEntity as MutatedEntity<StateDefinition>),
+    $version: 0,
+  };
 
   await engine.store.insert({
     collectionName: collection.name,
-    documents: toDocuments(metadata, [entity]),
+    documents: toDocuments(metadata, collection, [entity]),
   });
 
   if (!options.select) {

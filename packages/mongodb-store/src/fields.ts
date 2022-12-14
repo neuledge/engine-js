@@ -1,13 +1,12 @@
 export const escapeFieldName = (name: string): string => {
   switch (name) {
     case '_id':
-    case 'v':
       return `${name}_org`;
 
     default:
-      return name.replace(/_org$/, '_org_org');
+      return name.endsWith('_org') ? `${name}_org` : name;
   }
 };
 
 export const unescapeFieldName = (name: string): string =>
-  name.replace(/_org$/, '');
+  name.endsWith('_org') ? name.slice(0, -4) : name;

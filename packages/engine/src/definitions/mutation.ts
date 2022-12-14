@@ -1,4 +1,4 @@
-import { Entity } from '@/entity';
+import { MutatedEntity } from '@/entity';
 import {
   StateDefinition,
   StateDefinitionName,
@@ -21,7 +21,7 @@ export interface CreateMutationDefinition<
   S extends StateDefinition,
   A extends MutationDefinitionArguments,
 > {
-  (this: void, args: A): Resolveable<Entity<S>>;
+  (this: void, args: A): Resolveable<MutatedEntity<S>>;
 }
 
 export interface UpdateMutationDefinition<
@@ -29,14 +29,14 @@ export interface UpdateMutationDefinition<
   A extends MutationDefinitionArguments,
   R extends StateDefinition,
 > {
-  (this: StateDefinitionType<S>, args: A): Resolveable<Entity<R>>;
+  (this: StateDefinitionType<S>, args: A): Resolveable<MutatedEntity<R>>;
 }
 
 export interface TransformMutationDefinition<
   S extends StateDefinition,
   R extends StateDefinition,
 > {
-  (this: StateDefinitionType<S>): Resolveable<Entity<R>>;
+  (this: StateDefinitionType<S>): Resolveable<MutatedEntity<R>>;
 }
 
 export interface DeleteMutationDefinition<

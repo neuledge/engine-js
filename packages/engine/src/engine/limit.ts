@@ -1,7 +1,7 @@
 import { StateDefinition } from '@/definitions';
 import { Entity } from '@/entity';
 import { EntityList } from '@/list';
-import { Metadata } from '@/metadata';
+import { Metadata, MetadataCollection } from '@/metadata';
 import { LimitQueryOptions } from '@/queries';
 import { StoreFindOptions, StoreList } from '@/store';
 import { toEntityList } from './entity';
@@ -16,6 +16,7 @@ export const convertLimitQuery = (
 
 export const toLimitedEntityList = <S extends StateDefinition>(
   metadata: Metadata,
+  collection: MetadataCollection,
   options: LimitQueryOptions,
   list: StoreList,
 ): EntityList<Entity<S>> => {
@@ -28,5 +29,5 @@ export const toLimitedEntityList = <S extends StateDefinition>(
     console.trace(`Your query can be found here:`);
   }
 
-  return toEntityList(metadata, list);
+  return toEntityList(metadata, collection, list);
 };

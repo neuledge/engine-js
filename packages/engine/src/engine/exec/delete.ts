@@ -37,7 +37,12 @@ export const execDeleteMany = async <S extends StateDefinition>(
     ...convertLimitQuery(options),
   });
 
-  const entities = toLimitedEntityList(metadata, options, documents);
+  const entities = toLimitedEntityList(
+    metadata,
+    collection,
+    options,
+    documents,
+  );
 
   await deleteEntityList(options.states, entities, options.method);
   await deleteStoreDocuments(engine.store, collection, documents);
@@ -63,7 +68,7 @@ export const execDeleteMaybeEntity = async <S extends StateDefinition>(
     limit: 1,
   });
 
-  const entity = toMaybeEntity(metadata, documents);
+  const entity = toMaybeEntity(metadata, collection, documents);
   if (!entity) return;
 
   await deleteEntity(options.states, entity, options.method);
@@ -92,7 +97,7 @@ export const execDeleteEntityOrThrow = async <S extends StateDefinition>(
     limit: 1,
   });
 
-  const entity = toEntityOrThrow(metadata, documents);
+  const entity = toEntityOrThrow(metadata, collection, documents);
   if (!entity) return;
 
   await deleteEntity(options.states, entity, options.method);

@@ -11,9 +11,17 @@ import {
   MetadataGhostStateRelation,
 } from './ghost';
 
+const METADATA_HASH_DEFAULT_FIELD = '__h';
+const METADATA_VERSION_DEFAULT_FIELD = '__v';
+
 export type MetadataStateContext = Partial<
   Record<StateDefinitionName, MetadataState>
 >;
+
+export interface MetadataStateReservedNames {
+  hash: string;
+  version: string;
+}
 
 export interface MetadataStateRelation extends MetadataGhostStateRelation {
   states: MetadataState[];
@@ -23,6 +31,7 @@ export interface MetadataStateRelation extends MetadataGhostStateRelation {
 export class MetadataState extends MetadataGhostState {
   fields: MetadataStateField[];
   instance: StateDefinition;
+  reservedNames: MetadataStateReservedNames;
   relations: MetadataStateRelation[];
 
   private constructor(ctx: MetadataStateContext, state: StateDefinition) {
@@ -34,12 +43,29 @@ export class MetadataState extends MetadataGhostState {
     this.hash = null as never;
     this.fields = [];
     this.instance = state;
+    this.reservedNames = {
+      hash: METADATA_HASH_DEFAULT_FIELD,
+      version: METADATA_VERSION_DEFAULT_FIELD,
+    };
     this.relations = [];
 
     const scalars = Object.entries(resolveDefer(state.$scalars));
 
     for (const [key, def] of scalars) {
-      this.fields.push(...getScalarFields(key, key, def));
+      const fields = getScalarFields(key, key, def);
+
+      for (const field of fields) {
+        if (
+          field.name === this.reservedNames.hash ||
+          field.name === this.reservedNames.version
+        ) {
+          throw new Error(
+            `State "${this.name}" has a scalar field named "${field.name}" which is reserved for internal use.`,
+          );
+        }
+      }
+
+      this.fields.push(...fields);
     }
 
     for (const [key, def] of scalars) {

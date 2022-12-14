@@ -7,6 +7,12 @@ export type Entity<S extends StateDefinition> = {
     : never;
 }[StateDefinitionName<S>];
 
+export type MutatedEntity<S extends StateDefinition> = {
+  [N in StateDefinitionName<S>]: S extends StateDefinition<N, infer R>
+    ? R & { $state: StateDefinitionName<S> }
+    : never;
+}[StateDefinitionName<S>];
+
 export type ProjectedEntity<S extends StateDefinition, P extends Select<S>> = {
   [K in StateDefinitionName<S>]: S extends StateDefinition<K, infer R>
     ? Project<S, P & Select<S>, R>
@@ -15,6 +21,7 @@ export type ProjectedEntity<S extends StateDefinition, P extends Select<S>> = {
 
 type StateEntity<S extends StateDefinition, T> = T & {
   $state: StateDefinitionName<S>;
+  $version: number;
 };
 
 type Project<S extends StateDefinition, P extends Select<S>, T> = StateEntity<

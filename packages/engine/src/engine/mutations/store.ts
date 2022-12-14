@@ -1,4 +1,4 @@
-import { ENTITY_METADATA_HASH_FIELD, MetadataCollection } from '@/metadata';
+import { MetadataCollection } from '@/metadata';
 import {
   Store,
   StoreDocument,
@@ -15,17 +15,9 @@ export const updateStoreDocuments = async (
   documents: StoreDocument[],
   updated: StoreDocument[],
 ): Promise<void> => {
-  const { primaryKeys } = collection;
-
   await Promise.all(
     documents.map((document, index) =>
-      updateStoreDocument(
-        store,
-        collection,
-        primaryKeys,
-        document,
-        updated[index],
-      ),
+      updateStoreDocument(store, collection, document, updated[index]),
     ),
   );
 };
@@ -33,7 +25,6 @@ export const updateStoreDocuments = async (
 const updateStoreDocument = async (
   store: Store,
   collection: MetadataCollection,
-  primaryKeys: string[],
   document: StoreDocument,
   updated: StoreDocument,
 ): Promise<void> => {
@@ -44,7 +35,7 @@ const updateStoreDocument = async (
 
   await store.update({
     collectionName: collection.name,
-    where: getWhereRecord(primaryKeys, document),
+    where: getWhereRecord(collection, document),
     set: Object.fromEntries(setEntries),
     limit: 1,
   });
@@ -59,7 +50,7 @@ export const deleteStoreDocuments = async (
 ): Promise<void> => {
   await store.delete({
     collectionName: collection.name,
-    where: getWhere(collection.primaryKeys, documents),
+    where: getWhere(collection, documents),
     limit: documents.length,
   });
 };
@@ -79,24 +70,27 @@ export const deleteStoreDocuments = async (
 // store where
 
 const getWhere = (
-  primaryKeys: string[],
+  collection: MetadataCollection,
   documents: StoreDocument[],
 ): StoreWhere => ({
-  $or: documents.map((document) => getWhereRecord(primaryKeys, document)),
+  $or: documents.map((document) => getWhereRecord(collection, document)),
 });
 
 const getWhereRecord = (
-  primaryKeys: string[],
+  collection: MetadataCollection,
   document: StoreDocument,
 ): StoreWhereRecord =>
   Object.fromEntries([
-    ...primaryKeys.map((key): [string, StoreWhereEquals] => [
+    ...collection.primaryKeys.map((key): [string, StoreWhereEquals] => [
       key,
       { $eq: document[key] ?? null },
     ]),
-    // FIXME use version field
     [
-      ENTITY_METADATA_HASH_FIELD,
-      { $eq: document[ENTITY_METADATA_HASH_FIELD] ?? null },
+      collection.reservedNames.hash,
+      { $eq: document[collection.reservedNames.hash] ?? null },
+    ],
+    [
+      collection.reservedNames.version,
+      { $eq: document[collection.reservedNames.version] ?? 0 },
     ],
   ]);

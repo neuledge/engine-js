@@ -1,25 +1,31 @@
 import { StateDefinition } from '@/definitions';
 import { Entity } from '@/entity';
-import { Metadata } from '@/metadata';
+import { Metadata, MetadataCollection } from '@/metadata';
 import { StoreDocument, StoreScalarValue } from '@/store';
 
 export const toDocuments = <S extends StateDefinition>(
   metadata: Metadata,
+  collection: MetadataCollection,
   entities: Entity<S>[],
-): StoreDocument[] => entities.map((entity) => toDocument(metadata, entity));
+): StoreDocument[] =>
+  entities.map((entity) => toDocument(metadata, collection, entity));
 
 const toDocument = <S extends StateDefinition>(
   metadata: Metadata,
+  collection: MetadataCollection,
   entity: Entity<S>,
 ): StoreDocument => {
-  const { $state } = entity as Entity<StateDefinition>;
+  const { $state, $version } = entity as Entity<StateDefinition>;
 
   const state = metadata.findStateByKey($state);
   if (!state) {
     throw new Error(`State metadata not found: ${$state}`);
   }
 
-  const document: StoreDocument = {};
+  const document: StoreDocument = {
+    [collection.reservedNames.hash]: state.hash,
+    [collection.reservedNames.version]: $version,
+  };
 
   for (const field of state.fields) {
     document[field.name] = getEntityValue(entity, field.path);

@@ -1,63 +1,60 @@
 import { Entity, ProjectedEntity } from '@/entity';
 import { StateDefinition } from '@/definitions';
 import { EntityList } from '@/list';
-import { ENTITY_METADATA_HASH_FIELD } from '@/metadata/constants';
 import { Metadata } from '@/metadata/metadata';
 import { StoreDocument, StoreList } from '@/store';
 import { Select } from '@/queries';
+import { MetadataCollection } from '@/metadata';
 
 export const toEntityList = <S extends StateDefinition>(
   metadata: Metadata,
+  collection: MetadataCollection,
   list: StoreList,
 ): EntityList<Entity<S>> =>
   Object.assign(
     list
-      .filter((document) =>
-        Buffer.isBuffer(document[ENTITY_METADATA_HASH_FIELD]),
-      )
-      .map((document) =>
-        getStateEntity<S>(
-          metadata,
-          document[ENTITY_METADATA_HASH_FIELD] as Buffer,
-          document,
-        ),
-      ),
+      .map((document) => {
+        const stateHash = document[collection.reservedNames.hash];
+
+        return Buffer.isBuffer(stateHash)
+          ? getStateEntity<S>(metadata, collection, stateHash, document)
+          : undefined;
+      })
+      .filter((entity): entity is Entity<S> => entity !== undefined),
     { nextOffset: list.nextOffset },
   );
 
 export const toMaybeEntity = <S extends StateDefinition>(
   metadata: Metadata,
+  collection: MetadataCollection,
   list: StoreList,
 ): Entity<S> | undefined => {
   const document = list[0];
+  const stateHash = document?.[collection.reservedNames.hash];
 
-  return document && Buffer.isBuffer(document[ENTITY_METADATA_HASH_FIELD])
-    ? getStateEntity<S>(
-        metadata,
-        document[ENTITY_METADATA_HASH_FIELD],
-        document,
-      )
+  return Buffer.isBuffer(stateHash)
+    ? getStateEntity<S>(metadata, collection, stateHash, document)
     : undefined;
 };
 
 export const toEntityOrThrow = <S extends StateDefinition>(
   metadata: Metadata,
+  collection: MetadataCollection,
   list: StoreList,
 ): Entity<S> => {
   const document = list[0];
-  if (!document || !Buffer.isBuffer(document[ENTITY_METADATA_HASH_FIELD])) {
-    throw new Error('Document not found');
+  const stateHash = document?.[collection.reservedNames.hash];
+
+  if (!Buffer.isBuffer(stateHash)) {
+    throw new TypeError('Document not found');
   }
 
-  return getStateEntity<S>(
-    metadata,
-    document[ENTITY_METADATA_HASH_FIELD],
-    document,
-  );
+  return getStateEntity<S>(metadata, collection, stateHash, document);
 };
 
 const getStateEntity = <S extends StateDefinition>(
   metadata: Metadata,
+  collection: MetadataCollection,
   stateHash: Buffer,
   document: StoreDocument,
   prefix = '',
@@ -69,6 +66,7 @@ const getStateEntity = <S extends StateDefinition>(
 
   const entity = {
     $state: state.name,
+    $version: document[collection.reservedNames.version] ?? 0,
   } as Entity<S>;
 
   for (const field of state.fields) {
@@ -85,7 +83,8 @@ const getStateEntity = <S extends StateDefinition>(
     const key = `${prefix}${relation.name}`;
     if (!relation.path) continue;
 
-    const stateHash = document[`${key}_${ENTITY_METADATA_HASH_FIELD}`] as
+    // FIXME don't store relation hash on document
+    const stateHash = document[`${key}_${collection.reservedNames.hash}`] as
       | Buffer
       | undefined;
 
@@ -93,6 +92,7 @@ const getStateEntity = <S extends StateDefinition>(
 
     const childEntity = getStateEntity(
       metadata,
+      collection,
       stateHash,
       document,
       `${key}_`,
