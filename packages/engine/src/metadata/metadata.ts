@@ -56,24 +56,26 @@ export class Metadata {
 
   getCollections(states: StateDefinition[]): MetadataCollection[] {
     const collections = new Map<
-      MetadataCollection['name'],
-      MetadataCollection
+      MetadataState['collectionName'],
+      Set<MetadataState>
     >();
 
-    for (const state of states) {
-      const entity = this.keyMap[state.$name];
-      if (!entity) continue;
+    for (const def of states) {
+      const state = this.keyMap[def.$name];
+      if (!state) continue;
 
-      let collection = collections.get(entity.collectionName);
+      let collection = collections.get(state.collectionName);
       if (!collection) {
-        collection = new MetadataCollection(entity.collectionName, []);
-        collections.set(entity.collectionName, collection);
+        collection = new Set();
+        collections.set(state.collectionName, collection);
       }
 
-      collection.states.push(entity);
+      collection.add(state);
     }
 
-    return [...collections.values()];
+    return [...collections.entries()].map(
+      ([name, states]) => new MetadataCollection(name, [...states]),
+    );
   }
 
   sync(prev: Metadata): MetadataChange[] {

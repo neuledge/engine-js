@@ -3,14 +3,16 @@
   "pipeline": {
     "types": {
       "dependsOn": ["^types"],
+      "inputs": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.js", "src/**/*.jsx"],
       "outputs": ["dist/**/*.d.ts", "dist/**/*.d.ts.map"]
     },
     "build": {
-      "dependsOn": ["^build", "types"],
+      "dependsOn": ["^build", "^types"],
+      "inputs": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.js", "src/**/*.jsx"],
       "outputs": ["dist/**/*.js", "dist/**/*.js.map"]
     },
     "test": {
-      "dependsOn": ["build"],
+      "dependsOn": ["build", "types"],
       "outputs": [],
       "inputs": ["src/**/*.test.ts", "src/**/__tests__/*.ts"]
     },

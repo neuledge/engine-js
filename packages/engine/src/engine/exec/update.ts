@@ -30,6 +30,7 @@ import {
   updateEntityList,
   updateStoreDocuments,
 } from '../mutations/index';
+import { getStateDefinitionMap } from '../mutations/states';
 
 type ReturnState<S extends StateDefinition> = StateDefinitionMutationsReturn<
   S,
@@ -61,9 +62,11 @@ export const execUpdateMany = async <S extends StateDefinition>(
     documents,
   );
 
+  const states = getStateDefinitionMap(options.states);
   const [args] = options.args;
+
   const updated = await updateEntityList(
-    options.states,
+    states,
     entities,
     options.method,
     args,
@@ -106,9 +109,11 @@ export const execUpdateMaybeEntity = async <S extends StateDefinition>(
   const entity = toMaybeEntity(metadata, collection, documents);
   if (!entity) return;
 
+  const states = getStateDefinitionMap(options.states);
   const [args] = options.args;
+
   const updated: Entity<ReturnState<S>> = await updateEntity(
-    options.states,
+    states,
     entity,
     options.method,
     args,
@@ -149,10 +154,11 @@ export const execUpdateEntityOrThrow = async <S extends StateDefinition>(
   });
 
   const entity = toEntityOrThrow(metadata, collection, documents);
+  const states = getStateDefinitionMap(options.states);
 
   const [args] = options.args;
   const updated: Entity<ReturnState<S>> = await updateEntity(
-    options.states,
+    states,
     entity,
     options.method,
     args,

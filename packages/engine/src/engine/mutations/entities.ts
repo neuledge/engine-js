@@ -9,13 +9,14 @@ import {
 } from '@/definitions';
 import { Entity, MutatedEntity } from '@/entity';
 import { EntityList } from '@/list';
+import { StateDefinitionMap } from './states';
 
 export const updateEntityList = async <
   S extends StateDefinition,
   M extends StateDefinitionUpdateMutations<S>,
   A extends StateDefinitionMutationArguments<S, M>,
 >(
-  states: S[],
+  states: StateDefinitionMap<S>,
   entities: EntityList<Entity<S>>,
   method: M,
   args: A,
@@ -32,14 +33,14 @@ export const updateEntity = async <
   M extends StateDefinitionUpdateMutations<S>,
   A extends StateDefinitionMutationArguments<S, M>,
 >(
-  states: S[],
+  states: StateDefinitionMap<S>,
   entity: Entity<S>,
   method: M,
   args: A,
 ): Promise<Entity<StateDefinitionMutationsReturn<S, M>>> => {
   const { $state, $version, ...thisArg } = entity as Entity<StateDefinition>;
 
-  const state = states.find((state) => state.$name === $state);
+  const state = states[$state];
   if (!state) {
     throw new Error(`State ${$state} not found`);
   }
@@ -62,7 +63,7 @@ export const deleteEntityList = async <
   S extends StateDefinition,
   M extends StateDefinitionDeleteMutations<S>,
 >(
-  states: S[],
+  states: StateDefinitionMap<S>,
   entities: EntityList<Entity<S>>,
   method: M,
 ): Promise<void> => {
@@ -75,13 +76,14 @@ export const deleteEntity = async <
   S extends StateDefinition,
   M extends StateDefinitionDeleteMutations<S>,
 >(
-  states: S[],
+  states: StateDefinitionMap<S>,
   entity: Entity<S>,
   method: M,
 ): Promise<void> => {
-  const { $state, ...thisArg } = entity as Entity<StateDefinition>;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { $state, $version, ...thisArg } = entity as Entity<StateDefinition>;
 
-  const state = states.find((state) => state.$name === $state);
+  const state = states[$state];
   if (!state) {
     throw new Error(`State ${$state} not found`);
   }

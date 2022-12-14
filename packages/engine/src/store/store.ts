@@ -78,6 +78,7 @@ export interface StoreUpdateOptions<T> {
 export interface StoreDeleteOptions {
   collectionName: StoreCollectionName;
   where?: StoreWhere;
+  match?: StoreMatch;
   limit: number;
 }
 

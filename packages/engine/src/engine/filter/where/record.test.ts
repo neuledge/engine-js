@@ -1,4 +1,8 @@
-import { MetadataSchema, MetadataStateField } from '@/metadata';
+import {
+  MetadataCollection,
+  MetadataSchema,
+  MetadataStateField,
+} from '@/metadata';
 import { NumberScalar } from '@neuledge/scalars';
 import { convertWhereRecord } from './record';
 
@@ -58,134 +62,185 @@ describe('engine/filter/where/record', () => {
     const renamedMap: MetadataSchema = {
       foo: [{ field: foo }, { field: oldFoo }],
     };
+    const basicCollection: MetadataCollection = {
+      schema: basicMap,
+      reservedNames: { hash: '__h' },
+      states: [{ hash: Buffer.from('a') }],
+    } as never;
+    const renamedCollection: MetadataCollection = {
+      schema: renamedMap,
+      reservedNames: { hash: '__h' },
+      states: [{ hash: Buffer.from('b') }],
+    } as never;
 
     it('should throw an error if the operator is unknown', () => {
       expect(() =>
-        convertWhereRecord(basicMap, { foo: { $unknown: 1 } }),
+        convertWhereRecord(basicCollection, { foo: { $unknown: 1 } }),
       ).toThrow('Invalid operator: $unknown');
     });
 
     it('should throw an error if the path is unknown', () => {
-      expect(() => convertWhereRecord(basicMap, { zoo: { $eq: 1 } })).toThrow(
-        "Unknown where key: 'zoo'",
-      );
+      expect(() =>
+        convertWhereRecord(basicCollection, { zoo: { $eq: 1 } }),
+      ).toThrow("Unknown where key: 'zoo'");
     });
 
     it('should handle single value $eq', () => {
-      expect(convertWhereRecord(basicMap, { foo: { $eq: 123 } })).toEqual([
-        { foo: { $eq: 123 } },
-      ]);
+      expect(
+        convertWhereRecord(basicCollection, { foo: { $eq: 123 } }),
+      ).toEqual([{ __h: { $in: [Buffer.from('a')] }, foo: { $eq: 123 } }]);
     });
 
     it('should handle single null $eq', () => {
-      expect(convertWhereRecord(basicMap, { foo: { $eq: null } })).toEqual([
-        { foo: { $eq: null } },
-      ]);
+      expect(
+        convertWhereRecord(basicCollection, { foo: { $eq: null } }),
+      ).toEqual([{ __h: { $in: [Buffer.from('a')] }, foo: { $eq: null } }]);
     });
 
     it('should handle single value $gt', () => {
-      expect(convertWhereRecord(basicMap, { foo: { $gt: 123 } })).toEqual([
-        { foo: { $gt: 123 } },
-      ]);
+      expect(
+        convertWhereRecord(basicCollection, { foo: { $gt: 123 } }),
+      ).toEqual([{ __h: { $in: [Buffer.from('a')] }, foo: { $gt: 123 } }]);
     });
 
     it('should handle single value $gt and $lt', () => {
       expect(
-        convertWhereRecord(basicMap, { foo: { $gt: 123, $lt: 456 } }),
-      ).toEqual([{ foo: { $gt: 123, $lt: 456 } }]);
+        convertWhereRecord(basicCollection, { foo: { $gt: 123, $lt: 456 } }),
+      ).toEqual([
+        { __h: { $in: [Buffer.from('a')] }, foo: { $gt: 123, $lt: 456 } },
+      ]);
     });
 
     it('should handle renamed single value $eq', () => {
-      expect(convertWhereRecord(renamedMap, { foo: { $eq: 123 } })).toEqual([
-        { foo: { $eq: 123 } },
-        { foo_old: { $eq: 123 } },
+      expect(
+        convertWhereRecord(renamedCollection, { foo: { $eq: 123 } }),
+      ).toEqual([
+        { __h: { $in: [Buffer.from('b')] }, foo: { $eq: 123 } },
+        { __h: { $in: [Buffer.from('b')] }, foo_old: { $eq: 123 } },
       ]);
     });
 
     it('should handle renamed single value $lt and $gt', () => {
       expect(
-        convertWhereRecord(renamedMap, { foo: { $gt: 123, $lt: 456 } }),
+        convertWhereRecord(renamedCollection, { foo: { $gt: 123, $lt: 456 } }),
       ).toEqual([
-        { foo: { $gt: 123, $lt: 456 } },
-        { foo_old: { $gt: 123, $lt: 456 } },
+        { __h: { $in: [Buffer.from('b')] }, foo: { $gt: 123, $lt: 456 } },
+        { __h: { $in: [Buffer.from('b')] }, foo_old: { $gt: 123, $lt: 456 } },
       ]);
     });
 
     it('should handle multi field $eq', () => {
       expect(
-        convertWhereRecord(basicMap, {
+        convertWhereRecord(basicCollection, {
           foo: { $eq: 123 },
           bar: { $eq: 456 },
         }),
-      ).toEqual([{ foo: { $eq: 123 }, bar: { $eq: 456 } }]);
+      ).toEqual([
+        {
+          __h: { $in: [Buffer.from('a')] },
+          foo: { $eq: 123 },
+          bar: { $eq: 456 },
+        },
+      ]);
     });
 
     it('should handle single path value $eq', () => {
       expect(
-        convertWhereRecord(basicMap, { 'entity.id': { $eq: 123 } }),
-      ).toEqual([{ entity_id: { $eq: 123 } }]);
+        convertWhereRecord(basicCollection, { 'entity.id': { $eq: 123 } }),
+      ).toEqual([
+        { __h: { $in: [Buffer.from('a')] }, entity_id: { $eq: 123 } },
+      ]);
     });
 
     it('should handle multi value $eq', () => {
       expect(
-        convertWhereRecord(basicMap, {
+        convertWhereRecord(basicCollection, {
           entity: { $eq: { id: 123, subId: 456 } },
         }),
-      ).toEqual([{ entity_id: { $eq: 123 }, entity_subId: { $eq: 456 } }]);
+      ).toEqual([
+        {
+          __h: { $in: [Buffer.from('a')] },
+          entity_id: { $eq: 123 },
+          entity_subId: { $eq: 456 },
+        },
+      ]);
     });
 
     it('should handle single value $ne', () => {
-      expect(convertWhereRecord(basicMap, { foo: { $ne: 123 } })).toEqual([
-        { foo: { $ne: 123 } },
-      ]);
+      expect(
+        convertWhereRecord(basicCollection, { foo: { $ne: 123 } }),
+      ).toEqual([{ __h: { $in: [Buffer.from('a')] }, foo: { $ne: 123 } }]);
     });
 
     it('should handle multi field $ne', () => {
       expect(
-        convertWhereRecord(basicMap, { foo: { $ne: 123 }, bar: { $ne: 456 } }),
-      ).toEqual([{ foo: { $ne: 123 }, bar: { $ne: 456 } }]);
+        convertWhereRecord(basicCollection, {
+          foo: { $ne: 123 },
+          bar: { $ne: 456 },
+        }),
+      ).toEqual([
+        {
+          __h: { $in: [Buffer.from('a')] },
+          foo: { $ne: 123 },
+          bar: { $ne: 456 },
+        },
+      ]);
     });
 
     it('should handle multi value $ne', () => {
       expect(
-        convertWhereRecord(basicMap, {
+        convertWhereRecord(basicCollection, {
           entity: { $ne: { id: 123, subId: 456 } },
         }),
       ).toEqual([
-        { entity_id: { $ne: 123 } },
-        { entity_id: { $eq: 123 }, entity_subId: { $ne: 456 } },
+        { __h: { $in: [Buffer.from('a')] }, entity_id: { $ne: 123 } },
+        {
+          __h: { $in: [Buffer.from('a')] },
+          entity_id: { $eq: 123 },
+          entity_subId: { $ne: 456 },
+        },
       ]);
     });
 
     it('should handle single value $in', () => {
-      expect(convertWhereRecord(basicMap, { foo: { $in: [123] } })).toEqual([
-        { foo: { $in: [123] } },
-      ]);
+      expect(
+        convertWhereRecord(basicCollection, { foo: { $in: [123] } }),
+      ).toEqual([{ __h: { $in: [Buffer.from('a')] }, foo: { $in: [123] } }]);
     });
 
     it('should handle multi value $in', () => {
       expect(
-        convertWhereRecord(basicMap, { foo: { $in: [123, 456] } }),
-      ).toEqual([{ foo: { $in: [123, 456] } }]);
+        convertWhereRecord(basicCollection, { foo: { $in: [123, 456] } }),
+      ).toEqual([
+        { __h: { $in: [Buffer.from('a')] }, foo: { $in: [123, 456] } },
+      ]);
     });
 
     it('should handle single object value $in', () => {
       expect(
-        convertWhereRecord(basicMap, { entity: { $in: [{ id: 123 }] } }),
-      ).toEqual([{ entity_id: { $eq: 123 } }]);
+        convertWhereRecord(basicCollection, { entity: { $in: [{ id: 123 }] } }),
+      ).toEqual([
+        { __h: { $in: [Buffer.from('a')] }, entity_id: { $eq: 123 } },
+      ]);
     });
 
     it('should handle single object multi value $in', () => {
       expect(
-        convertWhereRecord(basicMap, {
+        convertWhereRecord(basicCollection, {
           entity: { $in: [{ id: 123, subId: 456 }] },
         }),
-      ).toEqual([{ entity_id: { $eq: 123 }, entity_subId: { $eq: 456 } }]);
+      ).toEqual([
+        {
+          __h: { $in: [Buffer.from('a')] },
+          entity_id: { $eq: 123 },
+          entity_subId: { $eq: 456 },
+        },
+      ]);
     });
 
     it('should handle multi object multi value $in', () => {
       expect(
-        convertWhereRecord(basicMap, {
+        convertWhereRecord(basicCollection, {
           entity: {
             $in: [
               { id: 123, subId: 456 },
@@ -194,51 +249,71 @@ describe('engine/filter/where/record', () => {
           },
         }),
       ).toEqual([
-        { entity_id: { $eq: 123 }, entity_subId: { $eq: 456 } },
-        { entity_id: { $eq: 987 }, entity_subId: { $eq: 654 } },
+        {
+          __h: { $in: [Buffer.from('a')] },
+          entity_id: { $eq: 123 },
+          entity_subId: { $eq: 456 },
+        },
+        {
+          __h: { $in: [Buffer.from('a')] },
+          entity_id: { $eq: 987 },
+          entity_subId: { $eq: 654 },
+        },
       ]);
     });
 
     it('should handle single value $nin', () => {
-      expect(convertWhereRecord(basicMap, { foo: { $nin: [123] } })).toEqual([
-        { foo: { $nin: [123] } },
-      ]);
+      expect(
+        convertWhereRecord(basicCollection, { foo: { $nin: [123] } }),
+      ).toEqual([{ __h: { $in: [Buffer.from('a')] }, foo: { $nin: [123] } }]);
     });
 
     it('should handle multi value $nin', () => {
       expect(
-        convertWhereRecord(basicMap, { foo: { $nin: [123, 456] } }),
-      ).toEqual([{ foo: { $nin: [123, 456] } }]);
+        convertWhereRecord(basicCollection, { foo: { $nin: [123, 456] } }),
+      ).toEqual([
+        { __h: { $in: [Buffer.from('a')] }, foo: { $nin: [123, 456] } },
+      ]);
     });
 
     it('should handle single object value $nin', () => {
       expect(
-        convertWhereRecord(basicMap, { entity: { $nin: [{ id: 123 }] } }),
-      ).toEqual([{ entity_id: { $ne: 123 } }]);
+        convertWhereRecord(basicCollection, {
+          entity: { $nin: [{ id: 123 }] },
+        }),
+      ).toEqual([
+        { __h: { $in: [Buffer.from('a')] }, entity_id: { $ne: 123 } },
+      ]);
     });
 
     it('should handle multi object value $nin', () => {
       expect(
-        convertWhereRecord(basicMap, {
+        convertWhereRecord(basicCollection, {
           entity: { $nin: [{ id: 123 }, { id: 456 }] },
         }),
-      ).toEqual([{ entity_id: { $nin: [123, 456] } }]);
+      ).toEqual([
+        { __h: { $in: [Buffer.from('a')] }, entity_id: { $nin: [123, 456] } },
+      ]);
     });
 
     it('should handle single object multi value $nin', () => {
       expect(
-        convertWhereRecord(basicMap, {
+        convertWhereRecord(basicCollection, {
           entity: { $nin: [{ id: 123, subId: 456 }] },
         }),
       ).toEqual([
-        { entity_id: { $ne: 123 } },
-        { entity_id: { $eq: 123 }, entity_subId: { $ne: 456 } },
+        { __h: { $in: [Buffer.from('a')] }, entity_id: { $ne: 123 } },
+        {
+          __h: { $in: [Buffer.from('a')] },
+          entity_id: { $eq: 123 },
+          entity_subId: { $ne: 456 },
+        },
       ]);
     });
 
     it('should handle multi object multi value $nin', () => {
       expect(
-        convertWhereRecord(basicMap, {
+        convertWhereRecord(basicCollection, {
           entity: {
             $nin: [
               { id: 123, subId: 456 },
@@ -247,9 +322,17 @@ describe('engine/filter/where/record', () => {
           },
         }),
       ).toEqual([
-        { entity_id: { $nin: [123, 987] } },
-        { entity_id: { $eq: 123 }, entity_subId: { $ne: 456 } },
-        { entity_id: { $eq: 987 }, entity_subId: { $ne: 654 } },
+        { __h: { $in: [Buffer.from('a')] }, entity_id: { $nin: [123, 987] } },
+        {
+          __h: { $in: [Buffer.from('a')] },
+          entity_id: { $eq: 123 },
+          entity_subId: { $ne: 456 },
+        },
+        {
+          __h: { $in: [Buffer.from('a')] },
+          entity_id: { $eq: 987 },
+          entity_subId: { $ne: 654 },
+        },
       ]);
     });
   });

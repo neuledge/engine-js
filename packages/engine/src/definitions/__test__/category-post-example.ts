@@ -63,7 +63,7 @@ export class Category {
   }
 
   static delete(this: Category): void {
-    // do nothing
+    //   // do nothing
   }
 }
 

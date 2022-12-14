@@ -13,19 +13,21 @@ describe('engine/filter', () => {
     beforeAll(() => {
       metadata = Metadata.generate([Category, ...Post]);
 
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      metadata
+        .findStateByKey(Post[0].$name)!
+        .fields.find((item) => item.name === 'content')!.name = 'description';
+
       categoriesCollection = metadata.getCollections([Category])[0];
       postsCollection = metadata.getCollections(Post)[0];
-
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      postsCollection.states[0].fields.find(
-        (item) => item.name === 'content',
-      )!.name = 'description';
     });
 
     it('should convert empty object', () => {
-      expect(convertFilterQuery(metadata, categoriesCollection, {})).toEqual(
-        {},
-      );
+      expect(convertFilterQuery(metadata, categoriesCollection, {})).toEqual({
+        where: {
+          __h: { $in: categoriesCollection.states.map((item) => item.hash) },
+        },
+      });
     });
 
     it('should convert simple equal where', () => {
@@ -34,7 +36,10 @@ describe('engine/filter', () => {
           where: { id: { $eq: 1 } },
         }),
       ).toEqual({
-        where: { id: { $eq: 1 } },
+        where: {
+          __h: { $in: categoriesCollection.states.map((item) => item.hash) },
+          id: { $eq: 1 },
+        },
       });
     });
 
@@ -44,7 +49,10 @@ describe('engine/filter', () => {
           where: { id: { $eq: null } },
         }),
       ).toEqual({
-        where: { id: { $eq: null } },
+        where: {
+          __h: { $in: categoriesCollection.states.map((item) => item.hash) },
+          id: { $eq: null },
+        },
       });
     });
 
@@ -62,7 +70,10 @@ describe('engine/filter', () => {
           where: { id: { $gt: 5, $lte: 10 } },
         }),
       ).toEqual({
-        where: { id: { $gt: 5, $lte: 10 } },
+        where: {
+          __h: { $in: categoriesCollection.states.map((item) => item.hash) },
+          id: { $gt: 5, $lte: 10 },
+        },
       });
     });
 
@@ -72,7 +83,22 @@ describe('engine/filter', () => {
           where: { $or: [{ id: { $gt: 5, $lte: 10 } }, { id: { $eq: 100 } }] },
         }),
       ).toEqual({
-        where: { $or: [{ id: { $gt: 5, $lte: 10 } }, { id: { $eq: 100 } }] },
+        where: {
+          $or: [
+            {
+              __h: {
+                $in: categoriesCollection.states.map((item) => item.hash),
+              },
+              id: { $gt: 5, $lte: 10 },
+            },
+            {
+              __h: {
+                $in: categoriesCollection.states.map((item) => item.hash),
+              },
+              id: { $eq: 100 },
+            },
+          ],
+        },
       });
     });
 
@@ -83,7 +109,16 @@ describe('engine/filter', () => {
         }),
       ).toEqual({
         where: {
-          $or: [{ description: { $eq: 'foo' } }, { content: { $eq: 'foo' } }],
+          $or: [
+            {
+              __h: { $in: postsCollection.states.map((item) => item.hash) },
+              description: { $eq: 'foo' },
+            },
+            {
+              __h: { $in: postsCollection.states.map((item) => item.hash) },
+              content: { $eq: 'foo' },
+            },
+          ],
         },
       });
     });
@@ -94,7 +129,10 @@ describe('engine/filter', () => {
           where: { category: { $eq: { id: 1 } } },
         }),
       ).toEqual({
-        where: { category_id: { $eq: 1 } },
+        where: {
+          __h: { $in: postsCollection.states.map((item) => item.hash) },
+          category_id: { $eq: 1 },
+        },
       });
     });
 
@@ -104,6 +142,9 @@ describe('engine/filter', () => {
           match: {},
         }),
       ).toEqual({
+        where: {
+          __h: { $in: postsCollection.states.map((item) => item.hash) },
+        },
         match: {},
       });
     });
@@ -114,12 +155,20 @@ describe('engine/filter', () => {
           match: { category: { where: { id: { $eq: 1 } } } },
         }),
       ).toEqual({
+        where: {
+          __h: { $in: postsCollection.states.map((item) => item.hash) },
+        },
         match: {
           category: [
             {
               collectionName: 'categories',
               by: { category_id: 'id' },
-              where: { id: { $eq: 1 } },
+              where: {
+                __h: {
+                  $in: categoriesCollection.states.map((item) => item.hash),
+                },
+                id: { $eq: 1 },
+              },
             },
           ],
         },

@@ -16,6 +16,7 @@ export type MetadataCollectionFieldMap = Record<
 
 export class MetadataCollection {
   readonly reservedNames: MetadataStateReservedNames;
+  readonly schema: MetadataSchema;
   readonly primaryKeys: string[];
 
   constructor(
@@ -26,11 +27,8 @@ export class MetadataCollection {
       fromSortedField(key),
     );
 
+    this.schema = getMetadataSchema(this.states);
     this.reservedNames = this.states[0].reservedNames;
-  }
-
-  get schema(): MetadataSchema {
-    return getMetadataSchema(this.states);
   }
 
   getFields(rootPath: string): MetadataStateField[] {

@@ -6,7 +6,7 @@ import { LimitQueryOptions } from '@/queries';
 import { StoreFindOptions, StoreList } from '@/store';
 import { toEntityList } from './entity';
 
-const DEFAULT_QUERY_LIMIT = 1000;
+export const DEFAULT_QUERY_LIMIT = 1000;
 
 export const convertLimitQuery = (
   options: LimitQueryOptions,

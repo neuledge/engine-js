@@ -1,6 +1,7 @@
 import { StateDefinition } from '@/definitions';
 import { Entity, ProjectedEntity } from '@/entity';
 import { EntityList } from '@/list';
+import { MetadataCollection } from '@/metadata/collection';
 import {
   DeleteFirstOrThrowQueryOptions,
   DeleteFirstQueryOptions,
@@ -9,16 +10,27 @@ import {
   DeleteUniqueQueryOptions,
   Select,
 } from '@/queries';
+import { StoreDocument, StoreList } from '@/store';
 import { chooseStatesCollection } from '../collection';
 import { NeuledgeEngine } from '../engine';
-import { projectEntity, toEntityOrThrow, toMaybeEntity } from '../entity';
+import {
+  projectEntities,
+  projectEntity,
+  toEntityOrThrow,
+  toMaybeEntity,
+} from '../entity';
 import { convertFilterQuery } from '../filter';
-import { convertLimitQuery, toLimitedEntityList } from '../limit';
+import {
+  convertLimitQuery,
+  DEFAULT_QUERY_LIMIT,
+  toLimitedEntityList,
+} from '../limit';
 import {
   deleteEntity,
   deleteEntityList,
   deleteStoreDocuments,
 } from '../mutations';
+import { getStateDefinitionMap } from '../mutations/states';
 import { convertRetriveQuery } from '../retrive';
 
 export const execDeleteMany = async <S extends StateDefinition>(
@@ -29,6 +41,20 @@ export const execDeleteMany = async <S extends StateDefinition>(
 > => {
   const metadata = await engine.metadata;
   const collection = chooseStatesCollection(metadata, options.states);
+
+  if (!options.select && (await tryDeleteStates(options))) {
+    let res;
+
+    do {
+      res = await engine.store.delete({
+        collectionName: collection.name,
+        ...convertFilterQuery(metadata, collection, options),
+        ...convertLimitQuery(options),
+      });
+    } while (options.limit == null && res.affectedCount >= DEFAULT_QUERY_LIMIT);
+
+    return;
+  }
 
   const documents = await engine.store.find({
     collectionName: collection.name,
@@ -44,14 +70,7 @@ export const execDeleteMany = async <S extends StateDefinition>(
     documents,
   );
 
-  await deleteEntityList(options.states, entities, options.method);
-  await deleteStoreDocuments(engine.store, collection, documents);
-
-  if (!options.select) {
-    return;
-  }
-
-  return projectEntity(entities, options.select);
+  return deleteMany(engine, collection, entities, documents, options);
 };
 
 export const execDeleteMaybeEntity = async <S extends StateDefinition>(
@@ -71,14 +90,7 @@ export const execDeleteMaybeEntity = async <S extends StateDefinition>(
   const entity = toMaybeEntity(metadata, collection, documents);
   if (!entity) return;
 
-  await deleteEntity(options.states, entity, options.method);
-  await deleteStoreDocuments(engine.store, collection, documents);
-
-  if (!options.select) {
-    return;
-  }
-
-  return projectEntity(entity, options.select);
+  return deleteOne(engine, collection, entity, documents[0], options);
 };
 
 export const execDeleteEntityOrThrow = async <S extends StateDefinition>(
@@ -100,8 +112,65 @@ export const execDeleteEntityOrThrow = async <S extends StateDefinition>(
   const entity = toEntityOrThrow(metadata, collection, documents);
   if (!entity) return;
 
-  await deleteEntity(options.states, entity, options.method);
+  return deleteOne(engine, collection, entity, documents[0], options);
+};
+
+// delete helpers
+
+const tryDeleteStates = async <S extends StateDefinition>(
+  options: DeleteManyQueryOptions<S, S>,
+) => {
+  const entities = options.states.map(
+    (state): Entity<StateDefinition> => ({
+      $state: state.$name,
+      $version: 0,
+    }),
+  );
+
+  const states = getStateDefinitionMap(options.states);
+
+  try {
+    await deleteEntityList(states, entities, options.method);
+    return true;
+  } catch {
+    return false;
+  }
+};
+
+const deleteMany = async <S extends StateDefinition>(
+  engine: NeuledgeEngine,
+  collection: MetadataCollection,
+  entities: EntityList<Entity<S>>,
+  documents: StoreList<StoreDocument>,
+  options: DeleteManyQueryOptions<S, S>,
+): Promise<EntityList<Entity<S> | ProjectedEntity<S, Select<S>>> | void> => {
+  const states = getStateDefinitionMap(options.states);
+
+  await deleteEntityList(states, entities, options.method);
   await deleteStoreDocuments(engine.store, collection, documents);
+
+  if (!options.select) {
+    return;
+  }
+
+  return projectEntities(entities, options.select);
+};
+
+const deleteOne = async <S extends StateDefinition>(
+  engine: NeuledgeEngine,
+  collection: MetadataCollection,
+  entity: Entity<S>,
+  document: StoreDocument,
+  options:
+    | DeleteFirstQueryOptions<S, S>
+    | DeleteUniqueQueryOptions<S, S>
+    | DeleteFirstOrThrowQueryOptions<S, S>
+    | DeleteUniqueOrThrowQueryOptions<S, S>,
+): Promise<Entity<S> | ProjectedEntity<S, Select<S>> | void> => {
+  const states = getStateDefinitionMap(options.states);
+
+  await deleteEntity(states, entity, options.method);
+  await deleteStoreDocuments(engine.store, collection, [document]);
 
   if (!options.select) {
     return;

@@ -5,6 +5,7 @@ import {
 import { DummyStore } from '@/store/__test__/dummy-store';
 import { NeuledgeEngine } from './engine';
 import { jest } from '@jest/globals';
+import { Metadata } from '@/metadata';
 
 /* eslint-disable max-lines-per-function */
 
@@ -19,11 +20,14 @@ describe('engine/engine', () => {
 
   describe('NeuledgeEngine#findMany()', () => {
     let engine: NeuledgeEngine;
+    let metadata: Metadata;
 
     beforeEach(async () => {
       engine = await new NeuledgeEngine({
         store: new DummyStore(),
       }).ready();
+
+      metadata = await engine.metadata;
     });
 
     it('should find empty query', async () => {
@@ -34,6 +38,9 @@ describe('engine/engine', () => {
       expect(engine.store.find).toHaveBeenCalledTimes(1);
       expect(engine.store.find).toHaveBeenCalledWith({
         collectionName: 'categories',
+        where: {
+          __h: { $in: [metadata.findStateByKey(Category.$name)?.hash] },
+        },
         limit: 1000,
       });
 
@@ -48,6 +55,9 @@ describe('engine/engine', () => {
       expect(engine.store.find).toHaveBeenCalledTimes(1);
       expect(engine.store.find).toHaveBeenCalledWith({
         collectionName: 'categories',
+        where: {
+          __h: { $in: [metadata.findStateByKey(Category.$name)?.hash] },
+        },
         limit: 10,
       });
 
@@ -62,6 +72,9 @@ describe('engine/engine', () => {
       expect(engine.store.find).toHaveBeenCalledTimes(1);
       expect(engine.store.find).toHaveBeenCalledWith({
         collectionName: 'categories',
+        where: {
+          __h: { $in: [metadata.findStateByKey(Category.$name)?.hash] },
+        },
         limit: 10,
         offset: 'foo',
       });
@@ -80,7 +93,10 @@ describe('engine/engine', () => {
       expect(engine.store.find).toHaveBeenCalledTimes(1);
       expect(engine.store.find).toHaveBeenCalledWith({
         collectionName: 'categories',
-        where: { id: { $gt: 3 } },
+        where: {
+          __h: { $in: [metadata.findStateByKey(Category.$name)?.hash] },
+          id: { $gt: 3 },
+        },
         limit: 10,
       });
 
@@ -99,6 +115,9 @@ describe('engine/engine', () => {
       expect(engine.store.find).toHaveBeenCalledWith({
         collectionName: 'categories',
         select: { id: true, name: true },
+        where: {
+          __h: { $in: [metadata.findStateByKey(Category.$name)?.hash] },
+        },
         limit: 10,
       });
 
@@ -116,6 +135,9 @@ describe('engine/engine', () => {
       expect(engine.store.find).toHaveBeenCalledTimes(1);
       expect(engine.store.find).toHaveBeenCalledWith({
         collectionName: 'posts',
+        where: {
+          __h: { $in: [metadata.findStateByKey(PublishedPost.$name)?.hash] },
+        },
         sort: { category_id: 'desc', title: 'desc' },
         limit: 10,
       });
@@ -134,6 +156,9 @@ describe('engine/engine', () => {
       expect(engine.store.find).toHaveBeenCalledTimes(1);
       expect(engine.store.find).toHaveBeenCalledWith({
         collectionName: 'posts',
+        where: {
+          __h: { $in: [metadata.findStateByKey(PublishedPost.$name)?.hash] },
+        },
         sort: { content: 'desc', id: 'asc' },
         limit: 10,
       });

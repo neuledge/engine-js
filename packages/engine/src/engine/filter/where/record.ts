@@ -2,21 +2,31 @@ import {
   StateDefinitionWhereRecord,
   StateDefinitionWhereTerm,
 } from '@/definitions';
-import { MetadataSchema, MetadataStateField } from '@/metadata';
+import {
+  MetadataCollection,
+  MetadataSchema,
+  MetadataStateField,
+} from '@/metadata';
 import { StoreWhereRecord } from '@/store';
 import { applyWhereOperatorTerm, convertWhereScalarTerm } from './term';
 
 export const convertWhereRecord = (
-  schema: MetadataSchema,
+  collection: MetadataCollection,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  where: StateDefinitionWhereRecord<any>,
+  where: StateDefinitionWhereRecord<any> | null,
 ): StoreWhereRecord[] => {
-  let records: StoreWhereRecord[] = [{}];
+  let records: StoreWhereRecord[] = [
+    {
+      [collection.reservedNames.hash]: {
+        $in: collection.states.map((s) => s.hash),
+      },
+    },
+  ];
 
-  for (const [key, term] of Object.entries(where)) {
+  for (const [key, term] of Object.entries(where ?? {})) {
     if (term == null) continue;
 
-    const choices = schema[key];
+    const choices = collection.schema[key];
     if (!choices?.length) {
       throw new Error(`Unknown where key: '${key}'`);
     }
