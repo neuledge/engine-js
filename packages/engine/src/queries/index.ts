@@ -20,6 +20,7 @@ export * from './retrive';
 export * from './select';
 export * from './sort';
 export * from './type';
+export * from './unique';
 export * from './update-first-or-throw';
 export * from './update-first';
 export * from './update-many';

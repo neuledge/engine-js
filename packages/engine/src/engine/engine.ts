@@ -33,17 +33,21 @@ import { loadMetadata } from './metadata';
 import {
   execCreateMany,
   execCreateOne,
-  execDeleteEntityOrThrow,
+  execDeleteFirstOrThrow,
   execDeleteMany,
-  execDeleteMaybeEntity,
+  execDeleteFirst,
   execFindFirst,
   execFindFirstOrThrow,
   execFindMany,
   execFindUnique,
   execFindUniqueOrThrow,
-  execUpdateEntityOrThrow,
+  execUpdateFirstOrThrow,
   execUpdateMany,
-  execUpdateMaybeEntity,
+  execUpdateFirst,
+  execDeleteUnique,
+  execDeleteUniqueOrThrow,
+  execUpdateUnique,
+  execUpdateUniqueOrThrow,
 } from './exec';
 
 export interface NeuledgeEngineOptions {
@@ -209,7 +213,7 @@ export class NeuledgeEngine {
       states,
       method,
       args: [args ?? ({} as A)],
-      exec: (options) => execUpdateMaybeEntity(this, options),
+      exec: (options) => execUpdateFirst(this, options),
     });
   }
 
@@ -243,7 +247,7 @@ export class NeuledgeEngine {
       states,
       method,
       args: [args ?? ({} as A)],
-      exec: (options) => execUpdateEntityOrThrow(this, options),
+      exec: (options) => execUpdateFirstOrThrow(this, options),
     });
   }
 
@@ -278,7 +282,7 @@ export class NeuledgeEngine {
       method,
       args: [args ?? ({} as A)],
       unique: true,
-      exec: (options) => execUpdateMaybeEntity(this, options),
+      exec: (options) => execUpdateUnique(this, options),
     });
   }
 
@@ -313,7 +317,7 @@ export class NeuledgeEngine {
       method,
       args: [args ?? ({} as A)],
       unique: true,
-      exec: (options) => execUpdateEntityOrThrow(this, options),
+      exec: (options) => execUpdateUniqueOrThrow(this, options),
     });
   }
 
@@ -339,7 +343,7 @@ export class NeuledgeEngine {
       type: 'DeleteFirst',
       states,
       method,
-      exec: (options) => execDeleteMaybeEntity(this, options),
+      exec: (options) => execDeleteFirst(this, options),
     });
   }
 
@@ -351,7 +355,7 @@ export class NeuledgeEngine {
       type: 'DeleteFirstOrThrow',
       states,
       method,
-      exec: (options) => execDeleteEntityOrThrow(this, options),
+      exec: (options) => execDeleteFirstOrThrow(this, options),
     });
   }
 
@@ -364,7 +368,7 @@ export class NeuledgeEngine {
       states,
       method,
       unique: true,
-      exec: (options) => execDeleteMaybeEntity(this, options),
+      exec: (options) => execDeleteUnique(this, options),
     });
   }
 
@@ -377,7 +381,7 @@ export class NeuledgeEngine {
       states,
       method,
       unique: true,
-      exec: (options) => execDeleteEntityOrThrow(this, options),
+      exec: (options) => execDeleteUniqueOrThrow(this, options),
     });
   }
 

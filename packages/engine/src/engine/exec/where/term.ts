@@ -3,8 +3,30 @@ import equal from 'fast-deep-equal/es6';
 import { StateDefinitionWhereTerm } from '@/definitions';
 import { StoreWhereRecord, StoreWhereTerm } from '@/store';
 import { NeuledgeError, NeuledgeErrorCode } from '@/error';
+import { MetadataStateField } from '@/metadata';
 
-export const convertWhereScalarTerm = (
+export const applyWhereRecordTerm = (
+  records: StoreWhereRecord[],
+  field: MetadataStateField,
+  term: StateDefinitionWhereTerm,
+): StoreWhereRecord[] => {
+  const res = records.map((record) => ({ ...record }));
+
+  for (const record of res) {
+    if (record[field.name] == null) {
+      record[field.name] = convertWhereScalarTerm(field.type, term);
+    } else {
+      throw new NeuledgeError(
+        NeuledgeErrorCode.QUERY_PARSING_ERROR,
+        `Duplicate where key: '${field.path}'`,
+      );
+    }
+  }
+
+  return res;
+};
+
+const convertWhereScalarTerm = (
   scalar: Scalar,
   term: StateDefinitionWhereTerm,
 ): StoreWhereTerm => {

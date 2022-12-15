@@ -3,13 +3,9 @@ import {
   StateDefinitionWhereTerm,
 } from '@/definitions';
 import { NeuledgeError, NeuledgeErrorCode } from '@/error';
-import {
-  MetadataCollection,
-  MetadataSchema,
-  MetadataStateField,
-} from '@/metadata';
+import { MetadataCollection, MetadataSchema } from '@/metadata';
 import { StoreWhereRecord } from '@/store';
-import { applyWhereOperatorTerm, convertWhereScalarTerm } from './term';
+import { applyWhereOperatorTerm, applyWhereRecordTerm } from './term';
 
 export const convertWhereRecord = (
   collection: MetadataCollection,
@@ -48,27 +44,6 @@ export const convertWhereRecord = (
   }
 
   return records;
-};
-
-const applyWhereRecordTerm = (
-  records: StoreWhereRecord[],
-  field: MetadataStateField,
-  term: StateDefinitionWhereTerm,
-): StoreWhereRecord[] => {
-  const res = records.map((record) => ({ ...record }));
-
-  for (const record of res) {
-    if (record[field.name] == null) {
-      record[field.name] = convertWhereScalarTerm(field.type, term);
-    } else {
-      throw new NeuledgeError(
-        NeuledgeErrorCode.QUERY_PARSING_ERROR,
-        `Duplicate where key: '${field.path}'`,
-      );
-    }
-  }
-
-  return res;
 };
 
 const applyWhereState = (

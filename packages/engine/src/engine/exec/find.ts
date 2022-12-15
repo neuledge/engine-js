@@ -11,11 +11,12 @@ import {
 import { chooseStatesCollection } from '../collection';
 import { NeuledgeEngine } from '../engine';
 import { toEntityOrThrow, toMaybeEntity } from '../entity';
-import { convertFilterQuery } from '../filter';
+import { convertFilterQuery, convertUniqueFilterQuery } from '../filter';
 import { convertLimitQuery, toLimitedEntityList } from '../limit';
 import { convertOffsetQuery } from '../offset';
 import { convertRetriveQuery } from '../retrive';
 import { convertSortQuery } from '../sort';
+import { convertUniqueQuery } from './unique';
 
 export const execFindMany = async <S extends StateDefinition>(
   engine: NeuledgeEngine,
@@ -49,7 +50,8 @@ export const execFindUnique = async <S extends StateDefinition>(
   const [document] = await engine.store.find({
     collectionName: collection.name,
     ...convertRetriveQuery(collection, options),
-    ...convertFilterQuery(metadata, collection, options),
+    ...convertUniqueFilterQuery(metadata, collection, options),
+    ...convertUniqueQuery(metadata, collection, options),
     limit: 1,
   });
 
@@ -66,7 +68,8 @@ export const execFindUniqueOrThrow = async <S extends StateDefinition>(
   const [document] = await engine.store.find({
     collectionName: collection.name,
     ...convertRetriveQuery(collection, options),
-    ...convertFilterQuery(metadata, collection, options),
+    ...convertUniqueFilterQuery(metadata, collection, options),
+    ...convertUniqueQuery(metadata, collection, options),
     limit: 1,
   });
 

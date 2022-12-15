@@ -1,7 +1,7 @@
 import { Entity } from '@/entity';
 import { StateDefinition, StateDefinitionUpdateMutations } from '@/definitions';
 import { ExecQuery, ExecQueryOptions } from './exec';
-import { FilterQuery, FilterQueryOptions } from './filter';
+import { UniqueFilterQuery, UniqueFilterQueryOptions } from './filter';
 import { SingleArgsQueryOptions } from './method';
 import { RetriveQuery, RetriveQueryOptions } from './retrive';
 import { RootQueryOptions } from './type';
@@ -11,7 +11,7 @@ export interface UpdateUniqueQuery<
   I extends StateDefinition,
   O extends StateDefinition,
 > extends RetriveQuery<'UpdateUniqueAndReturn', I, O, Entity<O>>,
-    FilterQuery<I>,
+    UniqueFilterQuery<I>,
     UniqueQuery<'UpdateUniqueWhere', I, O, Entity<O>>,
     ExecQuery<void> {}
 
@@ -20,7 +20,7 @@ export interface UpdateUniqueAndReturnQuery<
   O extends StateDefinition,
   R,
 > extends RetriveQuery<'UpdateUniqueAndReturn', I, O, R>,
-    FilterQuery<I>,
+    UniqueFilterQuery<I>,
     UniqueQuery<'UpdateUniqueWhereAndReturn', I, O, R> {}
 
 export interface UpdateUniqueWhereQuery<
@@ -28,7 +28,7 @@ export interface UpdateUniqueWhereQuery<
   O extends StateDefinition,
   R,
 > extends RetriveQuery<'UpdateUniqueWhereAndReturn', I, O, R>,
-    FilterQuery<I>,
+    UniqueFilterQuery<I>,
     UniqueQuery<'UpdateUniqueWhere', I, O, R>,
     ExecQuery<void> {}
 
@@ -37,7 +37,7 @@ export interface UpdateUniqueWhereAndReturnQuery<
   O extends StateDefinition,
   R,
 > extends RetriveQuery<'UpdateUniqueWhereAndReturn', I, O, R>,
-    FilterQuery<I>,
+    UniqueFilterQuery<I>,
     UniqueQuery<'UpdateUniqueWhereAndReturn', I, O, R>,
     ExecQuery<R | undefined> {}
 
@@ -47,6 +47,6 @@ export interface UpdateUniqueQueryOptions<
 > extends RootQueryOptions<'UpdateUnique', I>,
     SingleArgsQueryOptions<I, StateDefinitionUpdateMutations<I>>,
     RetriveQueryOptions<O>,
-    FilterQueryOptions<I>,
+    UniqueFilterQueryOptions<I>,
     UniqueQueryOptions<I>,
     ExecQueryOptions<'UpdateUnique', I, O> {}

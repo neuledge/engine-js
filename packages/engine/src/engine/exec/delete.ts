@@ -19,7 +19,7 @@ import {
   toEntityOrThrow,
   toMaybeEntity,
 } from '../entity';
-import { convertFilterQuery } from '../filter';
+import { convertFilterQuery, convertUniqueFilterQuery } from '../filter';
 import {
   convertLimitQuery,
   DEFAULT_QUERY_LIMIT,
@@ -32,6 +32,7 @@ import {
 } from '../mutations';
 import { getStateDefinitionMap } from '../mutations/states';
 import { convertRetriveQuery } from '../retrive';
+import { convertUniqueQuery } from './unique';
 
 export const execDeleteMany = async <S extends StateDefinition>(
   engine: NeuledgeEngine,
@@ -73,9 +74,9 @@ export const execDeleteMany = async <S extends StateDefinition>(
   return deleteMany(engine, collection, entities, documents, options);
 };
 
-export const execDeleteMaybeEntity = async <S extends StateDefinition>(
+export const execDeleteFirst = async <S extends StateDefinition>(
   engine: NeuledgeEngine,
-  options: DeleteFirstQueryOptions<S, S> | DeleteUniqueQueryOptions<S, S>,
+  options: DeleteFirstQueryOptions<S, S>,
 ): Promise<Entity<S> | ProjectedEntity<S, Select<S>> | void> => {
   const metadata = await engine.metadata;
   const collection = chooseStatesCollection(metadata, options.states);
@@ -93,11 +94,30 @@ export const execDeleteMaybeEntity = async <S extends StateDefinition>(
   return deleteOne(engine, collection, entity, document, options);
 };
 
-export const execDeleteEntityOrThrow = async <S extends StateDefinition>(
+export const execDeleteUnique = async <S extends StateDefinition>(
   engine: NeuledgeEngine,
-  options:
-    | DeleteFirstOrThrowQueryOptions<S, S>
-    | DeleteUniqueOrThrowQueryOptions<S, S>,
+  options: DeleteUniqueQueryOptions<S, S>,
+): Promise<Entity<S> | ProjectedEntity<S, Select<S>> | void> => {
+  const metadata = await engine.metadata;
+  const collection = chooseStatesCollection(metadata, options.states);
+
+  const [document] = await engine.store.find({
+    collectionName: collection.name,
+    ...convertRetriveQuery(collection, options),
+    ...convertUniqueFilterQuery(metadata, collection, options),
+    ...convertUniqueQuery(metadata, collection, options),
+    limit: 1,
+  });
+
+  const entity = toMaybeEntity(metadata, collection, document);
+  if (!entity) return;
+
+  return deleteOne(engine, collection, entity, document, options);
+};
+
+export const execDeleteFirstOrThrow = async <S extends StateDefinition>(
+  engine: NeuledgeEngine,
+  options: DeleteFirstOrThrowQueryOptions<S, S>,
 ): Promise<Entity<S> | ProjectedEntity<S, Select<S>> | void> => {
   const metadata = await engine.metadata;
   const collection = chooseStatesCollection(metadata, options.states);
@@ -106,6 +126,27 @@ export const execDeleteEntityOrThrow = async <S extends StateDefinition>(
     collectionName: collection.name,
     ...convertRetriveQuery(collection, options),
     ...convertFilterQuery(metadata, collection, options),
+    limit: 1,
+  });
+
+  const entity = toEntityOrThrow(metadata, collection, document);
+  if (!entity) return;
+
+  return deleteOne(engine, collection, entity, document, options);
+};
+
+export const execDeleteUniqueOrThrow = async <S extends StateDefinition>(
+  engine: NeuledgeEngine,
+  options: DeleteUniqueOrThrowQueryOptions<S, S>,
+): Promise<Entity<S> | ProjectedEntity<S, Select<S>> | void> => {
+  const metadata = await engine.metadata;
+  const collection = chooseStatesCollection(metadata, options.states);
+
+  const [document] = await engine.store.find({
+    collectionName: collection.name,
+    ...convertRetriveQuery(collection, options),
+    ...convertUniqueFilterQuery(metadata, collection, options),
+    ...convertUniqueQuery(metadata, collection, options),
     limit: 1,
   });
 

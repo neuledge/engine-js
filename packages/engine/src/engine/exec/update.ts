@@ -22,7 +22,7 @@ import {
   toEntityOrThrow,
   toMaybeEntity,
 } from '../entity';
-import { convertFilterQuery } from '../filter';
+import { convertFilterQuery, convertUniqueFilterQuery } from '../filter';
 import { convertLimitQuery, toLimitedEntityList } from '../limit';
 import { convertRetriveQuery } from '../retrive';
 import {
@@ -33,6 +33,7 @@ import {
   updateStoreDocuments,
 } from '../mutations';
 import { NeuledgeError, NeuledgeErrorCode } from '@/error';
+import { convertUniqueQuery } from './unique';
 
 const UPDATE_VERSION_RETRIES = 3;
 
@@ -101,11 +102,9 @@ export const execUpdateMany = async <S extends StateDefinition>(
   return projectEntities(res, options.select);
 };
 
-export const execUpdateMaybeEntity = async <S extends StateDefinition>(
+export const execUpdateFirst = async <S extends StateDefinition>(
   engine: NeuledgeEngine,
-  options:
-    | UpdateFirstQueryOptions<S, ReturnState<S>>
-    | UpdateUniqueQueryOptions<S, ReturnState<S>>,
+  options: UpdateFirstQueryOptions<S, ReturnState<S>>,
 ): Promise<
   | Entity<ReturnState<S>>
   | ProjectedEntity<ReturnState<S>, Select<ReturnState<S>>>
@@ -156,11 +155,63 @@ export const execUpdateMaybeEntity = async <S extends StateDefinition>(
   );
 };
 
-export const execUpdateEntityOrThrow = async <S extends StateDefinition>(
+export const execUpdateUnique = async <S extends StateDefinition>(
   engine: NeuledgeEngine,
-  options:
-    | UpdateFirstOrThrowQueryOptions<S, ReturnState<S>>
-    | UpdateUniqueOrThrowQueryOptions<S, ReturnState<S>>,
+  options: UpdateUniqueQueryOptions<S, ReturnState<S>>,
+): Promise<
+  | Entity<ReturnState<S>>
+  | ProjectedEntity<ReturnState<S>, Select<ReturnState<S>>>
+  | void
+> => {
+  const metadata = await engine.metadata;
+  const collection = chooseStatesCollection(metadata, options.states);
+
+  for (let retries = 1; retries < UPDATE_VERSION_RETRIES; retries++) {
+    const [document] = await engine.store.find({
+      collectionName: collection.name,
+      ...convertRetriveQuery(collection, options),
+      ...convertUniqueFilterQuery(metadata, collection, options),
+      ...convertUniqueQuery(metadata, collection, options),
+      limit: 1,
+    });
+
+    const entity = toMaybeEntity(metadata, collection, document);
+    if (!entity) return;
+
+    const states = getStateDefinitionMap(options.states);
+    const [args] = options.args;
+
+    const updated: Entity<ReturnState<S>> = await updateEntity(
+      states,
+      entity,
+      options.method,
+      args,
+    );
+
+    const success = await updateStoreDocument(
+      engine.store,
+      collection,
+      document,
+      toDocument(metadata, collection, updated),
+    );
+    if (!success) continue;
+
+    if (!options.select) {
+      return;
+    }
+
+    return projectEntity(updated, options.select);
+  }
+
+  throw new NeuledgeError(
+    NeuledgeErrorCode.VERSION_MISMATCH,
+    'Version mismatch while updating entity',
+  );
+};
+
+export const execUpdateFirstOrThrow = async <S extends StateDefinition>(
+  engine: NeuledgeEngine,
+  options: UpdateFirstOrThrowQueryOptions<S, ReturnState<S>>,
 ): Promise<
   | Entity<ReturnState<S>>
   | ProjectedEntity<ReturnState<S>, Select<ReturnState<S>>>
@@ -174,6 +225,58 @@ export const execUpdateEntityOrThrow = async <S extends StateDefinition>(
       collectionName: collection.name,
       ...convertRetriveQuery(collection, options),
       ...convertFilterQuery(metadata, collection, options),
+      limit: 1,
+    });
+
+    const entity = toEntityOrThrow(metadata, collection, document);
+    const states = getStateDefinitionMap(options.states);
+
+    const [args] = options.args;
+    const updated: Entity<ReturnState<S>> = await updateEntity(
+      states,
+      entity,
+      options.method,
+      args,
+    );
+
+    const success = await updateStoreDocument(
+      engine.store,
+      collection,
+      document,
+      toDocument(metadata, collection, updated),
+    );
+    if (!success) continue;
+
+    if (!options.select) {
+      return;
+    }
+
+    return projectEntity(updated, options.select);
+  }
+
+  throw new NeuledgeError(
+    NeuledgeErrorCode.VERSION_MISMATCH,
+    'Version mismatch while updating entity',
+  );
+};
+
+export const execUpdateUniqueOrThrow = async <S extends StateDefinition>(
+  engine: NeuledgeEngine,
+  options: UpdateUniqueOrThrowQueryOptions<S, ReturnState<S>>,
+): Promise<
+  | Entity<ReturnState<S>>
+  | ProjectedEntity<ReturnState<S>, Select<ReturnState<S>>>
+  | void
+> => {
+  const metadata = await engine.metadata;
+  const collection = chooseStatesCollection(metadata, options.states);
+
+  for (let retries = 1; retries < UPDATE_VERSION_RETRIES; retries++) {
+    const [document] = await engine.store.find({
+      collectionName: collection.name,
+      ...convertRetriveQuery(collection, options),
+      ...convertUniqueFilterQuery(metadata, collection, options),
+      ...convertUniqueQuery(metadata, collection, options),
       limit: 1,
     });
 
