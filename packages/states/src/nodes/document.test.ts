@@ -12,7 +12,6 @@ describe('ast/document', () => {
         type: 'Root',
         start: 0,
         end: 0,
-        imports: [],
         body: [],
       });
       expect(cursor.index).toBe(0);
@@ -30,43 +29,33 @@ describe('ast/document', () => {
         type: 'Root',
         start: 7,
         end: 47,
-        imports: [],
         body: [{ type: 'State', id: { type: 'Identifier', name: 'Foo' } }],
       });
       expect(cursor.index).toBe(9);
     });
 
-    it('should import', () => {
-      const cursor = new Tokenizer(`import "Bar"`);
-
-      expect(parseDocumentNode(cursor)).toMatchObject({
-        type: 'Root',
-        start: 0,
-        end: 12,
-        imports: [{ type: 'Import', source: { value: 'Bar' } }],
-        body: [],
-      });
-      expect(cursor.index).toBe(2);
-    });
-
-    it('should parse import and state', () => {
+    it('should parse multiple states', () => {
       const cursor = new Tokenizer(
         `
-      import "Bar"
-
       state Foo {
-        bar: Int = 4
+        foo: Int = 1
+      }
+
+      state Bar {
+        bar: Int = 1
       }`,
       );
 
       expect(parseDocumentNode(cursor)).toMatchObject({
         type: 'Root',
         start: 7,
-        end: 67,
-        imports: [{ type: 'Import', source: { value: 'Bar' } }],
-        body: [{ type: 'State', id: { type: 'Identifier', name: 'Foo' } }],
+        end: 95,
+        body: [
+          { type: 'State', id: { type: 'Identifier', name: 'Foo' } },
+          { type: 'State', id: { type: 'Identifier', name: 'Bar' } },
+        ],
       });
-      expect(cursor.index).toBe(11);
+      expect(cursor.index).toBe(18);
     });
   });
 });

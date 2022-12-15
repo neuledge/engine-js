@@ -4,7 +4,6 @@ import {
   EitherNode,
   EntityNode,
   FieldNode,
-  LiteralNode,
   MigrationNode,
   MutationNode,
   parseDocumentNode,
@@ -14,7 +13,6 @@ import {
   STATE_FIELD_INDEX_MAX_INPUT_VALUE,
   TypeNode,
 } from '@/nodes';
-import { resolve, dirname } from 'node:path';
 import { Tokenizer } from '@/tokenizer';
 import { ParsingError } from '@/parsing-error';
 import { BuiltInScalar, builtInScalars } from './built-in';
@@ -32,14 +30,9 @@ export class States {
   private readonly migrationMap: Partial<
     Record<`${string}->${string}`, MigrationNode>
   > = {};
-  private readonly imported: Partial<Record<string, Promise<DocumentNode>>> =
-    {};
   private parent?: States;
 
-  constructor(
-    private readonly load: (filename: string) => PromiseLike<string>,
-    private readonly basepath: string = '',
-  ) {}
+  // iterators
 
   *scalars(): Generator<ScalarNode, void, unknown> {
     yield* this.entities('Scalar');
@@ -64,6 +57,8 @@ export class States {
       }
     }
   }
+
+  // getters
 
   entity(name: string): EntityNode | BuiltInScalar | undefined {
     // eslint-disable-next-line @typescript-eslint/no-this-alias, unicorn/no-this-assignment
@@ -120,82 +115,54 @@ export class States {
     return undefined;
   }
 
-  async import(
-    filename: string,
-    basepath = this.basepath,
-    source?: LiteralNode<string>,
-  ): Promise<DocumentNode> {
-    const filepath = resolve(basepath, filename);
-
-    // eslint-disable-next-line @typescript-eslint/no-this-alias, unicorn/no-this-assignment
-    let self = this;
-    let res;
-
-    do {
-      res = this.imported[filepath];
-      if (res) return res;
-    } while ((self = self.parent as this));
-
-    res = this.imported[filepath] = Promise.resolve(this.load(filepath))
-      .then(
-        (content) => this.exec(content, filepath),
-        (error) => {
-          throw source
-            ? new ParsingError(
-                source,
-                `Can't import path '${filename}': ${
-                  error?.message || String(error)
-                }`,
-              )
-            : new Error(
-                `Can't import path '${filename}': ${
-                  error?.message || String(error)
-                }`,
-              );
-        },
-      )
-      .catch((error) => {
-        delete this.imported[filepath];
-        throw error;
-      });
-
-    return res;
-  }
+  // executors
 
   async exec(content: string, filepath?: string): Promise<DocumentNode> {
-    const cursor = new Tokenizer(content, filepath);
-    const res = parseDocumentNode(cursor);
-
-    const basepath = filepath ? dirname(filepath) : this.basepath;
-
-    // we will execute the document on a child context and only if no errors
-    // triggered we will embed it within the current parser
-
-    const child = new States(this.load, basepath);
-    child.parent = this;
-    if (filepath) {
-      child.imported[filepath] = Promise.resolve(res);
-    }
-
-    for (const item of res.imports) {
-      await child.import(item.source.value, basepath, item.source);
-    }
-
-    for (const item of res.body) {
-      child.register(item);
-    }
-
-    for (const item of res.body) {
-      child.process(item);
-    }
-
-    if (filepath) {
-      delete child.imported[filepath];
-    }
-
-    this.embed(child);
-    return res;
+    const [document] = await this.load([{ content, filepath }]);
+    return document;
   }
+
+  async load(
+    inputs: { content: string; filepath?: string }[],
+  ): Promise<DocumentNode[]> {
+    const documents = inputs.map(({ content, filepath }) => {
+      const cursor = new Tokenizer(content, filepath);
+      return parseDocumentNode(cursor);
+    });
+
+    // we will execute the documents on a child context and only if no errors
+    // triggered we will embed it within the current parser
+    const child = new States();
+    child.parent = this;
+
+    // first load all the entities and mutations
+    for (const document of documents) {
+      for (const item of document.body) {
+        child.register(item);
+      }
+    }
+
+    // then process the entities and mutations
+    for (const document of documents) {
+      for (const item of document.body) {
+        child.process(item);
+      }
+    }
+
+    // success! embed the child context within the current one
+    this.embed(child);
+
+    return documents;
+  }
+
+  private embed(child: States): void {
+    Object.assign(this.entityMap, child.entityMap);
+    Object.assign(this.fieldsMap, child.fieldsMap);
+    Object.assign(this.mutationMap, child.mutationMap);
+    Object.assign(this.migrationMap, child.migrationMap);
+  }
+
+  // registerers
 
   register(node: DocumentBodyNode): void {
     switch (node.type) {
@@ -258,6 +225,8 @@ export class States {
 
     this.migrationMap[`${node.origin.name}->${node.returns.name}`] = node;
   }
+
+  // processors
 
   process(node: DocumentBodyNode): void {
     switch (node.type) {
@@ -426,13 +395,5 @@ export class States {
         `Unknown type name '${node.identifier.name}'`,
       );
     }
-  }
-
-  private embed(child: States): void {
-    Object.assign(this.entityMap, child.entityMap);
-    Object.assign(this.fieldsMap, child.fieldsMap);
-    Object.assign(this.mutationMap, child.mutationMap);
-    Object.assign(this.migrationMap, child.migrationMap);
-    Object.assign(this.imported, child.imported);
   }
 }

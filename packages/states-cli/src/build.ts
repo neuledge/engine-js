@@ -3,6 +3,7 @@ import { resolve } from 'node:path';
 import fg from 'fast-glob';
 import { States } from '@neuledge/states';
 import { generate } from '@neuledge/states-ts';
+import pLimit from 'p-limit';
 
 export interface BuildOptions {
   basepath?: string;
@@ -13,13 +14,20 @@ export const build = async (
   files: string[],
   options: BuildOptions,
 ): Promise<void> => {
-  const states = new States(
-    (filename) => fs.readFile(filename, { encoding: 'utf8' }),
-    options.basepath,
+  const asyncLimit = pLimit(10);
+  const resolvedFiles = await resolveFiles(files, options.basepath);
+
+  const inputs = await Promise.all(
+    resolvedFiles.map((filepath) =>
+      asyncLimit(async () => ({
+        content: await fs.readFile(filepath, { encoding: 'utf8' }),
+        filepath,
+      })),
+    ),
   );
 
-  const resolvedFiles = await resolveFiles(files, options.basepath);
-  await Promise.all(resolvedFiles.map((file) => states.import(file)));
+  const states = new States();
+  await states.load(inputs);
 
   const outputFile = resolve(
     options.basepath ?? '',

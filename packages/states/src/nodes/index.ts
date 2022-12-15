@@ -8,7 +8,6 @@ export * from './expressions';
 export * from './reference-field';
 export * from './field';
 export * from './identifier';
-export * from './import';
 export * from './migration';
 export * from './mutation';
 export * from './literal';

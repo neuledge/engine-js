@@ -26,7 +26,8 @@ describe('build', () => {
       expect(writeFile).toHaveBeenCalledTimes(1);
       expect(writeFile).toHaveBeenCalledWith(
         '/states.ts',
-        `export class Foo {
+        `@$.State
+export class Foo {
   static $name = 'Foo' as const;
   static $projection: {
     id?: boolean;
