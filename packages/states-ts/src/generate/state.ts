@@ -3,6 +3,7 @@ import { generateDescriptionComment } from './comments';
 
 export const generateState = (state: StateNode, fields: FieldNode[]): string =>
   generateDescriptionComment(state, '') +
+  `@$.State\n` +
   `export class ${state.id.name} {\n` +
   `  static $name = '${state.id.name}' as const;\n` +
   `  static $projection: ${generateStateProjectionType(fields, '  ')};\n` +
