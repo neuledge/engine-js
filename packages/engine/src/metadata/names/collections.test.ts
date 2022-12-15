@@ -2,7 +2,7 @@ import {
   Category,
   DraftPost,
   PublishedPost,
-} from '@/definitions/__test__/category-post-example';
+} from '@/definitions/__fixtures__/category-post-example';
 import { getCollectionNames } from './collections';
 
 describe('metadata/names', () => {

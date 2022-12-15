@@ -35,7 +35,7 @@ export class Category {
   }: {
     name: string;
     description?: string | null;
-  }): $.Entity<typeof Category> {
+  }): $.Type<typeof Category> {
     return {
       $state: 'Category',
       id: Math.round(Math.random() * 1e6),
@@ -53,7 +53,7 @@ export class Category {
       name: string;
       description?: string | null;
     },
-  ): $.Entity<typeof Category> {
+  ): $.Type<typeof Category> {
     return {
       ...this,
       $state: 'Category',
@@ -66,6 +66,7 @@ export class Category {
     //   // do nothing
   }
 }
+export type $Category = $.Entity<typeof Category>;
 
 /**
  * Post in draft state
@@ -102,7 +103,7 @@ export class DraftPost {
     title: string;
     content?: string | null;
     category?: $.Id<typeof Category> | null;
-  }): $.Entity<typeof DraftPost> {
+  }): $.Type<typeof DraftPost> {
     return {
       $state: 'DraftPost',
       id: Math.round(Math.random() * 1e6),
@@ -123,7 +124,7 @@ export class DraftPost {
       content?: string | null;
       category?: $.Id<typeof Category> | null;
     },
-  ): $.Entity<typeof DraftPost> {
+  ): $.Type<typeof DraftPost> {
     return {
       ...this,
       $state: 'DraftPost',
@@ -133,7 +134,7 @@ export class DraftPost {
     };
   }
 
-  static publish(this: DraftPost): $.Entity<typeof PublishedPost> {
+  static publish(this: DraftPost): $.Type<typeof PublishedPost> {
     if (!this.category) {
       throw new TypeError(`Expect category to exists`);
     }
@@ -154,6 +155,7 @@ export class DraftPost {
     // do nothing
   }
 }
+export type $DraftPost = $.Entity<typeof DraftPost>;
 
 /**
  * Post in published state
@@ -196,7 +198,7 @@ export class PublishedPost {
       content,
       category,
     }: { title: string; content: string; category: $.Id<typeof Category> },
-  ): $.Entity<typeof PublishedPost> {
+  ): $.Type<typeof PublishedPost> {
     return {
       ...this,
       $state: 'PublishedPost',
@@ -210,6 +212,9 @@ export class PublishedPost {
     // do nothing
   }
 }
+export type $PublishedPost = $.Entity<typeof PublishedPost>;
 
 export type Post = DraftPost | PublishedPost;
-export const Post = $.either('Post', [DraftPost, PublishedPost]);
+export const Post: $.Either<'Post', typeof DraftPost | typeof PublishedPost> =
+  $.either('Post', [DraftPost, PublishedPost]);
+export type $Post = $.Entity<typeof Post[number]>;

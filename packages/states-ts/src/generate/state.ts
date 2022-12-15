@@ -4,7 +4,7 @@ import { generateDescriptionComment } from './comments';
 export const generateState = (state: StateNode, fields: FieldNode[]): string =>
   generateDescriptionComment(state, '') +
   `export class ${state.id.name} {\n` +
-  `  static $key = '${state.id.name}' as const;\n` +
+  `  static $name = '${state.id.name}' as const;\n` +
   `  static $projection: ${generateStateProjectionType(fields, '  ')};\n` +
   `  static $find: ${generateStateFindType(fields, '  ')};\n` +
   `  static $unique: ${generateStateUniqueType(fields, '  ')};\n` +

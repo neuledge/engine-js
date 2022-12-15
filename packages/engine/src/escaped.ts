@@ -5,10 +5,12 @@ export {
   type StateDefinitionWhereId as WhereId,
   type StateDefinitionWhereNumber as WhereNumber,
   type StateDefinitionWhereObject as WhereObject,
+  type EitherDefintion as Either,
   createEitherDefintion as either,
 } from './definitions';
 
-export { type MutatedEntity as Entity } from '@/entity';
+export { type Entity as Entity, type MutatedEntity as Type } from '@/entity';
 
-const $Date = Date;
-export { $Date as Date };
+const DateConstructor = Date;
+
+export { DateConstructor as Date };

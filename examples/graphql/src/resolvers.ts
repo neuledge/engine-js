@@ -12,6 +12,22 @@ export const resolvers: Resolvers = {
         .offset(offset ?? null),
   },
 
+  Post: {
+    __resolveType: ({ $state }) => $state,
+  },
+
+  DraftPost: {
+    category: async ({ category }) =>
+      category
+        ? engine.findUniqueOrThrow(Category).unique({ id: category.id })
+        : null,
+  },
+
+  PublishedPost: {
+    category: async ({ category }) =>
+      engine.findUniqueOrThrow(Category).unique({ id: category.id }),
+  },
+
   Query: {
     category: async (_, { id }) =>
       engine.findUniqueOrThrow(Category).unique({ id }),
@@ -26,7 +42,7 @@ export const resolvers: Resolvers = {
   Mutation: {
     createPost: async (_, { data }) =>
       engine
-        .createOne([DraftPost], 'create', {
+        .createOne(DraftPost, 'create', {
           title: data.title,
           content: data.content,
           category: data.categoryId ? { id: data.categoryId } : null,
@@ -56,7 +72,7 @@ export const resolvers: Resolvers = {
         .then(() => null),
 
     createCategory: async (_, { data }) =>
-      engine.createOne([Category], 'create', data).select(),
+      engine.createOne(Category, 'create', data).select(),
 
     updateCategory: async (_, { id, data }) =>
       engine

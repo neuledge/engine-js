@@ -1,7 +1,7 @@
 import {
   Category,
   PublishedPost,
-} from '@/definitions/__test__/category-post-example';
+} from '@/definitions/__fixtures__/category-post-example';
 import { DummyStore } from '@/store/__test__/dummy-store';
 import { NeuledgeEngine } from './engine';
 import { jest } from '@jest/globals';

@@ -3,11 +3,11 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "build": "yarn compile",
+    "types": "tsc --noEmit",
+    "build": "rimraf dist/**/*.js dist/**/*.js.map && tsup",
+    "generate": "yarn generate:schema",
     "generate:states": "states build --basepath src/states \"*.states\"",
     "generate:schema": "graphql-codegen",
-    "generate": "yarn generate:states && yarn generate:schema",
-    "compile": "tsup",
     "lint": "eslint . --ext \"js,jsx,ts,tsx,mjs,cjs\"",
     "lint:strict": "yarn lint --max-warnings 0",
     "start": "node --enable-source-maps dist/app.js"
@@ -24,6 +24,7 @@
   "devDependencies": {
     "@graphql-codegen/cli": "^2.13.7",
     "@graphql-codegen/typescript-resolvers": "^2.7.4",
+    "@graphql-tools/schema": "^9.0.12",
     "@neuledge/states-cli": "^0.1.0-alpha.2"
   }
 }

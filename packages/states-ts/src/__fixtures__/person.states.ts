@@ -4,7 +4,7 @@
  * @deprecated please use version 2
  */
 export class Person_old {
-  static $key = 'Person_old' as const;
+  static $name = 'Person_old' as const;
   static $projection: {
     id?: boolean;
     name?: boolean;
@@ -31,7 +31,7 @@ export class Person_old {
  * Got it??
  */
 export class Person {
-  static $key = 'Person' as const;
+  static $name = 'Person' as const;
   static $projection: {
     id?: boolean;
     firstName?: boolean;

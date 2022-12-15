@@ -13,7 +13,7 @@ import {
   DraftPost,
   Post,
   PublishedPost,
-} from './__test__/category-post-example';
+} from './__fixtures__/category-post-example';
 
 /* eslint-disable max-lines-per-function */
 

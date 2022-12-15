@@ -1,13 +1,18 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "pipeline": {
+    "generate": {
+      "dependsOn": ["^build", "^types"],
+      "inputs": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.js", "src/**/*.jsx"],
+      "outputs": ["dist/**/*.d.ts", "dist/**/*.d.ts.map"]
+    },
     "types": {
-      "dependsOn": ["^types"],
+      "dependsOn": ["^types", "generate"],
       "inputs": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.js", "src/**/*.jsx"],
       "outputs": ["dist/**/*.d.ts", "dist/**/*.d.ts.map"]
     },
     "build": {
-      "dependsOn": ["^build", "^types"],
+      "dependsOn": ["^build", "^types", "generate"],
       "inputs": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.js", "src/**/*.jsx"],
       "outputs": ["dist/**/*.js", "dist/**/*.js.map"]
     },

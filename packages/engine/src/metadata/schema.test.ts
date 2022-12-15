@@ -1,4 +1,7 @@
-import { Category, Post } from '@/definitions/__test__/category-post-example';
+import {
+  Category,
+  Post,
+} from '@/definitions/__fixtures__/category-post-example';
 import { MetadataCollection } from './collection';
 import { Metadata } from './metadata';
 import { getMetadataSchema } from './schema';

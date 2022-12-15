@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
 import { resolvers } from './resolvers';
 import { engine } from './engine';
+import { makeExecutableSchema } from '@graphql-tools/schema';
 
 /* eslint-disable no-console */
 
@@ -16,11 +17,11 @@ import { engine } from './engine';
     dirname(fileURLToPath(import.meta.url)),
     '../schema.graphql',
   );
-  const schema = await fs.readFile(schemaFile, { encoding: 'utf8' });
+  const typeDefs = await fs.readFile(schemaFile, { encoding: 'utf8' });
+  const schema = makeExecutableSchema({ typeDefs, resolvers });
 
   app.register(mercurius, {
     schema,
-    resolvers,
     graphiql: true,
     errorFormatter: (error, ...args) => {
       console.error(error);

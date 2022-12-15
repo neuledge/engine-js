@@ -1,16 +1,16 @@
 import { StateDefinition } from './state';
 
 export interface EitherDefintion<
-  K extends string = string,
+  N extends string = string,
   S extends StateDefinition = StateDefinition,
 > extends Array<S> {
-  $key: K;
+  $name: N;
 }
 
 export const createEitherDefintion = <
-  K extends string,
-  S extends readonly StateDefinition[],
+  N extends string,
+  S extends StateDefinition,
 >(
-  key: K,
-  states: S,
-): EitherDefintion<K, S[number]> => Object.assign([...states], { $key: key });
+  name: N,
+  states: readonly S[],
+): EitherDefintion<N, S> => Object.assign([...states], { $name: name });

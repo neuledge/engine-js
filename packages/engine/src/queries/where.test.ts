@@ -1,4 +1,7 @@
-import { Category, Post } from '@/definitions/__test__/category-post-example';
+import {
+  Category,
+  Post,
+} from '@/definitions/__fixtures__/category-post-example';
 import { UniqueWhere, Where } from './where';
 
 describe('queries/where', () => {

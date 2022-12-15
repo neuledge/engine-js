@@ -21,10 +21,10 @@
   "devDependencies": {
     "@neuledge/eslint-config": "^1.0.0-alpha.14",
     "@neuledge/jest-ts-preset": "^1.0.0-alpha.10",
-    "@neuledge/tsconfig": "^1.0.0-alpha.12",
+    "@neuledge/tsconfig": "^1.0.0-alpha.15",
     "@swc/core": "^1.3.21",
     "@types/jest": "^29.2.4",
-    "@types/node": "^16",
+    "@types/node": "^18",
     "@types/pluralize": "^0.0.29",
     "concurrently": "^7.3.0",
     "eslint": "^8.29.0",
@@ -35,6 +35,6 @@
     "ts-node": "^10.9.1",
     "tsup": "^6.5.0",
     "turbo": "^1.6.3",
-    "typescript": "~4.8"
+    "typescript": "^4.9.4"
   }
 }
