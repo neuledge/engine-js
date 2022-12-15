@@ -39,7 +39,7 @@ export interface UpdateUniqueWhereAndReturnQuery<
 > extends RetriveQuery<'UpdateUniqueWhereAndReturn', I, O, R>,
     UniqueFilterQuery<I>,
     UniqueQuery<'UpdateUniqueWhereAndReturn', I, O, R>,
-    ExecQuery<R | undefined> {}
+    ExecQuery<R | null> {}
 
 export interface UpdateUniqueQueryOptions<
   I extends StateDefinition,

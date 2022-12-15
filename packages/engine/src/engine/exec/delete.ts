@@ -32,7 +32,7 @@ import {
 } from '../mutations';
 import { getStateDefinitionMap } from '../mutations/states';
 import { convertRetriveQuery } from '../retrive';
-import { convertUniqueQuery } from './unique';
+import { convertUniqueQuery } from '../unique';
 
 export const execDeleteMany = async <S extends StateDefinition>(
   engine: NeuledgeEngine,
@@ -77,7 +77,7 @@ export const execDeleteMany = async <S extends StateDefinition>(
 export const execDeleteFirst = async <S extends StateDefinition>(
   engine: NeuledgeEngine,
   options: DeleteFirstQueryOptions<S, S>,
-): Promise<Entity<S> | ProjectedEntity<S, Select<S>> | void> => {
+): Promise<Entity<S> | ProjectedEntity<S, Select<S>> | null | void> => {
   const metadata = await engine.metadata;
   const collection = chooseStatesCollection(metadata, options.states);
 
@@ -89,7 +89,11 @@ export const execDeleteFirst = async <S extends StateDefinition>(
   });
 
   const entity = toMaybeEntity(metadata, collection, document);
-  if (!entity) return;
+  if (!entity) {
+    if (options.select) return null;
+
+    return;
+  }
 
   return deleteOne(engine, collection, entity, document, options);
 };
@@ -97,7 +101,7 @@ export const execDeleteFirst = async <S extends StateDefinition>(
 export const execDeleteUnique = async <S extends StateDefinition>(
   engine: NeuledgeEngine,
   options: DeleteUniqueQueryOptions<S, S>,
-): Promise<Entity<S> | ProjectedEntity<S, Select<S>> | void> => {
+): Promise<Entity<S> | ProjectedEntity<S, Select<S>> | null | void> => {
   const metadata = await engine.metadata;
   const collection = chooseStatesCollection(metadata, options.states);
 
@@ -110,7 +114,11 @@ export const execDeleteUnique = async <S extends StateDefinition>(
   });
 
   const entity = toMaybeEntity(metadata, collection, document);
-  if (!entity) return;
+  if (!entity) {
+    if (options.select) return null;
+
+    return;
+  }
 
   return deleteOne(engine, collection, entity, document, options);
 };
@@ -130,7 +138,6 @@ export const execDeleteFirstOrThrow = async <S extends StateDefinition>(
   });
 
   const entity = toEntityOrThrow(metadata, collection, document);
-  if (!entity) return;
 
   return deleteOne(engine, collection, entity, document, options);
 };
@@ -151,7 +158,6 @@ export const execDeleteUniqueOrThrow = async <S extends StateDefinition>(
   });
 
   const entity = toEntityOrThrow(metadata, collection, document);
-  if (!entity) return;
 
   return deleteOne(engine, collection, entity, document, options);
 };

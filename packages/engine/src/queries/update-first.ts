@@ -19,7 +19,7 @@ export interface UpdateFirstAndReturnQuery<
   R,
 > extends RetriveQuery<'UpdateFirstAndReturn', I, O, R>,
     FilterQuery<I>,
-    ExecQuery<R | undefined> {}
+    ExecQuery<R | null> {}
 
 export interface UpdateFirstQueryOptions<
   I extends StateDefinition,

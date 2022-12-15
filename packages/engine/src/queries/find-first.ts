@@ -12,7 +12,7 @@ export interface FindFirstQuery<S extends StateDefinition, R = Entity<S>>
     FilterQuery<S>,
     SortQuery<S>,
     OffsetQuery,
-    ExecQuery<R | undefined> {}
+    ExecQuery<R | null> {}
 
 export interface FindFirstQueryOptions<
   I extends StateDefinition,

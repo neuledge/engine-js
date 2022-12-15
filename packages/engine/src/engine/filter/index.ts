@@ -3,7 +3,7 @@ import { Metadata, MetadataCollection } from '@/metadata';
 import { StoreFindOptions } from '@/store';
 import { FilterQueryOptions, UniqueFilterQueryOptions } from '@/queries';
 import { convertMatch } from './match';
-import { convertWhere } from '../exec/where/index';
+import { convertWhere } from '../where';
 
 export const convertFilterQuery = <S extends StateDefinition>(
   metadata: Metadata,

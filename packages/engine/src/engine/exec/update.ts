@@ -33,7 +33,7 @@ import {
   updateStoreDocuments,
 } from '../mutations';
 import { NeuledgeError, NeuledgeErrorCode } from '@/error';
-import { convertUniqueQuery } from './unique';
+import { convertUniqueQuery } from '../unique';
 
 const UPDATE_VERSION_RETRIES = 3;
 

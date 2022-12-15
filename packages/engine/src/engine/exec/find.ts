@@ -16,7 +16,7 @@ import { convertLimitQuery, toLimitedEntityList } from '../limit';
 import { convertOffsetQuery } from '../offset';
 import { convertRetriveQuery } from '../retrive';
 import { convertSortQuery } from '../sort';
-import { convertUniqueQuery } from './unique';
+import { convertUniqueQuery } from '../unique';
 
 export const execFindMany = async <S extends StateDefinition>(
   engine: NeuledgeEngine,
@@ -43,7 +43,7 @@ export const execFindMany = async <S extends StateDefinition>(
 export const execFindUnique = async <S extends StateDefinition>(
   engine: NeuledgeEngine,
   options: FindUniqueQueryOptions<S, S>,
-): Promise<Entity<S> | undefined> => {
+): Promise<Entity<S> | null> => {
   const metadata = await engine.metadata;
   const collection = chooseStatesCollection(metadata, options.states);
 
@@ -79,7 +79,7 @@ export const execFindUniqueOrThrow = async <S extends StateDefinition>(
 export const execFindFirst = async <S extends StateDefinition>(
   engine: NeuledgeEngine,
   options: FindFirstQueryOptions<S, S>,
-): Promise<Entity<S> | undefined> => {
+): Promise<Entity<S> | null> => {
   const metadata = await engine.metadata;
   const collection = chooseStatesCollection(metadata, options.states);
 

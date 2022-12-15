@@ -16,7 +16,7 @@ export interface DeleteFirstAndReturnQuery<
   R = Entity<S>,
 > extends RetriveQuery<'DeleteFirstAndReturn', S, S, R>,
     FilterQuery<S>,
-    ExecQuery<R | undefined> {}
+    ExecQuery<R | null> {}
 
 export interface DeleteFirstQueryOptions<
   I extends StateDefinition,

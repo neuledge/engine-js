@@ -29,7 +29,7 @@ export const toMaybeEntity = <S extends StateDefinition>(
   metadata: Metadata,
   collection: MetadataCollection,
   document: StoreDocument | undefined,
-): Entity<S> | undefined => {
+): Entity<S> | null => {
   const stateHash = document?.[collection.reservedNames.hash];
 
   return Buffer.isBuffer(stateHash)
@@ -39,7 +39,7 @@ export const toMaybeEntity = <S extends StateDefinition>(
         stateHash,
         document as StoreDocument,
       )
-    : undefined;
+    : null;
 };
 
 export const toEntityOrThrow = <S extends StateDefinition>(

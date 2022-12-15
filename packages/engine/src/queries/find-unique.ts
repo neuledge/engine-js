@@ -15,7 +15,7 @@ export interface FindUniqueWhereQuery<S extends StateDefinition, R = Entity<S>>
   extends RetriveQuery<'FindUniqueWhere', S, S, R>,
     UniqueFilterQuery<S>,
     UniqueQuery<'FindUniqueWhere', S, S, R>,
-    ExecQuery<R | undefined> {}
+    ExecQuery<R | null> {}
 
 export interface FindUniqueQueryOptions<
   I extends StateDefinition,
