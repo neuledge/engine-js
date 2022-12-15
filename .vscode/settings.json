@@ -7,5 +7,6 @@
     "neuledge",
     "tsbuildinfo",
     "tsup"
-  ]
+  ],
+  "typescript.tsdk": "node_modules/typescript/lib"
 }
