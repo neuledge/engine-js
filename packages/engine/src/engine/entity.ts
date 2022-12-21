@@ -2,7 +2,7 @@ import { Entity, ProjectedEntity } from '@/entity';
 import { StateDefinition } from '@/definitions';
 import { EntityList } from '@/list';
 import { Metadata } from '@/metadata/metadata';
-import { StoreDocument, StoreList } from '@/store';
+import { StoreDocument, StoreList } from '@neuledge/store';
 import { Select } from '@/queries';
 import { MetadataCollection } from '@/metadata';
 import { NeuledgeError, NeuledgeErrorCode } from '@/error';
@@ -24,6 +24,23 @@ export const toEntityList = <S extends StateDefinition>(
       .filter((entity): entity is Entity<S> => entity !== undefined),
     { nextOffset: list.nextOffset },
   );
+
+export const toEntityListOrThrow = <S extends StateDefinition>(
+  metadata: Metadata,
+  collection: MetadataCollection,
+  list: StoreList,
+): EntityList<Entity<S>> => {
+  const entities = toEntityList(metadata, collection, list);
+
+  if (!entities.length) {
+    throw new NeuledgeError(
+      NeuledgeErrorCode.DOCUMENT_NOT_FOUND,
+      'Document not found',
+    );
+  }
+
+  return entities;
+};
 
 export const toMaybeEntity = <S extends StateDefinition>(
   metadata: Metadata,
@@ -129,29 +146,39 @@ const setEntityValue = (obj: object, path: string, value: unknown): void => {
   obj[pathKeys[pathKeys.length - 1] as never] = value as never;
 };
 
+export type UpdatedEntity<S extends StateDefinition> = {
+  entity: Entity<S>;
+  document: StoreDocument;
+};
+
 export const projectEntities = <S extends StateDefinition, P extends Select<S>>(
-  entities: EntityList<Entity<S>>,
-  select: P | true,
-): EntityList<ProjectedEntity<S, P>> | EntityList<Entity<S>> => {
+  entities: EntityList<UpdatedEntity<S>>,
+  select: P | true | null | undefined,
+): EntityList<ProjectedEntity<S, P>> | EntityList<Entity<S>> | void => {
+  if (!select) return;
+
   if (select === true) {
-    return entities;
+    return Object.assign(
+      entities.map((entity) => entity.entity),
+      { nextOffset: entities.nextOffset },
+    );
   }
 
   return Object.assign(
-    entities.map((entity) => projectEntitySelection(entity, select)),
+    entities.map((entity) => projectEntitySelection(entity.entity, select)),
     { nextOffset: entities.nextOffset },
   );
 };
 
 export const projectEntity = <S extends StateDefinition, P extends Select<S>>(
-  entity: Entity<S>,
+  entity: UpdatedEntity<S>,
   select: P | true,
 ): ProjectedEntity<S, P> | Entity<S> => {
   if (select === true) {
-    return entity;
+    return entity.entity;
   }
 
-  return projectEntitySelection(entity, select);
+  return projectEntitySelection(entity.entity, select);
 };
 
 const projectEntitySelection = <S extends StateDefinition, P extends Select<S>>(

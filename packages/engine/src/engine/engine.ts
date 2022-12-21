@@ -1,54 +1,36 @@
 import { Metadata } from '@/metadata/metadata';
-import {
-  StateDefinition,
-  StateDefinitionCreateMutations,
-  StateDefinitionDeleteMutations,
-  StateDefinitionMutationArguments,
-  StateDefinitionMutationsReturn,
-  StateDefinitionUpdateWithoutArgsMutations,
-  StateDefinitionUpdateMutations,
-} from '../definitions';
+import { StateDefinition } from '../definitions';
 import {
   FindFirstOrThrowQuery,
   FindFirstQuery,
   FindManyQuery,
   FindUniqueOrThrowQuery,
   FindUniqueQuery,
-  DeleteManyQuery,
-  DeleteUniqueQuery,
-  DeleteUniqueOrThrowQuery,
   QueryClass,
-  DeleteFirstQuery,
-  DeleteFirstOrThrowQuery,
-  CreateManyQuery,
-  CreateOneQuery,
-  UpdateManyQuery,
-  UpdateFirstQuery,
-  UpdateFirstOrThrowQuery,
-  UpdateUniqueQuery,
-  UpdateUniqueOrThrowQuery,
 } from '../queries';
-import { Store } from '../store';
+import { Store } from '@neuledge/store';
 import { loadMetadata } from './metadata';
 import {
-  execCreateMany,
-  execCreateOne,
-  execDeleteFirstOrThrow,
-  execDeleteMany,
-  execDeleteFirst,
+  execAlterMany,
+  execAlterOne,
   execFindFirst,
   execFindFirstOrThrow,
   execFindMany,
   execFindUnique,
   execFindUniqueOrThrow,
-  execUpdateFirstOrThrow,
-  execUpdateMany,
-  execUpdateFirst,
-  execDeleteUnique,
-  execDeleteUniqueOrThrow,
-  execUpdateUnique,
-  execUpdateUniqueOrThrow,
+  execInitMany,
+  execInitOne,
 } from './exec';
+import {
+  AlterFirstMutation,
+  AlterFirstOrThrowMutation,
+  AlterManyMutation,
+  AlterUniqueMutation,
+  AlterUniqueOrThrowMutation,
+  InitManyMutation,
+  InitOneMutation,
+  MutationGenerator,
+} from '@/mutations';
 
 export interface NeuledgeEngineOptions {
   store: Store;
@@ -117,272 +99,100 @@ export class NeuledgeEngine {
     });
   }
 
-  // create
+  // init
 
-  createMany<
-    S extends StateDefinition,
-    M extends StateDefinitionCreateMutations<S>,
-    A extends StateDefinitionMutationArguments<S, M>,
-  >(state: S, method: M, ...args: A[]): CreateManyQuery<S> {
-    return new QueryClass<'CreateMany', S, S>({
-      type: 'CreateMany',
-      states: [state],
-      method,
-      args,
-      exec: (options) => execCreateMany(this, options),
-    });
+  initMany<S extends StateDefinition>(state: S): InitManyMutation<S> {
+    return MutationGenerator(
+      'InitMany',
+      [state],
+      (options) =>
+        new QueryClass<'InitMany', S, S>({
+          ...options,
+          exec: (options) => execInitMany(this, options),
+        }),
+    );
   }
 
-  createOne<
-    S extends StateDefinition,
-    M extends StateDefinitionCreateMutations<S>,
-    A extends StateDefinitionMutationArguments<S, M>,
-  >(state: S, method: M, args: A): CreateOneQuery<S> {
-    return new QueryClass<'CreateOne', S, S>({
-      type: 'CreateOne',
-      states: [state],
-      method,
-      args: [args],
-      exec: (options) => execCreateOne(this, options),
-    });
+  initOne<S extends StateDefinition>(state: S): InitOneMutation<S> {
+    return MutationGenerator(
+      'InitOne',
+      [state],
+      (options) =>
+        new QueryClass<'InitOne', S, S>({
+          ...options,
+          exec: (options) => execInitOne(this, options),
+        }),
+    );
   }
 
-  // update
+  // alter
 
-  updateMany<
-    S extends StateDefinition,
-    M extends StateDefinitionUpdateWithoutArgsMutations<S>,
-  >(
-    states: S[],
-    method: M,
-  ): UpdateManyQuery<S, StateDefinitionMutationsReturn<S, M>>;
-  updateMany<
-    S extends StateDefinition,
-    M extends StateDefinitionUpdateMutations<S>,
-    A extends StateDefinitionMutationArguments<S, M>,
-  >(
-    states: S[],
-    method: M,
-    args: A,
-  ): UpdateManyQuery<S, StateDefinitionMutationsReturn<S, M>>;
-  updateMany<
-    S extends StateDefinition,
-    M extends StateDefinitionUpdateMutations<S>,
-    A extends StateDefinitionMutationArguments<S, M>,
-  >(
-    states: S[],
-    method: M,
-    args?: A,
-  ): UpdateManyQuery<S, StateDefinitionMutationsReturn<S, M>> {
-    return new QueryClass({
-      type: 'UpdateMany',
+  alterMany<S extends StateDefinition>(...states: S[]): AlterManyMutation<S> {
+    return MutationGenerator(
+      'AlterMany',
       states,
-      method,
-      args: [args ?? ({} as A)],
-      exec: (options) => execUpdateMany(this, options),
-    });
+      (options) =>
+        new QueryClass<'AlterMany', S, never>({
+          ...options,
+          exec: (options) => execAlterMany(this, options),
+        }),
+    );
   }
 
-  updateFirst<
-    S extends StateDefinition,
-    M extends StateDefinitionUpdateWithoutArgsMutations<S>,
-  >(
-    states: S[],
-    method: M,
-  ): UpdateFirstQuery<S, StateDefinitionMutationsReturn<S, M>>;
-  updateFirst<
-    S extends StateDefinition,
-    M extends StateDefinitionUpdateMutations<S>,
-    A extends StateDefinitionMutationArguments<S, M>,
-  >(
-    states: S[],
-    method: M,
-    args: A,
-  ): UpdateFirstQuery<S, StateDefinitionMutationsReturn<S, M>>;
-  updateFirst<
-    S extends StateDefinition,
-    M extends StateDefinitionUpdateMutations<S>,
-    A extends StateDefinitionMutationArguments<S, M>,
-  >(
-    states: S[],
-    method: M,
-    args?: A,
-  ): UpdateFirstQuery<S, StateDefinitionMutationsReturn<S, M>> {
-    return new QueryClass({
-      type: 'UpdateFirst',
+  alterFirst<S extends StateDefinition>(...states: S[]): AlterFirstMutation<S> {
+    return MutationGenerator(
+      'AlterFirst',
       states,
-      method,
-      args: [args ?? ({} as A)],
-      exec: (options) => execUpdateFirst(this, options),
-    });
+      (options) =>
+        new QueryClass<'AlterFirst', S, never>({
+          ...options,
+          exec: (options) => execAlterOne(this, options),
+        }),
+    );
   }
 
-  updateFirstOrThrow<
-    S extends StateDefinition,
-    M extends StateDefinitionUpdateWithoutArgsMutations<S>,
-  >(
-    states: S[],
-    method: M,
-  ): UpdateFirstOrThrowQuery<S, StateDefinitionMutationsReturn<S, M>>;
-  updateFirstOrThrow<
-    S extends StateDefinition,
-    M extends StateDefinitionUpdateMutations<S>,
-    A extends StateDefinitionMutationArguments<S, M>,
-  >(
-    states: S[],
-    method: M,
-    args: A,
-  ): UpdateFirstOrThrowQuery<S, StateDefinitionMutationsReturn<S, M>>;
-  updateFirstOrThrow<
-    S extends StateDefinition,
-    M extends StateDefinitionUpdateMutations<S>,
-    A extends StateDefinitionMutationArguments<S, M>,
-  >(
-    states: S[],
-    method: M,
-    args?: A,
-  ): UpdateFirstOrThrowQuery<S, StateDefinitionMutationsReturn<S, M>> {
-    return new QueryClass({
-      type: 'UpdateFirstOrThrow',
+  alterFirstOrThrow<S extends StateDefinition>(
+    ...states: S[]
+  ): AlterFirstOrThrowMutation<S> {
+    return MutationGenerator(
+      'AlterFirstOrThrow',
       states,
-      method,
-      args: [args ?? ({} as A)],
-      exec: (options) => execUpdateFirstOrThrow(this, options),
-    });
+      (options) =>
+        new QueryClass<'AlterFirstOrThrow', S, never>({
+          ...options,
+          exec: (options) => execAlterOne(this, options),
+        }),
+    );
   }
 
-  updateUnique<
-    S extends StateDefinition,
-    M extends StateDefinitionUpdateWithoutArgsMutations<S>,
-  >(
-    states: S[],
-    method: M,
-  ): UpdateUniqueQuery<S, StateDefinitionMutationsReturn<S, M>>;
-  updateUnique<
-    S extends StateDefinition,
-    M extends StateDefinitionUpdateMutations<S>,
-    A extends StateDefinitionMutationArguments<S, M>,
-  >(
-    states: S[],
-    method: M,
-    args: A,
-  ): UpdateUniqueQuery<S, StateDefinitionMutationsReturn<S, M>>;
-  updateUnique<
-    S extends StateDefinition,
-    M extends StateDefinitionUpdateMutations<S>,
-    A extends StateDefinitionMutationArguments<S, M>,
-  >(
-    states: S[],
-    method: M,
-    args?: A,
-  ): UpdateUniqueQuery<S, StateDefinitionMutationsReturn<S, M>> {
-    return new QueryClass({
-      type: 'UpdateUnique',
+  alterUnique<S extends StateDefinition>(
+    ...states: S[]
+  ): AlterUniqueMutation<S> {
+    return MutationGenerator(
+      'AlterUnique',
       states,
-      method,
-      args: [args ?? ({} as A)],
-      unique: true,
-      exec: (options) => execUpdateUnique(this, options),
-    });
+      (options) =>
+        new QueryClass<'AlterUnique', S, never>({
+          ...options,
+          unique: true,
+          exec: (options) => execAlterOne(this, options),
+        }),
+    );
   }
 
-  updateUniqueOrThrow<
-    S extends StateDefinition,
-    M extends StateDefinitionUpdateWithoutArgsMutations<S>,
-  >(
-    states: S[],
-    method: M,
-  ): UpdateUniqueOrThrowQuery<S, StateDefinitionMutationsReturn<S, M>>;
-  updateUniqueOrThrow<
-    S extends StateDefinition,
-    M extends StateDefinitionUpdateMutations<S>,
-    A extends StateDefinitionMutationArguments<S, M>,
-  >(
-    states: S[],
-    method: M,
-    args: A,
-  ): UpdateUniqueOrThrowQuery<S, StateDefinitionMutationsReturn<S, M>>;
-  updateUniqueOrThrow<
-    S extends StateDefinition,
-    M extends StateDefinitionUpdateMutations<S>,
-    A extends StateDefinitionMutationArguments<S, M>,
-  >(
-    states: S[],
-    method: M,
-    args?: A,
-  ): UpdateUniqueOrThrowQuery<S, StateDefinitionMutationsReturn<S, M>> {
-    return new QueryClass({
-      type: 'UpdateUniqueOrThrow',
+  alterUniqueOrThrow<S extends StateDefinition>(
+    ...states: S[]
+  ): AlterUniqueOrThrowMutation<S> {
+    return MutationGenerator(
+      'AlterUniqueOrThrow',
       states,
-      method,
-      args: [args ?? ({} as A)],
-      unique: true,
-      exec: (options) => execUpdateUniqueOrThrow(this, options),
-    });
-  }
-
-  // delete
-
-  deleteMany<
-    S extends StateDefinition,
-    M extends StateDefinitionDeleteMutations<S>,
-  >(states: S[], method: M): DeleteManyQuery<S> {
-    return new QueryClass({
-      type: 'DeleteMany',
-      states,
-      method,
-      exec: (options) => execDeleteMany(this, options),
-    });
-  }
-
-  deleteFirst<
-    S extends StateDefinition,
-    M extends StateDefinitionDeleteMutations<S>,
-  >(states: S[], method: M): DeleteFirstQuery<S> {
-    return new QueryClass({
-      type: 'DeleteFirst',
-      states,
-      method,
-      exec: (options) => execDeleteFirst(this, options),
-    });
-  }
-
-  deleteFirstOrThrow<
-    S extends StateDefinition,
-    M extends StateDefinitionDeleteMutations<S>,
-  >(states: S[], method: M): DeleteFirstOrThrowQuery<S> {
-    return new QueryClass({
-      type: 'DeleteFirstOrThrow',
-      states,
-      method,
-      exec: (options) => execDeleteFirstOrThrow(this, options),
-    });
-  }
-
-  deleteUnique<
-    S extends StateDefinition,
-    M extends StateDefinitionDeleteMutations<S>,
-  >(states: S[], method: M): DeleteUniqueQuery<S> {
-    return new QueryClass({
-      type: 'DeleteUnique',
-      states,
-      method,
-      unique: true,
-      exec: (options) => execDeleteUnique(this, options),
-    });
-  }
-
-  deleteUniqueOrThrow<
-    S extends StateDefinition,
-    M extends StateDefinitionDeleteMutations<S>,
-  >(states: S[], method: M): DeleteUniqueOrThrowQuery<S> {
-    return new QueryClass({
-      type: 'DeleteUniqueOrThrow',
-      states,
-      method,
-      unique: true,
-      exec: (options) => execDeleteUniqueOrThrow(this, options),
-    });
+      (options) =>
+        new QueryClass<'AlterUniqueOrThrow', S, never>({
+          ...options,
+          unique: true,
+          exec: (options) => execAlterOne(this, options),
+        }),
+    );
   }
 
   // utils

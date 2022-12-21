@@ -5,6 +5,8 @@ import {
   DateScalar as Date,
 } from '@neuledge/scalars';
 
+/* eslint-disable prefer-arrow-callback, prefer-arrow/prefer-arrow-functions, unicorn/consistent-function-scoping */
+
 /**
  * Basic category
  */
@@ -17,10 +19,8 @@ export class Category {
     name: { type: String, index: 2 },
     description: { type: String, index: 3, nullable: true },
   };
-  static $find: $.Where<{ id: $.WhereNumber<number> }>;
-  static $unique: {
-    id: number;
-  };
+  static $find = {} as $.Where<{ id: $.WhereNumber<number> }>;
+  static $unique = {} as { id: number };
   static $relations = () => ({
     posts: [[...Post]] as const,
   });
@@ -29,42 +29,51 @@ export class Category {
   name!: string;
   description?: string | null;
 
-  static create({
-    name,
-    description,
-  }: {
-    name: string;
-    description?: string | null;
-  }): $.Type<typeof Category> {
-    return {
-      $state: 'Category',
-      id: Math.round(Math.random() * 1e6),
-      name,
-      description,
-    };
-  }
-
-  static update(
-    this: Category,
-    {
+  static create = Object.assign(
+    function ({
       name,
       description,
     }: {
       name: string;
       description?: string | null;
+    }): $.Type<typeof Category> {
+      return {
+        $state: 'Category',
+        id: Math.round(Math.random() * 1e6),
+        name,
+        description,
+      };
     },
-  ): $.Type<typeof Category> {
-    return {
-      ...this,
-      $state: 'Category',
-      name: name,
-      description: description,
-    };
-  }
+    { mutation: 'create' } as const,
+  );
 
-  static delete(this: Category): void {
-    //   // do nothing
-  }
+  static update = Object.assign(
+    function (
+      this: Category,
+      {
+        name,
+        description,
+      }: {
+        name: string;
+        description?: string | null;
+      },
+    ): $.Type<typeof Category> {
+      return {
+        ...this,
+        $state: 'Category',
+        name: name,
+        description: description,
+      };
+    },
+    { mutation: 'update' } as const,
+  );
+
+  static delete = Object.assign(
+    function (this: Category): void {
+      // do nothing
+    },
+    { mutation: 'delete', virtual: true } as const,
+  );
 }
 export type $Category = $.Entity<typeof Category>;
 
@@ -81,10 +90,8 @@ export class DraftPost {
     title: { type: String, index: 3 },
     content: { type: String, index: 4, nullable: true },
   });
-  static $find: $.Where<{ id: $.WhereNumber<number> }>;
-  static $unique: {
-    id: number;
-  };
+  static $find = {} as $.Where<{ id: $.WhereNumber<number> }>;
+  static $unique = {} as { id: number };
   static $relations = () => ({
     category: [Category],
   });
@@ -95,27 +102,8 @@ export class DraftPost {
   title!: string;
   content?: string | null;
 
-  static create({
-    title,
-    content,
-    category,
-  }: {
-    title: string;
-    content?: string | null;
-    category?: $.Id<typeof Category> | null;
-  }): $.Type<typeof DraftPost> {
-    return {
-      $state: 'DraftPost',
-      id: Math.round(Math.random() * 1e6),
-      title,
-      content,
-      category,
-    };
-  }
-
-  static update(
-    this: DraftPost,
-    {
+  static create = Object.assign(
+    function ({
       title,
       content,
       category,
@@ -123,37 +111,68 @@ export class DraftPost {
       title: string;
       content?: string | null;
       category?: $.Id<typeof Category> | null;
+    }): $.Type<typeof DraftPost> {
+      return {
+        $state: 'DraftPost',
+        id: Math.round(Math.random() * 1e6),
+        title,
+        content,
+        category,
+      };
     },
-  ): $.Type<typeof DraftPost> {
-    return {
-      ...this,
-      $state: 'DraftPost',
-      title,
-      content,
-      category,
-    };
-  }
+    { mutation: 'create' } as const,
+  );
 
-  static publish(this: DraftPost): $.Type<typeof PublishedPost> {
-    if (!this.category) {
-      throw new TypeError(`Expect category to exists`);
-    }
-    if (!this.content) {
-      throw new TypeError(`Expect content to exists`);
-    }
+  static update = Object.assign(
+    function (
+      this: DraftPost,
+      {
+        title,
+        content,
+        category,
+      }: {
+        title: string;
+        content?: string | null;
+        category?: $.Id<typeof Category> | null;
+      },
+    ): $.Type<typeof DraftPost> {
+      return {
+        ...this,
+        $state: 'DraftPost',
+        title,
+        content,
+        category,
+      };
+    },
+    { mutation: 'update' } as const,
+  );
 
-    return {
-      ...this,
-      $state: 'PublishedPost',
-      content: this.content,
-      category: this.category,
-      publishedAt: new $.Date(),
-    };
-  }
+  static publish = Object.assign(
+    function (this: DraftPost): $.Type<typeof PublishedPost> {
+      if (!this.category) {
+        throw new TypeError(`Expect category to exists`);
+      }
+      if (!this.content) {
+        throw new TypeError(`Expect content to exists`);
+      }
 
-  static delete(this: DraftPost): void {
-    // do nothing
-  }
+      return {
+        ...this,
+        $state: 'PublishedPost',
+        content: this.content,
+        category: this.category,
+        publishedAt: new $.Date(),
+      };
+    },
+    { mutation: 'update' } as const,
+  );
+
+  static delete = Object.assign(
+    function (this: DraftPost): void {
+      // do nothing
+    },
+    { mutation: 'delete', virtual: true } as const,
+  );
 }
 export type $DraftPost = $.Entity<typeof DraftPost>;
 
@@ -171,13 +190,11 @@ export class PublishedPost {
     content: { type: String, index: 4 },
     publishedAt: { type: Date, index: 5 },
   });
-  static $find: $.Where<
+  static $find = {} as $.Where<
     | { id: $.WhereNumber<number> }
     | { category: $.WhereObject<$.Id<typeof Category>> }
   >;
-  static $unique: {
-    id: number;
-  };
+  static $unique = {} as { id: number };
   static $relations = () => ({
     category: [Category],
   });
@@ -191,26 +208,32 @@ export class PublishedPost {
   content!: string;
   publishedAt!: Date;
 
-  static update(
-    this: PublishedPost,
-    {
-      title,
-      content,
-      category,
-    }: { title: string; content: string; category: $.Id<typeof Category> },
-  ): $.Type<typeof PublishedPost> {
-    return {
-      ...this,
-      $state: 'PublishedPost',
-      title,
-      content,
-      category,
-    };
-  }
+  static update = Object.assign(
+    function (
+      this: PublishedPost,
+      {
+        title,
+        content,
+        category,
+      }: { title: string; content: string; category: $.Id<typeof Category> },
+    ): $.Type<typeof PublishedPost> {
+      return {
+        ...this,
+        $state: 'PublishedPost',
+        title,
+        content,
+        category,
+      };
+    },
+    { mutation: 'update' } as const,
+  );
 
-  static delete(this: PublishedPost): void {
-    // do nothing
-  }
+  static delete = Object.assign(
+    function (this: PublishedPost): void {
+      // do nothing
+    },
+    { mutation: 'delete', virtual: true } as const,
+  );
 }
 export type $PublishedPost = $.Entity<typeof PublishedPost>;
 

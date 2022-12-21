@@ -5,29 +5,43 @@ import {
   StoreWhere,
   StoreWhereEquals,
   StoreWhereRecord,
-} from '@/store';
+} from '@neuledge/store';
 import pLimit from 'p-limit';
 
 // update
 
-export const updateStoreDocuments = async (
+export const alterStoreDocuments = async (
   store: Store,
   collection: MetadataCollection,
   documents: StoreDocument[],
-  updated: StoreDocument[],
+  updates: (StoreDocument | null)[],
 ): Promise<boolean[]> => {
   const asyncLimit = pLimit(10);
+  const deleteDocuments: StoreDocument[] = [];
 
-  return await Promise.all(
-    documents.map((document, index) =>
-      asyncLimit(() =>
-        updateStoreDocument(store, collection, document, updated[index]),
-      ),
-    ),
+  const res = await Promise.all(
+    documents.map((document, index) => {
+      const updated = updates[index];
+
+      if (updated == null) {
+        deleteDocuments.push(document);
+        return true;
+      }
+
+      return asyncLimit(() =>
+        updateStoreDocument(store, collection, document, updated),
+      );
+    }),
   );
+
+  if (deleteDocuments.length) {
+    await deleteStoreDocuments(store, collection, deleteDocuments);
+  }
+
+  return res;
 };
 
-export const updateStoreDocument = async (
+const updateStoreDocument = async (
   store: Store,
   collection: MetadataCollection,
   document: StoreDocument,
@@ -52,7 +66,7 @@ export const updateStoreDocument = async (
 
 // delete
 
-export const deleteStoreDocuments = async (
+const deleteStoreDocuments = async (
   store: Store,
   collection: MetadataCollection,
   documents: StoreDocument[],
@@ -64,7 +78,7 @@ export const deleteStoreDocuments = async (
   });
 };
 
-// export const deleteStoreDocument = async (
+// const deleteStoreDocument = async (
 //   store: Store,
 //   collection: MetadataCollection,
 //   document: StoreDocument,

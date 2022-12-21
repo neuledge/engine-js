@@ -2,7 +2,7 @@ import { resolveDefer, StateDefinition } from '@/definitions';
 import { NeuledgeError, NeuledgeErrorCode } from '@/error';
 import { Metadata, MetadataCollection, MetadataStateField } from '@/metadata';
 import { Match } from '@/queries';
-import { StoreMatch, StoreMatchBy, StoreMatchOptions } from '@/store';
+import { StoreMatch, StoreMatchBy, StoreMatchOptions } from '@neuledge/store';
 import { convertFilterQuery } from './index';
 
 export const convertMatch = <S extends StateDefinition>(

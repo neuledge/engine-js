@@ -1,4 +1,4 @@
-import { StoreSelect } from '@neuledge/engine';
+import { StoreSelect } from '@neuledge/store';
 import { Document } from 'mongodb';
 import { escapeFieldName } from './fields';
 

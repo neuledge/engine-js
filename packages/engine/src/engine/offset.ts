@@ -1,5 +1,5 @@
 import { OffsetQueryOptions } from '@/queries';
-import { StoreFindOptions } from '@/store';
+import { StoreFindOptions } from '@neuledge/store';
 
 export const convertOffsetQuery = ({
   offset,

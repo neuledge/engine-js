@@ -1,6 +1,6 @@
 import { stateDefinitions } from '@neuledge/engine';
 import { Metadata } from '@/metadata';
-import { Store } from '@/store';
+import { Store } from '@neuledge/store';
 import {
   ensureStoreMetadata,
   getStoreMetadata,

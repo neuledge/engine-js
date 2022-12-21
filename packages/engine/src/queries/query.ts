@@ -1,34 +1,7 @@
 import { Entity } from '@/entity';
 import { StateDefinition } from '@/definitions';
-import {
-  CreateManyAndReturnQuery,
-  CreateManyQueryOptions,
-} from './create-many';
-import { CreateOneAndReturnQuery, CreateOneQueryOptions } from './create-one';
-import {
-  DeleteFirstAndReturnOrThrowQuery,
-  DeleteFirstOrThrowQueryOptions,
-} from './delete-first-or-throw';
-import {
-  DeleteFirstAndReturnQuery,
-  DeleteFirstQueryOptions,
-} from './delete-first';
-import {
-  DeleteManyAndReturnQuery,
-  DeleteManyQueryOptions,
-} from './delete-many';
-import {
-  DeleteUniqueAndReturnOrThrowQuery,
-  DeleteUniqueOrThrowQueryOptions,
-  DeleteUniqueWhereAndReturnOrThrowQuery,
-  DeleteUniqueWhereOrThrowQuery,
-} from './delete-unique-or-throw';
-import {
-  DeleteUniqueAndReturnQuery,
-  DeleteUniqueQueryOptions,
-  DeleteUniqueWhereAndReturnQuery,
-  DeleteUniqueWhereQuery,
-} from './delete-unique';
+import { InitManyAndReturnQuery, InitManyQueryOptions } from './init-many';
+import { InitOneAndReturnQuery, InitOneQueryOptions } from './init-one';
 import {
   FindFirstOrThrowQuery,
   FindFirstOrThrowQueryOptions,
@@ -49,29 +22,26 @@ import { MatchQueryOptions } from './match';
 import { SelectManyQuery, SelectManyQueryOptions } from './select-many';
 import { SelectOneQuery, SelectOneQueryOptions } from './select-one';
 import {
-  UpdateFirstAndReturnOrThrowQuery,
-  UpdateFirstOrThrowQueryOptions,
-} from './update-first-or-throw';
+  AlterFirstAndReturnOrThrowQuery,
+  AlterFirstOrThrowQueryOptions,
+} from './alter-first-or-throw';
 import {
-  UpdateFirstAndReturnQuery,
-  UpdateFirstQueryOptions,
-} from './update-first';
+  AlterFirstAndReturnQuery,
+  AlterFirstQueryOptions,
+} from './alter-first';
+import { AlterManyAndReturnQuery, AlterManyQueryOptions } from './alter-many';
 import {
-  UpdateManyAndReturnQuery,
-  UpdateManyQueryOptions,
-} from './update-many';
+  AlterUniqueAndReturnOrThrowQuery,
+  AlterUniqueOrThrowQueryOptions,
+  AlterUniqueWhereAndReturnOrThrowQuery,
+  AlterUniqueWhereOrThrowQuery,
+} from './alter-unique-or-throw';
 import {
-  UpdateUniqueAndReturnOrThrowQuery,
-  UpdateUniqueOrThrowQueryOptions,
-  UpdateUniqueWhereAndReturnOrThrowQuery,
-  UpdateUniqueWhereOrThrowQuery,
-} from './update-unique-or-throw';
-import {
-  UpdateUniqueAndReturnQuery,
-  UpdateUniqueQueryOptions,
-  UpdateUniqueWhereAndReturnQuery,
-  UpdateUniqueWhereQuery,
-} from './update-unique';
+  AlterUniqueAndReturnQuery,
+  AlterUniqueQueryOptions,
+  AlterUniqueWhereAndReturnQuery,
+  AlterUniqueWhereQuery,
+} from './alter-unique';
 
 export type Query<
   M extends QueryMode,
@@ -90,24 +60,21 @@ export type QueryType = keyof QueryOptionsTypes<never, never>;
 export type QueryMode = keyof QueryModes<never, never, never>;
 
 interface QueryModes<I extends StateDefinition, O extends StateDefinition, R> {
-  // CreateMany: never,
-  CreateManyAndReturn: CreateManyAndReturnQuery<O, R>;
-  // CreateOne: never;
-  CreateOneAndReturn: CreateOneAndReturnQuery<O, R>;
-  // DeleteMany: never,
-  DeleteManyAndReturn: DeleteManyAndReturnQuery<O, R>;
-  // DeleteFirst: never,
-  DeleteFirstAndReturn: DeleteFirstAndReturnQuery<O, R>;
-  // DeleteFirstOrThrow: never,
-  DeleteFirstAndReturnOrThrow: DeleteFirstAndReturnOrThrowQuery<O, R>;
-  // DeleteUnique: never,
-  DeleteUniqueAndReturn: DeleteUniqueAndReturnQuery<O, R>;
-  DeleteUniqueWhere: DeleteUniqueWhereQuery<O, R>;
-  DeleteUniqueWhereAndReturn: DeleteUniqueWhereAndReturnQuery<O, R>;
-  // DeleteUniqueOrThrow: never,
-  DeleteUniqueAndReturnOrThrow: DeleteUniqueAndReturnOrThrowQuery<O, R>;
-  DeleteUniqueWhereOrThrow: DeleteUniqueWhereOrThrowQuery<O, R>;
-  DeleteUniqueWhereAndReturnOrThrow: DeleteUniqueWhereAndReturnOrThrowQuery<
+  // AlterMany: never;
+  AlterManyAndReturn: AlterManyAndReturnQuery<I, O, R>;
+  // AlterFirst: never,
+  AlterFirstAndReturn: AlterFirstAndReturnQuery<I, O, R>;
+  // AlterFirstOrThrow: never,
+  AlterFirstAndReturnOrThrow: AlterFirstAndReturnOrThrowQuery<I, O, R>;
+  // AlterUnique: never;
+  AlterUniqueAndReturn: AlterUniqueAndReturnQuery<I, O, R>;
+  AlterUniqueWhere: AlterUniqueWhereQuery<I, O, R>;
+  AlterUniqueWhereAndReturn: AlterUniqueWhereAndReturnQuery<I, O, R>;
+  // AlterUniqueOrThrow: never;
+  AlterUniqueAndReturnOrThrow: AlterUniqueAndReturnOrThrowQuery<I, O, R>;
+  AlterUniqueWhereOrThrow: AlterUniqueWhereOrThrowQuery<I, O, R>;
+  AlterUniqueWhereAndReturnOrThrow: AlterUniqueWhereAndReturnOrThrowQuery<
+    I,
     O,
     R
   >;
@@ -118,39 +85,25 @@ interface QueryModes<I extends StateDefinition, O extends StateDefinition, R> {
   FindUniqueWhere: FindUniqueWhereQuery<O, R>;
   FindUniqueOrThrow: FindUniqueOrThrowQuery<O, R>;
   FindUniqueWhereOrThrow: FindUniqueWhereOrThrowQuery<O, R>;
+  // InitMany: never,
+  InitManyAndReturn: InitManyAndReturnQuery<O, R>;
+  // InitOne: never;
+  InitOneAndReturn: InitOneAndReturnQuery<O, R>;
   SelectMany: SelectManyQuery<O, R>;
   SelectOne: SelectOneQuery<O, R>;
-  // UpdateMany: never;
-  UpdateManyAndReturn: UpdateManyAndReturnQuery<I, O, R>;
-  // UpdateFirst: never,
-  UpdateFirstAndReturn: UpdateFirstAndReturnQuery<I, O, R>;
-  // UpdateFirstOrThrow: never,
-  UpdateFirstAndReturnOrThrow: UpdateFirstAndReturnOrThrowQuery<I, O, R>;
-  // UpdateUnique: never;
-  UpdateUniqueAndReturn: UpdateUniqueAndReturnQuery<I, O, R>;
-  UpdateUniqueWhere: UpdateUniqueWhereQuery<I, O, R>;
-  UpdateUniqueWhereAndReturn: UpdateUniqueWhereAndReturnQuery<I, O, R>;
-  // UpdateUniqueOrThrow: never;
-  UpdateUniqueAndReturnOrThrow: UpdateUniqueAndReturnOrThrowQuery<I, O, R>;
-  UpdateUniqueWhereOrThrow: UpdateUniqueWhereOrThrowQuery<I, O, R>;
-  UpdateUniqueWhereAndReturnOrThrow: UpdateUniqueWhereAndReturnOrThrowQuery<
-    I,
-    O,
-    R
-  >;
 }
 
 interface QueryOptionsTypes<
   I extends StateDefinition,
   O extends StateDefinition,
 > {
-  CreateMany: CreateManyQueryOptions<I, O>;
-  CreateOne: CreateOneQueryOptions<I, O>;
-  DeleteFirstOrThrow: DeleteFirstOrThrowQueryOptions<I, O>;
-  DeleteFirst: DeleteFirstQueryOptions<I, O>;
-  DeleteMany: DeleteManyQueryOptions<I, O>;
-  DeleteUniqueOrThrow: DeleteUniqueOrThrowQueryOptions<I, O>;
-  DeleteUnique: DeleteUniqueQueryOptions<I, O>;
+  AlterFirstOrThrow: AlterFirstOrThrowQueryOptions<I, O>;
+  AlterFirst: AlterFirstQueryOptions<I, O>;
+  AlterMany: AlterManyQueryOptions<I, O>;
+  AlterUniqueOrThrow: AlterUniqueOrThrowQueryOptions<I, O>;
+  AlterUnique: AlterUniqueQueryOptions<I, O>;
+  InitMany: InitManyQueryOptions<I, O>;
+  InitOne: InitOneQueryOptions<I, O>;
   Match: MatchQueryOptions<I>;
   FindFirstOrThrow: FindFirstOrThrowQueryOptions<I, O>;
   FindFirst: FindFirstQueryOptions<I, O>;
@@ -159,9 +112,4 @@ interface QueryOptionsTypes<
   FindUnique: FindUniqueQueryOptions<I, O>;
   SelectMany: SelectManyQueryOptions<I, O>;
   SelectOne: SelectOneQueryOptions<I, O>;
-  UpdateFirstOrThrow: UpdateFirstOrThrowQueryOptions<I, O>;
-  UpdateFirst: UpdateFirstQueryOptions<I, O>;
-  UpdateMany: UpdateManyQueryOptions<I, O>;
-  UpdateUniqueOrThrow: UpdateUniqueOrThrowQueryOptions<I, O>;
-  UpdateUnique: UpdateUniqueQueryOptions<I, O>;
 }

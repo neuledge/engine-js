@@ -1,7 +1,7 @@
 import { StateDefinitionWhereRecord } from '@/definitions';
 import { NeuledgeError, NeuledgeErrorCode } from '@/error';
 import { MetadataCollection } from '@/metadata';
-import { StoreWhere, StoreWhereRecord } from '@/store';
+import { StoreWhere, StoreWhereRecord } from '@neuledge/store';
 import { applyWhereRecordTerm } from './term';
 
 export const convertUniqueWhere = (

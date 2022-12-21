@@ -1,4 +1,4 @@
-import { StoreScalarValue, StoreWhere, StoreWhereTerm } from '@neuledge/engine';
+import { StoreScalarValue, StoreWhere, StoreWhereTerm } from '@neuledge/store';
 import { Filter, Document, FilterOperators } from 'mongodb';
 import { escapeFieldName } from './fields';
 

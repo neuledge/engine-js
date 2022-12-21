@@ -1,14 +1,7 @@
 import { StateDefinition } from '@/definitions';
 import { Entity } from '@/entity';
 import { Metadata, MetadataCollection } from '@/metadata';
-import { StoreDocument, StoreScalarValue } from '@/store';
-
-export const toDocuments = <S extends StateDefinition>(
-  metadata: Metadata,
-  collection: MetadataCollection,
-  entities: Entity<S>[],
-): StoreDocument[] =>
-  entities.map((entity) => toDocument(metadata, collection, entity));
+import { StoreDocument, StoreScalarValue } from '@neuledge/store';
 
 export const toDocument = <S extends StateDefinition>(
   metadata: Metadata,

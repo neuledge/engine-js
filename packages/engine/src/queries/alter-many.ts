@@ -1,31 +1,35 @@
 import { Entity } from '@/entity';
-import { StateDefinition, StateDefinitionUpdateMutations } from '@/definitions';
+import { StateDefinition, StateDefinitionAlterMutations } from '@/definitions';
 import { ExecQuery, ExecQueryOptions } from './exec';
 import { FilterQuery, FilterQueryOptions } from './filter';
+import { LimitQuery, LimitQueryOptions } from './limit';
 import { SingleArgsQueryOptions } from './method';
 import { RetriveQuery, RetriveQueryOptions } from './retrive';
 import { RootQueryOptions } from './type';
 
-export interface UpdateFirstOrThrowQuery<
+export interface AlterManyQuery<
   I extends StateDefinition,
   O extends StateDefinition,
-> extends RetriveQuery<'UpdateFirstAndReturnOrThrow', I, O, Entity<O>>,
+> extends RetriveQuery<'AlterManyAndReturn', I, O, Entity<O>>,
     FilterQuery<I>,
+    LimitQuery,
     ExecQuery<void> {}
 
-export interface UpdateFirstAndReturnOrThrowQuery<
+export interface AlterManyAndReturnQuery<
   I extends StateDefinition,
   O extends StateDefinition,
   R,
-> extends RetriveQuery<'UpdateFirstAndReturnOrThrow', I, O, R>,
+> extends RetriveQuery<'AlterManyAndReturn', I, O, R>,
     FilterQuery<I>,
-    ExecQuery<R> {}
+    LimitQuery,
+    ExecQuery<R[]> {}
 
-export interface UpdateFirstOrThrowQueryOptions<
+export interface AlterManyQueryOptions<
   I extends StateDefinition,
   O extends StateDefinition,
-> extends RootQueryOptions<'UpdateFirstOrThrow', I>,
-    SingleArgsQueryOptions<I, StateDefinitionUpdateMutations<I>>,
+> extends RootQueryOptions<'AlterMany', I>,
+    SingleArgsQueryOptions<I, StateDefinitionAlterMutations<I>>,
     RetriveQueryOptions<O>,
     FilterQueryOptions<I>,
-    ExecQueryOptions<'UpdateFirstOrThrow', I, O> {}
+    LimitQueryOptions,
+    ExecQueryOptions<'AlterMany', I, O> {}

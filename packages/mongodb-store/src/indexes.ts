@@ -1,4 +1,4 @@
-import { StoreIndex } from '@neuledge/engine';
+import { StoreIndex } from '@neuledge/store';
 import { Collection } from 'mongodb';
 import { escapeFieldName } from './fields';
 

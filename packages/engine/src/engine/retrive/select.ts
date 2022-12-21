@@ -1,7 +1,7 @@
 import { StateDefinition } from '@/definitions';
 import { MetadataCollection } from '@/metadata';
 import { Select } from '@/queries';
-import { StoreSelect } from '@/store';
+import { StoreSelect } from '@neuledge/store';
 
 export const convertSelectQuery = <S extends StateDefinition>(
   collection: MetadataCollection,

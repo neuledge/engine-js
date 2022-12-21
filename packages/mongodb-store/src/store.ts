@@ -12,7 +12,7 @@ import {
   StoreEnsureCollectionOptions,
   StoreCollection_Slim,
   StoreCollection,
-} from '@neuledge/engine';
+} from '@neuledge/store';
 import {
   Db,
   DbOptions,

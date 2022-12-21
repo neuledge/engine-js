@@ -13,6 +13,7 @@ export enum NeuledgeErrorCode {
   DOCUMENT_NOT_FOUND = 'DOCUMENT_NOT_FOUND',
 
   // collection checks
+  NO_COLLECTIONS = 'NO_COLLECTIONS',
   MULTIPLE_COLLECTIONS = 'MULTIPLE_COLLECTIONS',
 
   // state checks
@@ -29,6 +30,7 @@ export enum NeuledgeErrorCode {
   // query checks
   QUERY_PARSING_ERROR = 'QUERY_PARSING_ERROR',
   QUERY_EXECUTION_ERROR = 'QUERY_EXECUTION_ERROR',
+  INVALID_MUTATION = 'INVALID_MUTATION',
 
   // metadata checks
   UNSUPPORTED_METADATA = 'UNSUPPORTED_METADATA',

@@ -1,4 +1,3 @@
-export * from './create';
-export * from './delete';
+export * from './init';
 export * from './find';
-export * from './update';
+export * from './alter';

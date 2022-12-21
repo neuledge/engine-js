@@ -1,0 +1,7 @@
+{
+  "entry": ["src/index.ts"],
+  "format": ["esm", "cjs"],
+  "sourcemap": true,
+  "shims": true,
+  "external": ["@neuledge/engine"]
+}

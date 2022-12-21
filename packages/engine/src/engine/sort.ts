@@ -2,7 +2,7 @@ import { StateDefinition, SortDefinition } from '@/definitions';
 import { NeuledgeError, NeuledgeErrorCode } from '@/error';
 import { MetadataCollection } from '@/metadata';
 import { SortQueryOptions } from '@/queries';
-import { StoreFindOptions, StoreSort } from '@/store';
+import { StoreFindOptions, StoreSort } from '@neuledge/store';
 
 export const convertSortQuery = <S extends StateDefinition>(
   collection: MetadataCollection,

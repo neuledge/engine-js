@@ -5,7 +5,7 @@ import {
   MetadataGhostState,
   METADATA_HASH_BYTES,
 } from '@/metadata';
-import { Store, StoreList } from '@/store';
+import { Store, StoreList } from '@neuledge/store';
 import pLimit from 'p-limit';
 import {
   fromStoreMetadataState,

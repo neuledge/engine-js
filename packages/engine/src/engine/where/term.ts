@@ -1,7 +1,7 @@
 import { Scalar } from '@neuledge/scalars';
 import equal from 'fast-deep-equal/es6';
 import { StateDefinitionWhereTerm } from '@/definitions';
-import { StoreWhereRecord, StoreWhereTerm } from '@/store';
+import { StoreWhereRecord, StoreWhereTerm } from '@neuledge/store';
 import { NeuledgeError, NeuledgeErrorCode } from '@/error';
 import { MetadataStateField } from '@/metadata';
 

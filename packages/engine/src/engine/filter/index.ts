@@ -1,6 +1,6 @@
 import { StateDefinition } from '@/definitions';
 import { Metadata, MetadataCollection } from '@/metadata';
-import { StoreFindOptions } from '@/store';
+import { StoreFindOptions } from '@neuledge/store';
 import { FilterQueryOptions, UniqueFilterQueryOptions } from '@/queries';
 import { convertMatch } from './match';
 import { convertWhere } from '../where';

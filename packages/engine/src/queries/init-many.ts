@@ -6,22 +6,22 @@ import { MultiArgsQueryOptions } from './method';
 import { RetriveQuery, RetriveQueryOptions } from './retrive';
 import { RootQueryOptions } from './type';
 
-export interface CreateManyQuery<S extends StateDefinition>
-  extends RetriveQuery<'CreateManyAndReturn', S, S, Entity<S>>,
+export interface InitManyQuery<S extends StateDefinition>
+  extends RetriveQuery<'InitManyAndReturn', S, S, Entity<S>>,
     ExecQuery<void> {}
 
-export interface CreateManyAndReturnQuery<
+export interface InitManyAndReturnQuery<
   S extends StateDefinition,
   R = Entity<S>,
-> extends RetriveQuery<'CreateManyAndReturn', S, S, R>,
+> extends RetriveQuery<'InitManyAndReturn', S, S, R>,
     ExecQuery<EntityList<R>> {}
 
-export interface CreateManyQueryOptions<
+export interface InitManyQueryOptions<
   I extends StateDefinition,
   O extends StateDefinition,
-> extends RootQueryOptions<'CreateMany', I>,
+> extends RootQueryOptions<'InitMany', I>,
     MultiArgsQueryOptions<I, StateDefinitionCreateMutations<I>>,
     RetriveQueryOptions<O>,
-    ExecQueryOptions<'CreateMany', I, O> {
+    ExecQueryOptions<'InitMany', I, O> {
   states: [I];
 }

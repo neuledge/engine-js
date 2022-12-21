@@ -42,7 +42,8 @@ export const resolvers: Resolvers = {
   Mutation: {
     createPost: async (_, { data }) =>
       engine
-        .createOne(DraftPost, 'create', {
+        .initOne(DraftPost)
+        .create({
           title: data.title,
           content: data.content,
           category: data.categoryId ? { id: data.categoryId } : null,
@@ -51,7 +52,8 @@ export const resolvers: Resolvers = {
 
     updatePost: async (_, { id, data }) =>
       engine
-        .updateUniqueOrThrow([...Post], 'update', {
+        .alterUniqueOrThrow(...Post)
+        .update({
           title: data.title,
           content: data.content,
           category: { id: data.categoryId },
@@ -60,29 +62,25 @@ export const resolvers: Resolvers = {
         .select(),
 
     publishPost: async (_, { id }) =>
-      engine
-        .updateUniqueOrThrow([DraftPost], 'publish')
-        .unique({ id })
-        .select(),
+      engine.alterUniqueOrThrow(DraftPost).publish().unique({ id }).select(),
 
     deletePost: async (_, { id }) =>
       engine
-        .deleteUniqueOrThrow([...Post], 'delete')
+        .alterUniqueOrThrow(...Post)
+        .delete()
         .unique({ id })
         .then(() => null),
 
     createCategory: async (_, { data }) =>
-      engine.createOne(Category, 'create', data).select(),
+      engine.initOne(Category).create(data).select(),
 
     updateCategory: async (_, { id, data }) =>
-      engine
-        .updateUniqueOrThrow([Category], 'update', data)
-        .unique({ id })
-        .select(),
+      engine.alterUniqueOrThrow(Category).update(data).unique({ id }).select(),
 
     deleteCategory: async (_, { id }) =>
       engine
-        .deleteUniqueOrThrow([Category], 'delete')
+        .alterUniqueOrThrow(Category)
+        .delete()
         .unique({ id })
         .then(() => null),
   },

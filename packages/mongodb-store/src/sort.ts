@@ -1,4 +1,4 @@
-import { StoreSort } from '@neuledge/engine';
+import { StoreSort } from '@neuledge/store';
 import { Sort } from 'mongodb';
 import { escapeFieldName } from './fields';
 

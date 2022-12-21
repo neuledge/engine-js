@@ -10,9 +10,9 @@ import {
 } from '@/queries';
 import { chooseStatesCollection } from '../collection';
 import { NeuledgeEngine } from '../engine';
-import { toEntityOrThrow, toMaybeEntity } from '../entity';
+import { toEntityList, toEntityOrThrow, toMaybeEntity } from '../entity';
 import { convertFilterQuery, convertUniqueFilterQuery } from '../filter';
-import { convertLimitQuery, toLimitedEntityList } from '../limit';
+import { convertLimitQuery, checkLimitedList } from '../limit';
 import { convertOffsetQuery } from '../offset';
 import { convertRetriveQuery } from '../retrive';
 import { convertSortQuery } from '../sort';
@@ -25,9 +25,7 @@ export const execFindMany = async <S extends StateDefinition>(
   const metadata = await engine.metadata;
   const collection = chooseStatesCollection(metadata, options.states);
 
-  return toLimitedEntityList(
-    metadata,
-    collection,
+  const list = checkLimitedList(
     options,
     await engine.store.find({
       collectionName: collection.name,
@@ -38,6 +36,8 @@ export const execFindMany = async <S extends StateDefinition>(
       ...convertSortQuery(collection, options),
     }),
   );
+
+  return toEntityList(metadata, collection, list);
 };
 
 export const execFindUnique = async <S extends StateDefinition>(

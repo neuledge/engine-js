@@ -4,7 +4,7 @@ import {
 } from '@/definitions';
 import { NeuledgeError, NeuledgeErrorCode } from '@/error';
 import { MetadataCollection, MetadataSchema } from '@/metadata';
-import { StoreWhereRecord } from '@/store';
+import { StoreWhereRecord } from '@neuledge/store';
 import { applyWhereOperatorTerm, applyWhereRecordTerm } from './term';
 
 export const convertWhereRecord = (

@@ -1,6 +1,6 @@
 import { StateDefinition, StateDefinitionWhereRecord } from '@/definitions';
 import { MetadataCollection } from '@/metadata';
-import { StoreWhere, StoreWhereRecord } from '@/store';
+import { StoreWhere, StoreWhereRecord } from '@neuledge/store';
 import { Where } from '@/queries';
 import { convertWhereRecord } from './record';
 

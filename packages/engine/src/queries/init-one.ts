@@ -5,22 +5,20 @@ import { SingleArgsQueryOptions } from './method';
 import { RetriveQuery, RetriveQueryOptions } from './retrive';
 import { RootQueryOptions } from './type';
 
-export interface CreateOneQuery<S extends StateDefinition>
-  extends RetriveQuery<'CreateOneAndReturn', S, S, Entity<S>>,
+export interface InitOneQuery<S extends StateDefinition>
+  extends RetriveQuery<'InitOneAndReturn', S, S, Entity<S>>,
     ExecQuery<void> {}
 
-export interface CreateOneAndReturnQuery<
-  S extends StateDefinition,
-  R = Entity<S>,
-> extends RetriveQuery<'CreateOneAndReturn', S, S, R>,
+export interface InitOneAndReturnQuery<S extends StateDefinition, R = Entity<S>>
+  extends RetriveQuery<'InitOneAndReturn', S, S, R>,
     ExecQuery<R> {}
 
-export interface CreateOneQueryOptions<
+export interface InitOneQueryOptions<
   I extends StateDefinition,
   O extends StateDefinition,
-> extends RootQueryOptions<'CreateOne', I>,
+> extends RootQueryOptions<'InitOne', I>,
     SingleArgsQueryOptions<I, StateDefinitionCreateMutations<I>>,
     RetriveQueryOptions<O>,
-    ExecQueryOptions<'CreateOne', I, O> {
+    ExecQueryOptions<'InitOne', I, O> {
   states: [I];
 }

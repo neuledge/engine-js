@@ -1,4 +1,4 @@
-import { StoreScalarValue } from '@neuledge/engine';
+import { StoreScalarValue } from '@neuledge/store';
 import { Document, Binary } from 'mongodb';
 import { escapeFieldName, unescapeFieldName } from './fields';
 

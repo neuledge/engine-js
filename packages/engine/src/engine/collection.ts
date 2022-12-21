@@ -9,6 +9,13 @@ export const chooseStatesCollection = <S extends StateDefinition>(
   const collections = metadata.getCollections(states);
 
   if (collections.length !== 1) {
+    if (!collections.length) {
+      throw new NeuledgeError(
+        NeuledgeErrorCode.NO_COLLECTIONS,
+        `No collections found for ${states.length} states`,
+      );
+    }
+
     throw new NeuledgeError(
       NeuledgeErrorCode.MULTIPLE_COLLECTIONS,
       `Engine operations can only be used with one collection, got request for ${

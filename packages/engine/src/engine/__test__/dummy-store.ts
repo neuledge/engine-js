@@ -1,5 +1,4 @@
-import { NeuledgeError, NeuledgeErrorCode } from '@/error';
-import { Store } from '../store';
+import { Store } from '@neuledge/store';
 
 export class DummyStore implements Store {
   async listCollections() {
@@ -7,10 +6,7 @@ export class DummyStore implements Store {
   }
 
   async describeCollection(): Promise<never> {
-    throw new NeuledgeError(
-      NeuledgeErrorCode.NOT_IMPLEMENTED,
-      'Method not implemented.',
-    );
+    throw new Error('Method not implemented.');
   }
 
   async ensureCollection() {
