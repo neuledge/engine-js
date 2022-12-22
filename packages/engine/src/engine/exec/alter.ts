@@ -99,10 +99,7 @@ export const execAlterMany = async <S extends StateDefinition>(
     }
 
     if (!leftDocs?.length) {
-      return projectEntities(
-        [...ctx.entities.values()].map(({ entity }) => entity),
-        options.select,
-      );
+      return projectEntities([...ctx.entities.values()], options.select);
     }
 
     await alterDocuments(ctx, leftDocs);
@@ -114,6 +111,22 @@ export const execAlterMany = async <S extends StateDefinition>(
       documents.length > 1 ? 'entities' : 'entity'
     }`,
   );
+};
+
+export const execAlterOne = async <S extends StateDefinition>(
+  engine: NeuledgeEngine,
+  options:
+    | AlterFirstQueryOptions<S, ReturnState<S>>
+    | AlterFirstOrThrowQueryOptions<S, ReturnState<S>>
+    | AlterUniqueQueryOptions<S, ReturnState<S>>
+    | AlterUniqueOrThrowQueryOptions<S, ReturnState<S>>,
+): Promise<
+  | Entity<ReturnState<S>>
+  | ProjectedEntity<ReturnState<S>, Select<ReturnState<S>>>
+  | void
+> => {
+  const res = await execAlterMany(engine, options);
+  return res?.[0];
 };
 
 const preprareAlter = async <S extends StateDefinition>(
@@ -246,19 +259,3 @@ const getDocumentKey = (
   collection: MetadataCollection,
   document: StoreDocument,
 ) => JSON.stringify(collection.primaryKeys.map((key) => document[key] ?? null));
-
-export const execAlterOne = async <S extends StateDefinition>(
-  engine: NeuledgeEngine,
-  options:
-    | AlterFirstQueryOptions<S, ReturnState<S>>
-    | AlterFirstOrThrowQueryOptions<S, ReturnState<S>>
-    | AlterUniqueQueryOptions<S, ReturnState<S>>
-    | AlterUniqueOrThrowQueryOptions<S, ReturnState<S>>,
-): Promise<
-  | Entity<ReturnState<S>>
-  | ProjectedEntity<ReturnState<S>, Select<ReturnState<S>>>
-  | void
-> => {
-  const res = await execAlterMany(engine, options);
-  return res?.[0];
-};
