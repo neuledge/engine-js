@@ -1,5 +1,5 @@
 import { Entity } from '@/entity';
-import { StateDefinition, StateDefinitionAlterMutations } from '@/definitions';
+import { StateDefinition, StateDefinitionAlterMethods } from '@/definitions';
 import { ExecQuery, ExecQueryOptions } from './exec';
 import { UniqueFilterQuery, UniqueFilterQueryOptions } from './filter';
 import { SingleArgsQueryOptions } from './method';
@@ -45,7 +45,7 @@ export interface AlterUniqueOrThrowQueryOptions<
   I extends StateDefinition,
   O extends StateDefinition,
 > extends RootQueryOptions<'AlterUniqueOrThrow', I>,
-    SingleArgsQueryOptions<I, StateDefinitionAlterMutations<I>>,
+    SingleArgsQueryOptions<I, StateDefinitionAlterMethods<I>>,
     RetriveQueryOptions<O>,
     UniqueFilterQueryOptions<I>,
     UniqueQueryOptions<I>,

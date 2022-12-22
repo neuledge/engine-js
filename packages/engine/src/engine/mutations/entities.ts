@@ -1,7 +1,7 @@
 import {
   MutationDefinition,
   StateDefinition,
-  StateDefinitionAlterMutations,
+  StateDefinitionAlterMethods,
   StateDefinitionMutationArguments,
   StateDefinitionMutationsReturn,
 } from '@/definitions';
@@ -12,7 +12,7 @@ import { StateDefinitionMap } from './states';
 
 export const alterEntityList = async <
   S extends StateDefinition,
-  M extends StateDefinitionAlterMutations<S>,
+  M extends StateDefinitionAlterMethods<S>,
   A extends StateDefinitionMutationArguments<S, M>,
 >(
   states: StateDefinitionMap<S>,
@@ -31,7 +31,7 @@ export const alterEntityList = async <
 
 const alterEntity = async <
   S extends StateDefinition,
-  M extends StateDefinitionAlterMutations<S>,
+  M extends StateDefinitionAlterMethods<S>,
   A extends StateDefinitionMutationArguments<S, M>,
 >(
   states: StateDefinitionMap<S>,
@@ -64,7 +64,7 @@ const alterEntity = async <
     }
 
     case 'delete': {
-      await fn.call(thisArg);
+      await fn.call(thisArg, args);
       return null;
     }
 

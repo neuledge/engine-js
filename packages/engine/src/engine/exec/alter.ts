@@ -1,7 +1,7 @@
 import {
   MutationDefinition,
   StateDefinition,
-  StateDefinitionAlterMutations,
+  StateDefinitionAlterMethods,
   StateDefinitionMutationsReturn,
 } from '@/definitions';
 import { Entity, ProjectedEntity } from '@/entity';
@@ -59,7 +59,7 @@ type AlterQueryOptions<
 
 type ReturnState<S extends StateDefinition> = StateDefinitionMutationsReturn<
   S,
-  StateDefinitionAlterMutations<S>
+  StateDefinitionAlterMethods<S>
 >;
 
 type AlterContext<S extends StateDefinition> = {

@@ -1,5 +1,5 @@
 import { Entity } from '@/entity';
-import { StateDefinition, StateDefinitionCreateMutations } from '@/definitions';
+import { StateDefinition, StateDefinitionInitMethods } from '@/definitions';
 import { ExecQuery, ExecQueryOptions } from './exec';
 import { SingleArgsQueryOptions } from './method';
 import { RetriveQuery, RetriveQueryOptions } from './retrive';
@@ -17,7 +17,7 @@ export interface InitOneQueryOptions<
   I extends StateDefinition,
   O extends StateDefinition,
 > extends RootQueryOptions<'InitOne', I>,
-    SingleArgsQueryOptions<I, StateDefinitionCreateMutations<I>>,
+    SingleArgsQueryOptions<I, StateDefinitionInitMethods<I>>,
     RetriveQueryOptions<O>,
     ExecQueryOptions<'InitOne', I, O> {
   states: [I];

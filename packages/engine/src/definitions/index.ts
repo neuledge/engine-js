@@ -1,4 +1,4 @@
 export * from './either';
-export * from './mutation';
+export * from './mutations';
 export * from './relations';
 export * from './state';

@@ -10,7 +10,7 @@ import {
 /**
  * Basic category
  */
-@$.State
+@$.State<'Category', Category>()
 export class Category {
   static $name = 'Category' as const;
   static $id = ['+id'] as const;
@@ -29,58 +29,45 @@ export class Category {
   name!: string;
   description?: string | null;
 
-  static create = Object.assign(
-    function ({
-      name,
-      description,
-    }: {
+  static create = $.createMutation<
+    typeof Category,
+    {
       name: string;
       description?: string | null;
-    }): $.Type<typeof Category> {
-      return {
-        $state: 'Category',
-        id: Math.round(Math.random() * 1e6),
-        name,
-        description,
-      };
-    },
-    { mutation: 'create' } as const,
-  );
+    }
+  >('create', function ({ name, description }) {
+    return {
+      $state: 'Category',
+      id: Math.round(Math.random() * 1e6),
+      name,
+      description,
+    };
+  });
 
-  static update = Object.assign(
-    function (
-      this: Category,
-      {
-        name,
-        description,
-      }: {
-        name: string;
-        description?: string | null;
-      },
-    ): $.Type<typeof Category> {
-      return {
-        ...this,
-        $state: 'Category',
-        name: name,
-        description: description,
-      };
+  static update = $.createMutation<
+    typeof Category,
+    {
+      name: string;
+      description?: string | null;
     },
-    { mutation: 'update' } as const,
-  );
+    typeof Category
+  >('update', function ({ name, description }) {
+    return {
+      ...this,
+      $state: 'Category',
+      name: name,
+      description: description,
+    };
+  });
 
-  static delete = Object.assign(
-    function (this: Category): void {
-      // do nothing
-    },
-    { mutation: 'delete', virtual: true } as const,
-  );
+  static delete = $.createMutation<typeof Category>('delete');
 }
 export type $Category = $.Entity<typeof Category>;
 
 /**
  * Post in draft state
  */
-@$.State
+@$.State<'DraftPost', DraftPost>()
 export class DraftPost {
   static $name = 'DraftPost' as const;
   static $id = ['+id'] as const;
@@ -102,53 +89,44 @@ export class DraftPost {
   title!: string;
   content?: string | null;
 
-  static create = Object.assign(
-    function ({
-      title,
-      content,
-      category,
-    }: {
+  static create = $.createMutation<
+    typeof DraftPost,
+    {
       title: string;
       content?: string | null;
       category?: $.Id<typeof Category> | null;
-    }): $.Type<typeof DraftPost> {
-      return {
-        $state: 'DraftPost',
-        id: Math.round(Math.random() * 1e6),
-        title,
-        content,
-        category,
-      };
-    },
-    { mutation: 'create' } as const,
-  );
+    }
+  >('create', function ({ title, content, category }) {
+    return {
+      $state: 'DraftPost',
+      id: Math.round(Math.random() * 1e6),
+      title,
+      content,
+      category,
+    };
+  });
 
-  static update = Object.assign(
-    function (
-      this: DraftPost,
-      {
-        title,
-        content,
-        category,
-      }: {
-        title: string;
-        content?: string | null;
-        category?: $.Id<typeof Category> | null;
-      },
-    ): $.Type<typeof DraftPost> {
-      return {
-        ...this,
-        $state: 'DraftPost',
-        title,
-        content,
-        category,
-      };
+  static update = $.createMutation<
+    typeof DraftPost,
+    {
+      title: string;
+      content?: string | null;
+      category?: $.Id<typeof Category> | null;
     },
-    { mutation: 'update' } as const,
-  );
+    typeof DraftPost
+  >('update', function ({ title, content, category }) {
+    return {
+      ...this,
+      $state: 'DraftPost',
+      title,
+      content,
+      category,
+    };
+  });
 
-  static publish = Object.assign(
-    function (this: DraftPost): $.Type<typeof PublishedPost> {
+  static publish = $.createMutation<typeof DraftPost, typeof PublishedPost>(
+    'update',
+    function () {
       if (!this.category) {
         throw new TypeError(`Expect category to exists`);
       }
@@ -164,22 +142,16 @@ export class DraftPost {
         publishedAt: new $.Date(),
       };
     },
-    { mutation: 'update' } as const,
   );
 
-  static delete = Object.assign(
-    function (this: DraftPost): void {
-      // do nothing
-    },
-    { mutation: 'delete', virtual: true } as const,
-  );
+  static delete = $.createMutation('delete');
 }
 export type $DraftPost = $.Entity<typeof DraftPost>;
 
 /**
  * Post in published state
  */
-@$.State
+@$.State<'PublishedPost', PublishedPost>()
 export class PublishedPost {
   static $name = 'PublishedPost' as const;
   static $id = ['+id'] as const;
@@ -208,32 +180,21 @@ export class PublishedPost {
   content!: string;
   publishedAt!: Date;
 
-  static update = Object.assign(
-    function (
-      this: PublishedPost,
-      {
-        title,
-        content,
-        category,
-      }: { title: string; content: string; category: $.Id<typeof Category> },
-    ): $.Type<typeof PublishedPost> {
-      return {
-        ...this,
-        $state: 'PublishedPost',
-        title,
-        content,
-        category,
-      };
-    },
-    { mutation: 'update' } as const,
-  );
+  static update = $.createMutation<
+    typeof PublishedPost,
+    { title: string; content: string; category: $.Id<typeof Category> },
+    typeof PublishedPost
+  >('update', function ({ title, content, category }) {
+    return {
+      ...this,
+      $state: 'PublishedPost',
+      title,
+      content,
+      category,
+    };
+  });
 
-  static delete = Object.assign(
-    function (this: PublishedPost): void {
-      // do nothing
-    },
-    { mutation: 'delete', virtual: true } as const,
-  );
+  static delete = $.createMutation<typeof PublishedPost>('delete');
 }
 export type $PublishedPost = $.Entity<typeof PublishedPost>;
 

@@ -1,145 +1,195 @@
-import {
-  StateDefinitionMutationArguments,
-  StateDefintionMutations,
-  StateDefinitionCreateMutations,
-  StateDefinitionDeleteMutations,
-  StateDefinitionUpdateWithoutArgsMutations,
-  StateDefinitionUpdateWithArgsMutations,
-  StateDefinitionMutationsReturn,
-} from './mutation';
-import { StateDefinitionId } from './state';
+import { StateDefinitionId } from '../state';
 import {
   Category,
   DraftPost,
   Post,
   PublishedPost,
-} from './__fixtures__/category-post-example';
+} from '../__fixtures__/category-post-example';
+import {
+  StateDefinitionAlterMethods,
+  StateDefinitionAlterWithArgsMethods,
+  StateDefinitionAlterWithoutArgsMethods,
+  StateDefinitionInitMethods,
+  StateDefinitionInitWithArgsMethods,
+  StateDefinitionInitWithoutArgsMethods,
+  StateDefinitionMethods,
+  StateDefinitionMutationArguments,
+  StateDefinitionMutationsReturn,
+} from './state-helpers';
 
 /* eslint-disable max-lines-per-function */
 
-describe('generated/mutation', () => {
+describe('definitions/mutations/state', () => {
   describe('StateDefintionMutations<>', () => {
     it('should have single state methods', () => {
       expect<{ create: 1; update: 1; delete: 1 }>(
-        {} as Record<StateDefintionMutations<typeof Category>, 1>,
+        {} as Record<StateDefinitionMethods<typeof Category>, 1>,
       );
 
       expect<{ create: 1; update: 1; publish: 1; delete: 1 }>(
-        {} as Record<StateDefintionMutations<typeof DraftPost>, 1>,
+        {} as Record<StateDefinitionMethods<typeof DraftPost>, 1>,
       );
 
       expect<{ update: 1; delete: 1 }>(
-        {} as Record<StateDefintionMutations<typeof PublishedPost>, 1>,
+        {} as Record<StateDefinitionMethods<typeof PublishedPost>, 1>,
       );
     });
 
     it('should have multiple state methods', () => {
       expect<{ update: 1; delete: 1 }>(
-        {} as Record<StateDefintionMutations<typeof Post[number]>, 1>,
+        {} as Record<StateDefinitionMethods<typeof Post[number]>, 1>,
       );
     });
   });
 
-  describe('StateDefinitionCreateMutations<>', () => {
+  describe('StateDefinitionInitMethods<>', () => {
     it('should have single state methods', () => {
       expect<{ create: 1 }>(
-        {} as Record<StateDefinitionCreateMutations<typeof Category>, 1>,
+        {} as Record<StateDefinitionInitMethods<typeof Category>, 1>,
       );
       expect<{ create: 1 }>(
-        {} as Record<StateDefinitionCreateMutations<typeof DraftPost>, 1>,
+        {} as Record<StateDefinitionInitMethods<typeof DraftPost>, 1>,
       );
       expect<Record<never, 1>>(
-        {} as Record<StateDefinitionCreateMutations<typeof PublishedPost>, 1>,
+        {} as Record<StateDefinitionInitMethods<typeof PublishedPost>, 1>,
       );
     });
 
     it('should have multiple state methods', () => {
       expect<Record<never, 1>>(
-        {} as Record<StateDefinitionCreateMutations<typeof Post[number]>, 1>,
+        {} as Record<StateDefinitionInitMethods<typeof Post[number]>, 1>,
       );
     });
   });
 
-  describe('StateDefinitionUpdateWithArgsMutations<>', () => {
+  describe('StateDefinitionInitWithArgsMethods<>', () => {
     it('should have single state methods', () => {
-      expect<{ update: 1 }>(
-        {} as Record<
-          StateDefinitionUpdateWithArgsMutations<typeof Category>,
-          1
-        >,
+      expect<{ create: 1 }>(
+        {} as Record<StateDefinitionInitWithArgsMethods<typeof Category>, 1>,
       );
-      expect<{ update: 1 }>(
-        {} as Record<
-          StateDefinitionUpdateWithArgsMutations<typeof DraftPost>,
-          1
-        >,
+      expect<{ create: 1 }>(
+        {} as Record<StateDefinitionInitWithArgsMethods<typeof DraftPost>, 1>,
       );
-      expect<{ update: 1 }>(
+      expect<Record<never, 1>>(
         {} as Record<
-          StateDefinitionUpdateWithArgsMutations<typeof PublishedPost>,
+          StateDefinitionInitWithArgsMethods<typeof PublishedPost>,
           1
         >,
       );
     });
 
     it('should have multiple state methods', () => {
-      expect<{ update: 1 }>(
+      expect<Record<never, 1>>(
         {} as Record<
-          StateDefinitionUpdateWithArgsMutations<typeof Post[number]>,
+          StateDefinitionInitWithArgsMethods<typeof Post[number]>,
           1
         >,
       );
     });
   });
 
-  describe('StateDefinitionUpdateWithoutArgsMutations<>', () => {
+  describe('StateDefinitionInitWithoutArgsMethods<>', () => {
     it('should have single state methods', () => {
       expect<Record<never, 1>>(
-        {} as Record<
-          StateDefinitionUpdateWithoutArgsMutations<typeof Category>,
-          1
-        >,
+        {} as Record<StateDefinitionInitWithoutArgsMethods<typeof Category>, 1>,
       );
-      expect<{ publish: 1 }>(
+      expect<Record<never, 1>>(
         {} as Record<
-          StateDefinitionUpdateWithoutArgsMutations<typeof DraftPost>,
+          StateDefinitionInitWithoutArgsMethods<typeof DraftPost>,
           1
         >,
       );
       expect<Record<never, 1>>(
         {} as Record<
-          StateDefinitionUpdateWithoutArgsMutations<typeof PublishedPost>,
+          StateDefinitionInitWithoutArgsMethods<typeof PublishedPost>,
           1
         >,
       );
     });
 
     it('should have multiple state methods', () => {
-      expect<StateDefinitionUpdateWithoutArgsMutations<typeof Post[number]>>(
-        {} as never,
-      );
-      expect<never>(
-        {} as StateDefinitionUpdateWithoutArgsMutations<typeof Post[number]>,
+      expect<Record<never, 1>>(
+        {} as Record<
+          StateDefinitionInitWithoutArgsMethods<typeof Post[number]>,
+          1
+        >,
       );
     });
   });
 
-  describe('StateDefinitionDeleteMutations<>', () => {
+  describe('StateDefinitionAlterMethods<>', () => {
+    it('should have single state methods', () => {
+      expect<{ update: 1; delete: 1 }>(
+        {} as Record<StateDefinitionAlterMethods<typeof Category>, 1>,
+      );
+      expect<{ update: 1; publish: 1; delete: 1 }>(
+        {} as Record<StateDefinitionAlterMethods<typeof DraftPost>, 1>,
+      );
+      expect<{ update: 1; delete: 1 }>(
+        {} as Record<StateDefinitionAlterMethods<typeof PublishedPost>, 1>,
+      );
+    });
+
+    it('should have multiple state methods', () => {
+      expect<{ update: 1 }>(
+        {} as Record<StateDefinitionAlterMethods<typeof Post[number]>, 1>,
+      );
+    });
+  });
+
+  describe('StateDefinitionAlterWithArgsMethods<>', () => {
+    it('should have single state methods', () => {
+      expect<{ update: 1 }>(
+        {} as Record<StateDefinitionAlterWithArgsMethods<typeof Category>, 1>,
+      );
+      expect<{ update: 1 }>(
+        {} as Record<StateDefinitionAlterWithArgsMethods<typeof DraftPost>, 1>,
+      );
+      expect<{ update: 1 }>(
+        {} as Record<
+          StateDefinitionAlterWithArgsMethods<typeof PublishedPost>,
+          1
+        >,
+      );
+    });
+
+    it('should have multiple state methods', () => {
+      expect<{ update: 1 }>(
+        {} as Record<
+          StateDefinitionAlterWithArgsMethods<typeof Post[number]>,
+          1
+        >,
+      );
+    });
+  });
+  describe('StateDefinitionAlterWithoutArgsMethods<>', () => {
     it('should have single state methods', () => {
       expect<{ delete: 1 }>(
-        {} as Record<StateDefinitionDeleteMutations<typeof Category>, 1>,
+        {} as Record<
+          StateDefinitionAlterWithoutArgsMethods<typeof Category>,
+          1
+        >,
+      );
+      expect<{ publish: 1; delete: 1 }>(
+        {} as Record<
+          StateDefinitionAlterWithoutArgsMethods<typeof DraftPost>,
+          1
+        >,
       );
       expect<{ delete: 1 }>(
-        {} as Record<StateDefinitionDeleteMutations<typeof DraftPost>, 1>,
-      );
-      expect<{ delete: 1 }>(
-        {} as Record<StateDefinitionDeleteMutations<typeof PublishedPost>, 1>,
+        {} as Record<
+          StateDefinitionAlterWithoutArgsMethods<typeof PublishedPost>,
+          1
+        >,
       );
     });
 
     it('should have multiple state methods', () => {
       expect<{ delete: 1 }>(
-        {} as Record<StateDefinitionDeleteMutations<typeof Post[number]>, 1>,
+        {} as Record<
+          StateDefinitionAlterWithoutArgsMethods<typeof Post[number]>,
+          1
+        >,
       );
     });
   });

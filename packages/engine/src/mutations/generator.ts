@@ -1,7 +1,7 @@
 import {
   MutationDefinition,
   StateDefinition,
-  StateDefintionMutations,
+  StateDefinitionMethods,
 } from '@/definitions';
 import { Query, QueryMode, QueryOptions, QueryType } from '@/queries';
 import { Mutation, MutationType } from './mutation';
@@ -35,7 +35,9 @@ export const MutationGenerator = <
               type,
               states,
               method: method as never,
-              args: [args[0] ?? {}, ...args.slice(1)] as never,
+              args: (typeof args[0] === 'number'
+                ? Array.from({ length: args[0] }).fill({})
+                : [args[0] ?? {}, ...args.slice(1)]) as never,
             })
         : undefined,
 
@@ -54,7 +56,7 @@ export const MutationGenerator = <
 
 const hasMutation = <
   S extends StateDefinition,
-  M extends StateDefintionMutations<S>,
+  M extends StateDefinitionMethods<S>,
 >(
   type: MutationType,
   states: S[],

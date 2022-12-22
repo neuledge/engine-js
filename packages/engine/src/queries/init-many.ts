@@ -1,5 +1,5 @@
 import { Entity } from '@/entity';
-import { StateDefinition, StateDefinitionCreateMutations } from '@/definitions';
+import { StateDefinition, StateDefinitionInitMethods } from '@/definitions';
 import { EntityList } from '@/list';
 import { ExecQuery, ExecQueryOptions } from './exec';
 import { MultiArgsQueryOptions } from './method';
@@ -20,7 +20,7 @@ export interface InitManyQueryOptions<
   I extends StateDefinition,
   O extends StateDefinition,
 > extends RootQueryOptions<'InitMany', I>,
-    MultiArgsQueryOptions<I, StateDefinitionCreateMutations<I>>,
+    MultiArgsQueryOptions<I, StateDefinitionInitMethods<I>>,
     RetriveQueryOptions<O>,
     ExecQueryOptions<'InitMany', I, O> {
   states: [I];
