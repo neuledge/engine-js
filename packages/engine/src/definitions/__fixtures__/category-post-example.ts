@@ -29,7 +29,7 @@ export class Category {
   name!: string;
   description?: string | null;
 
-  static create = $.createMutation<
+  static create = $.mutation<
     typeof Category,
     {
       name: string;
@@ -44,7 +44,7 @@ export class Category {
     };
   });
 
-  static update = $.createMutation<
+  static update = $.mutation<
     typeof Category,
     {
       name: string;
@@ -60,7 +60,7 @@ export class Category {
     };
   });
 
-  static delete = $.createMutation<typeof Category>('delete');
+  static delete = $.mutation<typeof Category>('delete');
 }
 export type $Category = $.Entity<typeof Category>;
 
@@ -89,7 +89,7 @@ export class DraftPost {
   title!: string;
   content?: string | null;
 
-  static create = $.createMutation<
+  static create = $.mutation<
     typeof DraftPost,
     {
       title: string;
@@ -106,7 +106,7 @@ export class DraftPost {
     };
   });
 
-  static update = $.createMutation<
+  static update = $.mutation<
     typeof DraftPost,
     {
       title: string;
@@ -124,7 +124,7 @@ export class DraftPost {
     };
   });
 
-  static publish = $.createMutation<typeof DraftPost, typeof PublishedPost>(
+  static publish = $.mutation<typeof DraftPost, typeof PublishedPost>(
     'update',
     function () {
       if (!this.category) {
@@ -144,7 +144,7 @@ export class DraftPost {
     },
   );
 
-  static delete = $.createMutation('delete');
+  static delete = $.mutation('delete');
 }
 export type $DraftPost = $.Entity<typeof DraftPost>;
 
@@ -180,7 +180,7 @@ export class PublishedPost {
   content!: string;
   publishedAt!: Date;
 
-  static update = $.createMutation<
+  static update = $.mutation<
     typeof PublishedPost,
     { title: string; content: string; category: $.Id<typeof Category> },
     typeof PublishedPost
@@ -194,7 +194,7 @@ export class PublishedPost {
     };
   });
 
-  static delete = $.createMutation<typeof PublishedPost>('delete');
+  static delete = $.mutation<typeof PublishedPost>('delete');
 }
 export type $PublishedPost = $.Entity<typeof PublishedPost>;
 
