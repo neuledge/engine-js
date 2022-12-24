@@ -3,8 +3,8 @@
   "pipeline": {
     "generate": {
       "dependsOn": ["^build", "^types"],
-      "inputs": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.js", "src/**/*.jsx"],
-      "outputs": ["dist/**/*.d.ts", "dist/**/*.d.ts.map"]
+      "inputs": ["**/*.graphql", "**/*.gql", "**/*.states"],
+      "outputs": ["src/**/*.codegen.ts"]
     },
     "types": {
       "dependsOn": ["^types", "generate"],

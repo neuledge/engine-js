@@ -31,7 +31,7 @@ export const tokenize = (content: string, path?: string): Token[] => {
       const token = parseToken(
         value,
         position,
-        path && `${path}(${line},${column})`,
+        path && `${path}:${line}:${column}`,
       );
       if (token) {
         if (lastPunctuation) {
@@ -65,7 +65,7 @@ export const tokenize = (content: string, path?: string): Token[] => {
 
 const splitTokenValues = (content: string): string[] =>
   content.match(
-    /([$_a-z]\w*|(?:\d*\.\d+|\d+)|\s+|"""(?:[^"]+|"[^"]|""[^"])*"""|"(?:[^\n"\\]+|\\.)*"|'(?:[^\n'\\]+|\\.)*'|[!%&*+.<=>@^|-]+|.)/gi,
+    /([$_a-z]\w*|(?:\d*\.\d+|\d+)|\s+|"""(?:[^"]+|"[^"]|""[^"])*"""|"(?:[^\n"\\]+|\\.)*"|'(?:[^\n'\\]+|\\.)*'|[<=>]=|=>|[!=]==|&&|!!|\|\||\?\?|\*\*|\.\.\.|.)/gi,
   ) || [];
 
 const parseToken = (

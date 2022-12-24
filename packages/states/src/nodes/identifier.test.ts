@@ -1,7 +1,7 @@
 import { Tokenizer } from '@/tokenizer';
 import { IdentifierNode, parseIdentifierNode } from './identifier';
 
-describe('ast/identifier', () => {
+describe('nodes/identifier', () => {
   describe('parseIdentifierNode()', () => {
     it('should parse word token', () => {
       const cursor = new Tokenizer(`foo`);

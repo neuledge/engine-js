@@ -18,8 +18,8 @@ export class ParsingError extends SyntaxError {
     this.end = position.end;
     this.path = position.path;
 
-    if (this.path) {
-      this.stack = `${this.path}: ${this.message}`;
-    }
+    this.stack = `${this.name}: ${this.message}\r\n\tat ${
+      this.path ?? `character ${this.start}`
+    }`;
   }
 }

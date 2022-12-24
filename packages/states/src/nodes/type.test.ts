@@ -3,7 +3,7 @@ import { parseTypeNode, TypeExpressionNode, TypeGeneratorNode } from './type';
 
 /* eslint-disable max-lines-per-function */
 
-describe('ast/type', () => {
+describe('nodes/type', () => {
   describe('parseTypeNode()', () => {
     it('should parse type expression', () => {
       const cursor = new Tokenizer(`Int = 5`);

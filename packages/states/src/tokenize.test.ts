@@ -33,6 +33,66 @@ describe('parser/tokenize', () => {
       ]);
     });
 
+    it('should tokenize seperated punctuation', () => {
+      expect(tokenize(`. , ; : ( ) [ ] { }`)).toEqual<Token[]>([
+        { end: 1, value: '.', start: 0, type: 'Punctuation', adjacent: false },
+        { end: 3, value: ',', start: 2, type: 'Punctuation', adjacent: false },
+        { end: 5, value: ';', start: 4, type: 'Punctuation', adjacent: false },
+        { end: 7, value: ':', start: 6, type: 'Punctuation', adjacent: false },
+        { end: 9, value: '(', start: 8, type: 'Punctuation', adjacent: false },
+        {
+          end: 11,
+          value: ')',
+          start: 10,
+          type: 'Punctuation',
+          adjacent: false,
+        },
+        {
+          end: 13,
+          value: '[',
+          start: 12,
+          type: 'Punctuation',
+          adjacent: false,
+        },
+        {
+          end: 15,
+          value: ']',
+          start: 14,
+          type: 'Punctuation',
+          adjacent: false,
+        },
+        {
+          end: 17,
+          value: '{',
+          start: 16,
+          type: 'Punctuation',
+          adjacent: false,
+        },
+        {
+          end: 19,
+          value: '}',
+          start: 18,
+          type: 'Punctuation',
+          adjacent: false,
+        },
+      ]);
+    });
+
+    it('should tokenize adjacent punctuation', () => {
+      expect(tokenize(`=> >= <=`)).toEqual<Token[]>([
+        { end: 2, value: '=>', start: 0, type: 'Punctuation', adjacent: false },
+        { end: 5, value: '>=', start: 3, type: 'Punctuation', adjacent: false },
+        { end: 8, value: '<=', start: 6, type: 'Punctuation', adjacent: false },
+      ]);
+    });
+
+    it('should tokenize unary operators', () => {
+      expect(tokenize(`+!`)).toEqual<Token[]>([
+        { end: 1, value: '+', start: 0, type: 'Punctuation', adjacent: true },
+        { end: 2, value: '!', start: 1, type: 'Punctuation', adjacent: false },
+      ]);
+    });
+
     it('should tokenize field reference with version', () => {
       expect(tokenize(`BasicState@2.foo`)).toEqual<Token[]>([
         { end: 10, value: 'BasicState', start: 0, type: 'Word' },

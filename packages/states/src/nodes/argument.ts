@@ -10,6 +10,7 @@ export interface ArgumentNode<Value> extends AbstractNode<'Argument'> {
 export const parseMaybeArgumentNodes = <Value>(
   cursor: Tokenizer,
   parseValue: (cursor: Tokenizer) => Value,
+  allowImplicit?: boolean,
 ): ArgumentNode<Value>[] => {
   const { index: position } = cursor;
   if (
@@ -26,7 +27,34 @@ export const parseMaybeArgumentNodes = <Value>(
         return args;
       }
 
-      args.push(parseArgumentNode(cursor, parseValue));
+      args.push(parseArgumentNode(cursor, parseValue, allowImplicit));
+    } while (cursor.maybeConsumePunctuation(','));
+
+    cursor.consumePunctuation(')');
+    return args;
+  } catch (error) {
+    cursor.index = position;
+    throw error;
+  }
+};
+
+export const parseArgumentNodes = <Value>(
+  cursor: Tokenizer,
+  parseValue: (cursor: Tokenizer) => Value,
+  allowImplicit?: boolean,
+): ArgumentNode<Value>[] => {
+  const { index: position } = cursor;
+
+  cursor.consumePunctuation('(');
+
+  try {
+    const args: ArgumentNode<Value>[] = [];
+    do {
+      if (cursor.maybeConsumePunctuation(')')) {
+        return args;
+      }
+
+      args.push(parseArgumentNode(cursor, parseValue, allowImplicit));
     } while (cursor.maybeConsumePunctuation(','));
 
     cursor.consumePunctuation(')');
@@ -40,13 +68,18 @@ export const parseMaybeArgumentNodes = <Value>(
 const parseArgumentNode = <Value>(
   cursor: Tokenizer,
   parseValue: (cursor: Tokenizer) => Value,
+  allowImplicit?: boolean,
 ): ArgumentNode<Value> => {
   const start = cursor.start;
   const path = cursor.path;
 
   const key = parseIdentifierNode(cursor);
-  cursor.consumePunctuation(':');
-  const value = parseValue(cursor);
+
+  const explicit = allowImplicit
+    ? cursor.maybeConsumePunctuation(':')
+    : cursor.consumePunctuation(':');
+
+  const value = explicit ? parseValue(cursor) : (key as Value);
 
   return {
     type: 'Argument',

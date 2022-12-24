@@ -1,7 +1,7 @@
 import { Tokenizer } from '@/tokenizer';
 import { DescriptionNode, parseMaybeDescriptionNode } from './description';
 
-describe('ast/description', () => {
+describe('nodes/description', () => {
   describe('parseMaybeDescriptionNode()', () => {
     it('should parse regular string', () => {
       const cursor = new Tokenizer(`"Hello World!" test me`);

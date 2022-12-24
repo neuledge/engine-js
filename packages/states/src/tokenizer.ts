@@ -18,6 +18,10 @@ export class Tokenizer {
     return this.tokens[this.index];
   }
 
+  get next(): Token | undefined {
+    return this.tokens[this.index + 1];
+  }
+
   get path(): string | undefined {
     return this.tokens[this.index]?.path;
   }
@@ -50,22 +54,44 @@ export class Tokenizer {
     }
   }
 
-  consumeKeyword<V extends string>(value: V): WordToken & { value: V } {
+  pickKeyword<V extends string>(
+    ...values: V[]
+  ): (WordToken & { value: V }) | null {
+    return this.pick(
+      'Word',
+      values.length ? (token) => values.includes(token.value as V) : undefined,
+    ) as (WordToken & { value: V }) | null;
+  }
+
+  consumeKeyword<V extends string>(...values: V[]): WordToken & { value: V } {
     return this.consume(
       'Word',
-      (token) => token.value === value,
-      `'${value}' keyword`,
+      (token) => values.includes(token.value as V),
+      `'${values[0]}' keyword`,
     ) as WordToken & { value: V };
   }
 
   consumePunctuation<V extends string>(
-    value: V,
+    ...values: V[]
   ): PunctuationToken & { value: V } {
     return this.consume(
       'Punctuation',
-      (token) => token.value === value,
-      `'${value}' token`,
+      (token) => values.includes(token.value as V),
+      `'${values[0]}' token`,
     ) as PunctuationToken & { value: V };
+  }
+
+  pick<T extends Token['type']>(
+    type: T,
+    test?: ((token: Token & AbstractToken<T>) => boolean) | null,
+  ): (Token & AbstractToken<T>) | null {
+    const token = this.current;
+
+    if (!Tokenizer.isMatch<T>(token, type, test)) {
+      return null;
+    }
+
+    return token as Token & AbstractToken<T>;
   }
 
   consume<T extends Token['type']>(
@@ -73,14 +99,14 @@ export class Tokenizer {
     test?: ((token: Token & AbstractToken<T>) => boolean) | null,
     expected?: string,
   ): Token & AbstractToken<T> {
-    const token = this.current;
+    const token = this.pick<T>(type, test);
 
-    if (!Tokenizer.isMatch<T>(token, type, test)) {
+    if (!token) {
       throw this.createError(expected);
     }
 
     this.index += 1;
-    return token as Token & AbstractToken<T>;
+    return token;
   }
 
   createError(expected?: string): ParsingError {

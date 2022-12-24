@@ -3,7 +3,7 @@ import { DecoratorNode, parseDecoratorNodes } from './decorator';
 
 /* eslint-disable max-lines-per-function */
 
-describe('ast/decorator', () => {
+describe('nodes/decorator', () => {
   describe('parseDecoratorNodes()', () => {
     it('should skip parse if no "@" found', () => {
       const cursor = new Tokenizer(`state bar {}`);

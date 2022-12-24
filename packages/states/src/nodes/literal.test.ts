@@ -3,7 +3,7 @@ import { LiteralNode, parseLiteralNode } from './literal';
 
 /* eslint-disable max-lines-per-function */
 
-describe('ast/literal', () => {
+describe('nodes/literal', () => {
   describe('parseLiteralNode()', () => {
     it('should parse string', () => {
       const cursor = new Tokenizer(`"bar" state bar {}`);

@@ -3,7 +3,7 @@ import { parseStateFieldNodes, StateFieldNode } from './state-field';
 
 /* eslint-disable max-lines-per-function */
 
-describe('ast/state-field', () => {
+describe('nodes/state-field', () => {
   describe('parseStateFieldNodes()', () => {
     it('should parse empty fields', () => {
       const cursor = new Tokenizer(`{}`);

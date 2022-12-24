@@ -5,8 +5,8 @@
   "scripts": {
     "types": "tsc --noEmit",
     "build": "rimraf dist/**/*.js dist/**/*.js.map && tsup",
-    "generate": "yarn generate:schema",
-    "generate:states": "states build --basepath src/states \"*.states\"",
+    "generate": "yarn generate:schema && yarn generate:states",
+    "generate:states": "states build --output \"src/states.codegen.ts\" \"states/*.states\"",
     "generate:schema": "graphql-codegen",
     "lint": "eslint . --ext \"js,jsx,ts,tsx,mjs,cjs\"",
     "lint:strict": "yarn lint --max-warnings 0",

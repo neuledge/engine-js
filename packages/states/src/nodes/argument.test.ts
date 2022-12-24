@@ -4,7 +4,7 @@ import { LiteralNode, parseLiteralNode } from './literal';
 
 /* eslint-disable max-lines-per-function */
 
-describe('ast/argument', () => {
+describe('nodes/argument', () => {
   describe('parseMaybeArgumentNodes()', () => {
     it('should skip parse if not brackets', () => {
       const cursor = new Tokenizer(` = 3`);

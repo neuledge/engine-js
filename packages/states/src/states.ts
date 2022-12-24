@@ -25,7 +25,7 @@ export class States {
   };
   private readonly fieldsMap: Partial<Record<string, FieldNode[]>> = {};
   private readonly mutationMap: Partial<
-    Record<`${string | ''}.${string}`, MutationNode>
+    Record<`${string}.${string}`, MutationNode>
   > = {};
   private readonly migrationMap: Partial<
     Record<`${string}->${string}`, MigrationNode>
@@ -84,10 +84,7 @@ export class States {
     return undefined;
   }
 
-  mutation(
-    stateName: string | null | undefined,
-    name: string,
-  ): MutationNode | undefined {
+  mutation(stateName: string, name: string): MutationNode | undefined {
     const key = `${stateName || ''}.${name}` as const;
 
     // eslint-disable-next-line @typescript-eslint/no-this-alias, unicorn/no-this-assignment
@@ -204,15 +201,17 @@ export class States {
   }
 
   private registerMutation(node: MutationNode): void {
-    if (this.mutation(node.state?.name, node.key.name)) {
+    const form = node.from ?? node.returns;
+
+    if (this.mutation(form.name, node.key.name)) {
       throw new ParsingError(
         node.key,
         `The mutation name '${node.key.name}'${
-          node.state ? ` for state '${node.state.name}'` : ''
+          node.from ? ` for state '${node.from.name}'` : ''
         } already defined`,
       );
     }
-    this.mutationMap[`${node.state?.name || ''}.${node.key.name}`] = node;
+    this.mutationMap[`${form.name || ''}.${node.key.name}`] = node;
   }
 
   private registerMigration(node: MigrationNode): void {
@@ -236,12 +235,12 @@ export class States {
       }
 
       case 'State': {
-        this.processStateFields(node);
+        this.processState(node);
         break;
       }
 
       case 'Either': {
-        // TODO process state names
+        this.processEither(node);
         break;
       }
 
@@ -264,7 +263,7 @@ export class States {
     }
   }
 
-  private processStateFields(state: StateNode): FieldNode[] | undefined {
+  private processState(state: StateNode): FieldNode[] | undefined {
     if (state.id.name in this.fieldsMap) {
       return this.fieldsMap[state.id.name];
     }
@@ -312,7 +311,7 @@ export class States {
       );
     }
 
-    const fromFields = this.processStateFields(fromState);
+    const fromFields = this.processState(fromState);
     if (!fromFields) {
       throw new ParsingError(state.from, `Circular dependency detected`);
     }
@@ -365,7 +364,7 @@ export class States {
         );
 
         if (!field) {
-          const refFields = this.processStateFields(refState);
+          const refFields = this.processState(refState);
           if (!refFields) {
             throw new ParsingError(node.state, `Circular dependency detected`);
           }
@@ -385,6 +384,21 @@ export class States {
       case 'ExcludedField': {
         return null;
       }
+    }
+  }
+
+  private processEither(node: EitherNode): void {
+    for (const identifier of node.states) {
+      const state = this.entity(identifier.name);
+
+      if (state?.type !== 'State') {
+        throw new ParsingError(
+          identifier,
+          `Unknown state name '${identifier.name}'`,
+        );
+      }
+
+      this.processState(state);
     }
   }
 

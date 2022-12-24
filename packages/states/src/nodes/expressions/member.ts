@@ -1,7 +1,44 @@
+import { Tokenizer } from '@/tokenizer';
 import { AbstractNode } from '../abstract';
-import { IdentifierNode } from '../identifier';
+import { IdentifierNode, parseIdentifierNode } from '../identifier';
+import {
+  IdentifierExpressionNode,
+  NullLiteralNode,
+  parseIdentifierExpressionNode,
+} from './identifier';
 
 export interface MemberExpressionNode extends AbstractNode<'MemberExpression'> {
-  object: IdentifierNode | MemberExpressionNode;
+  object:
+    | Exclude<IdentifierExpressionNode, NullLiteralNode>
+    | MemberExpressionNode;
   property: IdentifierNode;
 }
+
+export const parseMemberExpressionNode = (
+  cursor: Tokenizer,
+): MemberExpressionNode => {
+  const start = cursor.start;
+
+  let object: IdentifierExpressionNode | MemberExpressionNode =
+    parseIdentifierExpressionNode(cursor);
+  if (object.type === 'NullLiteral') {
+    throw cursor.createError(`Unexpected null literal`);
+  }
+
+  cursor.consumePunctuation('.');
+
+  do {
+    const property = parseIdentifierNode(cursor);
+
+    object = {
+      type: 'MemberExpression',
+      path: cursor.path,
+      start,
+      end: cursor.end,
+      object,
+      property,
+    };
+  } while (cursor.maybeConsumePunctuation('.'));
+
+  return object;
+};

@@ -1,9 +1,11 @@
 import { Tokenizer } from '@/tokenizer';
+import { parseDecoratorNodes } from './decorator';
+import { parseMaybeDescriptionNode } from './description';
 import { parseStateNode, StateNode } from './state';
 
 /* eslint-disable max-lines-per-function */
 
-describe('ast/state', () => {
+describe('nodes/state', () => {
   describe('parseStateNode()', () => {
     it('should throw on missing state body', () => {
       const cursor = new Tokenizer(`state FreeAccount`);
@@ -107,7 +109,9 @@ describe('ast/state', () => {
         }`,
       );
 
-      expect(parseStateNode(cursor)).toMatchObject({
+      const decorators = parseDecoratorNodes(cursor);
+
+      expect(parseStateNode(cursor, undefined, decorators)).toMatchObject({
         decorators: [
           {
             type: 'Decorator',
@@ -129,7 +133,9 @@ describe('ast/state', () => {
         }`,
       );
 
-      expect(parseStateNode(cursor)).toMatchObject({
+      const decorators = parseDecoratorNodes(cursor);
+
+      expect(parseStateNode(cursor, undefined, decorators)).toMatchObject({
         decorators: [
           {
             type: 'Decorator',
@@ -156,7 +162,9 @@ describe('ast/state', () => {
         }`,
       );
 
-      expect(parseStateNode(cursor)).toMatchObject({
+      const description = parseMaybeDescriptionNode(cursor);
+
+      expect(parseStateNode(cursor, description)).toMatchObject({
         description: {
           type: 'Description',
           value: 'hi there!',
@@ -176,7 +184,10 @@ describe('ast/state', () => {
         }`,
       );
 
-      expect(parseStateNode(cursor)).toMatchObject({
+      const description = parseMaybeDescriptionNode(cursor);
+      const decorators = parseDecoratorNodes(cursor);
+
+      expect(parseStateNode(cursor, description, decorators)).toMatchObject({
         description: {
           type: 'Description',
           value: 'hi there!',

@@ -1,5 +1,5 @@
 #! /usr/bin/env node
 
-import { createProgram } from '../dist';
+import { createProgram } from '@neuledge/states-cli';
 
 createProgram().parse();

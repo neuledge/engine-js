@@ -1,22 +1,25 @@
 import { Tokenizer } from '@/tokenizer';
-import { parseDecoratorNodes } from './decorator';
-import { parseMaybeDescriptionNode } from './description';
+import { DecoratorNode } from './decorator';
+import { DescriptionNode } from './description';
 import { IdentifierNode, parseIdentifierNode } from './identifier';
 import { NamedNode } from './named';
 import { parseStateFieldNodes, StateFieldNode } from './state-field';
+
+export const STATE_KEYWORD = 'state';
 
 export interface StateNode extends NamedNode<'State'> {
   from?: IdentifierNode;
   fields: StateFieldNode[];
 }
 
-export const parseStateNode = (cursor: Tokenizer): StateNode => {
-  const description = parseMaybeDescriptionNode(cursor);
-  const decorators = parseDecoratorNodes(cursor);
-
+export const parseStateNode = (
+  cursor: Tokenizer,
+  description?: DescriptionNode,
+  decorators: DecoratorNode[] = [],
+): StateNode => {
   const start = cursor.start;
 
-  cursor.consumeKeyword('state');
+  cursor.consumeKeyword(STATE_KEYWORD);
   const id = parseIdentifierNode(cursor);
 
   const fromKeyword = cursor.maybeConsumeKeyword('from');
