@@ -1,5 +1,5 @@
 {
-  "name": "@neuledge/states",
+  "name": "@neuledge/states-parser",
   "version": "0.1.0-alpha.1",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
@@ -28,9 +28,5 @@
     "test": "jest",
     "lint": "eslint . --ext \"js,jsx,ts,tsx,mjs,cjs\"",
     "lint:strict": "yarn lint --max-warnings 0"
-  },
-  "dependencies": {
-    "@neuledge/states-parser": "^0.1.0-alpha.1",
-    "zod": "^3.20.2"
   }
 }

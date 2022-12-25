@@ -2,7 +2,7 @@ import fs from 'node:fs/promises';
 import { resolve } from 'node:path';
 import fg from 'fast-glob';
 import { States } from '@neuledge/states';
-import { generate } from '@neuledge/states-ts';
+import { generate } from '@neuledge/typescript-states';
 import pLimit from 'p-limit';
 
 export interface BuildOptions {
