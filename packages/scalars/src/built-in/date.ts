@@ -1,6 +1,8 @@
 import { Scalar } from '@/scalar';
 
-export const DateScalar: Scalar<Date> = {
+export type DateTimeScalar = Date;
+
+export const DateTimeScalar: Scalar<DateTimeScalar> = {
   key: 'Date',
   encode: (value) => value,
 };

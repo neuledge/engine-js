@@ -1,29 +1,37 @@
+import { State, StringScalar } from '@neuledge/states';
 import { generateTypeofType } from './type';
 
 /* eslint-disable max-lines-per-function */
 
-const pos = { start: 0, end: 0 };
-
 describe('generate/type', () => {
   describe('generateTypeofType()', () => {
+    const FooState: State = {
+      type: 'State',
+      node: {} as never,
+      name: 'Foo',
+      fields: {},
+      indexes: [],
+      primaryKey: { fields: {}, unique: true },
+    };
+
     it('should generate built-in type', () => {
       expect(
         generateTypeofType({
-          type: 'TypeExpression',
-          identifier: { type: 'Identifier', name: 'String', ...pos },
+          type: 'EntityExpression',
+          node: {} as never,
+          entity: StringScalar,
           list: false,
-          ...pos,
         }),
-      ).toBe('string');
+      ).toBe('String');
     });
 
-    it('should generate custom type', () => {
+    it('should generate state type', () => {
       expect(
         generateTypeofType({
-          type: 'TypeExpression',
-          identifier: { type: 'Identifier', name: 'Foo', ...pos },
+          type: 'EntityExpression',
+          node: {} as never,
+          entity: FooState,
           list: false,
-          ...pos,
         }),
       ).toBe('Foo');
     });
@@ -31,10 +39,10 @@ describe('generate/type', () => {
     it('should generate list type', () => {
       expect(
         generateTypeofType({
-          type: 'TypeExpression',
-          identifier: { type: 'Identifier', name: 'Foo', ...pos },
+          type: 'EntityExpression',
+          node: {} as never,
+          entity: FooState,
           list: true,
-          ...pos,
         }),
       ).toBe('Foo[]');
     });

@@ -2,8 +2,6 @@ import { generateDescriptionComment } from './comments';
 
 /* eslint-disable max-lines-per-function */
 
-const pos = { start: 0, end: 0 };
-
 describe('generate/comments', () => {
   describe('generateDescriptionComment()', () => {
     it('should not generate a comment on empty input', () => {
@@ -15,7 +13,7 @@ describe('generate/comments', () => {
       expect(
         generateDescriptionComment(
           {
-            description: { type: 'Description', value: 'Foo bar!', ...pos },
+            description: 'Foo bar!',
           },
           '',
         ),
@@ -26,7 +24,7 @@ describe('generate/comments', () => {
       expect(
         generateDescriptionComment(
           {
-            description: { type: 'Description', value: 'Foo bar!', ...pos },
+            description: 'Foo bar!',
           },
           '  ',
         ),
@@ -37,22 +35,8 @@ describe('generate/comments', () => {
       expect(
         generateDescriptionComment(
           {
-            description: { type: 'Description', value: 'Foo bar!', ...pos },
-            decorators: [
-              {
-                type: 'Decorator',
-                callee: { type: 'Identifier', name: 'deprecated', ...pos },
-                arguments: [
-                  {
-                    type: 'Argument',
-                    key: { type: 'Identifier', name: 'reason', ...pos },
-                    value: { type: 'Literal', value: 'my reason', ...pos },
-                    ...pos,
-                  },
-                ],
-                ...pos,
-              },
-            ],
+            description: 'Foo bar!',
+            deprecated: 'my reason',
           },
           '  ',
         ),
@@ -63,11 +47,7 @@ describe('generate/comments', () => {
       expect(
         generateDescriptionComment(
           {
-            description: {
-              type: 'Description',
-              value: 'Foo\n    bar!',
-              ...pos,
-            },
+            description: 'Foo\n    bar!',
           },
           '  ',
         ),
@@ -78,22 +58,8 @@ describe('generate/comments', () => {
       expect(
         generateDescriptionComment(
           {
-            description: { type: 'Description', value: 'Foo\nbar!', ...pos },
-            decorators: [
-              {
-                type: 'Decorator',
-                callee: { type: 'Identifier', name: 'deprecated', ...pos },
-                arguments: [
-                  {
-                    type: 'Argument',
-                    key: { type: 'Identifier', name: 'reason', ...pos },
-                    value: { type: 'Literal', value: 'my reason', ...pos },
-                    ...pos,
-                  },
-                ],
-                ...pos,
-              },
-            ],
+            description: 'Foo\nbar!',
+            deprecated: 'my reason',
           },
           '  ',
         ),
@@ -106,21 +72,7 @@ describe('generate/comments', () => {
       expect(
         generateDescriptionComment(
           {
-            decorators: [
-              {
-                type: 'Decorator',
-                callee: { type: 'Identifier', name: 'deprecated', ...pos },
-                arguments: [
-                  {
-                    type: 'Argument',
-                    key: { type: 'Identifier', name: 'reason', ...pos },
-                    value: { type: 'Literal', value: 'my reason', ...pos },
-                    ...pos,
-                  },
-                ],
-                ...pos,
-              },
-            ],
+            deprecated: 'my reason',
           },
           '  ',
         ),
@@ -131,21 +83,7 @@ describe('generate/comments', () => {
       expect(
         generateDescriptionComment(
           {
-            decorators: [
-              {
-                type: 'Decorator',
-                callee: { type: 'Identifier', name: 'deprecated', ...pos },
-                arguments: [
-                  {
-                    type: 'Argument',
-                    key: { type: 'Identifier', name: 'reason', ...pos },
-                    value: { type: 'Literal', value: 'my\nreason', ...pos },
-                    ...pos,
-                  },
-                ],
-                ...pos,
-              },
-            ],
+            deprecated: 'my\nreason',
           },
           '  ',
         ),

@@ -1,10 +1,8 @@
 import { BuiltInScalar } from './scalar';
 
 export const BooleanScalar: BuiltInScalar<'Boolean'> = {
-  type: 'BuiltInScalar',
-  id: { type: 'Identifier', name: 'Boolean' },
-  description: {
-    type: 'Description',
-    value: 'The `Boolean` scalar type represents `true` or `false`.',
-  },
+  type: 'Scalar',
+  name: 'Boolean',
+  description: 'The `Boolean` scalar type represents `true` or `false`.',
+  builtIn: true,
 };

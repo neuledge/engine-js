@@ -115,14 +115,14 @@ const parseFieldNode = (
   const nullSign = cursor.maybeConsumePunctuation('?');
 
   cursor.maybeConsumePunctuation(':');
-  const valueType = parseTypeNode(cursor);
+  const as = parseTypeNode(cursor);
   const index = parseIndex(cursor);
 
   return {
     type: 'Field',
     ...base,
     end: cursor.end,
-    valueType,
+    as,
     index,
     nullable: !!nullSign,
   };

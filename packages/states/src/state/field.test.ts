@@ -1,13 +1,34 @@
+import { NumberScalar, StringScalar } from '@/built-in';
+import { StatesContext } from '@/context';
 import { FieldNode, parseStates, StateNode } from '@neuledge/states-parser';
 import { parseStateFields } from './field';
 import { State } from './state';
 
 /* eslint-disable max-lines-per-function */
 
+const generateState = (source: string) => {
+  const ctx = new StatesContext();
+  const doc = parseStates(source);
+
+  const state: State = {
+    type: 'State',
+    node: doc.body[0] as StateNode,
+    name: 'User',
+    fields: {},
+    primaryKey: {
+      fields: {},
+      unique: true,
+    },
+    indexes: [],
+  };
+
+  return { ctx, state, nodes: state.node.fields as FieldNode[] };
+};
+
 describe('state/field', () => {
   describe('parseStateFields()', () => {
     it('should parse fields', () => {
-      const doc = parseStates(`
+      const { ctx, state, nodes } = generateState(`
         state User {
             id: Number = 1
             name?: String = 2
@@ -19,44 +40,54 @@ describe('state/field', () => {
         }
       `);
 
-      const state: State = {
-        node: doc.body[0] as StateNode,
-        name: 'User',
-        fields: {},
-        primaryKey: {
-          fields: {},
-          unique: true,
-        },
-        indexes: [],
-      };
-
-      const fields = parseStateFields(state, state.node.fields as FieldNode[]);
+      const fields = parseStateFields(ctx, state, nodes);
 
       expect(fields).toEqual({
         id: {
-          node: state.node.fields[0],
+          type: 'ScalarField',
+          node: nodes[0],
           name: 'id',
           nullable: false,
           index: 1,
+          as: {
+            type: 'EntityExpression',
+            node: nodes[0].as,
+            entity: NumberScalar,
+            list: false,
+          },
         },
         name: {
-          node: state.node.fields[1],
+          type: 'ScalarField',
+          node: nodes[1],
           name: 'name',
           nullable: true,
           index: 2,
+          as: {
+            type: 'EntityExpression',
+            node: nodes[1].as,
+            entity: StringScalar,
+            list: false,
+          },
         },
         email: {
-          node: state.node.fields[2],
+          type: 'ScalarField',
+          node: nodes[2],
           name: 'email',
           description: 'The user email',
           nullable: false,
           index: 3,
+          as: {
+            type: 'EntityExpression',
+            node: nodes[2].as,
+            entity: StringScalar,
+            list: false,
+          },
         },
       });
     });
 
     it('should parse fields with simple decorators', () => {
-      const doc = parseStates(`
+      const { ctx, state, nodes } = generateState(`
             state User {
                 @id id: Number = 1
                 @deprecated name?: String = 2
@@ -64,38 +95,48 @@ describe('state/field', () => {
             }
         `);
 
-      const state: State = {
-        node: doc.body[0] as StateNode,
-        name: 'User',
-        fields: {},
-        primaryKey: {
-          fields: {},
-          unique: true,
-        },
-        indexes: [],
-      };
-
-      const fields = parseStateFields(state, state.node.fields as FieldNode[]);
+      const fields = parseStateFields(ctx, state, nodes);
 
       expect(fields).toEqual({
         id: {
-          node: state.node.fields[0],
+          type: 'ScalarField',
+          node: nodes[0],
           name: 'id',
           nullable: false,
           index: 1,
+          as: {
+            type: 'EntityExpression',
+            node: nodes[0].as,
+            entity: NumberScalar,
+            list: false,
+          },
         },
         name: {
-          node: state.node.fields[1],
+          type: 'ScalarField',
+          node: nodes[1],
           name: 'name',
           nullable: true,
           deprecated: true,
           index: 2,
+          as: {
+            type: 'EntityExpression',
+            node: nodes[1].as,
+            entity: StringScalar,
+            list: false,
+          },
         },
         email: {
-          node: state.node.fields[2],
+          type: 'ScalarField',
+          node: nodes[2],
           name: 'email',
           nullable: false,
           index: 3,
+          as: {
+            type: 'EntityExpression',
+            node: nodes[2].as,
+            entity: StringScalar,
+            list: false,
+          },
         },
       });
 
@@ -107,7 +148,7 @@ describe('state/field', () => {
     });
 
     it('should parse fields with complex decorators', () => {
-      const doc = parseStates(`
+      const { ctx, state, nodes } = generateState(`
                 state User {
                     @id(direction: "desc") id: Number = 1
                     @deprecated(reason: "Use name instead") name?: String = 2
@@ -115,38 +156,48 @@ describe('state/field', () => {
                 }
             `);
 
-      const state: State = {
-        node: doc.body[0] as StateNode,
-        name: 'User',
-        fields: {},
-        primaryKey: {
-          fields: {},
-          unique: true,
-        },
-        indexes: [],
-      };
-
-      const fields = parseStateFields(state, state.node.fields as FieldNode[]);
+      const fields = parseStateFields(ctx, state, nodes);
 
       expect(fields).toEqual({
         id: {
-          node: state.node.fields[0],
+          type: 'ScalarField',
+          node: nodes[0],
           name: 'id',
           nullable: false,
           index: 1,
+          as: {
+            type: 'EntityExpression',
+            node: nodes[0].as,
+            entity: NumberScalar,
+            list: false,
+          },
         },
         name: {
-          node: state.node.fields[1],
+          type: 'ScalarField',
+          node: nodes[1],
           name: 'name',
           nullable: true,
           deprecated: 'Use name instead',
           index: 2,
+          as: {
+            type: 'EntityExpression',
+            node: nodes[1].as,
+            entity: StringScalar,
+            list: false,
+          },
         },
         email: {
-          node: state.node.fields[2],
+          type: 'ScalarField',
+          node: nodes[2],
           name: 'email',
           nullable: false,
           index: 3,
+          as: {
+            type: 'EntityExpression',
+            node: nodes[2].as,
+            entity: StringScalar,
+            list: false,
+          },
         },
       });
 
@@ -163,7 +214,7 @@ describe('state/field', () => {
     });
 
     it('should parse fields with index decorators', () => {
-      const doc = parseStates(`
+      const { ctx, state, nodes } = generateState(`
         state User {
           @id(direction: "desc") id: Number = 1
           @index name?: String = 2
@@ -171,37 +222,47 @@ describe('state/field', () => {
         }
       `);
 
-      const state: State = {
-        node: doc.body[0] as StateNode,
-        name: 'User',
-        fields: {},
-        primaryKey: {
-          fields: {},
-          unique: true,
-        },
-        indexes: [],
-      };
-
-      const fields = parseStateFields(state, state.node.fields as FieldNode[]);
+      const fields = parseStateFields(ctx, state, nodes);
 
       expect(fields).toEqual({
         id: {
-          node: state.node.fields[0],
+          type: 'ScalarField',
+          node: nodes[0],
           name: 'id',
           nullable: false,
           index: 1,
+          as: {
+            type: 'EntityExpression',
+            node: nodes[0].as,
+            entity: NumberScalar,
+            list: false,
+          },
         },
         name: {
-          node: state.node.fields[1],
+          type: 'ScalarField',
+          node: nodes[1],
           name: 'name',
           nullable: true,
           index: 2,
+          as: {
+            type: 'EntityExpression',
+            node: nodes[1].as,
+            entity: StringScalar,
+            list: false,
+          },
         },
         email: {
-          node: state.node.fields[2],
+          type: 'ScalarField',
+          node: nodes[2],
           name: 'email',
           nullable: false,
           index: 3,
+          as: {
+            type: 'EntityExpression',
+            node: nodes[2].as,
+            entity: StringScalar,
+            list: false,
+          },
         },
       });
 
@@ -221,7 +282,7 @@ describe('state/field', () => {
     });
 
     it('should throw on invalid decorator field', () => {
-      const doc = parseStates(`
+      const { ctx, state, nodes } = generateState(`
             state User {
                 @id id: Number = 1
                 @index(unique: 3) name?: String = 2
@@ -229,20 +290,7 @@ describe('state/field', () => {
             }
         `);
 
-      const state: State = {
-        node: doc.body[0] as StateNode,
-        name: 'User',
-        fields: {},
-        primaryKey: {
-          fields: {},
-          unique: true,
-        },
-        indexes: [],
-      };
-
-      expect(() =>
-        parseStateFields(state, state.node.fields as FieldNode[]),
-      ).toThrow(
+      expect(() => parseStateFields(ctx, state, nodes)).toThrow(
         "Invalid '@index()' decorator on argument 'unique': Expected boolean, received number",
       );
     });

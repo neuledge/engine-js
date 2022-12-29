@@ -1,6 +1,8 @@
 import { Scalar } from '@/scalar';
 
-export const NumberScalar: Scalar<number> = {
+export type NumberScalar = number;
+
+export const NumberScalar: Scalar<NumberScalar> = {
   key: 'Number',
   encode: (value) => value,
 };

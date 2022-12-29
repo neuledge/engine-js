@@ -9,7 +9,7 @@ export interface ParameterNode extends AbstractNode<'Parameter'> {
   key: IdentifierNode;
   description?: DescriptionNode;
   decorations: DecoratorNode[];
-  parameterType: TypeNode;
+  as: TypeNode;
   nullable: boolean;
 }
 
@@ -35,7 +35,7 @@ const parseParameterNode = (cursor: TokenCursor): ParameterNode => {
   const nullable = !!cursor.maybeConsumePunctuation('?');
 
   cursor.consumePunctuation(':');
-  const valueType = parseTypeNode(cursor);
+  const as = parseTypeNode(cursor);
 
   return {
     type: 'Parameter',
@@ -43,7 +43,7 @@ const parseParameterNode = (cursor: TokenCursor): ParameterNode => {
     start,
     end: cursor.end,
     key,
-    parameterType: valueType,
+    as,
     nullable,
     decorations: [],
   };

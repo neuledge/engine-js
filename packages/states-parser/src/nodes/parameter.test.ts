@@ -32,7 +32,7 @@ describe('nodes/parameter', () => {
         {
           type: 'Parameter',
           key: { type: 'Identifier', name: 'username' },
-          parameterType: {
+          as: {
             type: 'TypeExpression',
             identifier: { type: 'Identifier', name: 'Slug' },
           },
@@ -41,7 +41,7 @@ describe('nodes/parameter', () => {
         {
           type: 'Parameter',
           key: { type: 'Identifier', name: 'firstName' },
-          parameterType: {
+          as: {
             type: 'TypeExpression',
             identifier: { type: 'Identifier', name: 'FirstName' },
           },
@@ -50,7 +50,7 @@ describe('nodes/parameter', () => {
         {
           type: 'Parameter',
           key: { type: 'Identifier', name: 'lastName' },
-          parameterType: {
+          as: {
             type: 'TypeExpression',
             identifier: { type: 'Identifier', name: 'LastName' },
           },
@@ -59,7 +59,7 @@ describe('nodes/parameter', () => {
         {
           type: 'Parameter',
           key: { type: 'Identifier', name: 'email' },
-          parameterType: {
+          as: {
             type: 'TypeExpression',
             identifier: { type: 'Identifier', name: 'Email' },
           },
@@ -68,7 +68,7 @@ describe('nodes/parameter', () => {
         {
           type: 'Parameter',
           key: { type: 'Identifier', name: 'manager' },
-          parameterType: {
+          as: {
             type: 'TypeExpression',
             identifier: { type: 'Identifier', name: 'User' },
             list: true,
@@ -93,7 +93,7 @@ describe('nodes/parameter', () => {
         {
           type: 'Parameter',
           key: { type: 'Identifier', name: 'username' },
-          parameterType: {
+          as: {
             type: 'TypeExpression',
             identifier: { type: 'Identifier', name: 'Slug' },
           },
@@ -102,7 +102,7 @@ describe('nodes/parameter', () => {
         {
           type: 'Parameter',
           key: { type: 'Identifier', name: 'firstName' },
-          parameterType: {
+          as: {
             type: 'TypeExpression',
             identifier: { type: 'Identifier', name: 'FirstName' },
           },
@@ -111,7 +111,7 @@ describe('nodes/parameter', () => {
         {
           type: 'Parameter',
           key: { type: 'Identifier', name: 'lastName' },
-          parameterType: {
+          as: {
             type: 'TypeExpression',
             identifier: { type: 'Identifier', name: 'LastName' },
           },
@@ -120,7 +120,7 @@ describe('nodes/parameter', () => {
         {
           type: 'Parameter',
           key: { type: 'Identifier', name: 'email' },
-          parameterType: {
+          as: {
             type: 'TypeExpression',
             identifier: { type: 'Identifier', name: 'Email' },
           },
@@ -129,7 +129,7 @@ describe('nodes/parameter', () => {
         {
           type: 'Parameter',
           key: { type: 'Identifier', name: 'manager' },
-          parameterType: {
+          as: {
             type: 'TypeExpression',
             identifier: { type: 'Identifier', name: 'User' },
             list: true,

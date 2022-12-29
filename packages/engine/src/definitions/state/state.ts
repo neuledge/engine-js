@@ -1,4 +1,4 @@
-import { Defer, Deferred } from './defer';
+import { Defer, Deferred } from '../defer';
 import { StateDefintionScalar } from './scalar';
 import { SortDefinition, SortDefinitionKey } from './sort';
 import { StateDefinitionWhere } from './where';

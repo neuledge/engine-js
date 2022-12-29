@@ -12,30 +12,11 @@ export const parseMaybeArgumentNodes = <Value>(
   parseValue: (cursor: TokenCursor) => Value,
   allowImplicit?: boolean,
 ): ArgumentNode<Value>[] => {
-  const { index: position } = cursor;
-  if (
-    !cursor.maybeConsumePunctuation('(') ||
-    cursor.maybeConsumePunctuation(')')
-  ) {
+  if (!cursor.pickPunctuation('(')) {
     return [];
   }
 
-  try {
-    const args: ArgumentNode<Value>[] = [];
-    do {
-      if (cursor.maybeConsumePunctuation(')')) {
-        return args;
-      }
-
-      args.push(parseArgumentNode(cursor, parseValue, allowImplicit));
-    } while (cursor.maybeConsumePunctuation(','));
-
-    cursor.consumePunctuation(')');
-    return args;
-  } catch (error) {
-    cursor.index = position;
-    throw error;
-  }
+  return parseArgumentNodes(cursor, parseValue, allowImplicit);
 };
 
 export const parseArgumentNodes = <Value>(

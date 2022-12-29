@@ -1,11 +1,9 @@
 import { BuiltInScalar } from './scalar';
 
 export const StringScalar: BuiltInScalar<'String'> = {
-  type: 'BuiltInScalar',
-  id: { type: 'Identifier', name: 'String' },
-  description: {
-    type: 'Description',
-    value:
-      'The `String` scalar type represents textual data, represented as UTF-8 character sequences.',
-  },
+  type: 'Scalar',
+  name: 'String',
+  description:
+    'The `String` scalar type represents textual data, represented as UTF-8 character sequences.',
+  builtIn: true,
 };

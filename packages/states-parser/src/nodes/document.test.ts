@@ -107,7 +107,7 @@ describe('nodes/document', () => {
               {
                 type: 'Parameter',
                 key: { type: 'Identifier', name: 'name' },
-                parameterType: {
+                as: {
                   type: 'TypeExpression',
                   identifier: { type: 'Identifier', name: 'String' },
                 },
@@ -115,7 +115,7 @@ describe('nodes/document', () => {
               {
                 type: 'Parameter',
                 key: { type: 'Identifier', name: 'description' },
-                parameterType: {
+                as: {
                   type: 'TypeExpression',
                   identifier: { type: 'Identifier', name: 'String' },
                 },

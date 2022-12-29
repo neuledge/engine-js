@@ -1,3 +1,4 @@
+import { StatesContext } from '@/context';
 import { FieldNode, parseStates, StateNode } from '@neuledge/states-parser';
 import { parseState } from './state';
 
@@ -24,36 +25,18 @@ describe('state/state', () => {
       const stateNode = doc.body[0] as StateNode;
 
       const state = parseState(
+        new StatesContext(),
         doc.body[0] as StateNode,
         stateNode.fields as FieldNode[],
       );
 
       expect(state).toEqual({
+        type: 'State',
         node: stateNode,
         name: 'User',
         description: 'The user state',
         deprecated: undefined,
-        fields: {
-          id: {
-            node: stateNode.fields[0],
-            name: 'id',
-            nullable: false,
-            index: 1,
-          },
-          name: {
-            node: stateNode.fields[1],
-            name: 'name',
-            nullable: true,
-            index: 2,
-          },
-          email: {
-            node: stateNode.fields[2],
-            name: 'email',
-            description: 'The user email',
-            nullable: false,
-            index: 3,
-          },
-        },
+        fields: state.fields,
         primaryKey: {
           fields: { id: 'asc' },
           unique: true,
@@ -80,35 +63,18 @@ describe('state/state', () => {
       const stateNode = doc.body[0] as StateNode;
 
       const state = parseState(
+        new StatesContext(),
         doc.body[0] as StateNode,
         stateNode.fields as FieldNode[],
       );
 
       expect(state).toEqual({
+        type: 'State',
         node: stateNode,
         name: 'User',
         description: undefined,
         deprecated: true,
-        fields: {
-          id: {
-            node: stateNode.fields[0],
-            name: 'id',
-            nullable: false,
-            index: 1,
-          },
-          name: {
-            node: stateNode.fields[1],
-            name: 'name',
-            nullable: true,
-            index: 2,
-          },
-          email: {
-            node: stateNode.fields[2],
-            name: 'email',
-            nullable: false,
-            index: 3,
-          },
-        },
+        fields: state.fields,
         primaryKey: {
           fields: { id: 'asc' },
           unique: true,
@@ -137,35 +103,18 @@ describe('state/state', () => {
       const stateNode = doc.body[0] as StateNode;
 
       const state = parseState(
+        new StatesContext(),
         doc.body[0] as StateNode,
         stateNode.fields as FieldNode[],
       );
 
       expect(state).toEqual({
+        type: 'State',
         node: stateNode,
         name: 'User',
         description: undefined,
         deprecated: 'Use UserV2',
-        fields: {
-          id: {
-            node: stateNode.fields[0],
-            name: 'id',
-            nullable: false,
-            index: 1,
-          },
-          name: {
-            node: stateNode.fields[1],
-            name: 'name',
-            nullable: true,
-            index: 2,
-          },
-          email: {
-            node: stateNode.fields[2],
-            name: 'email',
-            nullable: false,
-            index: 3,
-          },
-        },
+        fields: state.fields,
         primaryKey: {
           fields: { id: 'asc' },
           unique: true,
@@ -199,7 +148,11 @@ describe('state/state', () => {
       const stateNode = doc.body[0] as StateNode;
 
       expect(() =>
-        parseState(doc.body[0] as StateNode, stateNode.fields as FieldNode[]),
+        parseState(
+          new StatesContext(),
+          doc.body[0] as StateNode,
+          stateNode.fields as FieldNode[],
+        ),
       ).toThrow('Field foo does not exist');
     });
 
@@ -216,7 +169,11 @@ describe('state/state', () => {
       const stateNode = doc.body[0] as StateNode;
 
       expect(() =>
-        parseState(doc.body[0] as StateNode, stateNode.fields as FieldNode[]),
+        parseState(
+          new StatesContext(),
+          doc.body[0] as StateNode,
+          stateNode.fields as FieldNode[],
+        ),
       ).toThrow(
         "Invalid '@index()' decorator on argument 'fields': Invalid input",
       );

@@ -1,14 +1,16 @@
-import { FieldNode, StateNode } from '@neuledge/states';
+import { State } from '@neuledge/states';
 import { generateDescriptionComment } from '../comments';
-import { generateStateFields, generateStateProjectionType } from './fields';
-import { generateStateStaticIndexes } from './indexes';
+import { generateStateFields, generateStateScalars } from './fields';
+import { generateStateIdType, generateStateStaticIndexes } from './indexes';
 
-export const generateState = (state: StateNode, fields: FieldNode[]): string =>
+export const generateState = (state: State): string =>
   generateDescriptionComment(state, '') +
-  `@$.State<'${state.id.name}', ${state.id.name}>()\n` +
-  `export class ${state.id.name} {\n` +
-  `  static $name = '${state.id.name}' as const;\n` +
-  `  static $projection: ${generateStateProjectionType(fields, '  ')};\n` +
-  `  ${generateStateStaticIndexes(state, fields, '  ')}\n` +
-  `${generateStateFields(fields, '  ')}\n` +
-  `}`;
+  `@$.State<'${state.name}', ${state.name}>()\n` +
+  `export class ${state.name} {\n` +
+  `  static $name = '${state.name}' as const;\n` +
+  `  static $id = ${generateStateIdType(state)} as const;\n` +
+  `  static $scalars = ${generateStateScalars(state, '  ')};\n` +
+  `  ${generateStateStaticIndexes(state, '  ')}\n` +
+  `${generateStateFields(state, '  ')}\n` +
+  `}\n` +
+  `export type $${state.name} = $.Entity<typeof ${state.name}>;`;

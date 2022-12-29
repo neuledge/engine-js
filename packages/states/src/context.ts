@@ -7,19 +7,19 @@ import {
   MigrationNode,
   MutationNode,
   ParsingError,
-  ScalarNode,
   StateFieldNode,
   StateNode,
   STATE_FIELD_INDEX_MAX_INPUT_VALUE,
   TypeNode,
   parseStates,
 } from '@neuledge/states-parser';
-import { BuiltInScalar, builtInScalars } from './built-in';
+import { builtInScalars } from './built-in';
+import { Either, parseEither } from './either';
+import { Entity } from './entity';
+import { parseState, State } from './state';
 
 export class StatesContext {
-  private readonly entityMap: Partial<
-    Record<string, EntityNode | BuiltInScalar>
-  > = {
+  private readonly entityMap: Partial<Record<string, Entity>> = {
     ...builtInScalars,
   };
   private readonly fieldsMap: Partial<Record<string, FieldNode[]>> = {};
@@ -33,33 +33,33 @@ export class StatesContext {
 
   // iterators
 
-  *scalars(): Generator<ScalarNode, void, unknown> {
-    yield* this.entities('Scalar');
-  }
+  // *scalars(): Generator<ScalarNode, void, unknown> {
+  //   yield* this.entities('Scalar');
+  // }
 
-  *states(): Generator<StateNode, void, unknown> {
+  *states(): Generator<State, void, unknown> {
     yield* this.entities('State');
   }
 
-  *eithers(): Generator<EitherNode, void, unknown> {
-    yield* this.entities('Either');
-  }
+  // *eithers(): Generator<EitherNode, void, unknown> {
+  //   yield* this.entities('Either');
+  // }
 
-  *entities<T extends EntityNode['type']>(
+  *entities<T extends Entity['type']>(
     type?: T | null,
-  ): Generator<EntityNode & { type: T }, void, unknown> {
+  ): Generator<Entity & { type: T }, void, unknown> {
     for (const key in this.entityMap) {
       const entity = this.entityMap[key];
 
       if (type == null || entity?.type === type) {
-        yield entity as EntityNode & { type: T };
+        yield entity as Entity & { type: T };
       }
     }
   }
 
   // getters
 
-  entity(name: string): EntityNode | BuiltInScalar | undefined {
+  entity(name: string): Entity | undefined {
     // eslint-disable-next-line @typescript-eslint/no-this-alias, unicorn/no-this-assignment
     let self = this;
 
@@ -195,7 +195,9 @@ export class StatesContext {
       );
     }
 
-    this.entityMap[name] = node;
+    const ref: Pick<Entity, 'type' | 'node'> = { type: node.type, node };
+
+    this.entityMap[name] = ref as Entity;
   }
 
   private registerMutation(node: MutationNode): void {
@@ -261,13 +263,26 @@ export class StatesContext {
     }
   }
 
-  private processState(state: StateNode): FieldNode[] | undefined {
+  private processState(state: StateNode): void {
     if (state.id.name in this.fieldsMap) {
-      return this.fieldsMap[state.id.name];
+      return;
     }
 
+    // FIXME simplify processing and verify inner references using the `parseState` function
+
     this.fieldsMap[state.id.name] = undefined;
-    const fieldMap = this.processStateFrom(state);
+    const fields = this.queryStateFields(state);
+
+    this.fieldsMap[state.id.name] = fields;
+
+    Object.assign(
+      this.entityMap[state.id.name] as State,
+      parseState(this, state, fields),
+    );
+  }
+
+  private queryStateFields(state: StateNode): FieldNode[] {
+    const fieldMap = this.queryStateFrom(state);
 
     const sortedFields = [...state.fields].sort(
       (a, b) =>
@@ -275,7 +290,7 @@ export class StatesContext {
     );
 
     for (const node of sortedFields) {
-      const field = this.processStateField(node);
+      const field = this.queryStateField(node);
       if (!field) continue;
 
       fieldMap[node.key.name] = field;
@@ -293,11 +308,10 @@ export class StatesContext {
       }
     }
 
-    this.fieldsMap[state.id.name] = fields;
     return fields;
   }
 
-  private processStateFrom(state: StateNode): Record<string, FieldNode> {
+  private queryStateFrom(state: StateNode): Record<string, FieldNode> {
     const fieldMap: Record<string, FieldNode> = {};
     if (!state.from) return fieldMap;
 
@@ -309,7 +323,9 @@ export class StatesContext {
       );
     }
 
-    const fromFields = this.processState(fromState);
+    this.processState(fromState.node);
+
+    const fromFields = this.fieldsMap[fromState.node.id.name];
     if (!fromFields) {
       throw new ParsingError(state.from, `Circular dependency detected`);
     }
@@ -340,10 +356,10 @@ export class StatesContext {
     return fieldMap;
   }
 
-  private processStateField(node: StateFieldNode): FieldNode | null {
+  private queryStateField(node: StateFieldNode): FieldNode | null {
     switch (node.type) {
       case 'Field': {
-        this.processType(node.valueType);
+        this.processType(node.as);
         return node;
       }
 
@@ -356,13 +372,15 @@ export class StatesContext {
           );
         }
 
-        let field = refState.fields.find(
+        let field = refState.node.fields.find(
           (field): field is FieldNode =>
             field.key.name === field.key.name && field.type === 'Field',
         );
 
         if (!field) {
-          const refFields = this.processState(refState);
+          this.processState(refState.node);
+
+          const refFields = this.fieldsMap[refState.node.id.name];
           if (!refFields) {
             throw new ParsingError(node.state, `Circular dependency detected`);
           }
@@ -386,18 +404,10 @@ export class StatesContext {
   }
 
   private processEither(node: EitherNode): void {
-    for (const identifier of node.states) {
-      const state = this.entity(identifier.name);
-
-      if (state?.type !== 'State') {
-        throw new ParsingError(
-          identifier,
-          `Unknown state name '${identifier.name}'`,
-        );
-      }
-
-      this.processState(state);
-    }
+    Object.assign(
+      this.entityMap[node.id.name] as Either,
+      parseEither(this, node),
+    );
   }
 
   private processType(node: TypeNode): void {

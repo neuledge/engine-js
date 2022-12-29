@@ -1,7 +1,7 @@
 import fs from 'node:fs/promises';
 import { resolve } from 'node:path';
 import fg from 'fast-glob';
-import { States } from '@neuledge/states';
+import { StatesContext } from '@neuledge/states';
 import { generate } from '@neuledge/typescript-states';
 import pLimit from 'p-limit';
 
@@ -20,21 +20,21 @@ export const build = async (
   const inputs = await Promise.all(
     resolvedFiles.map((filepath) =>
       asyncLimit(async () => ({
-        content: await fs.readFile(filepath, { encoding: 'utf8' }),
+        source: await fs.readFile(filepath, { encoding: 'utf8' }),
         filepath,
       })),
     ),
   );
 
-  const states = new States();
-  await states.load(inputs);
+  const ctx = new StatesContext();
+  await ctx.load(inputs);
 
   const outputFile = resolve(
     options.basepath ?? '',
     options.output || 'states.ts',
   );
 
-  await fs.writeFile(outputFile, generate(states));
+  await fs.writeFile(outputFile, generate(ctx));
 };
 
 const resolveFiles = async (

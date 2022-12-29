@@ -1,28 +1,47 @@
-import { EntityNode, States } from '@neuledge/states';
+import { Entity, StatesContext } from '@neuledge/states';
+import { generateEither } from './either';
+import { generateImports } from './imports';
 import { generateState } from './state';
 
+type GeneratedCode = {
+  source: string;
+  order: number;
+};
+
 export const generate = (
-  states: States,
-  entities: Iterable<EntityNode> = states.entities(),
+  context: StatesContext,
+  entities: Iterable<Entity> = context.entities(),
 ): string => {
-  const res: string[] = [];
+  const res: GeneratedCode[] = [{ source: generateImports(), order: 0 }];
 
-  for (const node of entities) {
-    switch (node.type) {
+  for (const entity of entities) {
+    switch (entity.type) {
+      case 'Scalar':
+        if (entity.builtIn) break;
+
+        // TODO generate scalars code
+        // res.push({ source: generateScalar(entity), order: 1 });
+        break;
+
       case 'State': {
-        const fields = states.fields(node.id.name);
-        if (!fields) {
-          throw new Error(`Internal error on parsing state '${node.id.name}'`);
-        }
-
-        res.push(generateState(node, fields));
+        res.push({ source: generateState(entity), order: 2 });
         break;
       }
 
+      case 'Either':
+        res.push({ source: generateEither(entity), order: 3 });
+        break;
+
       default:
-        throw new TypeError(`Unsupported entity type '${node.type}'`);
+        // @ts-expect-error `entity.type` is never
+        throw new TypeError(`Unsupported entity type '${entity.type}'`);
     }
   }
 
-  return res.join('\n\n') + '\n';
+  return (
+    res
+      .sort((a, b) => a.order - b.order)
+      .map(({ source }) => source)
+      .join('\n\n') + '\n'
+  );
 };

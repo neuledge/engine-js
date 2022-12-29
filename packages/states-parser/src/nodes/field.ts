@@ -9,7 +9,7 @@ export interface FieldNode extends AbstractNode<'Field'> {
   key: IdentifierNode;
   description?: DescriptionNode;
   decorators: DecoratorNode[];
-  valueType: TypeNode;
+  as: TypeNode;
   index: LiteralNode<number>;
   nullable: boolean;
 }

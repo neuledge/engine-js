@@ -26,21 +26,30 @@ describe('build', () => {
       expect(writeFile).toHaveBeenCalledTimes(1);
       expect(writeFile).toHaveBeenCalledWith(
         '/states.ts',
-        `@$.State
+        `import { $ } from '@neuledge/engine';
+import {
+  NumberScalar as Number,
+  StringScalar as String,
+  DateTimeScalar as DateTime,
+} from '@neuledge/scalars';
+
+@$.State<'Foo', Foo>()
 export class Foo {
   static $name = 'Foo' as const;
-  static $projection: {
-    id?: boolean;
+  static $id = ['+id'] as const;
+  static $scalars = {
+    id: { type: Number, index: 1 },
   };
-  static $find: {
-    id?: number;
-  };
+  static $find: $.Where<{
+    id?: $.WhereNumber<Number>;
+  }>;
   static $unique: {
-    id: number;
+    id: Number;
   };
 
-  id!: number;
+  id!: Number;
 }
+export type $Foo = $.Entity<typeof Foo>;
 `,
       );
     });

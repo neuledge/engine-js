@@ -1,6 +1,8 @@
 import { createScalarGeneratorScalar } from '@/generator';
 import { Scalar } from '@/scalar';
 
+export type StringScalar = string;
+
 export const StringScalar = createScalarGeneratorScalar(
   ({
     min,
@@ -8,7 +10,7 @@ export const StringScalar = createScalarGeneratorScalar(
   }: {
     min?: number | null;
     max?: number | null;
-  }): Scalar<string> => ({
+  }): Scalar<StringScalar> => ({
     key:
       min == null
         ? max == null

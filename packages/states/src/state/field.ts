@@ -1,32 +1,51 @@
+import { StatesContext } from '@/context';
 import { applyDecorators, createDecorator, Decorators } from '@/decorators';
+import { parseType, Type } from '@/type';
 import { FieldNode } from '@neuledge/states-parser';
 import { z } from 'zod';
 import { State } from './state';
 
-export interface StateField {
+export type StateField = ScalarField | RelationField;
+
+export type ScalarField = AbstractStateField<'ScalarField'>;
+export type RelationField = AbstractStateField<'RelationField'>;
+
+interface AbstractStateField<T extends string> {
+  type: T;
   node: FieldNode;
   name: string;
   nullable?: boolean;
   index: number;
   description?: string;
   deprecated?: boolean | string;
+  as: Type;
 }
 
 export const parseStateFields = (
+  ctx: StatesContext,
   state: State,
   nodes: FieldNode[],
 ): Record<string, StateField> =>
   Object.fromEntries(
-    nodes.map((node) => [node.key.name, parseStateField(state, node)]),
+    nodes.map((node) => [node.key.name, parseStateField(ctx, state, node)]),
   );
 
-const parseStateField = (state: State, node: FieldNode): StateField => {
+const parseStateField = (
+  ctx: StatesContext,
+  state: State,
+  node: FieldNode,
+): StateField => {
   const field: StateField = {
+    type:
+      node.as.type !== 'TypeExpression' || !node.as.list
+        ? 'ScalarField'
+        : 'RelationField',
     node,
     name: node.key.name,
     nullable: node.nullable,
     index: node.index.value,
     description: node.description?.value,
+    as: parseType(ctx, node.as),
   };
 
   applyDecorators({ state, field }, node.decorators, decorators);

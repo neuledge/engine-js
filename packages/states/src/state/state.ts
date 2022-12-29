@@ -1,3 +1,4 @@
+import { StatesContext } from '@/context';
 import { applyDecorators, createDecorator, Decorators } from '@/decorators';
 import { FieldNode, ParsingError, StateNode } from '@neuledge/states-parser';
 import { z } from 'zod';
@@ -5,6 +6,7 @@ import { parseStateFields, StateField } from './field';
 import { StateIndex, StatePrimaryKey } from './state-index';
 
 export interface State {
+  type: 'State';
   node: StateNode;
   name: string;
   description?: string;
@@ -14,13 +16,18 @@ export interface State {
   indexes: StateIndex[];
 }
 
-export const parseState = (node: StateNode, fields: FieldNode[]): State => {
+export const parseState = (
+  ctx: StatesContext,
+  node: StateNode,
+  fields: FieldNode[],
+): State => {
   const primaryKey: StatePrimaryKey = {
     fields: {},
     unique: true,
   };
 
   const state: State = {
+    type: 'State',
     node,
     name: node.id.name,
     description: node.description?.value,
@@ -29,7 +36,7 @@ export const parseState = (node: StateNode, fields: FieldNode[]): State => {
     indexes: [primaryKey],
   };
 
-  state.fields = parseStateFields(state, fields);
+  state.fields = parseStateFields(ctx, state, fields);
 
   applyDecorators(state, node.decorators, decorators);
 

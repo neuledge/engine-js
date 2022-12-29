@@ -1,6 +1,8 @@
 import { Scalar } from '@/scalar';
 
-export const BooleanScalar: Scalar<boolean> = {
+export type BooleanScalar = boolean;
+
+export const BooleanScalar: Scalar<BooleanScalar> = {
   key: 'Boolean',
   encode: (value) => value,
 };

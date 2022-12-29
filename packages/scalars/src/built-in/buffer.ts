@@ -1,6 +1,8 @@
 import { Scalar } from '@/scalar';
 
-export const BufferScalar: Scalar<Buffer> = {
+export type BufferScalar = Buffer;
+
+export const BufferScalar: Scalar<BufferScalar> = {
   key: 'Buffer',
   encode: (value) => value,
 };

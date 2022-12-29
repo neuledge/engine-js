@@ -85,7 +85,7 @@ describe('nodes/mutation', () => {
               type: 'Identifier',
               name: 'email',
             },
-            parameterType: {
+            as: {
               type: 'TypeExpression',
               identifier: {
                 type: 'Identifier',
@@ -194,7 +194,7 @@ describe('nodes/mutation', () => {
               type: 'Identifier',
               name: 'reason',
             },
-            parameterType: {
+            as: {
               type: 'TypeExpression',
               identifier: {
                 type: 'Identifier',

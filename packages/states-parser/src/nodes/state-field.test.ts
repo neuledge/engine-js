@@ -23,7 +23,7 @@ describe('nodes/state-field', () => {
           key: { end: 4, name: 'id', start: 2, type: 'Identifier' },
           start: 2,
           end: 25,
-          valueType: {
+          as: {
             type: 'TypeExpression',
             start: 6,
             end: 21,

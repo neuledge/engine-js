@@ -1,90 +1,96 @@
-import { FieldNode, StateNode } from '@neuledge/states';
-import { generateTypeofType } from '../type';
+import { State, StateField, StateIndex } from '@neuledge/states';
+import { generateTypeofType, generateWhereType } from '../type';
 
-export interface StateIndex {
-  fields: { field: FieldNode; direction: 1 | -1 }[];
-  unique?: boolean;
-  primary?: boolean;
-}
-
-// export const parseStateIndexes = (
-//   state: StateNode,
-//   fields: FieldNode[],
-// ): StateIndex[] => {
-//   const primary: StateIndex = {
-//     fields: fields
-//       .filter((item) =>
-//         item.decorators.some((item) => item.callee.name === 'id'),
-//       )
-//       .map((field) => ({ field, direction: 1 })),
-//     primary: true,
-//   };
-//
-//   const indexes = state.decorators
-//     .filter((item) => item.callee.name === 'index')
-//     .map((item): StateIndex => {
-//       const fieldsArg = item.arguments.find((arg) => arg.key.name === 'fields');
-//
-//       if (!fieldsArg) {
-//         throw new ParsingError(item, "Missing 'fields' argument");
-//       }
-//
-//       const keys = fieldsArg.value.value;
-//       if (!Array.isArray(keys)) {
-//         throw new ParsingError(fieldsArg, 'Fields must be an array');
-//       }
-//
-//       return {
-//         fields: keys.map((key) => {
-//           const field = fields.find((item) => item.key.name === key);
-//
-//           if (!field) {
-//             throw new ParsingError(
-//               fieldsArg,
-//               `Field '${key}' not found in '${state.id.name}'`,
-//             );
-//           }
-//
-//           return { field, direction: 1 };
-//         }),
-//         unique: item.arguments.some((arg) => arg.key.name === 'unique'),
-//       };
-//     });
-//
-//   return [primary, ...indexes];
-// };
+export const generateStateIdType = (state: State): string =>
+  `[${Object.entries(state.primaryKey.fields)
+    .map(([name, dir]) => `'${dir === 'asc' ? '+' : '-'}${name}'`)
+    .join(', ')}]`;
 
 export const generateStateStaticIndexes = (
-  state: StateNode,
-  fields: FieldNode[],
+  state: State,
   indent: string,
-): string => {
-  const ids = fields.filter((item) =>
-    item.decorators.some((item) => item.callee.name === 'id'),
-  );
+): string =>
+  `static $find: $.Where<${generateStateFindType(state, indent)}>;\n` +
+  `${indent}static $unique: ${generateStateUniqueType(state, indent)};`;
 
-  // const indexes = getIndexFields(state, fields);
+const generateStateFindType = (state: State, indent: string): string =>
+  getIndexTypePaths(state, state.indexes)
+    .flatMap((fields) =>
+      fields.map(
+        (field, i) =>
+          `{${fields
+            .slice(0, i)
+            .map(
+              (item) =>
+                `\n${indent}  ${item.name}: ${generateWhereType(item.as)};`,
+            )
+            .join('')}\n${indent}  ${field.name}?: ${generateWhereType(
+            field.as,
+          )};\n${indent}}`,
+      ),
+    )
+    .join(' | ');
 
-  return (
-    `static $find: ${generateStateFindType(ids, indent)};\n` +
-    `${indent}static $unique: ${generateStateUniqueType(ids, indent)};`
-  );
+const generateStateUniqueType = (state: State, indent: string): string =>
+  getIndexTypePaths(
+    state,
+    state.indexes.filter((index) => index.unique),
+  )
+    .map(
+      (fields) =>
+        `{${fields
+          .map(
+            (item) =>
+              `\n${indent}  ${item.name}: ${generateTypeofType(item.as)};`,
+          )
+          .join('')}\n${indent}}`,
+    )
+    .join(' | ');
+
+const getIndexTypePaths = (
+  state: State,
+  indexes: StateIndex[],
+): StateField[][] => {
+  type FieldMap = Map<string, { children: FieldMap; field: StateField }>;
+  const fields: FieldMap = new Map();
+
+  for (const index of indexes) {
+    let current = fields;
+
+    for (const key of Object.keys(index.fields)) {
+      let entry = current.get(key);
+      if (!entry) {
+        const field = state.fields[key];
+        if (!field) {
+          throw new Error(
+            `Index field '${key}' not found in state '${state.name}'`,
+          );
+        }
+
+        entry = { children: new Map(), field };
+        current.set(key, entry);
+      }
+
+      current = entry.children;
+    }
+  }
+
+  const result: StateField[][] = [];
+
+  const walk = (current: FieldMap, path: StateField[]): void => {
+    for (const [, entry] of current) {
+      const newPath = [...path, entry.field];
+
+      if (!entry.children.size) {
+        result.push(newPath);
+        return;
+      }
+
+      walk(entry.children, newPath);
+    }
+  };
+
+  walk(fields, []);
+
+  return result;
 };
-
-const generateStateFindType = (ids: FieldNode[], indent: string): string =>
-  `{${ids
-    .map(
-      (item) =>
-        `\n${indent}  ${item.key.name}?: ${generateTypeofType(
-          item.valueType,
-        )};`,
-    )
-    .join('')}\n${indent}}`;
-
-const generateStateUniqueType = (ids: FieldNode[], indent: string): string =>
-  `{${ids
-    .map(
-      (item) =>
-        `\n${indent}  ${item.key.name}: ${generateTypeofType(item.valueType)};`,
-    )
-    .join('')}\n${indent}}`;

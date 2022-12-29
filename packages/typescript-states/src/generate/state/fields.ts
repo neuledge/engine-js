@@ -1,28 +1,27 @@
-import { FieldNode } from '@neuledge/states';
+import { State } from '@neuledge/states';
 import { generateDescriptionComment } from '../comments';
-import { generateTypeofType } from '../type';
+import { generateScalarType, generateTypeofType, isScalarType } from '../type';
 
-export const generateStateProjectionType = (
-  fields: FieldNode[],
-  indent: string,
-): string =>
-  `{${fields
-    .map((item) => `\n${indent}  ${item.key.name}?: boolean;`)
-    .join('')}\n${indent}}`;
-
-export const generateStateFields = (
-  fields: FieldNode[],
-  indent: string,
-): string =>
-  `${fields
+export const generateStateScalars = (state: State, indent: string): string =>
+  `{${Object.values(state.fields)
+    .filter((item) => isScalarType(item.as))
     .map(
       (item) =>
-        `\n${indent}${generateDescriptionComment(item, indent)}${
-          item.key.name
-        }${
+        `\n${indent}  ${item.name}: { type: ${generateScalarType(
+          item.as,
+        )}, index: ${item.index}${item.nullable ? ', nullable: true' : ''} },`,
+    )
+    .join('')}\n${indent}}`;
+
+export const generateStateFields = (state: State, indent: string): string =>
+  `${Object.values(state.fields)
+    .filter((item) => isScalarType(item.as))
+    .map(
+      (item) =>
+        `\n${indent}${generateDescriptionComment(item, indent)}${item.name}${
           item.nullable
-            ? `?: ${generateTypeofType(item.valueType)} | null;`
-            : `!: ${generateTypeofType(item.valueType)};`
+            ? `?: ${generateTypeofType(item.as)} | null;`
+            : `!: ${generateTypeofType(item.as)};`
         }`,
     )
     .join('')}`;
