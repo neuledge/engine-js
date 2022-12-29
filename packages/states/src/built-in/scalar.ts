@@ -6,7 +6,6 @@ interface AnyScalar<Name extends string = string> {
   name: Name;
   description?: string;
   deprecated?: string | true;
-  builtIn?: boolean;
 }
 
 export interface Scalar<Name extends string = string> extends AnyScalar<Name> {

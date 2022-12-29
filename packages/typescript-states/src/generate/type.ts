@@ -1,4 +1,10 @@
-import { Entity, EntityExpression, Type } from '@neuledge/states';
+import {
+  BuiltInScalar,
+  Entity,
+  EntityExpression,
+  Scalar,
+  Type,
+} from '@neuledge/states';
 
 export const generateTypeofType = (type: Type): string => {
   switch (type.type) {
@@ -13,47 +19,78 @@ export const generateTypeofType = (type: Type): string => {
   }
 };
 
-export const isScalarType = (type: Type): boolean => !type.list;
+export type ScalarType = Type & { list?: false };
 
-export const generateScalarType = (type: Type): string => {
-  let result;
-  switch (type.entity.type) {
+export const isScalarType = (type: Type): type is ScalarType => !type.list;
+
+export const generateScalarType = (type: ScalarType): string => {
+  switch (type.type) {
+    // case 'TypeGenerator':
+    //   throw new Error('Not implemented.');
+
+    case 'EntityExpression':
+      return generateEntityScalarType(type.entity);
+
+    default:
+      throw new TypeError(`Unexpected type: ${type.type}`);
+  }
+};
+
+export const generateWhereType = (type: Type, nullable?: boolean): string => {
+  switch (type.type) {
+    // case 'TypeGenerator':
+    //   throw new Error('Not implemented.');
+
+    case 'EntityExpression':
+      return generateWhereEntity(type.entity, nullable);
+
+    default:
+      throw new TypeError(`Unexpected type: ${type.type}`);
+  }
+};
+
+const generateEntityExpression = (type: EntityExpression): string =>
+  type.list ? `${type.entity.name}[]` : type.entity.name;
+
+const generateEntityScalarType = (entity: Entity): string => {
+  switch (entity.type) {
     case 'Either':
-      result = `[...${type.entity.name}]`;
-      break;
+      return `[...${entity.name}]`;
 
     case 'State':
-      result = `[${type.entity.name}]`;
-      break;
+      return `[${entity.name}]`;
 
     case 'Scalar':
-      result = type.entity.name;
-      break;
-
-    default:
-      throw new TypeError(`Unexpected entity type: ${type.type}`);
-  }
-
-  if (type.list) {
-    result = `[${result}]`;
-  }
-
-  return result;
-};
-
-export const generateWhereType = (type: Type): string =>
-  // FIXME implement
-  `$.WhereNumber<${generateTypeofType(type)}>`;
-
-const generateEntityExpression = (type: EntityExpression): string => {
-  const typeofOwnType = generateTypeofOwnType(type.entity);
-
-  return type.list ? `${typeofOwnType}[]` : typeofOwnType;
-};
-
-const generateTypeofOwnType = (entity: Entity): string => {
-  switch (entity.name) {
-    default:
       return entity.name;
+
+    default:
+      // @ts-expect-error `entity` is never
+      throw new TypeError(`Unexpected entity type: ${entity.type}`);
   }
+};
+
+const generateWhereEntity = (entity: Entity, nullable?: boolean): string => {
+  switch (entity.type) {
+    case 'Either':
+      return `$.Where${nullable ? 'Nullable' : ''}State<typeof ${
+        entity.name
+      }[number]>`;
+
+    case 'State':
+      return `$.Where${nullable ? 'Nullable' : ''}State<typeof ${entity.name}>`;
+
+    case 'Scalar':
+      return generateWhereScalar(entity, nullable);
+  }
+};
+
+const generateWhereScalar = (
+  scalar: Scalar | BuiltInScalar,
+  nullable?: boolean,
+): string => {
+  if (scalar.node) {
+    throw new Error('Where non built-in scalar is not implemented.');
+  }
+
+  return `$.Where${nullable ? 'Nullable' : ''}${scalar.name}<${scalar.name}>`;
 };

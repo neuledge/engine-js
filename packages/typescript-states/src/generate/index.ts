@@ -17,7 +17,8 @@ export const generate = (
   for (const entity of entities) {
     switch (entity.type) {
       case 'Scalar':
-        if (entity.builtIn) break;
+        // skip built-in scalars
+        if (!entity.node) break;
 
         // TODO generate scalars code
         // res.push({ source: generateScalar(entity), order: 1 });

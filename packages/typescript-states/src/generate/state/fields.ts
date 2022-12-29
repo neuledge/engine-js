@@ -1,10 +1,17 @@
-import { State } from '@neuledge/states';
+import { State, StateField } from '@neuledge/states';
 import { generateDescriptionComment } from '../comments';
-import { generateScalarType, generateTypeofType, isScalarType } from '../type';
+import {
+  generateScalarType,
+  generateTypeofType,
+  isScalarType,
+  ScalarType,
+} from '../type';
 
 export const generateStateScalars = (state: State, indent: string): string =>
   `{${Object.values(state.fields)
-    .filter((item) => isScalarType(item.as))
+    .filter((item): item is StateField & { as: ScalarType } =>
+      isScalarType(item.as),
+    )
     .map(
       (item) =>
         `\n${indent}  ${item.name}: { type: ${generateScalarType(

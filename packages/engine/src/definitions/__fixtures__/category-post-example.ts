@@ -163,8 +163,7 @@ export class PublishedPost {
     publishedAt: { type: DateTime, index: 5 },
   });
   static $find: $.Where<
-    | { id: $.WhereNumber<Number> }
-    | { category: $.WhereObject<$.Id<typeof Category>> }
+    { id: $.WhereNumber<Number> } | { category: $.WhereState<typeof Category> }
   >;
   static $unique: { id: Number };
   static $relations = () => ({

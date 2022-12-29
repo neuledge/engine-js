@@ -28,8 +28,11 @@ describe('build', () => {
         '/states.ts',
         `import { $ } from '@neuledge/engine';
 import {
+  BooleanScalar as Boolean,
+  BufferScalar as Buffer,
   NumberScalar as Number,
   StringScalar as String,
+  ObjectScalar as Object,
   DateTimeScalar as DateTime,
 } from '@neuledge/scalars';
 

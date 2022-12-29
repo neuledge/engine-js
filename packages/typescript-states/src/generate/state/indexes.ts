@@ -22,10 +22,14 @@ const generateStateFindType = (state: State, indent: string): string =>
             .slice(0, i)
             .map(
               (item) =>
-                `\n${indent}  ${item.name}: ${generateWhereType(item.as)};`,
+                `\n${indent}  ${item.name}: ${generateWhereType(
+                  item.as,
+                  item.nullable,
+                )};`,
             )
             .join('')}\n${indent}  ${field.name}?: ${generateWhereType(
             field.as,
+            field.nullable,
           )};\n${indent}}`,
       ),
     )
@@ -83,7 +87,7 @@ const getIndexTypePaths = (
 
       if (!entry.children.size) {
         result.push(newPath);
-        return;
+        continue;
       }
 
       walk(entry.children, newPath);
