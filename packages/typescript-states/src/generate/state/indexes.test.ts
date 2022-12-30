@@ -19,6 +19,7 @@ describe('generate/state/indexes', () => {
             unique: true,
           },
           indexes: [],
+          mutations: {},
         }),
       ).toBe("['+id']");
     });
@@ -38,6 +39,7 @@ describe('generate/state/indexes', () => {
             unique: true,
           },
           indexes: [],
+          mutations: {},
         }),
       ).toBe("['+id', '-name']");
     });
@@ -72,6 +74,7 @@ describe('generate/state/indexes', () => {
                 unique: true,
               },
             ],
+            mutations: {},
           },
           '  ',
         ),
@@ -125,16 +128,20 @@ describe('generate/state/indexes', () => {
                 unique: true,
               },
             ],
+            mutations: {},
           },
           '  ',
         ),
       ).toMatchInlineSnapshot(`
-        "static $find: $.Where<{
-            id?: $.WhereNumber<Number>;
-          } | {
-            id: $.WhereNumber<Number>;
-            name?: $.WhereString<String>;
-          }>;
+        "static $find: $.Where<
+            | {
+                id?: $.WhereNumber<Number>;
+              }
+            | {
+                id: $.WhereNumber<Number>;
+                name?: $.WhereString<String>;
+              }
+          >;
           static $unique: {
             id: Number;
             name: String;
@@ -186,15 +193,19 @@ describe('generate/state/indexes', () => {
                 fields: { name: 'asc' },
               },
             ],
+            mutations: {},
           },
           '  ',
         ),
       ).toMatchInlineSnapshot(`
-        "static $find: $.Where<{
-            id?: $.WhereNumber<Number>;
-          } | {
-            name?: $.WhereNullableString<String>;
-          }>;
+        "static $find: $.Where<
+            | {
+                id?: $.WhereNumber<Number>;
+              }
+            | {
+                name?: $.WhereNullableString<String>;
+              }
+          >;
           static $unique: {
             id: Number;
           };"

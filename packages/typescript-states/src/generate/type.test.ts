@@ -12,6 +12,7 @@ describe('generate/type', () => {
       fields: {},
       indexes: [],
       primaryKey: { fields: {}, unique: true },
+      mutations: {},
     };
 
     it('should generate built-in type', () => {

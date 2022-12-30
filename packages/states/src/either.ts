@@ -3,10 +3,10 @@ import { z } from 'zod';
 import { applyDecorators, createDecorator, Decorators } from './decorators';
 import { State, StatesContext } from './index';
 
-export interface Either {
+export interface Either<N extends string = string> {
   type: 'Either';
   node: EitherNode;
-  name: string;
+  name: N;
   description?: string;
   deprecated?: boolean | string;
   states: State[];

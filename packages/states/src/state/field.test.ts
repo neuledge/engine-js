@@ -20,6 +20,7 @@ const generateState = (source: string) => {
       unique: true,
     },
     indexes: [],
+    mutations: {},
   };
 
   return { ctx, state, nodes: state.node.fields as FieldNode[] };

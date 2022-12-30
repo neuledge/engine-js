@@ -1,6 +1,6 @@
 import { ScalarNode } from '@neuledge/states-parser';
 
-interface AnyScalar<Name extends string = string> {
+export interface Scalar<Name extends string = string> {
   type: 'Scalar';
   node?: ScalarNode;
   name: Name;
@@ -8,11 +8,7 @@ interface AnyScalar<Name extends string = string> {
   deprecated?: string | true;
 }
 
-export interface Scalar<Name extends string = string> extends AnyScalar<Name> {
-  node: ScalarNode;
-}
-
 export interface BuiltInScalar<Name extends string = string>
-  extends AnyScalar<Name> {
+  extends Scalar<Name> {
   node?: never;
 }

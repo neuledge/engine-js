@@ -1,4 +1,4 @@
-import { BuiltInScalar } from './scalar';
+import { BuiltInScalar } from '../scalar';
 
 export const BufferScalar: BuiltInScalar<'Buffer'> = {
   type: 'Scalar',

@@ -2,21 +2,21 @@ import { TokenCursor } from '@/tokens';
 import { AbstractNode } from './abstract';
 import {
   ExpressionNode,
-  MemberExpressionNode,
+  // MemberExpressionNode,
   parseExpressionNode,
 } from './expressions';
 import { IdentifierNode, parseIdentifierNode } from './identifier';
 
-export type ReturnBodyNode = PropertyNode | SpreadElementNode;
+export type ReturnBodyNode = PropertyNode; /* | SpreadElementNode; */
 
 export interface PropertyNode extends AbstractNode<'Property'> {
   key: IdentifierNode;
   value: ExpressionNode;
 }
 
-export interface SpreadElementNode extends AbstractNode<'SpreadElement'> {
-  argument: MemberExpressionNode['object'];
-}
+// export interface SpreadElementNode extends AbstractNode<'SpreadElement'> {
+//   argument: MemberExpressionNode['object'];
+// }
 
 export const parseReturnBodyNodes = (cursor: TokenCursor): ReturnBodyNode[] => {
   const body: ReturnBodyNode[] = [];

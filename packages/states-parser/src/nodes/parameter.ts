@@ -1,14 +1,14 @@
 import { TokenCursor } from '@/tokens';
 import { AbstractNode } from './abstract';
-import { DecoratorNode } from './decorator';
-import { DescriptionNode } from './description';
+import { DecoratorNode, parseDecoratorNodes } from './decorator';
+import { DescriptionNode, parseMaybeDescriptionNode } from './description';
 import { IdentifierNode, parseIdentifierNode } from './identifier';
 import { parseTypeNode, TypeNode } from './type';
 
 export interface ParameterNode extends AbstractNode<'Parameter'> {
   key: IdentifierNode;
   description?: DescriptionNode;
-  decorations: DecoratorNode[];
+  decorators: DecoratorNode[];
   as: TypeNode;
   nullable: boolean;
 }
@@ -31,6 +31,8 @@ export const parseParameterNodes = (cursor: TokenCursor): ParameterNode[] => {
 const parseParameterNode = (cursor: TokenCursor): ParameterNode => {
   const start = cursor.start;
 
+  const description = parseMaybeDescriptionNode(cursor);
+  const decorators = parseDecoratorNodes(cursor);
   const key = parseIdentifierNode(cursor);
   const nullable = !!cursor.maybeConsumePunctuation('?');
 
@@ -45,6 +47,7 @@ const parseParameterNode = (cursor: TokenCursor): ParameterNode => {
     key,
     as,
     nullable,
-    decorations: [],
+    description,
+    decorators,
   };
 };

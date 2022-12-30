@@ -61,6 +61,7 @@ const generateEntityScalarType = (entity: Entity): string => {
       return `[${entity.name}]`;
 
     case 'Scalar':
+    case 'Void':
       return entity.name;
 
     default:
@@ -81,6 +82,13 @@ const generateWhereEntity = (entity: Entity, nullable?: boolean): string => {
 
     case 'Scalar':
       return generateWhereScalar(entity, nullable);
+
+    case 'Void':
+      return 'never';
+
+    default:
+      // @ts-expect-error `entity` is never
+      throw new TypeError(`Unexpected entity type: ${entity.type}`);
   }
 };
 

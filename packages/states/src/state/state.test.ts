@@ -28,6 +28,7 @@ describe('state/state', () => {
         new StatesContext(),
         doc.body[0] as StateNode,
         stateNode.fields as FieldNode[],
+        {},
       );
 
       expect(state).toEqual({
@@ -47,6 +48,7 @@ describe('state/state', () => {
             unique: true,
           },
         ],
+        mutations: {},
       });
     });
 
@@ -66,6 +68,7 @@ describe('state/state', () => {
         new StatesContext(),
         doc.body[0] as StateNode,
         stateNode.fields as FieldNode[],
+        {},
       );
 
       expect(state).toEqual({
@@ -85,6 +88,7 @@ describe('state/state', () => {
             unique: true,
           },
         ],
+        mutations: {},
       });
     });
 
@@ -106,6 +110,7 @@ describe('state/state', () => {
         new StatesContext(),
         doc.body[0] as StateNode,
         stateNode.fields as FieldNode[],
+        {},
       );
 
       expect(state).toEqual({
@@ -132,6 +137,7 @@ describe('state/state', () => {
             unique: true,
           },
         ],
+        mutations: {},
       });
     });
 
@@ -152,6 +158,7 @@ describe('state/state', () => {
           new StatesContext(),
           doc.body[0] as StateNode,
           stateNode.fields as FieldNode[],
+          {},
         ),
       ).toThrow('Field foo does not exist');
     });
@@ -173,6 +180,7 @@ describe('state/state', () => {
           new StatesContext(),
           doc.body[0] as StateNode,
           stateNode.fields as FieldNode[],
+          {},
         ),
       ).toThrow(
         "Invalid '@index()' decorator on argument 'fields': Invalid input",

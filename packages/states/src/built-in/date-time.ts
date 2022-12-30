@@ -1,4 +1,4 @@
-import { BuiltInScalar } from './scalar';
+import { BuiltInScalar } from '../scalar';
 
 export const DateTimeScalar: BuiltInScalar<'DateTime'> = {
   type: 'Scalar',

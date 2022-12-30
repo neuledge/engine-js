@@ -33,6 +33,9 @@ export const generate = (
         res.push({ source: generateEither(entity), order: 3 });
         break;
 
+      case 'Void':
+        break;
+
       default:
         // @ts-expect-error `entity.type` is never
         throw new TypeError(`Unsupported entity type '${entity.type}'`);

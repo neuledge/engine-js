@@ -144,7 +144,7 @@ export class DraftPost {
     },
   );
 
-  static delete = $.mutation('delete');
+  static delete = $.mutation<typeof DraftPost>('delete');
 }
 export type $DraftPost = $.Entity<typeof DraftPost>;
 

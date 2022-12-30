@@ -1,25 +1,28 @@
 import { StatesContext } from '@/context';
 import { applyDecorators, createDecorator, Decorators } from '@/decorators';
+import { Mutation } from '@/mutation';
 import { FieldNode, ParsingError, StateNode } from '@neuledge/states-parser';
 import { z } from 'zod';
 import { parseStateFields, StateField } from './field';
 import { StateIndex, StatePrimaryKey } from './state-index';
 
-export interface State {
+export interface State<N extends string = string> {
   type: 'State';
   node: StateNode;
-  name: string;
+  name: N;
   description?: string;
   deprecated?: boolean | string;
   fields: Record<string, StateField>;
   primaryKey: StatePrimaryKey;
   indexes: StateIndex[];
+  mutations: Record<string, Mutation>;
 }
 
 export const parseState = (
   ctx: StatesContext,
   node: StateNode,
   fields: FieldNode[],
+  mutations: Record<string, Mutation>,
 ): State => {
   const primaryKey: StatePrimaryKey = {
     fields: {},
@@ -34,6 +37,7 @@ export const parseState = (
     fields: {},
     primaryKey,
     indexes: [primaryKey],
+    mutations,
   };
 
   state.fields = parseStateFields(ctx, state, fields);
