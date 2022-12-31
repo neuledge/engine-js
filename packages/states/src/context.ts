@@ -11,16 +11,17 @@ import {
   STATE_FIELD_INDEX_MAX_INPUT_VALUE,
   parseStates,
 } from '@neuledge/states-parser';
-import { builtIn } from './built-in';
 import { Either, parseEither } from './either';
 import { Entity } from './entity';
 import { Mutation, parseMutation } from './mutation';
-import { Scalar } from './scalar';
+import { builtInScalars, CustomScalar } from './scalar';
 import { parseState, State } from './state';
+import { Void } from './void';
 
 export class StatesContext {
   private readonly entityMap: { [K in string]?: Entity<K> } = {
-    ...builtIn,
+    ...builtInScalars,
+    Void,
   };
   private readonly fieldsMap: Partial<Record<string, FieldNode[]>> = {};
   private readonly mutationMap: Partial<
@@ -31,7 +32,7 @@ export class StatesContext {
 
   // iterators
 
-  *scalars(): Generator<Scalar, void, unknown> {
+  *scalars(): Generator<CustomScalar, void, unknown> {
     yield* this.entities('Scalar');
   }
 

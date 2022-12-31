@@ -1,3 +1,4 @@
+export * from './big-int';
 export * from './boolean';
 export * from './buffer';
 export * from './date-time';

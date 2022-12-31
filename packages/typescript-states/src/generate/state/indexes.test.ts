@@ -1,4 +1,4 @@
-import { NumberScalar, StringScalar } from '@neuledge/states';
+import { NumberScalar, StringScalar } from '@neuledge/scalars';
 import { generateStateIdType, generateStateStaticIndexes } from './indexes';
 
 /* eslint-disable max-lines-per-function */

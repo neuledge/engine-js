@@ -83,7 +83,7 @@ const toStoreMetadataStateField = (
   field: MetadataGhostStateField,
 ): StoreMetadataStateField => ({
   name: field.name,
-  type: field.type.key,
+  type: field.type.name,
   indexes: [...field.indexes],
   nullable: field.nullable,
 });

@@ -1,10 +1,11 @@
-import { Void } from './built-in';
 import { Either } from './either';
-import { Scalar } from './scalar';
+import { CustomScalar, Scalar } from './scalar';
 import { State } from './state';
+import { Void } from './void';
 
 export type Entity<N extends string = string> =
   | Either<N>
   | State<N>
-  | Scalar<N>
+  | (Scalar & { name: N })
+  | CustomScalar<N>
   | (typeof Void['name'] extends N ? typeof Void : never);

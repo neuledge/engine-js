@@ -1,5 +1,5 @@
 import {
-  BuiltInScalar,
+  CustomScalar,
   Entity,
   EntityExpression,
   Scalar,
@@ -93,12 +93,23 @@ const generateWhereEntity = (entity: Entity, nullable?: boolean): string => {
 };
 
 const generateWhereScalar = (
-  scalar: Scalar | BuiltInScalar,
+  scalar: Scalar | CustomScalar,
   nullable?: boolean,
 ): string => {
   if (scalar.node) {
     throw new Error('Where non built-in scalar is not implemented.');
   }
 
-  return `$.Where${nullable ? 'Nullable' : ''}${scalar.name}<${scalar.name}>`;
+  switch (scalar.name) {
+    case 'Boolean':
+    case 'DateTime':
+    case 'Number':
+    case 'String':
+      return `$.Where${nullable ? 'Nullable' : ''}${scalar.name}<${
+        scalar.name
+      }>`;
+
+    default:
+      throw new Error(`Unsupported scalar type: ${scalar.name}`);
+  }
 };

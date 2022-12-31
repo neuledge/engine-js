@@ -30,7 +30,9 @@ export const assignFieldNames = <
   }
 
   for (const [name, list] of duplicates) {
-    const names = list.map((field) => `${name}_${toSnakeCase(field.type.key)}`);
+    const names = list.map(
+      (field) => `${name}_${toSnakeCase(field.type.name)}`,
+    );
 
     if (
       names.every((item) => !assigned.has(item)) &&

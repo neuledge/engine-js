@@ -1,6 +1,9 @@
+import { Scalar as BuiltInScalar, types } from '@neuledge/scalars';
 import { ScalarNode } from '@neuledge/states-parser';
 
-export interface Scalar<Name extends string = string> {
+export type Scalar = BuiltInScalar & { node?: never };
+
+export interface CustomScalar<Name extends string = string> {
   type: 'Scalar';
   node?: ScalarNode;
   name: Name;
@@ -8,7 +11,9 @@ export interface Scalar<Name extends string = string> {
   deprecated?: string | true;
 }
 
-export interface BuiltInScalar<Name extends string = string>
-  extends Scalar<Name> {
-  node?: never;
-}
+export const builtInScalars: { [K in string]: Scalar & { name: K } } =
+  Object.fromEntries(
+    Object.values(types)
+      .filter((value): value is Scalar => value?.type === 'Scalar')
+      .map((value) => [value.name, value]),
+  );

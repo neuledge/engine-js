@@ -1,10 +1,12 @@
-import { Void } from '@/built-in';
 import { StatesContext } from '@/context';
 import { applyDecorators, createDecorator, Decorators } from '@/decorators';
-import { Either, State } from '@/index';
 import { MutationNode, ParsingError } from '@neuledge/states-parser';
 import { z } from 'zod';
 import { Parameter, parseParameters } from '@/parameter';
+import { parseProperties, Property } from '@/property';
+import { State } from '@/state';
+import { Either } from '@/either';
+import { Void } from '@/void';
 
 export interface Mutation {
   type: 'Mutation';
@@ -16,7 +18,7 @@ export interface Mutation {
   target: State | Either;
   returns: State | typeof Void;
   parameters: Record<string, Parameter>;
-  body: [];
+  body: Record<string, Property>;
 }
 
 export const parseMutation = (
@@ -46,6 +48,8 @@ export const parseMutation = (
     );
   }
 
+  const parameters = parseParameters(ctx, node.parameters);
+
   const mutation: Mutation = {
     type: 'Mutation',
     node,
@@ -58,8 +62,8 @@ export const parseMutation = (
     description: node.description?.value,
     target,
     returns,
-    parameters: parseParameters(ctx, node.parameters),
-    body: [],
+    parameters,
+    body: parseProperties(ctx, parameters, node.body),
   };
 
   applyDecorators(mutation, node.decorators, decorators);

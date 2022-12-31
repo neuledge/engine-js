@@ -4,7 +4,7 @@ import {
   generateParametersArgument,
   generateParametersType,
 } from '../parameters';
-import { generateFunctionBody } from '../function';
+import { generateStateFunctionBody } from '../function';
 
 export const generateStateMutations = (state: State, indent: string): string =>
   Object.values(state.mutations)
@@ -49,11 +49,17 @@ const generateCreateMutationFn = (
   indent: string,
 ): string => {
   const parameters = Object.values(mutation.parameters);
+  const properties = Object.values(mutation.body);
 
   if (!parameters.length) {
     return `$.mutation<typeof ${state.name}>('${
       mutation.mutation
-    }', function () ${generateFunctionBody(indent)})`;
+    }', function () ${generateStateFunctionBody(
+      state,
+      properties,
+      false,
+      indent,
+    )})`;
   }
 
   return (
@@ -62,7 +68,7 @@ const generateCreateMutationFn = (
     `${indent}  ${generateParametersType(parameters, `${indent}  `)}\n` +
     `${indent}>('${mutation.mutation}', function (${generateParametersArgument(
       parameters,
-    )}) ${generateFunctionBody(indent)})`
+    )}) ${generateStateFunctionBody(state, properties, false, indent)})`
   );
 };
 
@@ -72,12 +78,18 @@ const generateUpdateMutationFn = (
   indent: string,
 ): string => {
   const parameters = Object.values(mutation.parameters);
+  const properties = Object.values(mutation.body);
 
   if (!parameters.length) {
     return (
       `$.mutation<typeof ${state.name}, typeof ${mutation.returns.name}>(\n` +
       `${indent}  '${mutation.mutation}',\n` +
-      `${indent}  function () ${generateFunctionBody(`${indent}  `)},\n` +
+      `${indent}  function () ${generateStateFunctionBody(
+        state,
+        properties,
+        true,
+        `${indent}  `,
+      )},\n` +
       `${indent})`
     );
   }
@@ -89,7 +101,7 @@ const generateUpdateMutationFn = (
     `${indent}  typeof ${mutation.returns.name}\n` +
     `${indent}>('${mutation.mutation}', function (${generateParametersArgument(
       parameters,
-    )}) ${generateFunctionBody(indent)})`
+    )}) ${generateStateFunctionBody(state, properties, true, indent)})`
   );
 };
 
@@ -99,8 +111,9 @@ const generateDeleteMutationFn = (
   indent: string,
 ): string => {
   const parameters = Object.values(mutation.parameters);
+  const properties = Object.values(mutation.body);
 
-  if (!mutation.body.length) {
+  if (!properties.length) {
     return `$.mutation<typeof ${state.name}>('${mutation.mutation}')`;
   }
 
@@ -110,6 +123,6 @@ const generateDeleteMutationFn = (
     `${indent}  ${generateParametersType(parameters, `${indent}  `)}\n` +
     `${indent}>('${mutation.mutation}', function (${generateParametersArgument(
       parameters,
-    )}) ${generateFunctionBody(indent)})`
+    )}) ${generateStateFunctionBody(state, properties, true, indent)})`
   );
 };

@@ -35,8 +35,8 @@ export class Metadata {
       }
 
       for (const { type } of entity.fields) {
-        if (this.typeMap[type.key] == null) {
-          this.typeMap[type.key] = type;
+        if (this.typeMap[type.name] == null) {
+          this.typeMap[type.name] = type;
         }
       }
     }

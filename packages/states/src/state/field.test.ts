@@ -1,4 +1,4 @@
-import { NumberScalar, StringScalar } from '@/built-in';
+import { NumberScalar, StringScalar } from '@neuledge/scalars';
 import { StatesContext } from '@/context';
 import { FieldNode, parseStates, StateNode } from '@neuledge/states-parser';
 import { parseStateFields } from './field';

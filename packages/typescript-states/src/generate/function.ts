@@ -1,3 +1,15 @@
-export const generateFunctionBody = (indent: string): string =>
-  // FIXME implement return body
-  `{\n${indent}  return {} as never;\n${indent}}`;
+import { Property, State } from '@neuledge/states';
+
+export const generateStateFunctionBody = (
+  state: State,
+  properties: Property[],
+  extendsThis: boolean,
+  indent: string,
+): string =>
+  `{\n` +
+  `${indent}  return {\n` +
+  (extendsThis ? `${indent}    ...this,\n` : '') +
+  `${indent}    $state: '${state.name}',\n` +
+  properties.map((property) => `${indent}    ${property.name},\n`).join('') +
+  `${indent}  };\n` +
+  `${indent}}`;

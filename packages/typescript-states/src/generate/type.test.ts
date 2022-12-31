@@ -1,4 +1,5 @@
-import { State, StringScalar } from '@neuledge/states';
+import { StringScalar } from '@neuledge/scalars';
+import { State } from '@neuledge/states';
 import { generateTypeofType } from './type';
 
 /* eslint-disable max-lines-per-function */
