@@ -1,52 +1,30 @@
 import { StringScalar } from '@neuledge/scalars';
-import { State } from '@neuledge/states';
-import { generateTypeofType } from './type';
+import { generateTypeType } from './type';
 
 /* eslint-disable max-lines-per-function */
 
 describe('generate/type', () => {
-  describe('generateTypeofType()', () => {
-    const FooState: State = {
-      type: 'State',
-      node: {} as never,
-      name: 'Foo',
-      fields: {},
-      indexes: [],
-      primaryKey: { fields: {}, unique: true },
-      mutations: {},
-    };
-
-    it('should generate built-in type', () => {
+  describe('generateTypeType()', () => {
+    it('should generate entity', () => {
       expect(
-        generateTypeofType({
+        generateTypeType({
           type: 'EntityExpression',
           node: {} as never,
           entity: StringScalar,
           list: false,
         }),
-      ).toBe('String');
+      ).toBe('$.scalars.String');
     });
 
-    it('should generate state type', () => {
+    it('should generate list entity', () => {
       expect(
-        generateTypeofType({
+        generateTypeType({
           type: 'EntityExpression',
           node: {} as never,
-          entity: FooState,
-          list: false,
-        }),
-      ).toBe('Foo');
-    });
-
-    it('should generate list type', () => {
-      expect(
-        generateTypeofType({
-          type: 'EntityExpression',
-          node: {} as never,
-          entity: FooState,
+          entity: StringScalar,
           list: true,
         }),
-      ).toBe('Foo[]');
+      ).toBe('$.scalars.String[]');
     });
   });
 });

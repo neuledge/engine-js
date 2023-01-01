@@ -1,1 +1,1 @@
-export type Resolveable<T> = T | PromiseLike<T>;
+export type Resolveable<T> = T | Promise<T> | PromiseLike<T>;

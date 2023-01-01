@@ -1,9 +1,4 @@
 import { $ } from '@neuledge/engine';
-import {
-  NumberScalar as Number,
-  StringScalar as String,
-  DateTimeScalar as DateTime,
-} from '@neuledge/scalars';
 
 /* eslint-disable @typescript-eslint/ban-types, prefer-arrow-callback, prefer-arrow/prefer-arrow-functions, unicorn/consistent-function-scoping */
 
@@ -15,25 +10,25 @@ export class Category {
   static $name = 'Category' as const;
   static $id = ['+id'] as const;
   static $scalars = {
-    id: { type: Number, index: 1 },
-    name: { type: String, index: 2 },
-    description: { type: String, index: 3, nullable: true },
+    id: { type: $.scalars.Number, index: 1 },
+    name: { type: $.scalars.String, index: 2 },
+    description: { type: $.scalars.String, index: 3, nullable: true },
   };
-  static $find: $.Where<{ id: $.WhereNumber<Number> }>;
-  static $unique: { id: Number };
+  static $find: $.Where<{ id: $.WhereNumber<$.scalars.Number> }>;
+  static $unique: { id: $.scalars.Number };
   static $relations = () => ({
     posts: [[...Post]] as const,
   });
 
-  id!: Number;
-  name!: String;
-  description?: String | null;
+  id!: $.scalars.Number;
+  name!: $.scalars.String;
+  description?: $.scalars.String | null;
 
   static create = $.mutation<
     typeof Category,
     {
-      name: String;
-      description?: String | null;
+      name: $.scalars.String;
+      description?: $.scalars.String | null;
     }
   >('create', function ({ name, description }) {
     return {
@@ -47,8 +42,8 @@ export class Category {
   static update = $.mutation<
     typeof Category,
     {
-      name: String;
-      description?: String | null;
+      name: $.scalars.String;
+      description?: $.scalars.String | null;
     },
     typeof Category
   >('update', function ({ name, description }) {
@@ -72,28 +67,28 @@ export class DraftPost {
   static $name = 'DraftPost' as const;
   static $id = ['+id'] as const;
   static $scalars = () => ({
-    id: { type: Number, index: 1 },
+    id: { type: $.scalars.Number, index: 1 },
     category: { type: [Category], index: 2, nullable: true },
-    title: { type: String, index: 3 },
-    content: { type: String, index: 4, nullable: true },
+    title: { type: $.scalars.String, index: 3 },
+    content: { type: $.scalars.String, index: 4, nullable: true },
   });
-  static $find: $.Where<{ id: $.WhereNumber<Number> }>;
-  static $unique: { id: Number };
+  static $find: $.Where<{ id: $.WhereNumber<$.scalars.Number> }>;
+  static $unique: { id: $.scalars.Number };
   static $relations = () => ({
     category: [Category],
   });
   static $states = () => [PublishedPost];
 
-  id!: Number;
+  id!: $.scalars.Number;
   category?: $.Id<typeof Category> | null;
-  title!: String;
-  content?: String | null;
+  title!: $.scalars.String;
+  content?: $.scalars.String | null;
 
   static create = $.mutation<
     typeof DraftPost,
     {
-      title: String;
-      content?: String | null;
+      title: $.scalars.String;
+      content?: $.scalars.String | null;
       category?: $.Id<typeof Category> | null;
     }
   >('create', function ({ title, content, category }) {
@@ -109,8 +104,8 @@ export class DraftPost {
   static update = $.mutation<
     typeof DraftPost,
     {
-      title: String;
-      content?: String | null;
+      title: $.scalars.String;
+      content?: $.scalars.String | null;
       category?: $.Id<typeof Category> | null;
     },
     typeof DraftPost
@@ -126,7 +121,7 @@ export class DraftPost {
 
   static publish = $.mutation<typeof DraftPost, typeof PublishedPost>(
     'update',
-    function () {
+    async function () {
       if (!this.category) {
         throw new TypeError(`Expect category to exists`);
       }
@@ -139,7 +134,7 @@ export class DraftPost {
         $state: 'PublishedPost',
         content: this.content,
         category: this.category,
-        publishedAt: new $.Date(),
+        publishedAt: await $.runtime.DateTime({}),
       };
     },
   );
@@ -156,16 +151,17 @@ export class PublishedPost {
   static $name = 'PublishedPost' as const;
   static $id = ['+id'] as const;
   static $scalars = () => ({
-    id: { type: Number, index: 1 },
+    id: { type: $.scalars.Number, index: 1 },
     category: { type: [Category], index: 2 },
-    title: { type: String, index: 3 },
-    content: { type: String, index: 4 },
-    publishedAt: { type: DateTime, index: 5 },
+    title: { type: $.scalars.String, index: 3 },
+    content: { type: $.scalars.String, index: 4 },
+    publishedAt: { type: $.scalars.DateTime, index: 5 },
   });
   static $find: $.Where<
-    { id: $.WhereNumber<Number> } | { category: $.WhereState<typeof Category> }
+    | { id: $.WhereNumber<$.scalars.Number> }
+    | { category: $.WhereState<typeof Category> }
   >;
-  static $unique: { id: Number };
+  static $unique: { id: $.scalars.Number };
   static $relations = () => ({
     category: [Category],
   });
@@ -173,15 +169,19 @@ export class PublishedPost {
     'category.posts': ['+category', '+title'] as const,
   };
 
-  id!: Number;
-  title!: String;
+  id!: $.scalars.Number;
+  title!: $.scalars.String;
   category!: $.Id<typeof Category>;
-  content!: String;
-  publishedAt!: DateTime;
+  content!: $.scalars.String;
+  publishedAt!: $.scalars.DateTime;
 
   static update = $.mutation<
     typeof PublishedPost,
-    { title: String; content: String; category: $.Id<typeof Category> },
+    {
+      title: $.scalars.String;
+      content: $.scalars.String;
+      category: $.Id<typeof Category>;
+    },
     typeof PublishedPost
   >('update', function ({ title, content, category }) {
     return {

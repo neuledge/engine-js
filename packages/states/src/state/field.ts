@@ -1,5 +1,6 @@
 import { StatesContext } from '@/context';
 import { applyDecorators, createDecorator, Decorators } from '@/decorators';
+import { NonNullableEntity, parseNonNullableEntity } from '@/entity';
 import { parseType, Type } from '@/type';
 import { FieldNode } from '@neuledge/states-parser';
 import { z } from 'zod';
@@ -7,11 +8,19 @@ import { State } from './state';
 
 export type StateField = ScalarField | RelationField;
 
-export type ScalarField = AbstractStateField<'ScalarField'>;
-export type RelationField = AbstractStateField<'RelationField'>;
+export interface ScalarField {
+  type: 'ScalarField';
+  node: FieldNode;
+  name: string;
+  nullable?: boolean;
+  index: number;
+  description?: string;
+  deprecated?: boolean | string;
+  entity: NonNullableEntity;
+}
 
-interface AbstractStateField<T extends string> {
-  type: T;
+export interface RelationField {
+  type: 'RelationField';
   node: FieldNode;
   name: string;
   nullable?: boolean;
@@ -35,18 +44,26 @@ const parseStateField = (
   state: State,
   node: FieldNode,
 ): StateField => {
-  const field: StateField = {
-    type:
-      node.as.type !== 'TypeExpression' || !node.as.list
-        ? 'ScalarField'
-        : 'RelationField',
-    node,
-    name: node.key.name,
-    nullable: node.nullable,
-    index: node.index.value,
-    description: node.description?.value,
-    as: parseType(ctx, node.as),
-  };
+  const field: StateField =
+    node.as.type !== 'TypeExpression' || !node.as.list
+      ? {
+          type: 'ScalarField',
+          node,
+          name: node.key.name,
+          nullable: node.nullable,
+          index: node.index.value,
+          description: node.description?.value,
+          entity: parseNonNullableEntity(ctx, node.as.identifier),
+        }
+      : {
+          type: 'RelationField',
+          node,
+          name: node.key.name,
+          nullable: node.nullable,
+          index: node.index.value,
+          description: node.description?.value,
+          as: parseType(ctx, node.as),
+        };
 
   applyDecorators({ state, field }, node.decorators, decorators);
 

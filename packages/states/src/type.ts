@@ -1,17 +1,13 @@
-import {
-  ParsingError,
-  TypeExpressionNode,
-  TypeNode,
-} from '@neuledge/states-parser';
+import { TypeExpressionNode, TypeNode } from '@neuledge/states-parser';
 import { StatesContext } from './context';
-import { Entity } from './entity';
+import { NonNullableEntity, parseNonNullableEntity } from './entity';
 
 export type Type = EntityExpression;
 
 export interface EntityExpression {
   type: 'EntityExpression';
   node: TypeExpressionNode;
-  entity: Entity;
+  entity: NonNullableEntity;
   list: boolean;
 }
 
@@ -32,19 +28,9 @@ export const parseType = (ctx: StatesContext, node: TypeNode): Type => {
 const parseEntityExpression = (
   ctx: StatesContext,
   node: TypeExpressionNode,
-): EntityExpression => {
-  const entity = ctx.entity(node.identifier.name);
-  if (!entity) {
-    throw new ParsingError(
-      node.identifier,
-      `Unknown entity '${node.identifier.name}'`,
-    );
-  }
-
-  return {
-    type: 'EntityExpression',
-    node,
-    entity,
-    list: node.list,
-  };
-};
+): EntityExpression => ({
+  type: 'EntityExpression',
+  node,
+  entity: parseNonNullableEntity(ctx, node.identifier),
+  list: node.list,
+});

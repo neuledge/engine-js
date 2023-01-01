@@ -58,12 +58,7 @@ describe('generate/state/indexes', () => {
                 type: 'ScalarField',
                 name: 'id',
                 node: null as never,
-                as: {
-                  type: 'EntityExpression',
-                  node: null as never,
-                  entity: NumberScalar,
-                  list: false,
-                },
+                entity: NumberScalar,
                 index: 1,
               },
             },
@@ -80,10 +75,10 @@ describe('generate/state/indexes', () => {
         ),
       ).toMatchInlineSnapshot(`
         "static $find: $.Where<{
-            id?: $.WhereNumber<Number>;
+            id?: $.WhereNumber<$.scalars.Number>;
           }>;
           static $unique: {
-            id: Number;
+            id: $.scalars.Number;
           };"
       `);
     });
@@ -100,24 +95,14 @@ describe('generate/state/indexes', () => {
                 type: 'ScalarField',
                 name: 'id',
                 node: null as never,
-                as: {
-                  type: 'EntityExpression',
-                  node: null as never,
-                  entity: NumberScalar,
-                  list: false,
-                },
+                entity: NumberScalar,
                 index: 1,
               },
               name: {
                 type: 'ScalarField',
                 name: 'name',
                 node: null as never,
-                as: {
-                  type: 'EntityExpression',
-                  node: null as never,
-                  entity: StringScalar,
-                  list: false,
-                },
+                entity: StringScalar,
                 index: 2,
               },
             },
@@ -135,16 +120,16 @@ describe('generate/state/indexes', () => {
       ).toMatchInlineSnapshot(`
         "static $find: $.Where<
             | {
-                id?: $.WhereNumber<Number>;
+                id?: $.WhereNumber<$.scalars.Number>;
               }
             | {
-                id: $.WhereNumber<Number>;
-                name?: $.WhereString<String>;
+                id: $.WhereNumber<$.scalars.Number>;
+                name?: $.WhereString<$.scalars.String>;
               }
           >;
           static $unique: {
-            id: Number;
-            name: String;
+            id: $.scalars.Number;
+            name: $.scalars.String;
           };"
       `);
     });
@@ -161,24 +146,14 @@ describe('generate/state/indexes', () => {
                 type: 'ScalarField',
                 name: 'id',
                 node: null as never,
-                as: {
-                  type: 'EntityExpression',
-                  node: null as never,
-                  entity: NumberScalar,
-                  list: false,
-                },
+                entity: NumberScalar,
                 index: 1,
               },
               name: {
                 type: 'ScalarField',
                 name: 'name',
                 node: null as never,
-                as: {
-                  type: 'EntityExpression',
-                  node: null as never,
-                  entity: StringScalar,
-                  list: false,
-                },
+                entity: StringScalar,
                 nullable: true,
                 index: 2,
               },
@@ -200,14 +175,14 @@ describe('generate/state/indexes', () => {
       ).toMatchInlineSnapshot(`
         "static $find: $.Where<
             | {
-                id?: $.WhereNumber<Number>;
+                id?: $.WhereNumber<$.scalars.Number>;
               }
             | {
-                name?: $.WhereNullableString<String>;
+                name?: $.WhereNullableString<$.scalars.String>;
               }
           >;
           static $unique: {
-            id: Number;
+            id: $.scalars.Number;
           };"
       `);
     });

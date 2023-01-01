@@ -1,5 +1,5 @@
 import { Parameter } from '@neuledge/states';
-import { generateTypeofType } from './type';
+import { generateTypeType } from './type';
 
 export const generateParametersType = (
   parameters: Parameter[],
@@ -17,7 +17,7 @@ export const generateParametersType = (
 const generateParameterType = (parameter: Parameter, indent: string): string =>
   `${indent}  ${parameter.name}${
     parameter.nullable ? '?' : ''
-  }: ${generateTypeofType(parameter.as)}${
+  }: ${generateTypeType(parameter.as)}${
     parameter.nullable ? ' | null' : ''
   };\n`;
 

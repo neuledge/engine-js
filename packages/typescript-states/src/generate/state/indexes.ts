@@ -1,5 +1,5 @@
-import { State, StateField, StateIndex } from '@neuledge/states';
-import { generateTypeofType, generateWhereType } from '../type';
+import { ScalarField, State, StateIndex } from '@neuledge/states';
+import { generateEntityType, generateWhereEntity } from '../entity';
 
 export const generateStateIdType = (state: State): string =>
   `[${Object.entries(state.primaryKey.fields)
@@ -28,11 +28,11 @@ const generateStateFindType = (state: State, indent: string): string => {
                 (item) =>
                   `\n${multiPaths ? `${indent}    ` : indent}  ${
                     item.name
-                  }: ${generateWhereType(item.as, item.nullable)};`,
+                  }: ${generateWhereEntity(item.entity, item.nullable)};`,
               )
               .join('')}\n${indent}${multiPaths ? '    ' : ''}  ${
               field.name
-            }?: ${generateWhereType(field.as, field.nullable)};\n${
+            }?: ${generateWhereEntity(field.entity, field.nullable)};\n${
               multiPaths ? `${indent}    ` : indent
             }}`,
         ),
@@ -51,7 +51,7 @@ const generateStateUniqueType = (state: State, indent: string): string =>
         `{${fields
           .map(
             (item) =>
-              `\n${indent}  ${item.name}: ${generateTypeofType(item.as)};`,
+              `\n${indent}  ${item.name}: ${generateEntityType(item.entity)};`,
           )
           .join('')}\n${indent}}`,
     )
@@ -60,8 +60,8 @@ const generateStateUniqueType = (state: State, indent: string): string =>
 const getIndexTypePaths = (
   state: State,
   indexes: StateIndex[],
-): StateField[][] => {
-  type FieldMap = Map<string, { children: FieldMap; field: StateField }>;
+): ScalarField[][] => {
+  type FieldMap = Map<string, { children: FieldMap; field: ScalarField }>;
   const fields: FieldMap = new Map();
 
   for (const index of indexes) {
@@ -71,7 +71,7 @@ const getIndexTypePaths = (
       let entry = current.get(key);
       if (!entry) {
         const field = state.fields[key];
-        if (!field) {
+        if (field?.type !== 'ScalarField') {
           throw new Error(
             `Index field '${key}' not found in state '${state.name}'`,
           );
@@ -85,9 +85,9 @@ const getIndexTypePaths = (
     }
   }
 
-  const result: StateField[][] = [];
+  const result: ScalarField[][] = [];
 
-  const walk = (current: FieldMap, path: StateField[]): void => {
+  const walk = (current: FieldMap, path: ScalarField[]): void => {
     for (const [, entry] of current) {
       const newPath = [...path, entry.field];
 

@@ -20,20 +20,20 @@ describe('generate/state', () => {
           static $name = 'User' as const;
           static $id = ['+id'] as const;
           static $scalars = {
-            id: { type: Number, index: 1 },
-            name: { type: String, index: 2 },
-            email: { type: String, index: 3, nullable: true },
+            id: { type: $.scalars.Number, index: 1 },
+            name: { type: $.scalars.String, index: 2 },
+            email: { type: $.scalars.String, index: 3, nullable: true },
           };
           static $find: $.Where<{
-            id?: $.WhereNumber<Number>;
+            id?: $.WhereNumber<$.scalars.Number>;
           }>;
           static $unique: {
-            id: Number;
+            id: $.scalars.Number;
           };
 
-          id!: Number;
-          name!: String;
-          email?: String | null;
+          id!: $.scalars.Number;
+          name!: $.scalars.String;
+          email?: $.scalars.String | null;
         }
         export type $User = $.Entity<typeof User>;"
       `);

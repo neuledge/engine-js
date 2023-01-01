@@ -25,6 +25,4 @@ export {
 
 export { type Entity as Entity, type MutatedEntity as Type } from '@/entity';
 
-const DateConstructor = Date;
-
-export { DateConstructor as Date };
+export { types as scalars, runtime } from '@neuledge/scalars';

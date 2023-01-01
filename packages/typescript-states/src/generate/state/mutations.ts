@@ -4,7 +4,7 @@ import {
   generateParametersArgument,
   generateParametersType,
 } from '../parameters';
-import { generateStateFunctionBody } from '../function';
+import { generateStateFunctionBody } from '../property';
 
 export const generateStateMutations = (state: State, indent: string): string =>
   Object.values(state.mutations)
@@ -54,7 +54,7 @@ const generateCreateMutationFn = (
   if (!parameters.length) {
     return `$.mutation<typeof ${state.name}>('${
       mutation.mutation
-    }', function () ${generateStateFunctionBody(
+    }', async function () ${generateStateFunctionBody(
       state,
       properties,
       false,
@@ -66,7 +66,9 @@ const generateCreateMutationFn = (
     `$.mutation<\n` +
     `${indent}  typeof ${state.name},\n` +
     `${indent}  ${generateParametersType(parameters, `${indent}  `)}\n` +
-    `${indent}>('${mutation.mutation}', function (${generateParametersArgument(
+    `${indent}>('${
+      mutation.mutation
+    }', async function (${generateParametersArgument(
       parameters,
     )}) ${generateStateFunctionBody(state, properties, false, indent)})`
   );
@@ -84,8 +86,8 @@ const generateUpdateMutationFn = (
     return (
       `$.mutation<typeof ${state.name}, typeof ${mutation.returns.name}>(\n` +
       `${indent}  '${mutation.mutation}',\n` +
-      `${indent}  function () ${generateStateFunctionBody(
-        state,
+      `${indent}  async function () ${generateStateFunctionBody(
+        mutation.returns as State,
         properties,
         true,
         `${indent}  `,
@@ -99,9 +101,16 @@ const generateUpdateMutationFn = (
     `${indent}  typeof ${state.name},\n` +
     `${indent}  ${generateParametersType(parameters, `${indent}  `)},\n` +
     `${indent}  typeof ${mutation.returns.name}\n` +
-    `${indent}>('${mutation.mutation}', function (${generateParametersArgument(
+    `${indent}>('${
+      mutation.mutation
+    }', async function (${generateParametersArgument(
       parameters,
-    )}) ${generateStateFunctionBody(state, properties, true, indent)})`
+    )}) ${generateStateFunctionBody(
+      mutation.returns as State,
+      properties,
+      true,
+      indent,
+    )})`
   );
 };
 
@@ -121,7 +130,9 @@ const generateDeleteMutationFn = (
     `$.mutation<\n` +
     `${indent}  typeof ${state.name},\n` +
     `${indent}  ${generateParametersType(parameters, `${indent}  `)}\n` +
-    `${indent}>('${mutation.mutation}', function (${generateParametersArgument(
+    `${indent}>('${
+      mutation.mutation
+    }', async function (${generateParametersArgument(
       parameters,
     )}) ${generateStateFunctionBody(state, properties, true, indent)})`
   );

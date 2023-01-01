@@ -1,34 +1,27 @@
-import { State, StateField } from '@neuledge/states';
+import { ScalarField, State } from '@neuledge/states';
 import { generateDescriptionComment } from '../comments';
-import {
-  generateScalarType,
-  generateTypeofType,
-  isScalarType,
-  ScalarType,
-} from '../type';
+import { generateEntityScalar, generateEntityType } from '../entity';
 
 export const generateStateScalars = (state: State, indent: string): string =>
   `{${Object.values(state.fields)
-    .filter((item): item is StateField & { as: ScalarType } =>
-      isScalarType(item.as),
-    )
+    .filter((item): item is ScalarField => item.type === 'ScalarField')
     .map(
       (item) =>
-        `\n${indent}  ${item.name}: { type: ${generateScalarType(
-          item.as,
+        `\n${indent}  ${item.name}: { type: ${generateEntityScalar(
+          item.entity,
         )}, index: ${item.index}${item.nullable ? ', nullable: true' : ''} },`,
     )
     .join('')}\n${indent}}`;
 
 export const generateStateFields = (state: State, indent: string): string =>
   `${Object.values(state.fields)
-    .filter((item) => isScalarType(item.as))
+    .filter((item): item is ScalarField => item.type === 'ScalarField')
     .map(
       (item) =>
         `\n${indent}${generateDescriptionComment(item, indent)}${item.name}${
           item.nullable
-            ? `?: ${generateTypeofType(item.as)} | null;`
-            : `!: ${generateTypeofType(item.as)};`
+            ? `?: ${generateEntityType(item.entity)} | null;`
+            : `!: ${generateEntityType(item.entity)};`
         }`,
     )
     .join('')}`;

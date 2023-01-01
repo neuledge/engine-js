@@ -27,30 +27,22 @@ describe('build', () => {
       expect(writeFile).toHaveBeenCalledWith(
         '/states.ts',
         `import { $ } from '@neuledge/engine';
-import {
-  BooleanScalar as Boolean,
-  BufferScalar as Buffer,
-  NumberScalar as Number,
-  StringScalar as String,
-  ObjectScalar as Object,
-  DateTimeScalar as DateTime,
-} from '@neuledge/scalars';
 
 @$.State<'Foo', Foo>()
 export class Foo {
   static $name = 'Foo' as const;
   static $id = ['+id'] as const;
   static $scalars = {
-    id: { type: Number, index: 1 },
+    id: { type: $.scalars.Number, index: 1 },
   };
   static $find: $.Where<{
-    id?: $.WhereNumber<Number>;
+    id?: $.WhereNumber<$.scalars.Number>;
   }>;
   static $unique: {
-    id: Number;
+    id: $.scalars.Number;
   };
 
-  id!: Number;
+  id!: $.scalars.Number;
 }
 export type $Foo = $.Entity<typeof Foo>;
 `,

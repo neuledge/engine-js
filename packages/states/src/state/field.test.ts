@@ -50,12 +50,7 @@ describe('state/field', () => {
           name: 'id',
           nullable: false,
           index: 1,
-          as: {
-            type: 'EntityExpression',
-            node: nodes[0].as,
-            entity: NumberScalar,
-            list: false,
-          },
+          entity: NumberScalar,
         },
         name: {
           type: 'ScalarField',
@@ -63,12 +58,7 @@ describe('state/field', () => {
           name: 'name',
           nullable: true,
           index: 2,
-          as: {
-            type: 'EntityExpression',
-            node: nodes[1].as,
-            entity: StringScalar,
-            list: false,
-          },
+          entity: StringScalar,
         },
         email: {
           type: 'ScalarField',
@@ -77,12 +67,7 @@ describe('state/field', () => {
           description: 'The user email',
           nullable: false,
           index: 3,
-          as: {
-            type: 'EntityExpression',
-            node: nodes[2].as,
-            entity: StringScalar,
-            list: false,
-          },
+          entity: StringScalar,
         },
       });
     });
@@ -105,12 +90,7 @@ describe('state/field', () => {
           name: 'id',
           nullable: false,
           index: 1,
-          as: {
-            type: 'EntityExpression',
-            node: nodes[0].as,
-            entity: NumberScalar,
-            list: false,
-          },
+          entity: NumberScalar,
         },
         name: {
           type: 'ScalarField',
@@ -119,12 +99,7 @@ describe('state/field', () => {
           nullable: true,
           deprecated: true,
           index: 2,
-          as: {
-            type: 'EntityExpression',
-            node: nodes[1].as,
-            entity: StringScalar,
-            list: false,
-          },
+          entity: StringScalar,
         },
         email: {
           type: 'ScalarField',
@@ -132,12 +107,7 @@ describe('state/field', () => {
           name: 'email',
           nullable: false,
           index: 3,
-          as: {
-            type: 'EntityExpression',
-            node: nodes[2].as,
-            entity: StringScalar,
-            list: false,
-          },
+          entity: StringScalar,
         },
       });
 
@@ -166,12 +136,7 @@ describe('state/field', () => {
           name: 'id',
           nullable: false,
           index: 1,
-          as: {
-            type: 'EntityExpression',
-            node: nodes[0].as,
-            entity: NumberScalar,
-            list: false,
-          },
+          entity: NumberScalar,
         },
         name: {
           type: 'ScalarField',
@@ -180,12 +145,7 @@ describe('state/field', () => {
           nullable: true,
           deprecated: 'Use name instead',
           index: 2,
-          as: {
-            type: 'EntityExpression',
-            node: nodes[1].as,
-            entity: StringScalar,
-            list: false,
-          },
+          entity: StringScalar,
         },
         email: {
           type: 'ScalarField',
@@ -193,12 +153,7 @@ describe('state/field', () => {
           name: 'email',
           nullable: false,
           index: 3,
-          as: {
-            type: 'EntityExpression',
-            node: nodes[2].as,
-            entity: StringScalar,
-            list: false,
-          },
+          entity: StringScalar,
         },
       });
 
@@ -232,12 +187,7 @@ describe('state/field', () => {
           name: 'id',
           nullable: false,
           index: 1,
-          as: {
-            type: 'EntityExpression',
-            node: nodes[0].as,
-            entity: NumberScalar,
-            list: false,
-          },
+          entity: NumberScalar,
         },
         name: {
           type: 'ScalarField',
@@ -245,12 +195,7 @@ describe('state/field', () => {
           name: 'name',
           nullable: true,
           index: 2,
-          as: {
-            type: 'EntityExpression',
-            node: nodes[1].as,
-            entity: StringScalar,
-            list: false,
-          },
+          entity: StringScalar,
         },
         email: {
           type: 'ScalarField',
@@ -258,12 +203,7 @@ describe('state/field', () => {
           name: 'email',
           nullable: false,
           index: 3,
-          as: {
-            type: 'EntityExpression',
-            node: nodes[2].as,
-            entity: StringScalar,
-            list: false,
-          },
+          entity: StringScalar,
         },
       });
 

@@ -1,5 +1,6 @@
 export * from './context';
 export * from './either';
+export * from './expression';
 export * from './entity';
 export * from './mutation';
 export * from './parameter';
