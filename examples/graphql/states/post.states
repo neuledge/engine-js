@@ -24,7 +24,7 @@ state PublishedPost from DraftPost {
 Create a new draft post
 """
 create(
-  name: String
+  title: String
   content?: String
   category?: Category
 ): DraftPost
@@ -33,7 +33,7 @@ create(
 Update a draft post
 """
 DraftPost.update(
-  name: String
+  title: String
   content?: String
   category?: Category
 ): DraftPost
@@ -42,7 +42,7 @@ DraftPost.update(
 Update a published post
 """
 PublishedPost.update(
-  name: String
+  title: String
   content: String
   category: Category
 ): PublishedPost
@@ -51,6 +51,8 @@ PublishedPost.update(
 Publish a draft post
 """
 DraftPost.publish(): PublishedPost => {
+  content: Required(value: this.content),
+  category: Required(value: this.category),
   publishedAt: DateTime(),
 }
 

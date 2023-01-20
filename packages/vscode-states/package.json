@@ -1,0 +1,50 @@
+{
+  "name": "vscode-neuledge-states",
+  "displayName": "Neuledge States",
+  "description": "This is a VSCode plugin for the Neuledge States language. It provides syntax highlighting and code completion for the Neuledge States language.",
+  "version": "0.0.2",
+  "icon": "images/icon.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/neuledge/engine-js.git"
+  },
+  "license": "Apache-2.0",
+  "scripts": {
+    "package": "vsce package --yarn",
+    "release": "vsce publish --yarn"
+  },
+  "publisher": "neuledge",
+  "engines": {
+    "vscode": "^1.74.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "contributes": {
+    "languages": [
+      {
+        "id": "states",
+        "aliases": [
+          "Neuledge States",
+          "states"
+        ],
+        "extensions": [
+          ".states",
+          ".neu",
+          ".neuledge"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "states",
+        "scopeName": "source.states",
+        "path": "./syntaxes/states.tmLanguage.json"
+      }
+    ]
+  },
+  "devDependencies": {
+    "@vscode/vsce": "^2.16.0"
+  }
+}

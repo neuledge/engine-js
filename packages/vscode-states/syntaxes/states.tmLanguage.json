@@ -1,0 +1,91 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "Neuledge States",
+  "patterns": [{ "include": "#states" }],
+  "repository": {
+    "states": {
+      "patterns": [
+        { "include": "#comments" },
+        { "include": "#keywords" },
+        { "include": "#string" },
+        { "include": "#number" },
+        { "include": "#decorator" },
+        { "include": "#punctuations" }
+      ]
+    },
+
+    "comments": {
+      "patterns": [
+        {
+          "comment": "need to prefix comment space with a scope else Atom's reflow cmd doesn't work",
+          "name": "comment.line.states",
+          "match": "(\\s*)(#).*",
+          "captures": {
+            "1": {
+              "name": "punctuation.whitespace.comment.leading.states"
+            }
+          }
+        }
+      ]
+    },
+
+    "keywords": {
+      "match": "\\b(state|from|either)\\b",
+      "name": "keyword.control.states"
+    },
+
+    "string": {
+      "patterns": [
+        { "include": "#triple-string" },
+        { "include": "#single-string" },
+        { "include": "#double-string" }
+      ]
+    },
+
+    "number": {
+      "name": "constant.numeric.states",
+      "match": "\\b(0|[1-9][0-9]*)\\b"
+    },
+
+    "triple-string": {
+      "name": "string.quoted.triple.states",
+      "begin": "\"\"\"",
+      "end": "\"\"\""
+    },
+
+    "single-string": {
+      "name": "string.quoted.single.states",
+      "begin": "'",
+      "end": "'|\n",
+      "patterns": [
+        {
+          "name": "constant.character.escape.states",
+          "match": "\\."
+        }
+      ]
+    },
+
+    "double-string": {
+      "name": "string.quoted.double.states",
+      "begin": "\"",
+      "end": "\"|\n",
+      "patterns": [
+        {
+          "name": "constant.character.escape.states",
+          "match": "\\."
+        }
+      ]
+    },
+
+    "decorator": {
+      "match": "@\\w+",
+      "name": "entity.name.function.decorator.states"
+    },
+
+    "punctuations": {
+      "match": "[{}()\\[\\].,;:=><|&*+-\\/!%?~^]",
+      "name": "punctuation.other.states"
+    }
+  },
+  "scopeName": "source.states"
+}

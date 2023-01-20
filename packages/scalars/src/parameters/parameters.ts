@@ -2,8 +2,8 @@ import { Scalar, ScalarInput, ScalarType, ScalarValue } from '@/scalar';
 
 export type Parameters = Record<string, Parameter>;
 
-export interface Parameter {
-  type: Scalar;
+export interface Parameter<S extends Scalar = Scalar> {
+  type: S;
   nullable?: boolean;
 }
 

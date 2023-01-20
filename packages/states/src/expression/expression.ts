@@ -11,7 +11,7 @@ export const parseExpression = (
 ): Expression => {
   switch (node.type) {
     case 'CallExpression':
-      return parseCallExpression(node);
+      return parseCallExpression(parameters, node);
 
     case 'Identifier':
       return parseIdentifierExpression(parameters, node);

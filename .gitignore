@@ -75,3 +75,6 @@ typings/
 
 # turbo repo
 .turbo
+
+# vscode
+*.vsix

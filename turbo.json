@@ -14,7 +14,12 @@
     "build": {
       "dependsOn": ["^build", "^types", "generate"],
       "inputs": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.js", "src/**/*.jsx"],
-      "outputs": ["dist/**/*.js", "dist/**/*.js.map"]
+      "outputs": [
+        "dist/**/*.js",
+        "dist/**/*.js.map",
+        "dist/**/*.mjs",
+        "dist/**/*.mjs.map"
+      ]
     },
     "test": {
       "dependsOn": ["build", "types"],

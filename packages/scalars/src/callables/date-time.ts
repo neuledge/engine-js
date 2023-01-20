@@ -6,7 +6,7 @@ export const DateTime = createCallable(
   {
     now: { type: DateTimeScalar, nullable: true },
   },
-  DateTimeScalar,
+  { type: DateTimeScalar },
   ({ now }) => {
     if (now != null) {
       return new Date(now);
