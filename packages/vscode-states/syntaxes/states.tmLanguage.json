@@ -10,6 +10,9 @@
         { "include": "#string" },
         { "include": "#number" },
         { "include": "#decorator" },
+        { "include": "#argument" },
+        { "include": "#this" },
+        { "include": "#mutation-name" },
         { "include": "#punctuations" }
       ]
     },
@@ -30,7 +33,7 @@
     },
 
     "keywords": {
-      "match": "\\b(state|from|either)\\b",
+      "match": "\\b(state|from|either)\\b(?=\\s+[A-Za-z0-9][A-Za-z0-9_]*\\s*)",
       "name": "keyword.control.states"
     },
 
@@ -80,6 +83,41 @@
     "decorator": {
       "match": "@\\w+",
       "name": "entity.name.function.decorator.states"
+    },
+
+    "argument": {
+      "match": "\\b([A-Za-z_][A-Za-z0-9_]*)\\s*(\\?)?(:)\\s*",
+      "captures": {
+        "1": {
+          "name": "variable.other.states"
+        },
+        "2": {
+          "name": "keyword.operator.optional.states"
+        },
+        "3": {
+          "name": "punctuation.separator.key-value.states"
+        }
+      }
+    },
+
+    "this": {
+      "match": "\\bthis\\b",
+      "name": "variable.language.this.states"
+    },
+
+    "mutation-name": {
+      "match": "^\\s*\\b(([A-Za-z_][A-Za-z0-9_]*)\\s*(\\.)\\s*)?([A-Za-z_][A-Za-z0-9_]*)\\s*(?=\\()",
+      "captures": {
+        "2": {
+          "name": "entity.name.type.states"
+        },
+        "3": {
+          "name": "punctuation.separator.key-value.states"
+        },
+        "4": {
+          "name": "variable.other.states"
+        }
+      }
     },
 
     "punctuations": {

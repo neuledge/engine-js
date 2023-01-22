@@ -4,6 +4,10 @@ This is a VSCode plugin for the Neuledge States language. It provides syntax hig
 
 ## Release Notes
 
+### 0.0.3
+
+- Improve mutation detection
+
 ### 0.0.1
 
 Initial release.
