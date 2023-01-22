@@ -11,6 +11,7 @@
   "license": "Apache-2.0",
   "scripts": {
     "package": "vsce package --yarn",
+    "postpublish": "yarn release",
     "release": "vsce publish --yarn"
   },
   "publisher": "neuledge",
