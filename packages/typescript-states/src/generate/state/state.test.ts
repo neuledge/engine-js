@@ -18,12 +18,12 @@ describe('generate/state', () => {
         "@$.State<'User', User>()
         export class User {
           static $name = 'User' as const;
-          static $id = ['+id'] as const;
-          static $scalars = {
+          static $id = { fields: ['+id'] } as const;
+          static $scalars = () => ({
             id: { type: $.scalars.Number, index: 1 },
             name: { type: $.scalars.String, index: 2 },
             email: { type: $.scalars.String, index: 3, nullable: true },
-          };
+          });
           static $find: $.Where<{
             id?: $.WhereNumber<$.scalars.Number>;
           }>;

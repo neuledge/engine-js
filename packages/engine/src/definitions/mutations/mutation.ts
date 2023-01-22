@@ -1,5 +1,5 @@
-import { MutatedEntity } from '@/entity';
-import { StateDefinition, StateDefinitionType } from '../state';
+import { AlteredEntity } from '@/entity';
+import { StateDefinition, StateType } from '../state';
 import { Resolveable } from './utils';
 
 export type MutationDefinitionArguments = Record<string, unknown>;
@@ -29,14 +29,14 @@ export interface CreateWithArgsMutationDefinition<
   A extends MutationDefinitionArguments = MutationDefinitionArguments,
 > {
   readonly mutation: 'create';
-  (this: void, args: A): Resolveable<MutatedEntity<S>>;
+  (this: void, args: A): Resolveable<AlteredEntity<S>>;
 }
 
 export interface CreateWithoutArgsMutationDefinition<
   S extends StateDefinition,
 > {
   readonly mutation: 'create';
-  (this: void): Resolveable<MutatedEntity<S>>;
+  (this: void): Resolveable<AlteredEntity<S>>;
 }
 
 // update
@@ -55,7 +55,7 @@ export interface UpdateWithArgsMutationDefinition<
   R extends StateDefinition = StateDefinition,
 > {
   readonly mutation: 'update';
-  (this: StateDefinitionType<S>, args: A): Resolveable<MutatedEntity<R>>;
+  (this: StateType<S>, args: A): Resolveable<AlteredEntity<R>>;
 }
 
 export interface UpdateWithoutArgsMutationDefinition<
@@ -63,7 +63,7 @@ export interface UpdateWithoutArgsMutationDefinition<
   R extends StateDefinition = StateDefinition,
 > {
   readonly mutation: 'update';
-  (this: StateDefinitionType<S>): Resolveable<MutatedEntity<R>>;
+  (this: StateType<S>): Resolveable<AlteredEntity<R>>;
 }
 
 // delete
@@ -81,7 +81,7 @@ export interface DeleteWithArgsMutationDefinition<
 > {
   readonly mutation: 'delete';
   readonly virtual?: false;
-  (this: StateDefinitionType<S>, args: A): Resolveable<void>;
+  (this: StateType<S>, args: A): Resolveable<void>;
 }
 
 export interface DeleteWithoutArgsMutationDefinition<
@@ -89,5 +89,5 @@ export interface DeleteWithoutArgsMutationDefinition<
 > {
   readonly mutation: 'delete';
   readonly virtual?: boolean;
-  (this: StateDefinitionType<S>): Resolveable<void>;
+  (this: StateType<S>): Resolveable<void>;
 }

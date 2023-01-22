@@ -70,8 +70,9 @@ const decorators: Decorators<State> = {
         ),
         z.array(z.string()),
       ]),
+      auto: z.literal('increment').optional(),
     }),
-    (state, { fields }, argsNodes) => {
+    (state, { fields, auto }, argsNodes) => {
       const fieldsEntries = Array.isArray(fields)
         ? fields.map((field): [string, 'asc'] => [field, 'asc'])
         : Object.entries(fields);
@@ -88,6 +89,10 @@ const decorators: Decorators<State> = {
 
         state.primaryKey.fields[field.name] =
           direction === 1 || direction === 'asc' ? 'asc' : 'desc';
+      }
+
+      if (auto) {
+        state.primaryKey.auto = auto;
       }
     },
   ),

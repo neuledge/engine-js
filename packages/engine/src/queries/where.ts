@@ -1,19 +1,18 @@
 import {
   StateDefinition,
-  StateDefinitionName,
-  StateDefinitionFind,
-  StateDefinitionUnique,
+  StateName,
+  StateFind,
+  StateUnique,
 } from '@/definitions';
 import { AllKeys } from './utils';
 
-export type Where<S extends StateDefinition> = StateDefinitionFind<S> & {
+export type Where<S extends StateDefinition> = StateFind<S> & {
   [K in NonCommonQueryKeys<S>]?: never;
 };
 
-export type UniqueWhere<S extends StateDefinition> =
-  StateDefinitionUnique<S> & {
-    [K in NonCommonUniqueKeys<S>]?: never;
-  };
+export type UniqueWhere<S extends StateDefinition> = StateUnique<S> & {
+  [K in NonCommonUniqueKeys<S>]?: never;
+};
 
 // Forbidden all non-common keys between the given states, effectively doing an
 // AND operator between all state values.
@@ -31,15 +30,15 @@ export type UniqueWhere<S extends StateDefinition> =
 //   3. Forbidden the result from all keys (`id`)
 
 type NonCommonQueryKeys<S extends StateDefinition> = {
-  [K in StateDefinitionName<S>]: Exclude<
-    AllKeys<StateDefinitionFind<S>>,
-    S extends StateDefinition<K> ? AllKeys<StateDefinitionFind<S>> : never
+  [K in StateName<S>]: Exclude<
+    AllKeys<StateFind<S>>,
+    S extends StateDefinition<K> ? AllKeys<StateFind<S>> : never
   >;
-}[StateDefinitionName<S>];
+}[StateName<S>];
 
 type NonCommonUniqueKeys<S extends StateDefinition> = {
-  [K in StateDefinitionName<S>]: Exclude<
-    AllKeys<StateDefinitionUnique<S>>,
-    S extends StateDefinition<K> ? AllKeys<StateDefinitionUnique<S>> : never
+  [K in StateName<S>]: Exclude<
+    AllKeys<StateUnique<S>>,
+    S extends StateDefinition<K> ? AllKeys<StateUnique<S>> : never
   >;
-}[StateDefinitionName<S>];
+}[StateName<S>];

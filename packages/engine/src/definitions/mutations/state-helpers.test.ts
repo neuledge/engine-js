@@ -1,4 +1,4 @@
-import { StateDefinitionId } from '../state';
+import { StateId } from '../state';
 import {
   Category,
   DraftPost,
@@ -204,7 +204,7 @@ describe('definitions/mutations/state', () => {
       expect<{
         title: string;
         content?: string | null;
-        category?: StateDefinitionId<typeof Category> | null;
+        category?: StateId<typeof Category> | null;
       }>({} as StateDefinitionMutationArguments<typeof DraftPost, 'update'>);
 
       expect<Record<string, never>>(
@@ -220,7 +220,7 @@ describe('definitions/mutations/state', () => {
       expect<{
         title: string;
         content: string;
-        category: StateDefinitionId<typeof Category>;
+        category: StateId<typeof Category>;
       }>({} as StateDefinitionMutationArguments<typeof Post[number], 'update'>);
 
       expect<Record<string, never>>(

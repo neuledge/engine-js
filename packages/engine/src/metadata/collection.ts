@@ -23,7 +23,7 @@ export class MetadataCollection {
     public readonly name: string,
     public readonly states: MetadataState[],
   ) {
-    this.primaryKeys = this.states[0].instance.$id.map((key) =>
+    this.primaryKeys = this.states[0].instance.$id.fields.map((key) =>
       fromSortedField(key),
     );
 

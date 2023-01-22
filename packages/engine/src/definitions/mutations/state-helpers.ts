@@ -1,4 +1,4 @@
-import { StateDefinition, StateDefinitionName } from '../state';
+import { StateDefinition, StateName } from '../state';
 import {
   CreateMutationDefinition,
   CreateWithArgsMutationDefinition,
@@ -107,7 +107,7 @@ export type StateDefinitionMutationsReturn<
   M extends keyof S,
 > = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  [N in StateDefinitionName<S>]: S extends StateDefinition<N, any>
+  [N in StateName<S>]: S extends StateDefinition<N, any>
     ? S[M] extends DeleteMutationDefinition<S>
       ? never
       : // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -120,4 +120,4 @@ export type StateDefinitionMutationsReturn<
       ? R
       : never
     : never;
-}[StateDefinitionName<S>];
+}[StateName<S>];

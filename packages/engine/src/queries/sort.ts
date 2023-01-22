@@ -1,8 +1,4 @@
-import {
-  StateDefinition,
-  StateDefinitionIndexes,
-  StateDefinitionType,
-} from '@/definitions';
+import { StateDefinition, StateIndexes, StateType } from '@/definitions';
 
 export interface SortQuery<S extends StateDefinition> {
   sort(sort: SortIndex<S> | null): this;
@@ -18,11 +14,11 @@ export type Sort<S extends StateDefinition> =
   | readonly SortField<S>[];
 
 export type SortIndex<S extends StateDefinition> = SortedField<
-  keyof StateDefinitionIndexes<S> & string
+  keyof StateIndexes<S> & string
 >;
 
 export type SortField<S extends StateDefinition> = SortedField<
-  keyof StateDefinitionType<S> & string
+  keyof StateType<S> & string
 >;
 
 type SortedField<K extends string> = `${'+' | '-'}${K}`;

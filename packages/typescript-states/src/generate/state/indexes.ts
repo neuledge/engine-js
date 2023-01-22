@@ -1,10 +1,15 @@
 import { ScalarField, State, StateIndex } from '@neuledge/states';
 import { generateEntityType, generateWhereEntity } from '../entity';
 
-export const generateStateIdType = (state: State): string =>
-  `[${Object.entries(state.primaryKey.fields)
-    .map(([name, dir]) => `'${dir === 'asc' ? '+' : '-'}${name}'`)
-    .join(', ')}]`;
+export const generateStateIdType = (state: State): string => {
+  const { fields, auto } = state.primaryKey;
+
+  const keys = Object.entries(fields).map(
+    ([name, dir]) => `'${dir === 'asc' ? '+' : '-'}${name}'`,
+  );
+
+  return `{ fields: [${keys.join(', ')}]${auto ? `, auto: '${auto}'` : ''} }`;
+};
 
 export const generateStateStaticIndexes = (
   state: State,

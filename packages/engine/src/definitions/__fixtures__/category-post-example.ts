@@ -8,14 +8,18 @@ import { $ } from '@neuledge/engine';
 @$.State<'Category', Category>()
 export class Category {
   static $name = 'Category' as const;
-  static $id = ['+id'] as const;
-  static $scalars = {
+  static $id = { fields: ['+id'], auto: 'increment' } as const;
+  static $scalars = () => ({
     id: { type: $.scalars.Number, index: 1 },
     name: { type: $.scalars.String, index: 2 },
     description: { type: $.scalars.String, index: 3, nullable: true },
+  });
+  static $find: $.Where<{
+    id?: $.WhereNumber<$.scalars.Number>;
+  }>;
+  static $unique: {
+    id: $.scalars.Number;
   };
-  static $find: $.Where<{ id: $.WhereNumber<$.scalars.Number> }>;
-  static $unique: { id: $.scalars.Number };
   static $relations = () => ({
     posts: [[...Post]] as const,
   });
@@ -30,10 +34,10 @@ export class Category {
       name: $.scalars.String;
       description?: $.scalars.String | null;
     }
-  >('create', function ({ name, description }) {
+  >('create', async function ({ name, description }) {
     return {
       $state: 'Category',
-      id: Math.round(Math.random() * 1e6),
+      id: null,
       name,
       description,
     };
@@ -46,12 +50,12 @@ export class Category {
       description?: $.scalars.String | null;
     },
     typeof Category
-  >('update', function ({ name, description }) {
+  >('update', async function ({ name, description }) {
     return {
       ...this,
       $state: 'Category',
-      name: name,
-      description: description,
+      name,
+      description,
     };
   });
 
@@ -65,15 +69,19 @@ export type $Category = $.Entity<typeof Category>;
 @$.State<'DraftPost', DraftPost>()
 export class DraftPost {
   static $name = 'DraftPost' as const;
-  static $id = ['+id'] as const;
+  static $id = { fields: ['+id'], auto: 'increment' } as const;
   static $scalars = () => ({
     id: { type: $.scalars.Number, index: 1 },
     category: { type: [Category], index: 2, nullable: true },
     title: { type: $.scalars.String, index: 3 },
     content: { type: $.scalars.String, index: 4, nullable: true },
   });
-  static $find: $.Where<{ id: $.WhereNumber<$.scalars.Number> }>;
-  static $unique: { id: $.scalars.Number };
+  static $find: $.Where<{
+    id?: $.WhereNumber<$.scalars.Number>;
+  }>;
+  static $unique: {
+    id: $.scalars.Number;
+  };
   static $relations = () => ({
     category: [Category],
   });
@@ -91,10 +99,10 @@ export class DraftPost {
       content?: $.scalars.String | null;
       category?: $.Id<typeof Category> | null;
     }
-  >('create', function ({ title, content, category }) {
+  >('create', async function ({ title, content, category }) {
     return {
       $state: 'DraftPost',
-      id: Math.round(Math.random() * 1e6),
+      id: null,
       title,
       content,
       category,
@@ -109,7 +117,7 @@ export class DraftPost {
       category?: $.Id<typeof Category> | null;
     },
     typeof DraftPost
-  >('update', function ({ title, content, category }) {
+  >('update', async function ({ title, content, category }) {
     return {
       ...this,
       $state: 'DraftPost',
@@ -122,18 +130,11 @@ export class DraftPost {
   static publish = $.mutation<typeof DraftPost, typeof PublishedPost>(
     'update',
     async function () {
-      if (!this.category) {
-        throw new TypeError(`Expect category to exists`);
-      }
-      if (!this.content) {
-        throw new TypeError(`Expect content to exists`);
-      }
-
       return {
         ...this,
         $state: 'PublishedPost',
-        content: this.content,
-        category: this.category,
+        content: await $.runtime.Required({ value: this.content }),
+        category: await $.runtime.Required({ value: this.category }),
         publishedAt: await $.runtime.DateTime({}),
       };
     },
@@ -149,17 +150,21 @@ export type $DraftPost = $.Entity<typeof DraftPost>;
 @$.State<'PublishedPost', PublishedPost>()
 export class PublishedPost {
   static $name = 'PublishedPost' as const;
-  static $id = ['+id'] as const;
+  static $id = { fields: ['+id'], auto: 'increment' } as const;
   static $scalars = () => ({
     id: { type: $.scalars.Number, index: 1 },
-    category: { type: [Category], index: 2 },
     title: { type: $.scalars.String, index: 3 },
+    category: { type: [Category], index: 2 },
     content: { type: $.scalars.String, index: 4 },
     publishedAt: { type: $.scalars.DateTime, index: 5 },
   });
   static $find: $.Where<
-    | { id: $.WhereNumber<$.scalars.Number> }
-    | { category: $.WhereState<typeof Category> }
+    | {
+        id?: $.WhereNumber<$.scalars.Number>;
+      }
+    | {
+        category?: $.WhereState<typeof Category>;
+      }
   >;
   static $unique: { id: $.scalars.Number };
   static $relations = () => ({
@@ -183,7 +188,7 @@ export class PublishedPost {
       category: $.Id<typeof Category>;
     },
     typeof PublishedPost
-  >('update', function ({ title, content, category }) {
+  >('update', async function ({ title, content, category }) {
     return {
       ...this,
       $state: 'PublishedPost',

@@ -54,7 +54,7 @@ export const getScalarFields = (
   for (const childState of type) {
     const scalars = resolveDefer(childState.$scalars);
 
-    for (const sortKey of childState.$id) {
+    for (const sortKey of childState.$id.fields) {
       const id = fromSortedField(sortKey);
       const childScalarDef = scalars[id];
 

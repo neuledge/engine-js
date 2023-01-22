@@ -5,7 +5,7 @@ import {
   StateDefinitionMutationArguments,
   StateDefinitionMutationsReturn,
 } from '@/definitions';
-import { Entity, MutatedEntity } from '@/entity';
+import { Entity, AlteredEntity } from '@/entity';
 import { NeuledgeError, NeuledgeErrorCode } from '@/error';
 import pLimit from 'p-limit';
 import { StateDefinitionMap } from './states';
@@ -58,7 +58,7 @@ const alterEntity = async <
       const mutated = await fn.call(thisArg, args);
 
       return {
-        ...(mutated as MutatedEntity<StateDefinition>),
+        ...(mutated as AlteredEntity<StateDefinition>),
         $version: $version + 1,
       };
     }

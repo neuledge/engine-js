@@ -20,8 +20,10 @@ export const generateEntityScalar = (entity: NonNullableEntity): string => {
 export const generateEntityType = (entity: NonNullableEntity): string => {
   switch (entity.type) {
     case 'Either':
+      return `$.Id<typeof ${entity.name}[number]>`;
+
     case 'State':
-      return entity.name;
+      return `$.Id<typeof ${entity.name}>`;
 
     case 'Scalar':
       return entity.node ? entity.name : `$.scalars.${entity.name}`;

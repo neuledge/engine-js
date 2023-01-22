@@ -1,4 +1,4 @@
-import { StateDefinition, StateDefinitionId } from '../state';
+import { StateDefinition, StateId } from '../state';
 import { ComparableFilters } from './comparable';
 import { EqualableFilters } from './equalable';
 import { SequenceFilters } from './sequence';
@@ -15,10 +15,10 @@ export type StateDefinitionWhereNullableId<V extends object> =
   EqualableFilters<V | null>;
 
 export type StateDefinitionWhereState<S extends StateDefinition> =
-  StateDefinitionWhereId<StateDefinitionId<S>>;
+  StateDefinitionWhereId<StateId<S>>;
 
 export type StateDefinitionWhereNullableState<S extends StateDefinition> =
-  StateDefinitionWhereNullableId<StateDefinitionId<S>>;
+  StateDefinitionWhereNullableId<StateId<S>>;
 
 export type StateDefinitionWhereObject<V extends object> =
   | EqualableFilters<V>

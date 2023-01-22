@@ -5,4 +5,5 @@ export interface StateIndex {
 
 export interface StatePrimaryKey extends StateIndex {
   unique: true;
+  auto?: 'increment';
 }

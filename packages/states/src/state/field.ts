@@ -90,12 +90,17 @@ const decorators: Decorators<{ state: State; field: StateField }> = {
           z.literal(-1),
         ])
         .optional(),
+      auto: z.literal('increment').optional(),
     }),
-    ({ state, field }, { direction }) => {
+    ({ state, field }, { direction, auto }) => {
       state.primaryKey.fields[field.name] =
         direction == null || direction === 'asc' || direction === 1
           ? 'asc'
           : 'desc';
+
+      if (auto) {
+        state.primaryKey.auto = auto;
+      }
     },
   ),
 

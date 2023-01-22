@@ -21,7 +21,27 @@ describe('generate/state/indexes', () => {
           indexes: [],
           mutations: {},
         }),
-      ).toBe("['+id']");
+      ).toBe("{ fields: ['+id'] }");
+    });
+
+    it('should generate the id type with auto', () => {
+      expect(
+        generateStateIdType({
+          type: 'State',
+          name: 'Test',
+          node: null as never,
+          fields: {},
+          primaryKey: {
+            fields: {
+              id: 'asc',
+            },
+            unique: true,
+            auto: 'increment',
+          },
+          indexes: [],
+          mutations: {},
+        }),
+      ).toBe("{ fields: ['+id'], auto: 'increment' }");
     });
 
     it('should generate the id type with multiple fields', () => {
@@ -41,7 +61,7 @@ describe('generate/state/indexes', () => {
           indexes: [],
           mutations: {},
         }),
-      ).toBe("['+id', '-name']");
+      ).toBe("{ fields: ['+id', '-name'] }");
     });
   });
 

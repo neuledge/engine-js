@@ -1,5 +1,5 @@
 import { MutationDefinition, StateDefinition } from '@/definitions';
-import { Entity, MutatedEntity, ProjectedEntity } from '@/entity';
+import { Entity, AlteredEntity, ProjectedEntity } from '@/entity';
 import { NeuledgeError, NeuledgeErrorCode } from '@/error';
 import { EntityList } from '@/list';
 import { InitManyQueryOptions, InitOneQueryOptions, Select } from '@/queries';
@@ -27,13 +27,13 @@ export const execInitMany = async <S extends StateDefinition>(
     );
   }
 
-  const newEntities: MutatedEntity<S>[] = await Promise.all(
+  const newEntities: AlteredEntity<S>[] = await Promise.all(
     options.args.map((args) => fn(args)),
   );
 
   const entities = newEntities.map(
     (entity): Entity<S> => ({
-      ...(entity as MutatedEntity<StateDefinition>),
+      ...(entity as AlteredEntity<StateDefinition>),
       $version: 0,
     }),
   );

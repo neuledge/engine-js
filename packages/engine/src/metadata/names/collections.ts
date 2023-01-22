@@ -1,13 +1,9 @@
-import {
-  resolveDefer,
-  StateDefinition,
-  StateDefinitionName,
-} from '@/definitions';
+import { resolveDefer, StateDefinition, StateName } from '@/definitions';
 import pluralize from 'pluralize';
 
 export const getCollectionNames = (
   states: Iterable<StateDefinition>,
-): Map<StateDefinitionName, string> => {
+): Map<StateName, string> => {
   const groups = getStateGroups(states);
 
   const suggestions: StatesNameSuggestion[] = [];
@@ -42,7 +38,7 @@ export const getCollectionNames = (
 const getStateGroups = (
   states: Iterable<StateDefinition>,
 ): Set<Set<StateDefinition>> => {
-  const groups: Map<StateDefinitionName, Set<StateDefinition>> = new Map();
+  const groups: Map<StateName, Set<StateDefinition>> = new Map();
 
   for (const state of states) {
     let set = groups.get(state.$name);

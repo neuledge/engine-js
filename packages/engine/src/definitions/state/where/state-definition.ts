@@ -10,3 +10,5 @@ interface StateDefinitionWhereOr<T> {
 export type StateDefinitionWhereRecord<T> = {
   [K in keyof T]?: T[K];
 };
+
+export type StateDefinitionUnique<T> = { [K in keyof T]?: T[K] };

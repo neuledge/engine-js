@@ -1,7 +1,7 @@
 import {
   resolveDefer,
   StateDefinition,
-  StateDefinitionName,
+  StateName,
   StateDefintionScalar,
 } from '@/definitions';
 import { NeuledgeError, NeuledgeErrorCode } from '@/index';
@@ -15,9 +15,7 @@ import {
 const METADATA_HASH_DEFAULT_FIELD = '__h';
 const METADATA_VERSION_DEFAULT_FIELD = '__v';
 
-export type MetadataStateContext = Partial<
-  Record<StateDefinitionName, MetadataState>
->;
+export type MetadataStateContext = Partial<Record<StateName, MetadataState>>;
 
 export interface MetadataStateReservedNames {
   hash: string;

@@ -3,7 +3,7 @@ import { generateDescriptionComment } from '../comments';
 import { generateEntityScalar, generateEntityType } from '../entity';
 
 export const generateStateScalars = (state: State, indent: string): string =>
-  `{${Object.values(state.fields)
+  `() => ({${Object.values(state.fields)
     .filter((item): item is ScalarField => item.type === 'ScalarField')
     .map(
       (item) =>
@@ -11,7 +11,7 @@ export const generateStateScalars = (state: State, indent: string): string =>
           item.entity,
         )}, index: ${item.index}${item.nullable ? ', nullable: true' : ''} },`,
     )
-    .join('')}\n${indent}}`;
+    .join('')}\n${indent}})`;
 
 export const generateStateFields = (state: State, indent: string): string =>
   `${Object.values(state.fields)

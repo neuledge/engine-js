@@ -1,15 +1,16 @@
 import { Defer, Deferred } from '../defer';
+import { StateDefinitionId as StateDefinitionId } from './id';
 import { StateDefintionScalar } from './scalar';
 import { SortDefinition, SortDefinitionKey } from './sort';
-import { StateDefinitionWhere } from './where';
+import { StateDefinitionUnique, StateDefinitionWhere } from './where';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export interface StateDefinition<N extends string = string, T = any> {
   $name: N;
-  $id: SortDefinition<T>;
+  $id: StateDefinitionId<T>;
   $scalars: Defer<{ [K in keyof T]: StateDefintionScalar<T[K]> }>;
   $find: StateDefinitionWhere;
-  $unique: { [K in keyof T]?: T[K] };
+  $unique: StateDefinitionUnique<T>;
   $relations?: Defer<
     Record<
       string,
@@ -23,22 +24,25 @@ export interface StateDefinition<N extends string = string, T = any> {
   new (...args: any): T;
 }
 
-export type StateDefinitionType<S extends StateDefinition> =
-  S extends StateDefinition<string, infer R> ? R : never;
+export type StateType<S extends StateDefinition> = S extends StateDefinition<
+  string,
+  infer R
+>
+  ? R
+  : never;
 
-export type StateDefinitionName<S extends StateDefinition = StateDefinition> =
-  S['$name'];
+export type StateName<S extends StateDefinition = StateDefinition> = S['$name'];
 // export type StateScalars<S extends State> = Deferred<S['$scalars']>;
-export type StateDefinitionId<S extends StateDefinition> = Pick<
-  StateDefinitionType<S>,
-  SortDefinitionKey<S['$id'][number]>
+export type StateId<S extends StateDefinition> = Pick<
+  StateType<S>,
+  SortDefinitionKey<S['$id']['fields'][number]>
 >;
-export type StateDefinitionFind<S extends StateDefinition> = S['$find'];
-export type StateDefinitionUnique<S extends StateDefinition> = S['$unique'];
-export type StateDefinitionIndexes<S extends StateDefinition> = NonNullable<
+export type StateFind<S extends StateDefinition> = S['$find'];
+export type StateUnique<S extends StateDefinition> = S['$unique'];
+export type StateIndexes<S extends StateDefinition> = NonNullable<
   S['$indexes']
 >;
-export type StateDefinitionRelations<S extends StateDefinition> = Deferred<
+export type StateRelations<S extends StateDefinition> = Deferred<
   S['$relations'],
   Record<never, never>
 >;

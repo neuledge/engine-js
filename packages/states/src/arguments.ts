@@ -1,22 +1,22 @@
 import { ArgumentNode, ParsingError } from '@neuledge/states-parser';
 
-export type Arguments<V extends { node: unknown }> = Record<
+export type Arguments<T extends { node?: unknown }> = Record<
   string,
-  Argument<V>
+  Argument<T>
 >;
 
-export interface Argument<V extends { node: unknown }> {
+export interface Argument<T extends { node?: unknown }> {
   type: 'Argument';
-  node: ArgumentNode<V['node']>;
+  node: ArgumentNode<T['node']>;
   name: string;
-  value: V;
+  value: T;
 }
 
-export const parseArguments = <V extends { node: unknown }>(
-  nodes: ArgumentNode<V['node']>[],
-  parser: (node: V['node']) => V,
-): Arguments<V> => {
-  const acc: Arguments<V> = {};
+export const parseArguments = <T extends { node: unknown }>(
+  nodes: ArgumentNode<T['node']>[],
+  parser: (node: T['node']) => T,
+): Arguments<T> => {
+  const acc: Arguments<T> = {};
 
   for (const node of nodes) {
     if (node.key.name in acc) {
@@ -29,10 +29,10 @@ export const parseArguments = <V extends { node: unknown }>(
   return acc;
 };
 
-const parseArgument = <V extends { node: unknown }>(
-  node: ArgumentNode<V['node']>,
-  parser: (node: V['node']) => V,
-): Argument<V> => ({
+const parseArgument = <T extends { node: unknown }>(
+  node: ArgumentNode<T['node']>,
+  parser: (node: T['node']) => T,
+): Argument<T> => ({
   type: 'Argument',
   node,
   name: node.key.name,

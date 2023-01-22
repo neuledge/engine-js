@@ -31,10 +31,10 @@ describe('build', () => {
 @$.State<'Foo', Foo>()
 export class Foo {
   static $name = 'Foo' as const;
-  static $id = ['+id'] as const;
-  static $scalars = {
+  static $id = { fields: ['+id'] } as const;
+  static $scalars = () => ({
     id: { type: $.scalars.Number, index: 1 },
-  };
+  });
   static $find: $.Where<{
     id?: $.WhereNumber<$.scalars.Number>;
   }>;

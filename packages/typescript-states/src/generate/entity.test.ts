@@ -27,7 +27,7 @@ describe('generate/entity', () => {
     });
 
     it('should generate state', () => {
-      expect(generateEntityType(FooState)).toBe('Foo');
+      expect(generateEntityType(FooState)).toBe('$.Id<typeof Foo>');
     });
 
     it('should generate either', () => {
@@ -38,7 +38,7 @@ describe('generate/entity', () => {
           node: {} as never,
           states: [FooState],
         }),
-      ).toBe('MyEither');
+      ).toBe('$.Id<typeof MyEither[number]>');
     });
 
     it('should throw on unknown type', () => {

@@ -1,18 +1,18 @@
 import { Arguments, parseArguments } from '@/arguments';
-import { Parameter } from '@/parameter';
+import { ParametersContext } from '@/parameter';
 import { Callable, runtime } from '@neuledge/scalars';
-import { CallExpressionNode } from '@neuledge/states-parser';
+import { CallExpressionNode, ExpressionNode } from '@neuledge/states-parser';
 import { Expression, parseExpression } from './expression';
 
 export interface CallExpression {
   type: 'CallExpression';
   node: CallExpressionNode;
   callee: Callable;
-  arguments: Arguments<Expression>;
+  arguments: Arguments<Expression & { node: ExpressionNode }>;
 }
 
 export const parseCallExpression = (
-  parameters: Record<string, Parameter>,
+  params: ParametersContext,
   node: CallExpressionNode,
 ): CallExpression => {
   const callee = runtime[node.callee.name as keyof typeof runtime];
@@ -26,7 +26,7 @@ export const parseCallExpression = (
     callee,
     // FIXME `node.arguments` type is `ArgumentNode<ExpressionNode>[]`
     arguments: parseArguments(node.arguments as never, (node) =>
-      parseExpression(parameters, node),
+      parseExpression(params, node),
     ),
   };
 };

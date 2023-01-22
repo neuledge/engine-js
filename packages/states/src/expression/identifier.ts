@@ -1,4 +1,4 @@
-import { Parameter } from '@/parameter';
+import { Parameter, ParametersContext } from '@/parameter';
 import { IdentifierNode, ParsingError } from '@neuledge/states-parser';
 
 export interface IdentifierExpression {
@@ -8,10 +8,10 @@ export interface IdentifierExpression {
 }
 
 export const parseIdentifierExpression = (
-  parameters: Record<string, Parameter>,
+  params: ParametersContext,
   node: IdentifierNode,
 ): IdentifierExpression => {
-  const reference = parameters[node.name];
+  const reference = params.parameters[node.name];
 
   if (!reference) {
     throw new ParsingError(node, `Unknown identifier '${node.name}'`);
