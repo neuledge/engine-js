@@ -1,9 +1,9 @@
 import fs from 'node:fs/promises';
 import { jest } from '@jest/globals';
-import { build } from './build';
+import { __test_action as action } from './generate';
 
-describe('build', () => {
-  describe('build()', () => {
+describe('generate', () => {
+  describe('action()', () => {
     afterEach(() => {
       jest.restoreAllMocks();
     });
@@ -16,7 +16,7 @@ describe('build', () => {
         .spyOn(fs, 'writeFile')
         .mockImplementation(async () => void 0);
 
-      await build(['foo.states'], { basepath: '/' });
+      await action(['foo.states'], { basepath: '/' });
 
       expect(readFile).toHaveBeenCalledTimes(1);
       expect(readFile).toHaveBeenCalledWith('/foo.states', {

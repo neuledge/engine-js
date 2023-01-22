@@ -4,13 +4,27 @@ import fg from 'fast-glob';
 import { StatesContext } from '@neuledge/states';
 import { generate } from '@neuledge/typescript-states';
 import pLimit from 'p-limit';
+import { Command } from 'commander';
 
-export interface BuildOptions {
+export const setGenerateCommand = (program: Command) =>
+  program
+    .command('generate', { isDefault: true })
+    .description(
+      'Convert `.states` files to TypeScript files (default command)',
+    )
+    .argument('<files...>', 'files to build')
+    .option('-P, --basepath <path>', 'base path')
+    .option('-O, --output <file>', 'output ts file')
+    .action(action);
+
+interface BuildOptions {
   basepath?: string;
   output?: string;
 }
 
-export const build = async (
+export { action as __test_action };
+
+const action = async (
   files: string[],
   options: BuildOptions,
 ): Promise<void> => {
