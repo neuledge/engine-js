@@ -3,7 +3,7 @@ import { $ } from '@neuledge/engine';
 /* eslint-disable @typescript-eslint/ban-types, prefer-arrow-callback, prefer-arrow/prefer-arrow-functions, unicorn/consistent-function-scoping */
 
 /**
- * Basic category
+ * A posts category
  */
 @$.State<'Category', Category>()
 export class Category {
@@ -28,6 +28,9 @@ export class Category {
   name!: $.scalars.String;
   description?: $.scalars.String | null;
 
+  /**
+   * Create a new category
+   */
   static create = $.mutation<
     typeof Category,
     {
@@ -43,6 +46,9 @@ export class Category {
     };
   });
 
+  /**
+   * Update the category details
+   */
   static update = $.mutation<
     typeof Category,
     {
@@ -59,12 +65,15 @@ export class Category {
     };
   });
 
+  /**
+   * Delete the category and all it's related posts
+   */
   static delete = $.mutation<typeof Category>('delete');
 }
 export type $Category = $.Entity<typeof Category>;
 
 /**
- * Post in draft state
+ * An unpublished post
  */
 @$.State<'DraftPost', DraftPost>()
 export class DraftPost {
@@ -83,7 +92,7 @@ export class DraftPost {
     id: $.scalars.Number;
   };
   static $relations = () => ({
-    category: [Category],
+    category: [Category] as const,
   });
   static $transforms = () => [PublishedPost];
 
@@ -92,6 +101,9 @@ export class DraftPost {
   title!: $.scalars.String;
   content?: $.scalars.String | null;
 
+  /**
+   * Create a new draft post
+   */
   static create = $.mutation<
     typeof DraftPost,
     {
@@ -103,12 +115,15 @@ export class DraftPost {
     return {
       $state: 'DraftPost',
       id: null,
+      category,
       title,
       content,
-      category,
     };
   });
 
+  /**
+   * Update a draft post
+   */
   static update = $.mutation<
     typeof DraftPost,
     {
@@ -127,6 +142,9 @@ export class DraftPost {
     };
   });
 
+  /**
+   * Publish a draft post
+   */
   static publish = $.mutation<typeof DraftPost, typeof PublishedPost>(
     'update',
     async function () {
@@ -140,35 +158,44 @@ export class DraftPost {
     },
   );
 
+  /**
+   * Delete a post
+   */
   static delete = $.mutation<typeof DraftPost>('delete');
 }
 export type $DraftPost = $.Entity<typeof DraftPost>;
 
 /**
- * Post in published state
+ * A published post
  */
 @$.State<'PublishedPost', PublishedPost>()
 export class PublishedPost {
   static $name = 'PublishedPost' as const;
   static $id = { fields: ['+id'], auto: 'increment' } as const;
   static $scalars = () => ({
-    id: { type: $.scalars.Number, index: 1 },
-    title: { type: $.scalars.String, index: 3 },
-    category: { type: [Category], index: 2 },
-    content: { type: $.scalars.String, index: 4 },
-    publishedAt: { type: $.scalars.DateTime, index: 5 },
+    id: { type: $.scalars.Number, index: 256 },
+    title: { type: $.scalars.String, index: 258 },
+    category: { type: [Category], index: 1 },
+    content: { type: $.scalars.String, index: 2 },
+    publishedAt: { type: $.scalars.DateTime, index: 3 },
   });
   static $find: $.Where<
     | {
-        id?: $.WhereNumber<$.scalars.Number>;
-      }
-    | {
         category?: $.WhereState<typeof Category>;
       }
+    | {
+        category: $.WhereState<typeof Category>;
+        title?: $.WhereString<$.scalars.String>;
+      }
+    | {
+        id?: $.WhereNumber<$.scalars.Number>;
+      }
   >;
-  static $unique: { id: $.scalars.Number };
+  static $unique: {
+    id: $.scalars.Number;
+  };
   static $relations = () => ({
-    category: [Category],
+    category: [Category] as const,
   });
   static $indexes = {
     category_title: ['+category', '+title'] as const,
@@ -180,6 +207,9 @@ export class PublishedPost {
   content!: $.scalars.String;
   publishedAt!: $.scalars.DateTime;
 
+  /**
+   * Update a published post
+   */
   static update = $.mutation<
     typeof PublishedPost,
     {
@@ -198,6 +228,9 @@ export class PublishedPost {
     };
   });
 
+  /**
+   * Delete a post
+   */
   static delete = $.mutation<typeof PublishedPost>('delete');
 }
 export type $PublishedPost = $.Entity<typeof PublishedPost>;
