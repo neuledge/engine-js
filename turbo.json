@@ -23,18 +23,12 @@
     },
     "test": {
       "dependsOn": ["build", "types"],
-      "outputs": [],
       "inputs": ["src/**/*.test.ts", "src/**/__tests__/*.ts"]
     },
-    "lint": {
-      "outputs": []
-    },
-    "lint:strict": {
-      "outputs": []
-    },
+    "lint": {},
+    "lint:strict": {},
     "deploy": {
-      "dependsOn": ["build", "types", "test", "lint:strict"],
-      "outputs": []
+      "dependsOn": ["build", "types", "test", "lint:strict"]
     }
   }
 }
