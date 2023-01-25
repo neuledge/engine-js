@@ -36,7 +36,10 @@ export function createMutation<
   R extends StateDefinition,
 >(
   type: 'update',
-  mutation: (this: StateType<S>) => Resolveable<AlteredEntity<R>>,
+  mutation: (
+    this: StateType<S>,
+    args?: object,
+  ) => Resolveable<AlteredEntity<R>>,
 ): UpdateWithoutArgsMutationDefinition<S, R>;
 export function createMutation<
   S extends StateDefinition,

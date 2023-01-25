@@ -41,6 +41,7 @@ export class Foo {
   static $unique: {
     id: $.scalars.Number;
   };
+  static $relations = {};
 
   id!: $.scalars.Number;
 }

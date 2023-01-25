@@ -1,5 +1,5 @@
 import { State, StatesContext } from '@neuledge/states';
-import { generateState } from './state';
+import { generateState } from './index';
 
 /* eslint-disable max-lines-per-function */
 
@@ -30,6 +30,7 @@ describe('generate/state', () => {
           static $unique: {
             id: $.scalars.Number;
           };
+          static $relations = {};
 
           id!: $.scalars.Number;
           name!: $.scalars.String;

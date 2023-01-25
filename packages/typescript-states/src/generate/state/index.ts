@@ -1,1 +1,23 @@
-export * from './state';
+import { State } from '@neuledge/states';
+import { generateDescriptionComment } from '../comments';
+import {
+  generateStateFields,
+  generateStateRelations,
+  generateStateScalars,
+} from './fields';
+import { generateStateIdType, generateStateStaticIndexes } from './indexes';
+import { generateStateMutations } from './mutations';
+
+export const generateState = (state: State): string =>
+  generateDescriptionComment(state, '') +
+  `@$.State<'${state.name}', ${state.name}>()\n` +
+  `export class ${state.name} {\n` +
+  `  static $name = '${state.name}' as const;\n` +
+  `  static $id = ${generateStateIdType(state)} as const;\n` +
+  `  static $scalars = ${generateStateScalars(state, '  ')};\n` +
+  `  ${generateStateStaticIndexes(state, '  ')}\n` +
+  `  static $relations = ${generateStateRelations(state, '  ')};\n` +
+  `${generateStateFields(state, '  ')}\n` +
+  generateStateMutations(state, '  ') +
+  `}\n` +
+  `export type $${state.name} = $.Entity<typeof ${state.name}>;`;
