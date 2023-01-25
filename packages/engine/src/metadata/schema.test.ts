@@ -6,6 +6,8 @@ import { MetadataCollection } from './collection';
 import { Metadata } from './metadata';
 import { getMetadataSchema } from './schema';
 
+/* eslint-disable max-lines-per-function */
+
 describe('engine/metadata/schema', () => {
   describe('getMetadataSchema()', () => {
     let categoriesCollection: MetadataCollection;
@@ -41,9 +43,22 @@ describe('engine/metadata/schema', () => {
             },
           },
         ],
-        'category.id': [{ field: postsCollection.getFields('category.id')[0] }],
-        id: [{ field: postsCollection.getFields('id')[0] }],
-        title: [{ field: postsCollection.getFields('title')[0] }],
+        'category.id': [
+          {
+            field: {
+              ...postsCollection.getFields('category.id')[0],
+              indexes: [1, 1],
+            },
+          },
+        ],
+        id: [
+          { field: { ...postsCollection.getFields('id')[0], indexes: [256] } },
+        ],
+        title: [
+          {
+            field: { ...postsCollection.getFields('title')[0], indexes: [258] },
+          },
+        ],
         content: [{ field: postsCollection.getFields('content')[1] }],
         publishedAt: [{ field: postsCollection.getFields('publishedAt')[0] }],
       });
