@@ -39,15 +39,17 @@ describe('state/state', () => {
         deprecated: undefined,
         fields: state.fields,
         primaryKey: {
+          name: 'id',
           fields: { id: 'asc' },
           unique: true,
         },
-        indexes: [
-          {
+        indexes: {
+          id: {
+            name: 'id',
             fields: { id: 'asc' },
             unique: true,
           },
-        ],
+        },
         mutations: {},
       });
     });
@@ -79,15 +81,17 @@ describe('state/state', () => {
         deprecated: true,
         fields: state.fields,
         primaryKey: {
+          name: 'id',
           fields: { id: 'asc' },
           unique: true,
         },
-        indexes: [
-          {
+        indexes: {
+          id: {
+            name: 'id',
             fields: { id: 'asc' },
             unique: true,
           },
-        ],
+        },
         mutations: {},
       });
     });
@@ -121,22 +125,26 @@ describe('state/state', () => {
         deprecated: 'Use UserV2',
         fields: state.fields,
         primaryKey: {
+          name: 'id',
           fields: { id: 'asc' },
           unique: true,
         },
-        indexes: [
-          {
-            fields: { id: 'asc' },
-            unique: true,
-          },
-          {
+        indexes: {
+          name_id: {
+            name: 'name_id',
             fields: { name: 'asc', id: 'desc' },
           },
-          {
+          email: {
+            name: 'email',
             fields: { email: 'asc' },
             unique: true,
           },
-        ],
+          id: {
+            name: 'id',
+            fields: { id: 'asc' },
+            unique: true,
+          },
+        },
         mutations: {},
       });
     });

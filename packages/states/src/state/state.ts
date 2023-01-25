@@ -4,7 +4,11 @@ import { Mutation } from '@/mutation';
 import { FieldNode, ParsingError, StateNode } from '@neuledge/states-parser';
 import { z } from 'zod';
 import { parseStateFields, StateField } from './field';
-import { StateIndex, StatePrimaryKey } from './state-index';
+import {
+  StateIndex,
+  StateIndexNameRegex,
+  StatePrimaryKey,
+} from './state-index';
 
 export interface State<N extends string = string> {
   type: 'State';
@@ -14,7 +18,7 @@ export interface State<N extends string = string> {
   deprecated?: boolean | string;
   fields: Record<string, StateField>;
   primaryKey: StatePrimaryKey;
-  indexes: StateIndex[];
+  indexes: Record<string, StateIndex>;
   mutations: Record<string, Mutation>;
 }
 
@@ -24,25 +28,25 @@ export const parseState = (
   fields: FieldNode[],
   mutations: Record<string, Mutation>,
 ): State => {
-  const primaryKey: StatePrimaryKey = {
-    fields: {},
-    unique: true,
-  };
-
   const state: State = {
     type: 'State',
     node,
     name: node.id.name,
     description: node.description?.value,
     fields: {},
-    primaryKey,
-    indexes: [primaryKey],
+    primaryKey: {
+      name: '',
+      fields: {},
+      unique: true,
+    },
+    indexes: {},
     mutations,
   };
 
   state.fields = parseStateFields(ctx, state, fields);
 
   applyDecorators(state, node.decorators, decorators);
+  applyPrimaryKey(state, node);
 
   return state;
 };
@@ -111,13 +115,15 @@ const decorators: Decorators<State> = {
         z.array(z.string()),
       ]),
       unique: z.boolean().optional(),
+      name: z.string().regex(StateIndexNameRegex).optional(),
     }),
-    (state, { fields, unique }, argsNodes) => {
+    (state, { fields, unique, name }, argsNodes, node) => {
       const fieldsEntries = Array.isArray(fields)
         ? fields.map((field): [string, 'asc'] => [field, 'asc'])
         : Object.entries(fields);
 
       const index: StateIndex = {
+        name: name || fieldsEntries.map(([key]) => key).join('_'),
         fields: {},
         unique,
       };
@@ -136,7 +142,36 @@ const decorators: Decorators<State> = {
           direction === 1 || direction === 'asc' ? 'asc' : 'desc';
       }
 
-      state.indexes.push(index);
+      if (state.indexes[index.name]) {
+        throw new ParsingError(node, `Duplicate index name: ${index.name}`);
+      }
+
+      state.indexes[index.name] = index;
+
+      if (index.name) {
+        state.indexes[index.name] = index;
+      }
     },
   ),
+};
+
+const applyPrimaryKey = (state: State, node: StateNode) => {
+  const { primaryKey, indexes } = state;
+
+  const primaryKeyName = Object.keys(primaryKey.fields).join('_');
+  if (!primaryKeyName) {
+    throw new ParsingError(
+      node.id,
+      'State must have at least one primary key field',
+    );
+  }
+
+  let i = 0;
+  primaryKey.name = primaryKeyName;
+
+  while (indexes[primaryKey.name]) {
+    primaryKey.name = `${primaryKeyName}_${++i}`;
+  }
+
+  indexes[primaryKey.name] = primaryKey;
 };

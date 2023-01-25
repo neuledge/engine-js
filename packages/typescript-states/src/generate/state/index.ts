@@ -5,7 +5,11 @@ import {
   generateStateOptionalRelations,
   generateStateScalars,
 } from './fields';
-import { generateStateIdType, generateStateStaticIndexes } from './indexes';
+import {
+  generateStateIdType,
+  generateStateOptionalIndexes,
+  generateStateQueryIndexes,
+} from './indexes';
 import {
   generateStateMutations,
   generateStateOptionalTransforms,
@@ -14,6 +18,7 @@ import {
 export const generateState = (state: State): string => {
   const relations = generateStateOptionalRelations(state, '  ');
   const transforms = generateStateOptionalTransforms(state, '  ');
+  const indexes = generateStateOptionalIndexes(state, '  ');
 
   return (
     generateDescriptionComment(state, '') +
@@ -22,8 +27,9 @@ export const generateState = (state: State): string => {
     `  static $name = '${state.name}' as const;\n` +
     `  static $id = ${generateStateIdType(state)} as const;\n` +
     `  static $scalars = ${generateStateScalars(state, '  ')};\n` +
-    `  ${generateStateStaticIndexes(state, '  ')}\n` +
+    `  ${generateStateQueryIndexes(state, '  ')}\n` +
     (relations ? `  static $relations = ${relations};\n` : '') +
+    (indexes ? `  static $indexes = ${indexes};\n` : '') +
     (transforms ? `  static $transforms = ${transforms};\n` : '') +
     `${generateStateFields(state, '  ')}\n` +
     generateStateMutations(state, '  ') +

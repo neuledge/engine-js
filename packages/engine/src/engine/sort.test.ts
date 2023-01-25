@@ -31,7 +31,7 @@ describe('engine/sort', () => {
 
     it('should convert a sort asc string to a sort object', () => {
       const res = convertSortQuery(postsCollection, {
-        sort: '+category.posts',
+        sort: '+category_title',
       });
 
       expect(res).toEqual({ sort: { category_id: 'asc', title: 'asc' } });
@@ -40,7 +40,7 @@ describe('engine/sort', () => {
 
     it('should convert a sort desc string to a sort object', () => {
       const res = convertSortQuery(postsCollection, {
-        sort: '-category.posts',
+        sort: '-category_title',
       });
 
       expect(res).toEqual({ sort: { category_id: 'desc', title: 'desc' } });

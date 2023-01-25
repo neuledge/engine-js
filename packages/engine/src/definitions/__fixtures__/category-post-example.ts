@@ -171,7 +171,7 @@ export class PublishedPost {
     category: [Category],
   });
   static $indexes = {
-    'category.posts': ['+category', '+title'] as const,
+    category_title: ['+category', '+title'] as const,
   };
 
   id!: $.scalars.Number;

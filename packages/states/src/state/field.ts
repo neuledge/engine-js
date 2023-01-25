@@ -2,9 +2,10 @@ import { StatesContext } from '@/context';
 import { applyDecorators, createDecorator, Decorators } from '@/decorators';
 import { NonNullableEntity, parseNonNullableEntity } from '@/entity';
 import { parseType, Type } from '@/type';
-import { FieldNode } from '@neuledge/states-parser';
+import { FieldNode, ParsingError } from '@neuledge/states-parser';
 import { z } from 'zod';
 import { State } from './state';
+import { StateIndex, StateIndexNameRegex } from './state-index';
 
 export type StateField = ScalarField | RelationField;
 
@@ -115,9 +116,11 @@ const decorators: Decorators<{ state: State; field: StateField }> = {
         ])
         .optional(),
       unique: z.boolean().optional(),
+      name: z.string().regex(StateIndexNameRegex).optional(),
     }),
-    ({ state, field }, { direction, unique }) => {
-      state.indexes.push({
+    ({ state, field }, { direction, unique, name }, argsNodes, node) => {
+      const index: StateIndex = {
+        name: name || field.name,
         fields: {
           [field.name]:
             direction == null || direction === 'asc' || direction === 1
@@ -125,7 +128,12 @@ const decorators: Decorators<{ state: State; field: StateField }> = {
               : 'desc',
         },
         unique,
-      });
+      };
+
+      if (state.indexes[index.name]) {
+        throw new ParsingError(node, `Duplicate index name: ${index.name}`);
+      }
+      state.indexes[index.name] = index;
     },
   ),
 
@@ -139,9 +147,11 @@ const decorators: Decorators<{ state: State; field: StateField }> = {
           z.literal(-1),
         ])
         .optional(),
+      name: z.string().regex(StateIndexNameRegex).optional(),
     }),
-    ({ state, field }, { direction }) => {
-      state.indexes.push({
+    ({ state, field }, { direction, name }, argsNodes, node) => {
+      const index: StateIndex = {
+        name: name || field.name,
         fields: {
           [field.name]:
             direction == null || direction === 'asc' || direction === 1
@@ -149,7 +159,12 @@ const decorators: Decorators<{ state: State; field: StateField }> = {
               : 'desc',
         },
         unique: true,
-      });
+      };
+
+      if (state.indexes[index.name]) {
+        throw new ParsingError(node, `Duplicate index name: ${index.name}`);
+      }
+      state.indexes[index.name] = index;
     },
   ),
 };

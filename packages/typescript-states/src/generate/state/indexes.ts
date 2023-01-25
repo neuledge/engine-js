@@ -11,15 +11,46 @@ export const generateStateIdType = (state: State): string => {
   return `{ fields: [${keys.join(', ')}]${auto ? `, auto: '${auto}'` : ''} }`;
 };
 
-export const generateStateStaticIndexes = (
+export const generateStateQueryIndexes = (
   state: State,
   indent: string,
 ): string =>
   `static $find: $.Where<${generateStateFindType(state, indent)}>;\n` +
   `${indent}static $unique: ${generateStateUniqueType(state, indent)};`;
 
+export const generateStateOptionalIndexes = (
+  state: State,
+  indent: string,
+): string | null => {
+  const indexes = Object.values(state.indexes).filter((index) => !index.unique);
+
+  if (!indexes.length) {
+    return null;
+  }
+
+  return (
+    `{` +
+    indexes
+      .map(
+        (index) =>
+          `\n${indent}  ${
+            /^\w+$/.test(index.name)
+              ? index.name
+              : `'${index.name.replace(/['\\]/g, '\\$1')}'`
+          }: [${Object.entries(index.fields)
+            .map(
+              ([field, direction]) =>
+                `'${direction === 'asc' ? `+` : '-'}${field}'`,
+            )
+            .join(', ')}] as const,`,
+      )
+      .join('') +
+    `\n${indent}}`
+  );
+};
+
 const generateStateFindType = (state: State, indent: string): string => {
-  const paths = getIndexTypePaths(state, state.indexes);
+  const paths = getIndexTypePaths(state, Object.values(state.indexes));
   const multiPaths = paths.length > 1 || paths[0].length > 1;
 
   return (
@@ -49,7 +80,7 @@ const generateStateFindType = (state: State, indent: string): string => {
 const generateStateUniqueType = (state: State, indent: string): string =>
   getIndexTypePaths(
     state,
-    state.indexes.filter((index) => index.unique),
+    Object.values(state.indexes).filter((index) => index.unique),
   )
     .map(
       (fields) =>

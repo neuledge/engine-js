@@ -1,5 +1,5 @@
 import { NumberScalar, StringScalar } from '@neuledge/scalars';
-import { generateStateIdType, generateStateStaticIndexes } from './indexes';
+import { generateStateIdType, generateStateQueryIndexes } from './indexes';
 
 /* eslint-disable max-lines-per-function */
 
@@ -13,12 +13,13 @@ describe('generate/state/indexes', () => {
           node: null as never,
           fields: {},
           primaryKey: {
+            name: 'id',
             fields: {
               id: 'asc',
             },
             unique: true,
           },
-          indexes: [],
+          indexes: {},
           mutations: {},
         }),
       ).toBe("{ fields: ['+id'] }");
@@ -32,13 +33,14 @@ describe('generate/state/indexes', () => {
           node: null as never,
           fields: {},
           primaryKey: {
+            name: 'id',
             fields: {
               id: 'asc',
             },
             unique: true,
             auto: 'increment',
           },
-          indexes: [],
+          indexes: {},
           mutations: {},
         }),
       ).toBe("{ fields: ['+id'], auto: 'increment' }");
@@ -52,13 +54,14 @@ describe('generate/state/indexes', () => {
           node: null as never,
           fields: {},
           primaryKey: {
+            name: 'id_name',
             fields: {
               id: 'asc',
               name: 'desc',
             },
             unique: true,
           },
-          indexes: [],
+          indexes: {},
           mutations: {},
         }),
       ).toBe("{ fields: ['+id', '-name'] }");
@@ -68,7 +71,7 @@ describe('generate/state/indexes', () => {
   describe('generateStateStaticIndexes()', () => {
     it('should generate simple static index', () => {
       expect(
-        generateStateStaticIndexes(
+        generateStateQueryIndexes(
           {
             type: 'State',
             name: 'Test',
@@ -83,12 +86,13 @@ describe('generate/state/indexes', () => {
               },
             },
             primaryKey: null as never,
-            indexes: [
-              {
+            indexes: {
+              id: {
+                name: 'id',
                 fields: { id: 'asc' },
                 unique: true,
               },
-            ],
+            },
             mutations: {},
           },
           '  ',
@@ -105,7 +109,7 @@ describe('generate/state/indexes', () => {
 
     it('should generate static index with multiple fields', () => {
       expect(
-        generateStateStaticIndexes(
+        generateStateQueryIndexes(
           {
             type: 'State',
             name: 'Test',
@@ -127,12 +131,13 @@ describe('generate/state/indexes', () => {
               },
             },
             primaryKey: null as never,
-            indexes: [
-              {
+            indexes: {
+              id_name: {
+                name: 'id_name',
                 fields: { id: 'asc', name: 'desc' },
                 unique: true,
               },
-            ],
+            },
             mutations: {},
           },
           '  ',
@@ -156,7 +161,7 @@ describe('generate/state/indexes', () => {
 
     it('should generate multiple static indexes', () => {
       expect(
-        generateStateStaticIndexes(
+        generateStateQueryIndexes(
           {
             type: 'State',
             name: 'Test',
@@ -179,15 +184,17 @@ describe('generate/state/indexes', () => {
               },
             },
             primaryKey: null as never,
-            indexes: [
-              {
+            indexes: {
+              id: {
+                name: 'id',
                 fields: { id: 'asc' },
                 unique: true,
               },
-              {
+              name: {
+                name: 'name',
                 fields: { name: 'asc' },
               },
-            ],
+            },
             mutations: {},
           },
           '  ',

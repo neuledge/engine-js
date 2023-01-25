@@ -13,7 +13,7 @@ state DraftPost {
 """
 A published post
 """
-@index(fields: ["category"])
+@index(fields: ["category", "title"])
 state PublishedPost from DraftPost {
   category: Category = 1
   content: String = 2

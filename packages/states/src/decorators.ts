@@ -16,6 +16,7 @@ export const createDecorator =
       target: T,
       args: z.infer<A>,
       argNodes: Record<string, ArgumentNode<LiteralNode>>,
+      node: DecoratorNode,
     ) => T | void,
   ): Decorator<T> =>
   (target, node) => {
@@ -41,7 +42,7 @@ export const createDecorator =
       );
     }
 
-    return decorator(target, args.data, argsNodes);
+    return decorator(target, args.data, argsNodes, node);
   };
 
 export const applyDecorators = <T>(

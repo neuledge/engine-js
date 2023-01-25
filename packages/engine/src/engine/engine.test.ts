@@ -129,7 +129,7 @@ describe('engine/engine', () => {
 
       const result = await engine
         .findMany(PublishedPost)
-        .sort('-category.posts')
+        .sort('-category_title')
         .limit(10);
 
       expect(engine.store.find).toHaveBeenCalledTimes(1);

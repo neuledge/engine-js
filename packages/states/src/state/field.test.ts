@@ -16,10 +16,11 @@ const generateState = (source: string) => {
     name: 'User',
     fields: {},
     primaryKey: {
+      name: '',
       fields: {},
       unique: true,
     },
-    indexes: [],
+    indexes: {},
     mutations: {},
   };
 
@@ -115,7 +116,7 @@ describe('state/field', () => {
         id: 'asc',
       });
 
-      expect(state.indexes).toEqual([]);
+      expect(state.indexes).toEqual({});
     });
 
     it('should parse fields with complex decorators', () => {
@@ -161,12 +162,13 @@ describe('state/field', () => {
         id: 'desc',
       });
 
-      expect(state.indexes).toEqual([
-        {
+      expect(state.indexes).toEqual({
+        email: {
+          name: 'email',
           fields: { email: 'asc' },
           unique: true,
         },
-      ]);
+      });
     });
 
     it('should parse fields with index decorators', () => {
@@ -211,15 +213,17 @@ describe('state/field', () => {
         id: 'desc',
       });
 
-      expect(state.indexes).toEqual([
-        {
+      expect(state.indexes).toEqual({
+        name: {
+          name: 'name',
           fields: { name: 'asc' },
         },
-        {
+        email: {
+          name: 'email',
           fields: { email: 'desc' },
           unique: true,
         },
-      ]);
+      });
     });
 
     it('should throw on invalid decorator field', () => {
