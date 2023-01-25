@@ -6,6 +6,29 @@ import {
 } from '../parameters';
 import { generateStateFunctionBody } from '../property';
 
+export const generateStateOptionalTransforms = (
+  state: State,
+  indent: string,
+): string | null => {
+  const transforms = Object.values(state.mutations)
+    .filter(
+      (item) => item.mutation === 'update' && item.returns.name !== state.name,
+    )
+    .map((item) => item.returns);
+
+  if (!transforms.length) {
+    return null;
+  }
+
+  if (transforms.length <= 3) {
+    return `() => [${transforms.map((item) => item.name).join(', ')}]`;
+  }
+
+  return `() => [${transforms
+    .map((item) => `\n${indent}  ${item.name},`)
+    .join('')}\n${indent}]`;
+};
+
 export const generateStateMutations = (state: State, indent: string): string =>
   Object.values(state.mutations)
     .map(

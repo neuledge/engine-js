@@ -85,7 +85,7 @@ export class DraftPost {
   static $relations = () => ({
     category: [Category],
   });
-  static $states = () => [PublishedPost];
+  static $transforms = () => [PublishedPost];
 
   id!: $.scalars.Number;
   category?: $.Id<typeof Category> | null;

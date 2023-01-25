@@ -47,7 +47,7 @@ const getStateGroups = (
       groups.set(state.$name, set);
     }
 
-    const relatedStates = resolveDefer(state.$states, []);
+    const relatedStates = resolveDefer(state.$transforms, []);
     for (const relatedState of relatedStates) {
       set.add(relatedState);
 

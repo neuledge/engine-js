@@ -30,7 +30,6 @@ describe('generate/state', () => {
           static $unique: {
             id: $.scalars.Number;
           };
-          static $relations = {};
 
           id!: $.scalars.Number;
           name!: $.scalars.String;

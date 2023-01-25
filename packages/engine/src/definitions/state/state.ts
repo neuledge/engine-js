@@ -17,7 +17,7 @@ export interface StateDefinition<N extends string = string, T = any> {
       readonly StateDefinition[] | readonly [readonly StateDefinition[]]
     >
   >;
-  $states?: Defer<readonly StateDefinition[]>;
+  $transforms?: Defer<readonly StateDefinition[]>;
   $indexes?: Record<string, SortDefinition<T>>;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -47,4 +47,4 @@ export type StateRelations<S extends StateDefinition> = Deferred<
   Record<never, never>
 >;
 
-// export type StateDefinitionStates<S extends State> = Deferred<S['$states']>;
+// export type StateDefinitionStates<S extends State> = Deferred<S['$transforms']>;

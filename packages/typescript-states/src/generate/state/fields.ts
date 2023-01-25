@@ -27,16 +27,16 @@ export const generateStateFields = (state: State, indent: string): string =>
     )
     .join('')}`;
 
-export const generateStateRelations = (
+export const generateStateOptionalRelations = (
   state: State,
   indent: string,
-): string => {
+): string | null => {
   const fields = Object.values(state.fields).filter(
     (item) => item.type === 'RelationField' || item.entity.type !== 'Scalar',
   );
 
   if (!fields.length) {
-    return '{}';
+    return null;
   }
 
   return `() => ({${fields
