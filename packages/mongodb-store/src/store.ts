@@ -12,6 +12,7 @@ import {
   StoreEnsureCollectionOptions,
   StoreCollection_Slim,
   StoreCollection,
+  StoreInsertionResponse,
 } from '@neuledge/store';
 import {
   Db,
@@ -101,8 +102,8 @@ export class MongoDBStore implements Store {
   async ensureCollection(options: StoreEnsureCollectionOptions): Promise<void> {
     const db = await this.db;
     const collection = await db
-      .createCollection(options.name)
-      .catch(() => db.collection(options.name));
+      .createCollection(options.collection.name)
+      .catch(() => db.collection(options.collection.name));
 
     if (options.dropIndexes?.length) {
       await dropIndexes(collection, options.dropIndexes);
@@ -115,13 +116,13 @@ export class MongoDBStore implements Store {
 
   async dropCollection(options: StoreDropCollectionOptions): Promise<void> {
     const db = await this.db;
-    await db.dropCollection(options.name);
+    await db.dropCollection(options.collection.name);
   }
 
   async find<T = StoreDocument>(
     options: StoreFindOptions,
   ): Promise<StoreList<T>> {
-    const collection = await this.collection(options.collectionName);
+    const collection = await this.collection(options.collection.name);
 
     let query = collection
       // unicon issue: https://github.com/sindresorhus/eslint-plugin-unicorn/issues/1947
@@ -158,20 +159,26 @@ export class MongoDBStore implements Store {
 
   async insert<T = StoreDocument>(
     options: StoreInsertOptions<T>,
-  ): Promise<StoreMutationResponse> {
-    const collection = await this.collection(options.collectionName);
+  ): Promise<StoreInsertionResponse> {
+    const collection = await this.collection(options.collection.name);
 
     const res = await collection.insertMany(
       options.documents.map((doc) => escapeDocument(doc)),
     );
 
-    return { affectedCount: res.insertedCount };
+    return {
+      insertedIds: options.documents.map(
+        (doc, i) =>
+          res.insertedIds[i]?.id ?? (doc as StoreDocument)._id ?? null,
+      ),
+      affectedCount: res.insertedCount,
+    };
   }
 
   async update<T = StoreDocument>(
     options: StoreUpdateOptions<T>,
   ): Promise<StoreMutationResponse> {
-    const collection = await this.collection(options.collectionName);
+    const collection = await this.collection(options.collection.name);
 
     const filter = options.where ? findFilter(options.where) : {};
     const update = updateFilter(options.set as Document);
@@ -205,7 +212,7 @@ export class MongoDBStore implements Store {
   }
 
   async delete(options: StoreDeleteOptions): Promise<StoreMutationResponse> {
-    const collection = await this.collection(options.collectionName);
+    const collection = await this.collection(options.collection.name);
 
     const filter = options.where ? findFilter(options.where) : {};
     let res;

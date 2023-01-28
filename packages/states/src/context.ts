@@ -3,7 +3,6 @@ import {
   DocumentNode,
   EitherNode,
   EntityNode,
-  FieldNode,
   MutationNode,
   ParsingError,
   StateFieldNode,
@@ -15,20 +14,35 @@ import { Either, parseEither } from './either';
 import { Entity } from './entity';
 import { Mutation, parseMutation } from './mutation';
 import { builtInScalars, CustomScalar } from './scalar';
-import { parseState, State } from './state';
+import {
+  isStateIndexEquals,
+  parseState,
+  parseStateField,
+  State,
+  StateField,
+} from './state';
 import { Void } from './void';
+
+/**
+ * The order in which the context processes its entities.
+ */
+enum ProcessingOrder {
+  Eithers = 1,
+  States = 2,
+  Mutations = 3,
+  Transforms = 4,
+}
 
 export class StatesContext {
   private readonly entityMap: { [K in string]?: Entity<K> } = {
     ...builtInScalars,
     Void,
   };
-  private readonly fieldsMap: Partial<Record<string, FieldNode[]>> = {};
   private readonly mutationMap: Partial<
     Record<string, Partial<Record<string, Mutation>>>
   > = {};
   private parent?: StatesContext;
-  private processing: { process(): unknown; order: number }[] = [];
+  private processing: { process(): unknown; order: ProcessingOrder }[] = [];
 
   // iterators
 
@@ -64,18 +78,6 @@ export class StatesContext {
 
     do {
       const res = this.entityMap[name] as Entity<N> | undefined;
-      if (res) return res;
-    } while ((self = self.parent as this));
-
-    return undefined;
-  }
-
-  fields(stateName: string): FieldNode[] | undefined {
-    // eslint-disable-next-line @typescript-eslint/no-this-alias, unicorn/no-this-assignment
-    let self = this;
-
-    do {
-      const res = this.fieldsMap[stateName];
       if (res) return res;
     } while ((self = self.parent as this));
 
@@ -133,7 +135,6 @@ export class StatesContext {
 
   private embed(child: StatesContext): void {
     Object.assign(this.entityMap, child.entityMap);
-    Object.assign(this.fieldsMap, child.fieldsMap);
 
     Object.assign(
       this.mutationMap,
@@ -184,8 +185,8 @@ export class StatesContext {
 
   private registerEntity<T extends EntityNode>(
     node: T,
-    order: number,
-    process: () => Entity & { type: T['type']; node: T },
+    order: ProcessingOrder,
+    process: (ref: object) => Entity & { type: T['type']; node: T },
   ): void {
     const { name } = node.id;
 
@@ -200,13 +201,13 @@ export class StatesContext {
     this.entityMap[name] = ref as Entity;
 
     this.processing.push({
-      process: () => Object.assign(ref, process()),
+      process: () => Object.assign(ref, process(ref)),
       order,
     });
   }
 
   private registerEither(node: EitherNode): void {
-    this.registerEntity(node, 1, () => {
+    this.registerEntity(node, ProcessingOrder.Eithers, () => {
       const mutations = this.mutationMap[node.id.name] ?? {};
 
       for (const state of node.states) {
@@ -221,14 +222,47 @@ export class StatesContext {
   }
 
   private registerState(node: StateNode): void {
-    this.registerEntity(node, 2, () =>
-      parseState(
-        this,
+    this.registerEntity(node, ProcessingOrder.States, (ref) => {
+      const fields: State['fields'] = {};
+      const baseIndex = this.assignStateFields(node, ref, fields);
+      const mutations = this.mutationMap[node.id.name] ?? {};
+
+      return parseState(
         node,
-        this.queryStateFields(node),
-        (this.mutationMap[node.id.name] ?? {}) as Record<string, Mutation>,
-      ),
-    );
+        fields,
+        mutations as Record<string, Mutation>,
+        baseIndex,
+      );
+    });
+
+    this.processing.push({
+      process: () => {
+        const state = this.entity(node.id.name) as State;
+        const mutations = this.mutationMap[node.id.name] ?? {};
+
+        for (const mutation of Object.values(mutations)) {
+          if (mutation?.mutation !== 'update') continue;
+
+          const transformed = mutation.returns as State;
+          if (transformed.name !== state.name) continue;
+
+          if (
+            !isStateIndexEquals(
+              state,
+              state.primaryKey,
+              transformed,
+              transformed.primaryKey,
+            )
+          ) {
+            throw new ParsingError(
+              mutation.node.key,
+              `A mutation for state '${state.name}' must return a state with the same primary key as the original state`,
+            );
+          }
+        }
+      },
+      order: ProcessingOrder.Transforms,
+    });
   }
 
   private registerMutation(node: MutationNode): void {
@@ -254,107 +288,102 @@ export class StatesContext {
 
     this.processing.push({
       process: () => Object.assign(ref, parseMutation(this, node)),
-      order: 3,
+      order: ProcessingOrder.Mutations,
     });
   }
 
   // processors
 
   process(): void {
-    for (const { process } of this.processing.sort(
-      (a, b) => a.order - b.order,
-    )) {
+    this.processing.sort((a, b) => a.order - b.order);
+
+    for (const { process } of this.processing) {
       process();
     }
 
     this.processing = [];
   }
 
-  private queryStateFields(state: StateNode): FieldNode[] {
-    if (state.id.name in this.fieldsMap) {
-      const res = this.fieldsMap[state.id.name];
-
-      if (res === undefined) {
-        throw new ParsingError(state.id, `Circular dependency detected`);
+  /**
+   * Assign the given `fields` dictionary with the fields of the given `node` state.
+   * Return the calculated base index of the state.
+   */
+  private assignStateFields(
+    node: StateNode,
+    ref: Partial<State>,
+    fields: State['fields'],
+  ): number {
+    // return the cached fields if already processed
+    if ('fields' in ref) {
+      if (ref.baseIndex == null || ref.fields == null) {
+        throw new ParsingError(node.id, `Circular dependency detected`);
       }
 
-      return res;
+      Object.assign(fields, ref.fields);
+
+      return ref.baseIndex;
     }
 
-    this.fieldsMap[state.id.name] = undefined;
-    const fieldMap = this.queryStateFrom(state);
+    // mark the state as processing (to detect circular dependencies)
+    ref.fields = undefined;
+    let baseIndex = 0;
 
-    const sortedFields = [...state.fields].sort(
+    // if the state has a parent, we need to parse its fields first
+    if (node.from) {
+      const parent = this.entity(node.from.name);
+
+      if (parent?.type !== 'State') {
+        throw new ParsingError(
+          node.from,
+          `Unknown state name '${node.from.name}'`,
+        );
+      }
+
+      baseIndex +=
+        this.assignStateFields(parent.node, parent, fields) +
+        STATE_FIELD_INDEX_MAX_INPUT_VALUE;
+    }
+
+    // we will sort the fields by their index
+    const sortedFields = [...node.fields].sort(
       (a, b) =>
         ('index' in a ? a.index.value : 0) - ('index' in b ? b.index.value : 0),
     );
 
-    for (const node of sortedFields) {
-      const field = this.queryStateField(node);
-      if (!field) continue;
+    for (const fieldNode of sortedFields) {
+      const field = this.parseStateField(fieldNode, baseIndex);
 
-      fieldMap[node.key.name] = field;
-    }
+      if (!field) {
+        // field marked as excluded
 
-    const fields = Object.values(fieldMap);
+        if (!fields[fieldNode.key.name]) {
+          throw new ParsingError(
+            fieldNode.key,
+            `Unknown field name '${fieldNode.key.name}'`,
+          );
+        }
 
-    for (const field of fields) {
-      const mutation = this.mutation(state.id.name, field.key.name);
-      if (mutation) {
-        throw new ParsingError(
-          mutation.node.key,
-          `The state '${state.id.name}' already has a field name '${field.key.name}' defined`,
-        );
-      }
-    }
-
-    this.fieldsMap[state.id.name] = fields;
-    return fields;
-  }
-
-  private queryStateFrom(state: StateNode): Record<string, FieldNode> {
-    const fieldMap: Record<string, FieldNode> = {};
-    if (!state.from) return fieldMap;
-
-    const fromState = this.entity(state.from.name);
-    if (fromState?.type !== 'State') {
-      throw new ParsingError(
-        state.from,
-        `Unknown state name '${state.from.name}'`,
-      );
-    }
-
-    const fromFields = this.queryStateFields(fromState.node);
-    for (const item of fromFields) {
-      fieldMap[item.key.name] = {
-        ...item,
-        index: {
-          ...item.index,
-          value: item.index.value + STATE_FIELD_INDEX_MAX_INPUT_VALUE,
-        },
-      };
-    }
-
-    for (const item of state.fields) {
-      if (!fieldMap[item.key.name]) {
-        if (item.type !== 'ExcludedField') continue;
-
-        throw new ParsingError(
-          item,
-          `Unknown field name '${item.key.name}' on state '${state.from.name}'`,
-        );
+        delete fields[fieldNode.key.name];
+        continue;
       }
 
-      delete fieldMap[item.key.name];
+      fields[field.name] = field;
     }
 
-    return fieldMap;
+    // mark the state as processed
+    ref.fields = fields;
+    ref.baseIndex = baseIndex;
+
+    return baseIndex;
   }
 
-  private queryStateField(node: StateFieldNode): FieldNode | null {
+  private parseStateField(
+    node: StateFieldNode,
+    baseIndex: number,
+  ): StateField | null {
     switch (node.type) {
       case 'Field': {
-        return node;
+        return parseStateField(this, node, baseIndex);
       }
 
       case 'ReferenceField': {
@@ -365,25 +394,21 @@ export class StatesContext {
             `Unknown state name '${node.state.name}'`,
           );
         }
+        const fields: State['fields'] = {};
+        this.assignStateFields(refState.node, refState, fields);
 
-        let field = refState.node.fields.find(
-          (field): field is FieldNode =>
-            field.key.name === field.key.name && field.type === 'Field',
-        );
-
+        const field = fields[node.key.name];
         if (!field) {
-          const refFields = this.queryStateFields(refState.node);
-          field = refFields.find(({ key }) => key.name === node.key.name);
-
-          if (!field) {
-            throw new ParsingError(
-              node.key,
-              `Undefined field name '${node.key.name}' on state '${node.state.name}'`,
-            );
-          }
+          throw new ParsingError(
+            node.key,
+            `Undefined field name '${node.key.name}' on state '${node.state.name}'`,
+          );
         }
 
-        return { ...field, index: node.index };
+        return {
+          ...field,
+          index: node.index.value + baseIndex,
+        };
       }
 
       case 'ExcludedField': {

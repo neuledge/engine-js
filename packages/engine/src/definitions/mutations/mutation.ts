@@ -1,4 +1,4 @@
-import { AlteredEntity } from '@/entity';
+import { AlteredEntity, InitiatedEntity } from '@/entity';
 import { StateDefinition, StateType } from '../state';
 import { Resolveable } from './utils';
 
@@ -29,14 +29,14 @@ export interface CreateWithArgsMutationDefinition<
   A extends MutationDefinitionArguments = MutationDefinitionArguments,
 > {
   readonly mutation: 'create';
-  (this: void, args: A): Resolveable<AlteredEntity<S>>;
+  (this: void, args: A): Resolveable<InitiatedEntity<S>>;
 }
 
 export interface CreateWithoutArgsMutationDefinition<
   S extends StateDefinition,
 > {
   readonly mutation: 'create';
-  (this: void): Resolveable<AlteredEntity<S>>;
+  (this: void): Resolveable<InitiatedEntity<S>>;
 }
 
 // update

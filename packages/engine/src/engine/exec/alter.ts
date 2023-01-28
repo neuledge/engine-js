@@ -42,7 +42,7 @@ import {
   StoreFindOptions,
   StoreList,
 } from '@neuledge/store';
-import { Metadata, MetadataCollection } from '@/metadata';
+import { Metadata, MetadataCollection, MetadataState } from '@/metadata';
 import { toDocument } from '../document';
 
 const ALTER_VERSION_RETRIES = 3;
@@ -135,14 +135,22 @@ const preprareAlter = async <S extends StateDefinition>(
 ): Promise<AlterContext<S> | void> => {
   const metadata = await engine.metadata;
 
-  const collection = chooseStatesCollection(metadata, options.states);
-  const storeFilters = createStoreFilters(metadata, collection, options);
+  const { states, collection } = chooseStatesCollection(
+    metadata,
+    options.states,
+  );
+
+  const storeFilters = createStoreFilters(
+    metadata,
+    states,
+    collection,
+    options,
+  );
 
   if (isAlterDeleteOnly(options)) {
     return deleteDocuments(engine.store, storeFilters, options);
   }
 
-  const states = getStateDefinitionMap(options.states);
   const res = new Map<string, UpdatedEntity<ReturnState<S>>>();
 
   return {
@@ -150,7 +158,7 @@ const preprareAlter = async <S extends StateDefinition>(
     metadata,
     store: engine.store,
     collection,
-    states,
+    states: getStateDefinitionMap(options.states),
     options,
     storeFilters,
   };
@@ -158,10 +166,11 @@ const preprareAlter = async <S extends StateDefinition>(
 
 const createStoreFilters = <S extends StateDefinition>(
   metadata: Metadata,
+  states: MetadataState[],
   collection: MetadataCollection,
   options: AlterQueryOptions<S>,
 ) => ({
-  collectionName: collection.name,
+  collection,
 
   // FIXME filter by retrive query as well (requireOne)
   // ...convertRetriveQuery(collection, options),
@@ -171,7 +180,7 @@ const createStoreFilters = <S extends StateDefinition>(
         ...convertUniqueFilterQuery(metadata, collection, options),
         ...convertUniqueQuery(metadata, collection, options),
       }
-    : convertFilterQuery(metadata, collection, options)),
+    : convertFilterQuery(metadata, states, collection, options)),
 
   ...(options.type === 'AlterMany' ? convertLimitQuery(options) : { limit: 1 }),
 });
@@ -258,4 +267,9 @@ const alterDocuments = async <S extends StateDefinition>(
 const getDocumentKey = (
   collection: MetadataCollection,
   document: StoreDocument,
-) => JSON.stringify(collection.primaryKeys.map((key) => document[key] ?? null));
+) =>
+  JSON.stringify(
+    Object.keys(collection.primaryKey.fields).map(
+      (key) => document[key] ?? null,
+    ),
+  );

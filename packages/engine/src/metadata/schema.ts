@@ -1,128 +1,101 @@
 import { MetadataState, MetadataStateField } from './state';
 
+/**
+ * Metadata schema contain for each where path a set of choices, each choice
+ * can be a field or a sub schema.
+ */
 export type MetadataSchema = {
-  [Key in string]?: MetadataSchemaChoice[];
+  [Path in string]?: MetadataSchemaChoice[];
 };
 
+/**
+ * A schema choice can be a field or a sub schema.
+ */
 export type MetadataSchemaChoice =
   | { field: MetadataStateField; schema?: never }
   | { field?: never; schema: MetadataSchema };
 
-const cache = new Map<string, MetadataSchema>();
+/**
+ * Get the metadata schema from the given states.
+ * This function will be used recursively to build the schema for the relation
+ * fields. If a relation parent provided, only include the fields that are under
+ * the parent path will be included.
+ */
+export const getMetadataSchema = (
+  states: MetadataState[],
+  relationParent?: { state: MetadataState; path: string },
+): MetadataSchema => {
+  const schemaMap: Record<string, Record<string, MetadataSchemaChoice>> = {};
 
-export const getMetadataSchema = (states: MetadataState[]): MetadataSchema => {
-  const key = getSchemaKey(states);
-  let schema = cache.get(key);
+  for (const state of states) {
+    // query the state fields and build the field choices
+    // if a relation parent provided, only include the fields that are under
+    // the parent path
+    for (const field of (relationParent?.state ?? state).fields) {
+      let { path } = field;
+      if (relationParent) {
+        if (!path.startsWith(`${relationParent.path}.`)) continue;
 
-  if (!schema) {
-    schema = {};
-    cache.set(key, schema);
+        path = path.slice(relationParent.path.length + 1);
+      }
 
-    Object.assign(schema, buildMetadataSchema(states));
+      let pathChoices = schemaMap[path];
+      if (!pathChoices) {
+        pathChoices = schemaMap[path] = {};
+      }
+
+      const key = getFieldKey(field);
+      if (pathChoices[key]) continue;
+
+      pathChoices[key] = { field };
+    }
+
+    // query the state relations and build the schema choices
+    // if a relation parent provided, only include the relations that are under
+    // the parent path
+    for (const relation of state.relations) {
+      let { path } = relation;
+
+      if (relationParent) {
+        if (!path.startsWith(`${relationParent.path}.`)) continue;
+
+        path = path.slice(relationParent.path.length + 1);
+      }
+
+      let pathChoices = schemaMap[path];
+      if (!pathChoices) {
+        pathChoices = schemaMap[path] = {};
+      }
+
+      const key = getSchemaKey(relation.states);
+      if (pathChoices[key]) continue;
+
+      const childSchema = getMetadataSchema(relation.states, { state, path });
+      pathChoices[key] = { schema: childSchema };
+    }
   }
 
-  return schema;
+  // convert the schema map to a schema object without the choices keys
+  return Object.fromEntries(
+    Object.entries(schemaMap).map(([path, choices]) => [
+      path,
+      Object.values(choices),
+    ]),
+  );
 };
 
+/**
+ * Get a unique field key
+ */
+const getFieldKey = (field: MetadataStateField): string =>
+  `${field.name}:${field.type.name}${field.nullable ? '?' : ''}`;
+
+/**
+ * Get a unique schema key
+ */
 const getSchemaKey = (states: MetadataState[]): string =>
   JSON.stringify(
     states
       .map((state) => `${state.name}#${state.hash.toString('base64url')}`)
       .sort(),
   );
-
-const buildMetadataSchema = (
-  states: MetadataState[],
-  parent?: { state: MetadataState; path: string },
-): MetadataSchema => {
-  const { fieldsMap, statesMap } = indexMetadataSchema(states, parent);
-
-  const schema: MetadataSchema = {};
-
-  for (const [path, fields] of fieldsMap) {
-    let choices = schema[path];
-
-    if (!choices) {
-      choices = schema[path] = [];
-    }
-
-    for (const field of fields.values()) {
-      choices.push({ field });
-    }
-  }
-
-  for (const [path, item] of statesMap) {
-    let choices = schema[path];
-
-    if (!choices) {
-      choices = schema[path] = [];
-    }
-
-    for (const schema of item.values()) {
-      choices.push({ schema });
-    }
-  }
-
-  return schema;
-};
-
-const indexMetadataSchema = (
-  states: MetadataState[],
-  parent?: { state: MetadataState; path: string },
-) => {
-  const fieldsMap = new Map<string, Map<string, MetadataStateField>>();
-  const statesMap = new Map<string, Map<string, MetadataSchema>>();
-
-  for (const state of states) {
-    for (const field of (parent?.state ?? state).fields) {
-      let { path } = field;
-      const { name } = field;
-
-      if (parent) {
-        if (!path.startsWith(`${parent.path}.`)) continue;
-
-        path = path.slice(parent.path.length + 1);
-      }
-
-      let fields = fieldsMap.get(path);
-
-      if (!fields) {
-        fields = new Map();
-        fieldsMap.set(path, fields);
-      }
-
-      fields.set(name, field);
-    }
-
-    for (const relation of state.relations) {
-      let { path } = relation;
-
-      if (parent) {
-        if (!path.startsWith(`${parent.path}.`)) continue;
-
-        path = path.slice(parent.path.length + 1);
-      }
-
-      let states = statesMap.get(path);
-
-      if (!states) {
-        states = new Map();
-        statesMap.set(path, states);
-      }
-
-      const key = getSchemaKey(relation.states);
-
-      if (!states.has(key)) {
-        states.set(
-          key,
-          buildMetadataSchema(relation.states, {
-            state,
-            path: parent ? `${parent.path}.${path}` : path,
-          }),
-        );
-      }
-    }
-  }
-
-  return { fieldsMap, statesMap };
-};

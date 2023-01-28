@@ -25,7 +25,7 @@ export const convertUniqueWhere = (
   ];
 
   for (const [key, value] of Object.entries(where)) {
-    const choices = collection.schema[key];
+    const choices = collection.schema[key] ?? [];
     if (!choices?.length) {
       throw new NeuledgeError(
         NeuledgeErrorCode.QUERY_PARSING_ERROR,

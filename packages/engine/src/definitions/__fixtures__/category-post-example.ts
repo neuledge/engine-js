@@ -173,11 +173,11 @@ export class PublishedPost {
   static $name = 'PublishedPost' as const;
   static $id = { fields: ['+id'], auto: 'increment' } as const;
   static $scalars = () => ({
-    id: { type: $.scalars.Number, index: 256 },
-    title: { type: $.scalars.String, index: 258 },
-    category: { type: [Category], index: 1 },
-    content: { type: $.scalars.String, index: 2 },
-    publishedAt: { type: $.scalars.DateTime, index: 3 },
+    id: { type: $.scalars.Number, index: 1 },
+    category: { type: [Category], index: 256 },
+    title: { type: $.scalars.String, index: 3 },
+    content: { type: $.scalars.String, index: 257 },
+    publishedAt: { type: $.scalars.DateTime, index: 258 },
   });
   static $find: $.Where<
     | {
@@ -202,8 +202,8 @@ export class PublishedPost {
   };
 
   id!: $.scalars.Number;
-  title!: $.scalars.String;
   category!: $.Id<typeof Category>;
+  title!: $.scalars.String;
   content!: $.scalars.String;
   publishedAt!: $.scalars.DateTime;
 

@@ -1,12 +1,13 @@
+import { StoreSortDirection } from './sort';
+
 export interface StoreCollection {
-  name: StoreCollectionName;
-  indexes: StoreIndex[];
-  fields: StoreField[];
+  name: string;
+  primaryKey: StorePrimaryKey;
+  indexes: Record<StoreIndex['name'], StoreIndex>;
+  fields: Record<StoreField['name'], StoreField>;
 }
 
 export type StoreCollection_Slim = Pick<StoreCollection, 'name'>;
-
-export type StoreCollectionName = string;
 
 export interface StoreField {
   name: string;
@@ -41,7 +42,11 @@ export interface StoreIndex {
   primary?: boolean;
 }
 
+export interface StorePrimaryKey extends StoreIndex {
+  primary: true;
+}
+
 export interface StoreIndexField {
-  name: string;
-  order: 'asc' | 'desc';
+  field: StoreField;
+  order: StoreSortDirection;
 }

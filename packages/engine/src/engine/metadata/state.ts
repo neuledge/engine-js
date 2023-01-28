@@ -1,8 +1,8 @@
 import { NeuledgeError, NeuledgeErrorCode } from '@/error';
 import {
-  MetadataGhostState,
-  MetadataGhostStateField,
-  MetadataGhostStateRelation,
+  StateSnapshot,
+  StateFieldSnapshot,
+  StateRelationSnapshot,
 } from '@/metadata';
 
 export interface StoreMetadataState {
@@ -32,10 +32,10 @@ interface StoreMetadataStateRelation {
 }
 
 export const fromStoreMetadataState = (
-  getState: (hash: Buffer) => MetadataGhostState,
-  getType: (key: string) => MetadataGhostStateField['type'],
+  getState: (hash: Buffer) => StateSnapshot,
+  getType: (key: string) => StateFieldSnapshot['type'],
   doc: StoreMetadataState,
-): MetadataGhostState => {
+): StateSnapshot => {
   if (doc.v !== StoreMetadataStateVersion.V0) {
     throw new NeuledgeError(
       NeuledgeErrorCode.UNSUPPORTED_METADATA,
@@ -57,7 +57,7 @@ export const fromStoreMetadataState = (
 };
 
 export const toStoreMetadataState = (
-  state: MetadataGhostState,
+  state: StateSnapshot,
 ): StoreMetadataState => ({
   collectionName: state.collectionName,
   name: state.name,
@@ -70,9 +70,9 @@ export const toStoreMetadataState = (
 });
 
 const fromStoreMetadataStateField = (
-  getType: (key: string) => MetadataGhostStateField['type'],
+  getType: (key: string) => StateFieldSnapshot['type'],
   doc: StoreMetadataStateField,
-): MetadataGhostStateField => ({
+): StateFieldSnapshot => ({
   name: doc.name,
   type: getType(doc.type),
   indexes: doc.indexes,
@@ -80,7 +80,7 @@ const fromStoreMetadataStateField = (
 });
 
 const toStoreMetadataStateField = (
-  field: MetadataGhostStateField,
+  field: StateFieldSnapshot,
 ): StoreMetadataStateField => ({
   name: field.name,
   type: field.type.name,
@@ -89,16 +89,16 @@ const toStoreMetadataStateField = (
 });
 
 const fromStoreMetadataStateRelation = (
-  getState: (hash: Buffer) => MetadataGhostState,
+  getState: (hash: Buffer) => StateSnapshot,
   relation: StoreMetadataStateRelation,
-): MetadataGhostStateRelation => ({
+): StateRelationSnapshot => ({
   name: relation.name,
   states: relation.stateHashes.map((hash) => getState(hash)),
   index: relation.index,
 });
 
 const toStoreMetadataStateRelation = (
-  relation: MetadataGhostStateRelation,
+  relation: StateRelationSnapshot,
 ): StoreMetadataStateRelation => ({
   name: relation.name,
   stateHashes: relation.states.map((state) => state.hash),

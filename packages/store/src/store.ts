@@ -1,7 +1,6 @@
 import {
   StoreCollection_Slim,
   StoreCollection,
-  StoreCollectionName,
   StoreField,
   StoreIndex,
 } from './collection';
@@ -9,6 +8,7 @@ import {
   StoreDocument,
   StoreList,
   StoreListOffset,
+  StoreScalarValue,
   StoreSelect,
 } from './document';
 import { StoreMatch } from './relation';
@@ -27,7 +27,7 @@ export interface Store {
 
   insert<T = StoreDocument>(
     options: StoreInsertOptions<T>,
-  ): Promise<StoreMutationResponse>;
+  ): Promise<StoreInsertionResponse>;
   update<T = StoreDocument>(
     options: StoreUpdateOptions<T>,
   ): Promise<StoreMutationResponse>;
@@ -35,11 +35,11 @@ export interface Store {
 }
 
 export interface StoreDescribeCollectionOptions {
-  name: StoreCollectionName;
+  collection: StoreCollection;
 }
 
 export interface StoreEnsureCollectionOptions {
-  name: StoreCollectionName;
+  collection: StoreCollection;
   indexes?: StoreIndex[];
   fields?: StoreField[];
   dropIndexes?: string[];
@@ -47,11 +47,11 @@ export interface StoreEnsureCollectionOptions {
 }
 
 export interface StoreDropCollectionOptions {
-  name: StoreCollectionName;
+  collection: StoreCollection;
 }
 
 export interface StoreFindOptions {
-  collectionName: StoreCollectionName;
+  collection: StoreCollection;
   select?: StoreSelect;
   where?: StoreWhere;
   match?: StoreMatch;
@@ -64,22 +64,26 @@ export interface StoreFindOptions {
 }
 
 export interface StoreInsertOptions<T> {
-  collectionName: StoreCollectionName;
+  collection: StoreCollection;
   documents: T[];
 }
 
 export interface StoreUpdateOptions<T> {
-  collectionName: StoreCollectionName;
+  collection: StoreCollection;
   where?: StoreWhere;
   set: T;
   limit: number;
 }
 
 export interface StoreDeleteOptions {
-  collectionName: StoreCollectionName;
+  collection: StoreCollection;
   where?: StoreWhere;
   match?: StoreMatch;
   limit: number;
+}
+
+export interface StoreInsertionResponse extends StoreMutationResponse {
+  insertedIds: StoreScalarValue[];
 }
 
 export interface StoreMutationResponse {

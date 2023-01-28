@@ -14,7 +14,7 @@ describe('engine/filter', () => {
     let postsCollection: MetadataCollection;
 
     beforeAll(() => {
-      metadata = Metadata.generate([Category, ...Post]);
+      metadata = new Metadata([Category, ...Post]);
 
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       metadata
@@ -26,7 +26,14 @@ describe('engine/filter', () => {
     });
 
     it('should convert empty object', () => {
-      expect(convertFilterQuery(metadata, categoriesCollection, {})).toEqual({
+      expect(
+        convertFilterQuery(
+          metadata,
+          categoriesCollection.states,
+          categoriesCollection,
+          {},
+        ),
+      ).toEqual({
         where: {
           __h: { $in: categoriesCollection.states.map((item) => item.hash) },
         },
@@ -35,9 +42,14 @@ describe('engine/filter', () => {
 
     it('should convert simple equal where', () => {
       expect(
-        convertFilterQuery(metadata, categoriesCollection, {
-          where: { id: { $eq: 1 } },
-        }),
+        convertFilterQuery(
+          metadata,
+          categoriesCollection.states,
+          categoriesCollection,
+          {
+            where: { id: { $eq: 1 } },
+          },
+        ),
       ).toEqual({
         where: {
           __h: { $in: categoriesCollection.states.map((item) => item.hash) },
@@ -48,9 +60,14 @@ describe('engine/filter', () => {
 
     it('should convert equal null where', () => {
       expect(
-        convertFilterQuery(metadata, categoriesCollection, {
-          where: { id: { $eq: null } },
-        }),
+        convertFilterQuery(
+          metadata,
+          categoriesCollection.states,
+          categoriesCollection,
+          {
+            where: { id: { $eq: null } },
+          },
+        ),
       ).toEqual({
         where: {
           __h: { $in: categoriesCollection.states.map((item) => item.hash) },
@@ -61,17 +78,27 @@ describe('engine/filter', () => {
 
     it('should throw on undefined field where', () => {
       expect(() =>
-        convertFilterQuery(metadata, categoriesCollection, {
-          where: { foo: { $eq: 1 } },
-        }),
+        convertFilterQuery(
+          metadata,
+          categoriesCollection.states,
+          categoriesCollection,
+          {
+            where: { foo: { $eq: 1 } },
+          },
+        ),
       ).toThrow("Unknown where key: 'foo'");
     });
 
     it('should convert between ranges where', () => {
       expect(
-        convertFilterQuery(metadata, categoriesCollection, {
-          where: { id: { $gt: 5, $lte: 10 } },
-        }),
+        convertFilterQuery(
+          metadata,
+          categoriesCollection.states,
+          categoriesCollection,
+          {
+            where: { id: { $gt: 5, $lte: 10 } },
+          },
+        ),
       ).toEqual({
         where: {
           __h: { $in: categoriesCollection.states.map((item) => item.hash) },
@@ -82,9 +109,16 @@ describe('engine/filter', () => {
 
     it('should convert $or where', () => {
       expect(
-        convertFilterQuery(metadata, categoriesCollection, {
-          where: { $or: [{ id: { $gt: 5, $lte: 10 } }, { id: { $eq: 100 } }] },
-        }),
+        convertFilterQuery(
+          metadata,
+          categoriesCollection.states,
+          categoriesCollection,
+          {
+            where: {
+              $or: [{ id: { $gt: 5, $lte: 10 } }, { id: { $eq: 100 } }],
+            },
+          },
+        ),
       ).toEqual({
         where: {
           $or: [
@@ -107,7 +141,7 @@ describe('engine/filter', () => {
 
     it('should handle renamed field in state where', () => {
       expect(
-        convertFilterQuery(metadata, postsCollection, {
+        convertFilterQuery(metadata, postsCollection.states, postsCollection, {
           where: { content: { $eq: 'foo' } },
         }),
       ).toEqual({
@@ -128,7 +162,7 @@ describe('engine/filter', () => {
 
     it('should handle category id scalar where', () => {
       expect(
-        convertFilterQuery(metadata, postsCollection, {
+        convertFilterQuery(metadata, postsCollection.states, postsCollection, {
           where: { category: { $eq: { id: 1 } } },
         }),
       ).toEqual({
@@ -141,9 +175,14 @@ describe('engine/filter', () => {
 
     it('should handle empty filter', () => {
       expect(
-        convertFilterQuery<typeof Post[number]>(metadata, postsCollection, {
-          match: {},
-        }),
+        convertFilterQuery<typeof Post[number]>(
+          metadata,
+          postsCollection.states,
+          postsCollection,
+          {
+            match: {},
+          },
+        ),
       ).toEqual({
         where: {
           __h: { $in: postsCollection.states.map((item) => item.hash) },
@@ -154,7 +193,7 @@ describe('engine/filter', () => {
 
     it('should handle filter by category', () => {
       expect(
-        convertFilterQuery(metadata, postsCollection, {
+        convertFilterQuery(metadata, postsCollection.states, postsCollection, {
           match: { category: { where: { id: { $eq: 1 } } } },
         }),
       ).toEqual({
@@ -164,7 +203,7 @@ describe('engine/filter', () => {
         match: {
           category: [
             {
-              collectionName: 'categories',
+              collection: metadata['collections'].categories,
               by: { category_id: 'id' },
               where: {
                 __h: {

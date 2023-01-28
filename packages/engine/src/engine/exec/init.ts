@@ -1,5 +1,5 @@
 import { MutationDefinition, StateDefinition } from '@/definitions';
-import { Entity, AlteredEntity, ProjectedEntity } from '@/entity';
+import { Entity, ProjectedEntity, InitiatedEntity } from '@/entity';
 import { NeuledgeError, NeuledgeErrorCode } from '@/error';
 import { EntityList } from '@/list';
 import { InitManyQueryOptions, InitOneQueryOptions, Select } from '@/queries';
@@ -15,7 +15,7 @@ export const execInitMany = async <S extends StateDefinition>(
   EntityList<Entity<S>> | EntityList<ProjectedEntity<S, Select<S>>> | void
 > => {
   const metadata = await engine.metadata;
-  const collection = chooseStatesCollection(metadata, options.states);
+  const { collection } = chooseStatesCollection(metadata, options.states);
 
   const [state] = options.states;
   const fn = state[options.method] as MutationDefinition<S> | undefined;
@@ -27,13 +27,13 @@ export const execInitMany = async <S extends StateDefinition>(
     );
   }
 
-  const newEntities: AlteredEntity<S>[] = await Promise.all(
+  const newEntities: InitiatedEntity<S>[] = await Promise.all(
     options.args.map((args) => fn(args)),
   );
 
   const entities = newEntities.map(
     (entity): Entity<S> => ({
-      ...(entity as AlteredEntity<StateDefinition>),
+      ...(entity as InitiatedEntity<StateDefinition>),
       $version: 0,
     }),
   );
@@ -43,7 +43,7 @@ export const execInitMany = async <S extends StateDefinition>(
   );
 
   await engine.store.insert({
-    collectionName: collection.name,
+    collection,
     documents,
   });
 

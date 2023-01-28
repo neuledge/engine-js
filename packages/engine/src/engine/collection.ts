@@ -1,11 +1,11 @@
 import { resolveDefer, StateDefinition } from '@/definitions';
 import { NeuledgeError, NeuledgeErrorCode } from '@/error';
-import { Metadata, MetadataCollection } from '@/metadata';
+import { Metadata, MetadataCollection, MetadataState } from '@/metadata';
 
 export const chooseStatesCollection = <S extends StateDefinition>(
   metadata: Metadata,
   states: S[],
-): MetadataCollection => {
+): { collection: MetadataCollection; states: MetadataState[] } => {
   const collections = metadata.getCollections(states);
 
   if (collections.length !== 1) {
@@ -24,7 +24,14 @@ export const chooseStatesCollection = <S extends StateDefinition>(
     );
   }
 
-  return collections[0];
+  const collection = collections[0];
+
+  const stateNames = new Set(states.map((s) => s.$name));
+  const collectionStates = collection.states.filter((s) =>
+    stateNames.has(s.name),
+  );
+
+  return { collection, states: collectionStates };
 };
 
 export const getCollectionRelationStates = (

@@ -1,16 +1,21 @@
 import { resolveDefer, StateDefinition, StateName } from '@/definitions';
 import pluralize from 'pluralize';
 
-export const getCollectionNames = (
+/**
+ * Group states by collections and return a map of collection name to it's states.
+ */
+export const groupStatesByCollectionName = (
   states: Iterable<StateDefinition>,
-): Map<StateName, string> => {
+): Map<string, Iterable<StateDefinition>> => {
   const groups = getStateGroups(states);
 
+  // get all possible names for each group
   const suggestions: StatesNameSuggestion[] = [];
   for (const group of groups.values()) {
     suggestions.push(...suggestStatesCollectionNames(group));
   }
 
+  // sort suggestions by name and rank to pick the best name for each group among all groups suggestions
   suggestions.sort((a, b) => a.name.localeCompare(b.name) || b.rank - a.rank);
 
   const selectedName = new Map<
@@ -18,6 +23,7 @@ export const getCollectionNames = (
     StatesNameSuggestion
   >();
 
+  // pick the best ranked name for each group
   for (const [index, suggestion] of suggestions.entries()) {
     // ignore name collisions with last suggestion
     if (suggestions[index - 1]?.name === suggestion.name) continue;
@@ -29,9 +35,10 @@ export const getCollectionNames = (
   }
 
   return new Map(
-    [...selectedName.entries()].flatMap(([states, { name }]) =>
-      [...states].map((state) => [state.$name, name]),
-    ),
+    [...selectedName.entries()].map(([states, suggestion]) => [
+      suggestion.name,
+      states,
+    ]),
   );
 };
 
@@ -70,55 +77,75 @@ type StatesNameSuggestion = {
   rank: number;
 };
 
+/**
+ * Get all possible name combinations for a group of states by reusing the state
+ * names and generate all common phrases between all states.
+ *
+ * For example, if the group contains states `PaidUser`, `PaidUserProfile` and `AvatarPaidUser`,
+ * the suggestions will be:
+ * - `paid_users`
+ * - `users`
+ * - `paid`
+ * - `paid_user_profiles`
+ * - `avatar_paid_users`
+ */
 const suggestStatesCollectionNames = (
-  states: Iterable<StateDefinition>,
+  stateGroup: Iterable<StateDefinition>,
 ): StatesNameSuggestion[] => {
   const suggestions: StatesNameSuggestion[] = [];
-  const phrase: string[] = [];
+  const sharedPhrase: string[] = [];
 
-  let first: string[] | undefined;
-  for (const state of states) {
-    // split by camel case or snake case with separate numbers
+  let first = true;
+  for (const state of stateGroup) {
+    // split string to words by camel case, snake case and numbers
     const words = state.$name
       .split(/(?=[A-Z])|_|(?<=[a-z])(?=\d)/)
       .map((word) => word.toLowerCase());
 
-    suggestions.push({ states, name: formatCollectionName(words), rank: 0 });
+    // add exact name suggestion with rank 0
+    suggestions.push({
+      states: stateGroup,
+      name: formatCollectionName(words),
+      rank: 0,
+    });
 
-    if (first == null) {
-      phrase.push(...words);
+    if (first) {
+      sharedPhrase.push(...words);
 
-      first = words;
+      first = false;
       continue;
     }
 
     const wordsSet = new Set(words);
 
-    for (let i = 0; i < phrase.length; i++) {
-      if (!wordsSet.has(phrase[i])) {
-        phrase.splice(i, 1);
+    // remove words that are not shared by all states
+    for (let i = 0; i < sharedPhrase.length; i++) {
+      if (!wordsSet.has(sharedPhrase[i])) {
+        sharedPhrase.splice(i, 1);
         i--;
       }
     }
   }
 
+  // add suggestion for the shared phrase between all states with top rank
   suggestions.push({
-    states,
-    name: formatCollectionName(phrase),
+    states: stateGroup,
+    name: formatCollectionName(sharedPhrase),
     rank: 1000,
   });
 
-  for (let i = phrase.length - 1; i > 0; i--) {
+  // add suggestions for another shared phrases with lower rank
+  for (let i = sharedPhrase.length - 1; i > 0; i--) {
     suggestions.push(
       {
-        states,
-        name: formatCollectionName(phrase.slice(i)),
-        rank: (500 * phrase.length - i) / phrase.length,
+        states: stateGroup,
+        name: formatCollectionName(sharedPhrase.slice(i)),
+        rank: (500 * sharedPhrase.length - i) / sharedPhrase.length,
       },
       {
-        states,
-        name: formatCollectionName(phrase.slice(0, i)),
-        rank: (100 * i) / phrase.length,
+        states: stateGroup,
+        name: formatCollectionName(sharedPhrase.slice(0, i)),
+        rank: (100 * i) / sharedPhrase.length,
       },
     );
   }
@@ -126,5 +153,9 @@ const suggestStatesCollectionNames = (
   return suggestions;
 };
 
+/**
+ * Get a collection name from a list of words where the last word is pluralized.
+ * For example: ['user', 'profile'] -> 'user_profiles'
+ */
 const formatCollectionName = (words: string[]): string =>
   [...words.slice(0, -1), pluralize.plural(words[words.length - 1])].join('_');

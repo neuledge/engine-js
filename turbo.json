@@ -22,13 +22,13 @@
       ]
     },
     "test": {
-      "dependsOn": ["build", "types"],
+      "dependsOn": ["^test", "build", "types"],
       "inputs": ["src/**/*.test.ts", "src/**/__tests__/*.ts"]
     },
     "lint": {},
     "lint:strict": {},
     "deploy": {
-      "dependsOn": ["build", "types", "test", "lint:strict"]
+      "dependsOn": ["test", "lint:strict"]
     }
   }
 }

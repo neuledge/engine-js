@@ -11,7 +11,7 @@ describe('engine/sort', () => {
     let postsCollection: MetadataCollection;
 
     beforeAll(() => {
-      const metadata = Metadata.generate([Category, ...Post]);
+      const metadata = new Metadata([Category, ...Post]);
 
       categoriesCollection = metadata.getCollections([Category])[0];
       postsCollection = metadata.getCollections(Post)[0];

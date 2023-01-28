@@ -3,31 +3,30 @@ import {
   DraftPost,
   PublishedPost,
 } from '@/definitions/__fixtures__/category-post-example';
-import { getCollectionNames } from './collections';
+import { StateDefinition } from '@/index';
+import { groupStatesByCollectionName } from './collections';
 
 describe('metadata/names', () => {
-  describe('getCollectionNames()', () => {
+  describe('groupStatesByCollectionName()', () => {
     it('should generate collection name for category', () => {
-      expect(getCollectionNames([Category])).toEqual(
-        new Map([['Category', 'categories']]),
+      expect(groupStatesByCollectionName([Category])).toEqual(
+        new Map([['categories', new Set([Category])]]),
       );
     });
 
     it('should generate collection name for posts', () => {
-      expect(getCollectionNames([DraftPost, PublishedPost])).toEqual(
-        new Map([
-          ['DraftPost', 'posts'],
-          ['PublishedPost', 'posts'],
-        ]),
+      expect(groupStatesByCollectionName([DraftPost, PublishedPost])).toEqual(
+        new Map([['posts', new Set([DraftPost, PublishedPost])]]),
       );
     });
 
     it('should generate collection names for posts and category', () => {
-      expect(getCollectionNames([Category, DraftPost, PublishedPost])).toEqual(
-        new Map([
-          ['Category', 'categories'],
-          ['DraftPost', 'posts'],
-          ['PublishedPost', 'posts'],
+      expect(
+        groupStatesByCollectionName([Category, DraftPost, PublishedPost]),
+      ).toEqual(
+        new Map<string, Set<StateDefinition>>([
+          ['categories', new Set([Category])],
+          ['posts', new Set([DraftPost, PublishedPost])],
         ]),
       );
     });

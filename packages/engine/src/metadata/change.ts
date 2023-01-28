@@ -1,4 +1,4 @@
-import { MetadataGhostState } from './state';
+import { StateSnapshot } from './state';
 
 export type MetadataChange =
   | MetadataCreatedChange
@@ -7,16 +7,16 @@ export type MetadataChange =
 
 export interface MetadataCreatedChange {
   type: 'created';
-  entity: MetadataGhostState;
+  entity: StateSnapshot;
 }
 
 export interface MetadataUpdatedChange {
   type: 'updated';
-  origin: MetadataGhostState;
-  entity: MetadataGhostState;
+  origin: StateSnapshot;
+  entity: StateSnapshot;
 }
 
 export interface MetadataDeletedChange {
   type: 'deleted';
-  origin: MetadataGhostState;
+  origin: StateSnapshot;
 }

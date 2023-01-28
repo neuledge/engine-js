@@ -55,7 +55,7 @@ const updateStoreDocument = async (
   }
 
   const res = await store.update({
-    collectionName: collection.name,
+    collection,
     where: getWhereRecordByPrimaryKeys(collection, document),
     set: Object.fromEntries(setEntries),
     limit: 1,
@@ -72,7 +72,7 @@ const deleteStoreDocuments = async (
   documents: StoreDocument[],
 ): Promise<void> => {
   await store.delete({
-    collectionName: collection.name,
+    collection,
     where: getWhereByPrimaryKeys(collection, documents),
     limit: documents.length,
   });
@@ -106,10 +106,12 @@ const getWhereRecordByPrimaryKeys = (
   document: StoreDocument,
 ): StoreWhereRecord =>
   Object.fromEntries([
-    ...collection.primaryKeys.map((key): [string, StoreWhereEquals] => [
-      key,
-      { $eq: document[key] ?? null },
-    ]),
+    ...Object.keys(collection.primaryKey.fields).map(
+      (key): [string, StoreWhereEquals] => [
+        key,
+        { $eq: document[key] ?? null },
+      ],
+    ),
     [
       collection.reservedNames.hash,
       { $eq: document[collection.reservedNames.hash] ?? null },

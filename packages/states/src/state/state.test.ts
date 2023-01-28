@@ -1,5 +1,6 @@
-import { StatesContext } from '@/context';
+import { StatesContext } from '@/index';
 import { FieldNode, parseStates, StateNode } from '@neuledge/states-parser';
+import { parseStateField } from './field';
 import { parseState } from './state';
 
 /* eslint-disable max-lines-per-function */
@@ -23,13 +24,15 @@ describe('state/state', () => {
             `);
 
       const stateNode = doc.body[0] as StateNode;
+      const ctx = new StatesContext();
 
-      const state = parseState(
-        new StatesContext(),
-        doc.body[0] as StateNode,
-        stateNode.fields as FieldNode[],
-        {},
-      );
+      const fields = {
+        id: parseStateField(ctx, stateNode.fields[0] as FieldNode, 0),
+        name: parseStateField(ctx, stateNode.fields[1] as FieldNode, 0),
+        email: parseStateField(ctx, stateNode.fields[2] as FieldNode, 0),
+      };
+
+      const state = parseState(stateNode, fields, { bar: 2 as never }, 0);
 
       expect(state).toEqual({
         type: 'State',
@@ -37,7 +40,7 @@ describe('state/state', () => {
         name: 'User',
         description: 'The user state',
         deprecated: undefined,
-        fields: state.fields,
+        fields,
         primaryKey: {
           name: 'id',
           fields: { id: 'asc' },
@@ -50,7 +53,8 @@ describe('state/state', () => {
             unique: true,
           },
         },
-        mutations: {},
+        mutations: { bar: 2 },
+        baseIndex: 0,
       });
     });
 
@@ -65,13 +69,15 @@ describe('state/state', () => {
                 `);
 
       const stateNode = doc.body[0] as StateNode;
+      const ctx = new StatesContext();
 
-      const state = parseState(
-        new StatesContext(),
-        doc.body[0] as StateNode,
-        stateNode.fields as FieldNode[],
-        {},
-      );
+      const fields = {
+        id: parseStateField(ctx, stateNode.fields[0] as FieldNode, 0),
+        name: parseStateField(ctx, stateNode.fields[1] as FieldNode, 0),
+        email: parseStateField(ctx, stateNode.fields[2] as FieldNode, 0),
+      };
+
+      const state = parseState(stateNode, fields, { bar: 2 as never }, 255);
 
       expect(state).toEqual({
         type: 'State',
@@ -79,7 +85,7 @@ describe('state/state', () => {
         name: 'User',
         description: undefined,
         deprecated: true,
-        fields: state.fields,
+        fields,
         primaryKey: {
           name: 'id',
           fields: { id: 'asc' },
@@ -92,7 +98,8 @@ describe('state/state', () => {
             unique: true,
           },
         },
-        mutations: {},
+        mutations: { bar: 2 },
+        baseIndex: 255,
       });
     });
 
@@ -109,13 +116,15 @@ describe('state/state', () => {
                         `);
 
       const stateNode = doc.body[0] as StateNode;
+      const ctx = new StatesContext();
 
-      const state = parseState(
-        new StatesContext(),
-        doc.body[0] as StateNode,
-        stateNode.fields as FieldNode[],
-        {},
-      );
+      const fields = {
+        id: parseStateField(ctx, stateNode.fields[0] as FieldNode, 0),
+        name: parseStateField(ctx, stateNode.fields[1] as FieldNode, 0),
+        email: parseStateField(ctx, stateNode.fields[2] as FieldNode, 0),
+      };
+
+      const state = parseState(stateNode, fields, { bar: 2 as never }, 0);
 
       expect(state).toEqual({
         type: 'State',
@@ -123,7 +132,7 @@ describe('state/state', () => {
         name: 'User',
         description: undefined,
         deprecated: 'Use UserV2',
-        fields: state.fields,
+        fields,
         primaryKey: {
           name: 'id',
           fields: { id: 'asc' },
@@ -145,7 +154,8 @@ describe('state/state', () => {
             unique: true,
           },
         },
-        mutations: {},
+        mutations: { bar: 2 },
+        baseIndex: 0,
       });
     });
 
@@ -160,14 +170,16 @@ describe('state/state', () => {
       `);
 
       const stateNode = doc.body[0] as StateNode;
+      const ctx = new StatesContext();
+
+      const fields = {
+        id: parseStateField(ctx, stateNode.fields[0] as FieldNode, 0),
+        name: parseStateField(ctx, stateNode.fields[1] as FieldNode, 0),
+        email: parseStateField(ctx, stateNode.fields[2] as FieldNode, 0),
+      };
 
       expect(() =>
-        parseState(
-          new StatesContext(),
-          doc.body[0] as StateNode,
-          stateNode.fields as FieldNode[],
-          {},
-        ),
+        parseState(stateNode, fields, { bar: 2 as never }, 0),
       ).toThrow('Field foo does not exist');
     });
 
@@ -180,16 +192,17 @@ describe('state/state', () => {
               email: String = 3
           }
       `);
-
       const stateNode = doc.body[0] as StateNode;
+      const ctx = new StatesContext();
+
+      const fields = {
+        id: parseStateField(ctx, stateNode.fields[0] as FieldNode, 0),
+        name: parseStateField(ctx, stateNode.fields[1] as FieldNode, 0),
+        email: parseStateField(ctx, stateNode.fields[2] as FieldNode, 0),
+      };
 
       expect(() =>
-        parseState(
-          new StatesContext(),
-          doc.body[0] as StateNode,
-          stateNode.fields as FieldNode[],
-          {},
-        ),
+        parseState(stateNode, fields, { bar: 2 as never }, 0),
       ).toThrow(
         "Invalid '@index()' decorator on argument 'fields': Invalid input",
       );

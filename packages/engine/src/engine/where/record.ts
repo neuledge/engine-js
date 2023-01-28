@@ -3,11 +3,12 @@ import {
   StateDefinitionWhereTerm,
 } from '@/definitions';
 import { NeuledgeError, NeuledgeErrorCode } from '@/error';
-import { MetadataCollection, MetadataSchema } from '@/metadata';
+import { MetadataCollection, MetadataSchema, MetadataState } from '@/metadata';
 import { StoreWhereRecord } from '@neuledge/store';
 import { applyWhereOperatorTerm, applyWhereRecordTerm } from './term';
 
 export const convertWhereRecord = (
+  states: MetadataState[],
   collection: MetadataCollection,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   where: StateDefinitionWhereRecord<any> | null,
@@ -15,7 +16,7 @@ export const convertWhereRecord = (
   let records: StoreWhereRecord[] = [
     {
       [collection.reservedNames.hash]: {
-        $in: collection.states.map((s) => s.hash),
+        $in: states.map((s) => s.hash),
       },
     },
   ];
@@ -23,7 +24,7 @@ export const convertWhereRecord = (
   for (const [key, term] of Object.entries(where ?? {})) {
     if (term == null) continue;
 
-    const choices = collection.schema[key];
+    const choices = collection.schema[key] ?? [];
     if (!choices?.length) {
       throw new NeuledgeError(
         NeuledgeErrorCode.QUERY_PARSING_ERROR,
@@ -186,7 +187,7 @@ const applyWhereOperatorRecordValue = (
   key: string,
   value: unknown,
 ): StoreWhereRecord[] => {
-  const choices = schema[key];
+  const choices = Object.values(schema[key] ?? {});
   if (!choices?.length) {
     throw new NeuledgeError(
       NeuledgeErrorCode.QUERY_PARSING_ERROR,

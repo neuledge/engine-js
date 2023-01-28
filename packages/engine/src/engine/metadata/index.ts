@@ -1,30 +1,32 @@
-import { stateDefinitions } from '@neuledge/engine';
+import { neuledgeGlob } from '@/glob';
 import { Metadata } from '@/metadata';
 import { Store } from '@neuledge/store';
 import {
-  ensureStoreMetadata,
-  getStoreMetadata,
+  ensureMetadataCollection,
+  getMetadataCollection,
+  getStoreMetadataSnapshot,
   syncStoreMetadata,
 } from './store';
 
-const DEFAULT_COLLECTION_NAME = '__neuledge_metadata';
+const DEFAULT_METADATA_COLLECTION_NAME = '__neuledge_metadata';
 
 export const loadMetadata = async (
   store: Store,
-  collectionName: string = DEFAULT_COLLECTION_NAME,
+  metadataCollectionName: string = DEFAULT_METADATA_COLLECTION_NAME,
 ): Promise<Metadata> => {
-  await ensureStoreMetadata(store, collectionName);
+  const metadataCollection = getMetadataCollection(metadataCollectionName);
+  await ensureMetadataCollection(store, metadataCollection);
 
-  const metadata = Metadata.generate(stateDefinitions.values());
+  const metadata = new Metadata(neuledgeGlob.stateDefinitions.values());
   const changes = metadata.sync(
-    await getStoreMetadata(metadata, store, collectionName),
+    await getStoreMetadataSnapshot(metadata, store, metadataCollection),
   );
 
   for (const change of changes) {
     // FIXME handle changes
   }
 
-  await syncStoreMetadata(store, collectionName, changes);
+  await syncStoreMetadata(store, metadataCollection, changes);
 
   return metadata;
 };

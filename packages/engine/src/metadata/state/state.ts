@@ -8,9 +8,9 @@ import { NeuledgeError, NeuledgeErrorCode } from '@/index';
 import { getScalarFields, MetadataStateField } from './field';
 import {
   generateStateHash,
-  MetadataGhostState,
-  MetadataGhostStateRelation,
-} from './ghost';
+  StateSnapshot,
+  StateRelationSnapshot,
+} from './snapshot';
 
 const METADATA_HASH_DEFAULT_FIELD = '__h';
 const METADATA_VERSION_DEFAULT_FIELD = '__v';
@@ -22,21 +22,44 @@ export interface MetadataStateReservedNames {
   version: string;
 }
 
-export interface MetadataStateRelation extends MetadataGhostStateRelation {
+export interface MetadataStateRelation extends StateRelationSnapshot {
   states: MetadataState[];
   path: string;
 }
 
-export class MetadataState extends MetadataGhostState {
+export class MetadataState extends StateSnapshot {
   fields: MetadataStateField[];
   instance: StateDefinition;
   reservedNames: MetadataStateReservedNames;
   relations: MetadataStateRelation[];
+  transforms: MetadataState[];
+
+  static fromDefinition = (
+    ctx: MetadataStateContext,
+    state: StateDefinition,
+    collectionName?: string,
+  ): MetadataState => {
+    let ref = ctx[state.$name];
+
+    if (!ref) {
+      // the constructor will add to context and handle circular references
+      ref = new MetadataState(ctx, state);
+    }
+
+    if (collectionName) {
+      ref.collectionName = collectionName;
+    }
+
+    return ref;
+  };
 
   private constructor(ctx: MetadataStateContext, state: StateDefinition) {
     super();
+
+    // add to context to handle circular references
     ctx[state.$name] = this;
 
+    // init all properties before handling circular references
     this.collectionName = state.$name;
     this.name = state.$name;
     this.hash = null as never;
@@ -47,9 +70,10 @@ export class MetadataState extends MetadataGhostState {
       version: METADATA_VERSION_DEFAULT_FIELD,
     };
     this.relations = [];
+    this.transforms = [];
 
+    // assing fields
     const scalars = Object.entries(resolveDefer(state.$scalars));
-
     for (const [key, def] of scalars) {
       const fields = getScalarFields(key, key, def);
 
@@ -68,25 +92,19 @@ export class MetadataState extends MetadataGhostState {
       this.fields.push(...fields);
     }
 
+    // assign relations
     for (const [key, def] of scalars) {
       this.relations.push(...getScalarRelations(ctx, key, def));
     }
 
-    this.hash = generateStateHash(this);
-  }
-
-  static fromDefinition = (
-    ctx: MetadataStateContext,
-    state: StateDefinition,
-  ): MetadataState => {
-    let ref = ctx[state.$name];
-
-    if (!ref) {
-      ref = ctx[state.$name] = new MetadataState(ctx, state);
+    // assign transforms
+    for (const def of resolveDefer(state.$transforms, [])) {
+      this.transforms.push(MetadataState.fromDefinition(ctx, def));
     }
 
-    return ref;
-  };
+    // generate hash after all properties are finalized
+    this.hash = generateStateHash(this);
+  }
 }
 
 const getScalarRelations = (

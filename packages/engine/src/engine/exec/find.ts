@@ -23,14 +23,18 @@ export const execFindMany = async <S extends StateDefinition>(
   options: FindManyQueryOptions<S, S>,
 ): Promise<EntityList<Entity<S>>> => {
   const metadata = await engine.metadata;
-  const collection = chooseStatesCollection(metadata, options.states);
+
+  const { states, collection } = chooseStatesCollection(
+    metadata,
+    options.states,
+  );
 
   const list = checkLimitedList(
     options,
     await engine.store.find({
-      collectionName: collection.name,
+      collection,
       ...convertRetriveQuery(collection, options),
-      ...convertFilterQuery(metadata, collection, options),
+      ...convertFilterQuery(metadata, states, collection, options),
       ...convertOffsetQuery(options),
       ...convertLimitQuery(options),
       ...convertSortQuery(collection, options),
@@ -45,10 +49,10 @@ export const execFindUnique = async <S extends StateDefinition>(
   options: FindUniqueQueryOptions<S, S>,
 ): Promise<Entity<S> | null> => {
   const metadata = await engine.metadata;
-  const collection = chooseStatesCollection(metadata, options.states);
+  const { collection } = chooseStatesCollection(metadata, options.states);
 
   const [document] = await engine.store.find({
-    collectionName: collection.name,
+    collection,
     ...convertRetriveQuery(collection, options),
     ...convertUniqueFilterQuery(metadata, collection, options),
     ...convertUniqueQuery(metadata, collection, options),
@@ -63,10 +67,10 @@ export const execFindUniqueOrThrow = async <S extends StateDefinition>(
   options: FindUniqueOrThrowQueryOptions<S, S>,
 ): Promise<Entity<S>> => {
   const metadata = await engine.metadata;
-  const collection = chooseStatesCollection(metadata, options.states);
+  const { collection } = chooseStatesCollection(metadata, options.states);
 
   const [document] = await engine.store.find({
-    collectionName: collection.name,
+    collection,
     ...convertRetriveQuery(collection, options),
     ...convertUniqueFilterQuery(metadata, collection, options),
     ...convertUniqueQuery(metadata, collection, options),
@@ -81,12 +85,16 @@ export const execFindFirst = async <S extends StateDefinition>(
   options: FindFirstQueryOptions<S, S>,
 ): Promise<Entity<S> | null> => {
   const metadata = await engine.metadata;
-  const collection = chooseStatesCollection(metadata, options.states);
+
+  const { states, collection } = chooseStatesCollection(
+    metadata,
+    options.states,
+  );
 
   const [document] = await engine.store.find({
-    collectionName: collection.name,
+    collection,
     ...convertRetriveQuery(collection, options),
-    ...convertFilterQuery(metadata, collection, options),
+    ...convertFilterQuery(metadata, states, collection, options),
     ...convertOffsetQuery(options),
     limit: 1,
     ...convertSortQuery(collection, options),
@@ -100,12 +108,16 @@ export const execFindFirstOrThrow = async <S extends StateDefinition>(
   options: FindFirstOrThrowQueryOptions<S, S>,
 ): Promise<Entity<S>> => {
   const metadata = await engine.metadata;
-  const collection = chooseStatesCollection(metadata, options.states);
+
+  const { states, collection } = chooseStatesCollection(
+    metadata,
+    options.states,
+  );
 
   const [document] = await engine.store.find({
-    collectionName: collection.name,
+    collection,
     ...convertRetriveQuery(collection, options),
-    ...convertFilterQuery(metadata, collection, options),
+    ...convertFilterQuery(metadata, states, collection, options),
     ...convertOffsetQuery(options),
     limit: 1,
     ...convertSortQuery(collection, options),

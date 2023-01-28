@@ -16,14 +16,18 @@ export const ensureIndexes = async (
   const exists = await collection.listIndexes().toArray();
   const existMap = new Map(exists.map((item) => [item.name, item]));
 
-  // FIXME handle primary index as an '_id' field
-
   for (const index of indexes) {
+    if (index.primary) {
+      // FIXME handle primary index as an '_id' field
+      // continue;
+    }
+
     if (existMap.has(index.name)) continue;
 
     const indexSpec: Record<string, 1 | -1> = {};
-    for (const field of index.fields) {
-      indexSpec[escapeFieldName(field.name)] = field.order === 'asc' ? 1 : -1;
+    for (const indexField of index.fields) {
+      indexSpec[escapeFieldName(indexField.field.name)] =
+        indexField.order === 'asc' ? 1 : -1;
     }
 
     await collection.createIndex(indexSpec, {

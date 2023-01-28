@@ -1,9 +1,8 @@
-import { StatesContext } from '@/context';
 import { applyDecorators, createDecorator, Decorators } from '@/decorators';
 import { Mutation } from '@/mutation';
-import { FieldNode, ParsingError, StateNode } from '@neuledge/states-parser';
+import { ParsingError, StateNode } from '@neuledge/states-parser';
 import { z } from 'zod';
-import { parseStateFields, StateField } from './field';
+import { StateField } from './field';
 import {
   StateIndex,
   StateIndexNameRegex,
@@ -20,20 +19,21 @@ export interface State<N extends string = string> {
   primaryKey: StatePrimaryKey;
   indexes: Record<string, StateIndex>;
   mutations: Record<string, Mutation>;
+  baseIndex: number;
 }
 
 export const parseState = (
-  ctx: StatesContext,
   node: StateNode,
-  fields: FieldNode[],
-  mutations: Record<string, Mutation>,
+  fields: State['fields'],
+  mutations: State['mutations'],
+  baseIndex: State['baseIndex'],
 ): State => {
   const state: State = {
     type: 'State',
     node,
     name: node.id.name,
     description: node.description?.value,
-    fields: {},
+    fields,
     primaryKey: {
       name: '',
       fields: {},
@@ -41,9 +41,33 @@ export const parseState = (
     },
     indexes: {},
     mutations,
+    baseIndex,
   };
 
-  state.fields = parseStateFields(ctx, state, fields);
+  for (const field of Object.values(fields)) {
+    if (field.type !== 'ScalarField') continue;
+
+    const { stateIndex, primaryKey } = field;
+
+    if (stateIndex) {
+      if (state.indexes[stateIndex.name]) {
+        throw new ParsingError(
+          field.node,
+          `Index '${stateIndex.name}' already exists`,
+        );
+      }
+
+      state.indexes[stateIndex.name] = stateIndex;
+    }
+
+    if (primaryKey) {
+      Object.assign(state.primaryKey.fields, primaryKey.fields);
+
+      if (primaryKey.auto) {
+        state.primaryKey.auto = primaryKey.auto;
+      }
+    }
+  }
 
   applyDecorators(state, node.decorators, decorators);
   applyPrimaryKey(state, node);

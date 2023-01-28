@@ -1,4 +1,9 @@
-import { CustomScalar, NonNullableEntity, Scalar } from '@neuledge/states';
+import {
+  CustomScalar,
+  EntityExpression,
+  NonNullableEntity,
+  Scalar,
+} from '@neuledge/states';
 
 export const generateEntityScalar = (entity: NonNullableEntity): string => {
   switch (entity.type) {
@@ -34,21 +39,31 @@ export const generateEntityType = (entity: NonNullableEntity): string => {
   }
 };
 
-export const generateWhereEntity = (
-  entity: NonNullableEntity,
+export const generateWhereEntityExpression = (
+  { entity, list }: EntityExpression,
   nullable?: boolean,
 ): string => {
   switch (entity.type) {
-    case 'Either':
+    case 'Either': {
+      if (list) {
+        throw new Error('Where list of eithers is not supported.');
+      }
+
       return `$.Where${nullable ? 'Nullable' : ''}State<typeof ${
         entity.name
       }[number]>`;
+    }
 
-    case 'State':
+    case 'State': {
+      if (list) {
+        throw new Error('Where list of states is not supported.');
+      }
+
       return `$.Where${nullable ? 'Nullable' : ''}State<typeof ${entity.name}>`;
+    }
 
     case 'Scalar':
-      return generateWhereScalar(entity, nullable);
+      return generateWhereScalar(entity, nullable, list);
 
     default:
       // @ts-expect-error `entity` is never
@@ -58,10 +73,17 @@ export const generateWhereEntity = (
 
 const generateWhereScalar = (
   scalar: Scalar | CustomScalar,
-  nullable?: boolean,
+  nullable: boolean | undefined,
+  list: boolean,
 ): string => {
   if (scalar.node) {
     throw new Error('Where non built-in scalar is not implemented.');
+  }
+
+  if (list) {
+    return `$.Where${nullable ? 'Nullable' : ''}Array<$.scalars.${
+      scalar.name
+    }>`;
   }
 
   switch (scalar.name) {

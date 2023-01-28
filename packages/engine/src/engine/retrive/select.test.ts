@@ -10,7 +10,7 @@ describe('engine/retrive/select', () => {
     let postsCollection: MetadataCollection;
 
     beforeAll(() => {
-      const metadata = Metadata.generate([Category, ...Post]);
+      const metadata = new Metadata([Category, ...Post]);
 
       postsCollection = metadata.getCollections(Post)[0];
     });

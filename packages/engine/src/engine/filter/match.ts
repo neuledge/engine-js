@@ -38,9 +38,14 @@ export const convertMatch = <S extends StateDefinition>(
 
     res[key] = metadata.getCollections(states).map(
       (relCollection): StoreMatchOptions => ({
-        collectionName: relCollection.name,
+        collection: relCollection,
         by: getStoreMatchBy(key, fields, relCollection),
-        ...convertFilterQuery(metadata, relCollection, matchOpts),
+        ...convertFilterQuery(
+          metadata,
+          relCollection.states,
+          relCollection,
+          matchOpts,
+        ),
       }),
     );
   }

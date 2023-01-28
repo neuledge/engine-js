@@ -1,15 +1,14 @@
 import { ScalarField, State } from '@neuledge/states';
 import { generateDescriptionComment } from '../comments';
-import { generateEntityScalar, generateEntityType } from '../entity';
-import { generateTypeScalar } from '../type';
+import { generateTypeScalar, generateTypeType } from '../type';
 
 export const generateStateScalars = (state: State, indent: string): string =>
   `() => ({${Object.values(state.fields)
     .filter((item): item is ScalarField => item.type === 'ScalarField')
     .map(
       (item) =>
-        `\n${indent}  ${item.name}: { type: ${generateEntityScalar(
-          item.entity,
+        `\n${indent}  ${item.name}: { type: ${generateTypeScalar(
+          item.as,
         )}, index: ${item.index}${item.nullable ? ', nullable: true' : ''} },`,
     )
     .join('')}\n${indent}})`;
@@ -21,8 +20,8 @@ export const generateStateFields = (state: State, indent: string): string =>
       (item) =>
         `\n${indent}${generateDescriptionComment(item, indent)}${item.name}${
           item.nullable
-            ? `?: ${generateEntityType(item.entity)} | null;`
-            : `!: ${generateEntityType(item.entity)};`
+            ? `?: ${generateTypeType(item.as)} | null;`
+            : `!: ${generateTypeType(item.as)};`
         }`,
     )
     .join('')}`;
@@ -32,7 +31,7 @@ export const generateStateOptionalRelations = (
   indent: string,
 ): string | null => {
   const fields = Object.values(state.fields).filter(
-    (item) => item.type === 'RelationField' || item.entity.type !== 'Scalar',
+    (item) => item.type === 'RelationField' || item.as.entity.type !== 'Scalar',
   );
 
   if (!fields.length) {
@@ -42,11 +41,7 @@ export const generateStateOptionalRelations = (
   return `() => ({${fields
     .map(
       (item) =>
-        `\n${indent}  ${item.name}: ${
-          item.type === 'ScalarField'
-            ? generateEntityScalar(item.entity)
-            : generateTypeScalar(item.as)
-        } as const,`,
+        `\n${indent}  ${item.name}: ${generateTypeScalar(item.as)} as const,`,
     )
     .join('')}\n${indent}})`;
 };

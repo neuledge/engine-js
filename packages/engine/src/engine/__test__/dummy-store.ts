@@ -22,7 +22,7 @@ export class DummyStore implements Store {
   }
 
   async insert() {
-    return { affectedCount: 0 };
+    return { insertedIds: [], affectedCount: 0 };
   }
 
   async update() {

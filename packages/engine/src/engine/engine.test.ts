@@ -37,7 +37,7 @@ describe('engine/engine', () => {
 
       expect(engine.store.find).toHaveBeenCalledTimes(1);
       expect(engine.store.find).toHaveBeenCalledWith({
-        collectionName: 'categories',
+        collection: metadata['collections']['categories'],
         where: {
           __h: { $in: [metadata.findStateByKey(Category.$name)?.hash] },
         },
@@ -54,7 +54,7 @@ describe('engine/engine', () => {
 
       expect(engine.store.find).toHaveBeenCalledTimes(1);
       expect(engine.store.find).toHaveBeenCalledWith({
-        collectionName: 'categories',
+        collection: metadata['collections']['categories'],
         where: {
           __h: { $in: [metadata.findStateByKey(Category.$name)?.hash] },
         },
@@ -71,7 +71,7 @@ describe('engine/engine', () => {
 
       expect(engine.store.find).toHaveBeenCalledTimes(1);
       expect(engine.store.find).toHaveBeenCalledWith({
-        collectionName: 'categories',
+        collection: metadata['collections']['categories'],
         where: {
           __h: { $in: [metadata.findStateByKey(Category.$name)?.hash] },
         },
@@ -92,7 +92,7 @@ describe('engine/engine', () => {
 
       expect(engine.store.find).toHaveBeenCalledTimes(1);
       expect(engine.store.find).toHaveBeenCalledWith({
-        collectionName: 'categories',
+        collection: metadata['collections']['categories'],
         where: {
           __h: { $in: [metadata.findStateByKey(Category.$name)?.hash] },
           id: { $gt: 3 },
@@ -113,7 +113,7 @@ describe('engine/engine', () => {
 
       expect(engine.store.find).toHaveBeenCalledTimes(1);
       expect(engine.store.find).toHaveBeenCalledWith({
-        collectionName: 'categories',
+        collection: metadata['collections']['categories'],
         select: { id: true, name: true },
         where: {
           __h: { $in: [metadata.findStateByKey(Category.$name)?.hash] },
@@ -134,7 +134,7 @@ describe('engine/engine', () => {
 
       expect(engine.store.find).toHaveBeenCalledTimes(1);
       expect(engine.store.find).toHaveBeenCalledWith({
-        collectionName: 'posts',
+        collection: metadata['collections']['posts'],
         where: {
           __h: { $in: [metadata.findStateByKey(PublishedPost.$name)?.hash] },
         },
@@ -155,7 +155,7 @@ describe('engine/engine', () => {
 
       expect(engine.store.find).toHaveBeenCalledTimes(1);
       expect(engine.store.find).toHaveBeenCalledWith({
-        collectionName: 'posts',
+        collection: metadata['collections']['posts'],
         where: {
           __h: { $in: [metadata.findStateByKey(PublishedPost.$name)?.hash] },
         },

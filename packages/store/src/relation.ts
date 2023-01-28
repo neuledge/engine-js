@@ -1,4 +1,4 @@
-import { StoreCollectionName } from './collection';
+import { StoreCollection } from './collection';
 import { StoreScalarValue } from './document';
 import { StoreWhere } from './where';
 
@@ -9,7 +9,7 @@ export type StoreMatch = Record<string, StoreMatchOptions[]>;
 // export type StoreIncludeMany = Record<string, StoreIncludeOptions[]>;
 
 export interface StoreMatchOptions {
-  collectionName: StoreCollectionName;
+  collection: StoreCollection;
   by: StoreMatchBy;
   where?: StoreWhere;
   match?: StoreMatch;

@@ -1,27 +1,36 @@
 import { StatesContext } from '@/context';
 import { applyDecorators, createDecorator, Decorators } from '@/decorators';
-import { NonNullableEntity, parseNonNullableEntity } from '@/entity';
 import { parseType, Type } from '@/type';
 import { FieldNode, ParsingError } from '@neuledge/states-parser';
 import { z } from 'zod';
-import { State } from './state';
-import { StateIndex, StateIndexNameRegex } from './state-index';
+import {
+  StateIndex,
+  StateIndexNameRegex,
+  StatePrimaryKey,
+} from './state-index';
 
 export type StateField = ScalarField | RelationField;
 
-export interface ScalarField {
+/**
+ * A scalar field is a field that exists in the current state. Typically,
+ * this is a column in a database table and it can contain a scalar value
+ * (including arrays and objects).
+ */
+export interface ScalarField extends AbstractField {
   type: 'ScalarField';
-  node: FieldNode;
-  name: string;
-  nullable?: boolean;
-  index: number;
-  description?: string;
-  deprecated?: boolean | string;
-  entity: NonNullableEntity;
+  stateIndex?: StateIndex;
+  primaryKey?: StatePrimaryKey;
 }
 
-export interface RelationField {
+/**
+ * A relation field is a field that references another state but does not
+ * exist in the current state. Typically, this is a foreign key.
+ */
+export interface RelationField extends AbstractField {
   type: 'RelationField';
+}
+
+interface AbstractField {
   node: FieldNode;
   name: string;
   nullable?: boolean;
@@ -31,52 +40,35 @@ export interface RelationField {
   as: Type;
 }
 
-export const parseStateFields = (
+export const parseStateField = (
   ctx: StatesContext,
-  state: State,
-  nodes: FieldNode[],
-): Record<string, StateField> =>
-  Object.fromEntries(
-    nodes.map((node) => [node.key.name, parseStateField(ctx, state, node)]),
-  );
-
-const parseStateField = (
-  ctx: StatesContext,
-  state: State,
   node: FieldNode,
+  baseIndex: number,
 ): StateField => {
-  const field: StateField =
-    node.as.type !== 'TypeExpression' || !node.as.list
-      ? {
-          type: 'ScalarField',
-          node,
-          name: node.key.name,
-          nullable: node.nullable,
-          index: node.index.value,
-          description: node.description?.value,
-          entity: parseNonNullableEntity(ctx, node.as.identifier),
-        }
-      : {
-          type: 'RelationField',
-          node,
-          name: node.key.name,
-          nullable: node.nullable,
-          index: node.index.value,
-          description: node.description?.value,
-          as: parseType(ctx, node.as),
-        };
+  const as = parseType(ctx, node.as);
 
-  applyDecorators({ state, field }, node.decorators, decorators);
+  const field: StateField = {
+    type:
+      as.entity.type === 'Scalar' || !as.list ? 'ScalarField' : 'RelationField',
+    node,
+    name: node.key.name,
+    nullable: node.nullable,
+    index: node.index.value + baseIndex,
+    description: node.description?.value,
+    as,
+  };
+
+  applyDecorators(field, node.decorators, decorators);
 
   return field;
 };
 
-const decorators: Decorators<{ state: State; field: StateField }> = {
+const decorators: Decorators<StateField> = {
   deprecated: createDecorator(
     z.object({
       reason: z.string().optional(),
     }),
-    ({ field }, args) => {
+    (field, args) => {
       field.deprecated = args.reason || true;
     },
   ),
@@ -93,15 +85,32 @@ const decorators: Decorators<{ state: State; field: StateField }> = {
         .optional(),
       auto: z.literal('increment').optional(),
     }),
-    ({ state, field }, { direction, auto }) => {
-      state.primaryKey.fields[field.name] =
-        direction == null || direction === 'asc' || direction === 1
-          ? 'asc'
-          : 'desc';
-
-      if (auto) {
-        state.primaryKey.auto = auto;
+    (field, { direction, auto }) => {
+      if (field.type !== 'ScalarField') {
+        throw new ParsingError(
+          field.node,
+          `@id can only be applied to scalar fields`,
+        );
       }
+
+      if (field.primaryKey) {
+        throw new ParsingError(
+          field.node,
+          `Duplicate @id on field '${field.name}'`,
+        );
+      }
+
+      field.primaryKey = {
+        name: field.name,
+        fields: {
+          [field.name]:
+            direction == null || direction === 'asc' || direction === 1
+              ? 'asc'
+              : 'desc',
+        },
+        unique: true,
+        auto,
+      };
     },
   ),
 
@@ -118,8 +127,22 @@ const decorators: Decorators<{ state: State; field: StateField }> = {
       unique: z.boolean().optional(),
       name: z.string().regex(StateIndexNameRegex).optional(),
     }),
-    ({ state, field }, { direction, unique, name }, argsNodes, node) => {
-      const index: StateIndex = {
+    (field, { direction, unique, name }) => {
+      if (field.type !== 'ScalarField') {
+        throw new ParsingError(
+          field.node,
+          `@index can only be applied to scalar fields`,
+        );
+      }
+
+      if (field.stateIndex) {
+        throw new ParsingError(
+          field.node,
+          `Duplicate @index or @unique on field '${field.name}'`,
+        );
+      }
+
+      field.stateIndex = {
         name: name || field.name,
         fields: {
           [field.name]:
@@ -129,11 +152,6 @@ const decorators: Decorators<{ state: State; field: StateField }> = {
         },
         unique,
       };
-
-      if (state.indexes[index.name]) {
-        throw new ParsingError(node, `Duplicate index name: ${index.name}`);
-      }
-      state.indexes[index.name] = index;
     },
   ),
 
@@ -149,8 +167,22 @@ const decorators: Decorators<{ state: State; field: StateField }> = {
         .optional(),
       name: z.string().regex(StateIndexNameRegex).optional(),
     }),
-    ({ state, field }, { direction, name }, argsNodes, node) => {
-      const index: StateIndex = {
+    (field, { direction, name }) => {
+      if (field.type !== 'ScalarField') {
+        throw new ParsingError(
+          field.node,
+          `@unique can only be applied to scalar fields`,
+        );
+      }
+
+      if (field.stateIndex) {
+        throw new ParsingError(
+          field.node,
+          `Duplicate @unique or @index on field '${field.name}'`,
+        );
+      }
+
+      field.stateIndex = {
         name: name || field.name,
         fields: {
           [field.name]:
@@ -160,11 +192,6 @@ const decorators: Decorators<{ state: State; field: StateField }> = {
         },
         unique: true,
       };
-
-      if (state.indexes[index.name]) {
-        throw new ParsingError(node, `Duplicate index name: ${index.name}`);
-      }
-      state.indexes[index.name] = index;
     },
   ),
 };

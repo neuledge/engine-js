@@ -8,7 +8,7 @@ export interface StateDefinitionId<T> {
 export type InitiatedState<
   ID extends StateDefinitionId<T>,
   T,
-> = ID['auto'] extends 'increment'
+> = ID['auto'] extends string
   ? {
       [K in Exclude<keyof T, SortDefinitionKey<ID['fields'][number]>>]: T[K];
     } & {

@@ -1,5 +1,6 @@
 import { ScalarField, State, StateIndex } from '@neuledge/states';
-import { generateEntityType, generateWhereEntity } from '../entity';
+import { generateWhereEntityExpression } from '../entity';
+import { generateTypeScalar } from '../type';
 
 export const generateStateIdType = (state: State): string => {
   const { fields, auto } = state.primaryKey;
@@ -64,11 +65,11 @@ const generateStateFindType = (state: State, indent: string): string => {
                 (item) =>
                   `\n${multiPaths ? `${indent}    ` : indent}  ${
                     item.name
-                  }: ${generateWhereEntity(item.entity, item.nullable)};`,
+                  }: ${generateWhereEntityExpression(item.as, item.nullable)};`,
               )
               .join('')}\n${indent}${multiPaths ? '    ' : ''}  ${
               field.name
-            }?: ${generateWhereEntity(field.entity, field.nullable)};\n${
+            }?: ${generateWhereEntityExpression(field.as, field.nullable)};\n${
               multiPaths ? `${indent}    ` : indent
             }}`,
         ),
@@ -87,7 +88,7 @@ const generateStateUniqueType = (state: State, indent: string): string =>
         `{${fields
           .map(
             (item) =>
-              `\n${indent}  ${item.name}: ${generateEntityType(item.entity)};`,
+              `\n${indent}  ${item.name}: ${generateTypeScalar(item.as)};`,
           )
           .join('')}\n${indent}}`,
     )

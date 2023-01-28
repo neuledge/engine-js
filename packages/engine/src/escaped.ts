@@ -18,6 +18,8 @@ export {
   type StateDefinitionWhereNullableBuffer as WhereNullableBuffer,
   type StateDefinitionWhereState as WhereState,
   type StateDefinitionWhereNullableState as WhereNullableState,
+  type StateDefinitionWhereArray as WhereArray,
+  type StateDefinitionWhereNullableArray as WhereNullableArray,
   type EitherDefintion as Either,
   createEitherDefintion as either,
   createMutation as mutation,

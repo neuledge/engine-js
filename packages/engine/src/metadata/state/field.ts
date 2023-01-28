@@ -6,7 +6,7 @@ import {
 } from '@/definitions';
 import { Scalar } from '@neuledge/scalars';
 
-export interface MetadataGhostStateField {
+export interface StateFieldSnapshot {
   name: string;
   path?: string;
   indexes: number[];
@@ -14,18 +14,32 @@ export interface MetadataGhostStateField {
   nullable: boolean;
 }
 
-export interface MetadataStateField extends MetadataGhostStateField {
+export interface MetadataStateField extends StateFieldSnapshot {
   path: string;
 }
 
 export const getMetadataStateFieldKey = (
-  field: MetadataGhostStateField,
+  field: StateFieldSnapshot,
   strict?: boolean,
 ): string =>
   `${field.indexes.join(':')}#${field.type}${
     strict && field.nullable ? '?' : ''
   }`;
 
+/**
+ * Generate list of scalar fields from field definition. Usually, each field definition
+ * will have only one scalar field, but in case of nested states, it may have multiple
+ * fields, as the number of primary keys in the nested state.
+ *
+ * We will assign a unique name to each field, and the path will match the original
+ * field destination, using dot notation for nested fields. For example, if we have
+ * a field named `user` that is a nested state, and the nested state has a primary
+ * key named `id`, the field name will be `user_id`, and the path will be `user.id`.
+ *
+ * The indexes will be the indexes of the parent state, plus the index of the field
+ * in the current state. Top level fields will have only one item in the indexes array
+ * that equals the index of the field in the state.
+ */
 export const getScalarFields = (
   name: string,
   path: string,
@@ -36,6 +50,7 @@ export const getScalarFields = (
 
   const indexes = [...parentIndexes, index];
 
+  // type is scalar
   if (isStateDefinitionScalarTypeScalar(type)) {
     return [
       {
@@ -51,9 +66,11 @@ export const getScalarFields = (
   const fieldMap = new Map<string, MetadataStateField>();
   const refCount = new Map<string, number>();
 
+  // `type` is array of possible states
   for (const childState of type) {
     const scalars = resolveDefer(childState.$scalars);
 
+    // query only the primary key fields
     for (const sortKey of childState.$id.fields) {
       const id = fromSortedField(sortKey);
       const childScalarDef = scalars[id];
@@ -70,7 +87,8 @@ export const getScalarFields = (
         const value = fieldMap.get(mapKey);
 
         if (!value || (!value.nullable && item.nullable)) {
-          // prefer nullable fields
+          // prefer nullable fields and overwrite existing field if the current
+          // field is not nullable
           fieldMap.set(mapKey, item);
         }
 

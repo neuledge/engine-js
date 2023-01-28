@@ -1,25 +1,25 @@
 import { StateDefinition } from '@/definitions';
 import { generateHash } from '../hash';
-import { getMetadataStateFieldKey, MetadataGhostStateField } from './field';
+import { getMetadataStateFieldKey, StateFieldSnapshot } from './field';
 
-export type MetadataStateHash = Buffer;
+export type StateSnapshotHash = Buffer;
 
-export interface MetadataGhostStateRelation {
+export interface StateRelationSnapshot {
   name: string;
-  states: MetadataGhostState[];
+  states: StateSnapshot[];
   path?: string;
   index: number;
 }
 
-export class MetadataGhostState {
+export class StateSnapshot {
   collectionName!: string;
   name!: string;
-  hash!: MetadataStateHash;
-  fields!: MetadataGhostStateField[];
+  hash!: StateSnapshotHash;
+  fields!: StateFieldSnapshot[];
   instance?: StateDefinition;
-  relations!: MetadataGhostStateRelation[];
+  relations!: StateRelationSnapshot[];
 
-  matches(target: MetadataGhostState): boolean {
+  matches(target: StateSnapshot): boolean {
     if (this.hash.equals(target.hash)) return true;
 
     const actualFields = new Map(
@@ -38,7 +38,7 @@ export class MetadataGhostState {
     });
   }
 
-  sync(origin: MetadataGhostState): void {
+  sync(origin: StateSnapshot): void {
     this.collectionName = origin.collectionName;
 
     const targetFields = new Map(
@@ -72,7 +72,7 @@ export class MetadataGhostState {
   }
 
   assign(
-    origin: Omit<MetadataGhostState, 'matches' | 'sync' | 'clone' | 'assign'>,
+    origin: Omit<StateSnapshot, 'matches' | 'sync' | 'clone' | 'assign'>,
   ): this {
     this.collectionName = origin.collectionName;
     this.name = origin.name;
@@ -87,8 +87,8 @@ export class MetadataGhostState {
 // state
 
 export const generateStateHash = (
-  state: Pick<MetadataGhostState, 'fields' | 'relations'>,
-): MetadataStateHash =>
+  state: Pick<StateSnapshot, 'fields' | 'relations'>,
+): StateSnapshotHash =>
   generateHash([
     state.fields.map((field) => getMetadataStateFieldKey(field, true)).sort(),
     state.relations
@@ -96,9 +96,7 @@ export const generateStateHash = (
       .sort(),
   ]);
 
-const getMetadataStateRelationKey = (
-  relation: MetadataGhostStateRelation,
-): string =>
+const getMetadataStateRelationKey = (relation: StateRelationSnapshot): string =>
   `${relation.index}#${relation.states
     .map((state) =>
       generateStateHash({ fields: state.fields, relations: [] }).toString(

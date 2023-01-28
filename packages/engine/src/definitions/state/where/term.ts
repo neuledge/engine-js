@@ -67,3 +67,11 @@ export type StateDefinitionWhereBuffer<V extends Buffer> =
 export type StateDefinitionWhereNullableBuffer<V extends Buffer> =
   | EqualableFilters<V | null>
   | ComparableFilters<V>;
+
+export type StateDefinitionWhereArray<V> =
+  | EqualableFilters<V[]>
+  | ComparableFilters<V[]>;
+
+export type StateDefinitionWhereNullableArray<V> =
+  | EqualableFilters<V[] | null>
+  | ComparableFilters<V[]>;

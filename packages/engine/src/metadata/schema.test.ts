@@ -14,7 +14,7 @@ describe('engine/metadata/schema', () => {
     let postsCollection: MetadataCollection;
 
     beforeAll(() => {
-      const metadata = Metadata.generate([Category, ...Post]);
+      const metadata = new Metadata([Category, ...Post]);
 
       categoriesCollection = metadata.getCollections([Category])[0];
       postsCollection = metadata.getCollections(Post)[0];
@@ -47,19 +47,22 @@ describe('engine/metadata/schema', () => {
           {
             field: {
               ...postsCollection.getFields('category.id')[0],
-              indexes: [1, 1],
+              indexes: [2, 1],
             },
           },
         ],
         id: [
-          { field: { ...postsCollection.getFields('id')[0], indexes: [256] } },
+          { field: { ...postsCollection.getFields('id')[0], indexes: [1] } },
         ],
         title: [
           {
-            field: { ...postsCollection.getFields('title')[0], indexes: [258] },
+            field: { ...postsCollection.getFields('title')[0], indexes: [3] },
           },
         ],
-        content: [{ field: postsCollection.getFields('content')[1] }],
+        content: [
+          { field: postsCollection.getFields('content')[0] },
+          { field: postsCollection.getFields('content')[1] },
+        ],
         publishedAt: [{ field: postsCollection.getFields('publishedAt')[0] }],
       });
     });
