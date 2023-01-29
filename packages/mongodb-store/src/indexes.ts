@@ -17,9 +17,9 @@ export const ensureIndexes = async (
   const existMap = new Map(exists.map((item) => [item.name, item]));
 
   for (const index of indexes) {
-    if (index.primary) {
+    if (index.unique === 'primary') {
       // FIXME handle primary index as an '_id' field
-      // continue;
+      continue;
     }
 
     if (existMap.has(index.name)) continue;
@@ -27,12 +27,12 @@ export const ensureIndexes = async (
     const indexSpec: Record<string, 1 | -1> = {};
     for (const indexField of index.fields) {
       indexSpec[escapeFieldName(indexField.field.name)] =
-        indexField.order === 'asc' ? 1 : -1;
+        indexField.direction === 'asc' ? 1 : -1;
     }
 
     await collection.createIndex(indexSpec, {
       name: index.name,
-      unique: index.unique || index.primary,
+      unique: index.unique,
       background: true,
     });
   }

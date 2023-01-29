@@ -38,15 +38,15 @@ export type StoreFieldType =
 export interface StoreIndex {
   name: string;
   fields: StoreIndexField[];
-  unique?: boolean;
-  primary?: boolean;
+  unique?: boolean | 'primary';
 }
 
 export interface StorePrimaryKey extends StoreIndex {
-  primary: true;
+  unique: 'primary';
+  auto?: 'increment';
 }
 
 export interface StoreIndexField {
   field: StoreField;
-  order: StoreSortDirection;
+  direction: StoreSortDirection;
 }

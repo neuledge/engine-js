@@ -50,6 +50,12 @@ describe('engine/metadata/schema', () => {
               indexes: [2, 1],
             },
           },
+          {
+            field: {
+              ...postsCollection.getFields('category.id')[1],
+              indexes: [256, 1],
+            },
+          },
         ],
         id: [
           { field: { ...postsCollection.getFields('id')[0], indexes: [1] } },

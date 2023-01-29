@@ -23,7 +23,9 @@ export const generateStateOptionalIndexes = (
   state: State,
   indent: string,
 ): string | null => {
-  const indexes = Object.values(state.indexes).filter((index) => !index.unique);
+  const indexes = Object.values(state.indexes).filter(
+    (index) => index.name !== state.primaryKey.name,
+  );
 
   if (!indexes.length) {
     return null;
@@ -38,12 +40,12 @@ export const generateStateOptionalIndexes = (
             /^\w+$/.test(index.name)
               ? index.name
               : `'${index.name.replace(/['\\]/g, '\\$1')}'`
-          }: [${Object.entries(index.fields)
+          }: { fields: [${Object.entries(index.fields)
             .map(
               ([field, direction]) =>
                 `'${direction === 'asc' ? `+` : '-'}${field}'`,
             )
-            .join(', ')}] as const,`,
+            .join(', ')}]${index.unique ? ', unique: true' : ''} } as const,`,
       )
       .join('') +
     `\n${indent}}`

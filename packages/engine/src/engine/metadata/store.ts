@@ -34,8 +34,8 @@ export const getMetadataCollection = (
 
   const primaryKey: StorePrimaryKey = {
     name: 'hash',
-    fields: [{ field: hash, order: 'asc' }],
-    primary: true,
+    fields: [{ field: hash, direction: 'asc' }],
+    unique: 'primary',
   };
 
   return {

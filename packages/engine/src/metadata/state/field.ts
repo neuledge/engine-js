@@ -2,9 +2,11 @@ import {
   fromSortedField,
   isStateDefinitionScalarTypeScalar,
   resolveDefer,
+  StateDefinition,
   StateDefintionScalar,
 } from '@/definitions';
 import { Scalar } from '@neuledge/scalars';
+import { toSnakeCase } from '../names';
 
 export interface StateFieldSnapshot {
   name: string;
@@ -45,8 +47,13 @@ export const getScalarFields = (
   path: string,
   scalarDef: StateDefintionScalar,
   parentIndexes: number[] = [],
+  nullable?: boolean,
 ): MetadataStateField[] => {
-  const { type, index, nullable } = scalarDef;
+  const { type, index } = scalarDef;
+
+  if (!nullable && scalarDef.nullable) {
+    nullable = true;
+  }
 
   const indexes = [...parentIndexes, index];
 
@@ -54,7 +61,7 @@ export const getScalarFields = (
   if (isStateDefinitionScalarTypeScalar(type)) {
     return [
       {
-        name,
+        name: toSnakeCase(name),
         path,
         indexes,
         type,
@@ -63,6 +70,16 @@ export const getScalarFields = (
     ];
   }
 
+  return getStateDefinitionFields(name, path, indexes, type, nullable);
+};
+
+const getStateDefinitionFields = (
+  name: string,
+  path: string,
+  indexes: number[],
+  type: readonly StateDefinition[],
+  nullable?: boolean,
+): MetadataStateField[] => {
   const fieldMap = new Map<string, MetadataStateField>();
   const refCount = new Map<string, number>();
 
@@ -80,6 +97,7 @@ export const getScalarFields = (
         `${path}.${id}`,
         childScalarDef,
         indexes,
+        nullable,
       );
 
       for (const item of scalarFields) {

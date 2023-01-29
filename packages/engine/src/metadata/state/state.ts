@@ -72,8 +72,10 @@ export class MetadataState extends StateSnapshot {
     this.relations = [];
     this.transforms = [];
 
-    // assing fields
     const scalars = Object.entries(resolveDefer(state.$scalars));
+    const transforms = resolveDefer(state.$transforms, []);
+
+    // assing fields
     for (const [key, def] of scalars) {
       const fields = getScalarFields(key, key, def);
 
@@ -98,7 +100,7 @@ export class MetadataState extends StateSnapshot {
     }
 
     // assign transforms
-    for (const def of resolveDefer(state.$transforms, [])) {
+    for (const def of transforms) {
       this.transforms.push(MetadataState.fromDefinition(ctx, def));
     }
 

@@ -29,7 +29,6 @@ export class Metadata extends MetadataSnapshot<MetadataState> {
         MetadataState.fromDefinition(ctx, state, name),
       );
 
-      // FIXME how we handle index field name rename?
       renameDuplicateFieldNames(metadataStates);
 
       collections[name] = new MetadataCollection(name, metadataStates);

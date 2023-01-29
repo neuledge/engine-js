@@ -17,7 +17,7 @@ export const convertSortQuery = <S extends StateDefinition>(
     for (const state of collection.states) {
       const index = state.instance.$indexes?.[indexKey];
       if (index != null) {
-        sort = index;
+        sort = index.fields;
         break;
       }
     }

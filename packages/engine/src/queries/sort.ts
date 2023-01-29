@@ -14,7 +14,12 @@ export type Sort<S extends StateDefinition> =
   | readonly SortField<S>[];
 
 export type SortIndex<S extends StateDefinition> = SortedField<
-  keyof StateIndexes<S> & string
+  {
+    [K in keyof StateIndexes<S>]: StateIndexes<S>[K]['unique'] extends true
+      ? never
+      : K;
+  }[keyof StateIndexes<S>] &
+    string
 >;
 
 export type SortField<S extends StateDefinition> = SortedField<

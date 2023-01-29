@@ -1,7 +1,10 @@
 import { Defer, Deferred } from '../defer';
-import { StateDefinitionId as StateDefinitionId } from './id';
+import {
+  StateDefinitionId as StateDefinitionId,
+  StateDefinitionIndex,
+} from './indexes';
 import { StateDefintionScalar } from './scalar';
-import { SortDefinition, SortDefinitionKey } from './sort';
+import { SortDefinitionKey } from './sort';
 import { StateDefinitionUnique, StateDefinitionWhere } from './where';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -18,7 +21,7 @@ export interface StateDefinition<N extends string = string, T = any> {
     >
   >;
   $transforms?: Defer<readonly StateDefinition[]>;
-  $indexes?: Record<string, SortDefinition<T>>;
+  $indexes?: Record<string, StateDefinitionIndex<T>>;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   new (...args: any): T;

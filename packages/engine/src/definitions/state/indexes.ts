@@ -5,6 +5,11 @@ export interface StateDefinitionId<T> {
   fields: SortDefinition<T>;
 }
 
+export interface StateDefinitionIndex<T> {
+  fields: SortDefinition<T>;
+  unique?: boolean;
+}
+
 export type InitiatedState<
   ID extends StateDefinitionId<T>,
   T,
