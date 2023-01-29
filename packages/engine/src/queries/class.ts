@@ -16,7 +16,7 @@ import { UniqueQuery, UniqueQueryOptions } from './unique';
 import { Subset } from './utils';
 import { UniqueWhere, Where } from './where';
 import { Select } from './select';
-import { NeuledgeError, NeuledgeErrorCode } from '@/error';
+import { NeuledgeError } from '@/error';
 
 export class QueryClass<
   T extends QueryType,
@@ -214,14 +214,14 @@ export class QueryClass<
   async exec(): Promise<any> {
     if (!('exec' in this.options)) {
       throw new NeuledgeError(
-        NeuledgeErrorCode.QUERY_EXECUTION_ERROR,
+        NeuledgeError.Code.QUERY_EXECUTION_ERROR,
         `This query is not executable`,
       );
     }
 
     if ('unique' in this.options && this.options.unique === true) {
       throw new NeuledgeError(
-        NeuledgeErrorCode.QUERY_EXECUTION_ERROR,
+        NeuledgeError.Code.QUERY_EXECUTION_ERROR,
         `Can't resolve a unique query without the '.unique()' clause`,
       );
     }
@@ -237,6 +237,8 @@ export class QueryClass<
     onrejected?: // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null,
   ): Promise<TResult1 | TResult2> {
-    return this.exec().then(onfulfilled, onrejected);
+    return this.exec()
+      .catch(NeuledgeError.wrap())
+      .then(onfulfilled, onrejected);
   }
 }

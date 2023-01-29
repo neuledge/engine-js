@@ -2,7 +2,7 @@ import { Scalar } from '@neuledge/scalars';
 import equal from 'fast-deep-equal/es6';
 import { StateDefinitionWhereTerm } from '@/definitions';
 import { StoreWhereRecord, StoreWhereTerm } from '@neuledge/store';
-import { NeuledgeError, NeuledgeErrorCode } from '@/error';
+import { NeuledgeError } from '@/error';
 import { MetadataStateField } from '@/metadata';
 
 export const applyWhereRecordTerm = (
@@ -17,7 +17,7 @@ export const applyWhereRecordTerm = (
       record[field.name] = convertWhereScalarTerm(field.type, term);
     } else {
       throw new NeuledgeError(
-        NeuledgeErrorCode.QUERY_PARSING_ERROR,
+        NeuledgeError.Code.QUERY_PARSING_ERROR,
         `Duplicate where key: '${field.path}'`,
       );
     }
@@ -120,7 +120,7 @@ const assignWhereScalarOperator = (
     case '$nin': {
       if (!Array.isArray(value)) {
         throw new NeuledgeError(
-          NeuledgeErrorCode.QUERY_PARSING_ERROR,
+          NeuledgeError.Code.QUERY_PARSING_ERROR,
           `Expected array for '${operator}' operator`,
         );
       }
@@ -133,7 +133,7 @@ const assignWhereScalarOperator = (
 
     default: {
       throw new NeuledgeError(
-        NeuledgeErrorCode.QUERY_PARSING_ERROR,
+        NeuledgeError.Code.QUERY_PARSING_ERROR,
         `Invalid operator: ${operator}`,
       );
     }

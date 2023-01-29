@@ -2,7 +2,7 @@ import {
   StateDefinitionWhereRecord,
   StateDefinitionWhereTerm,
 } from '@/definitions';
-import { NeuledgeError, NeuledgeErrorCode } from '@/error';
+import { NeuledgeError } from '@/error';
 import { MetadataCollection, MetadataSchema, MetadataState } from '@/metadata';
 import { StoreWhereRecord } from '@neuledge/store';
 import { applyWhereOperatorTerm, applyWhereRecordTerm } from './term';
@@ -27,7 +27,7 @@ export const convertWhereRecord = (
     const choices = collection.schema[key] ?? [];
     if (!choices?.length) {
       throw new NeuledgeError(
-        NeuledgeErrorCode.QUERY_PARSING_ERROR,
+        NeuledgeError.Code.QUERY_PARSING_ERROR,
         `Unknown where key: '${key}'`,
       );
     }
@@ -55,7 +55,7 @@ const applyWhereState = (
   for (const [operator, where] of Object.entries(term)) {
     if (typeof where !== 'object' || where == null) {
       throw new NeuledgeError(
-        NeuledgeErrorCode.QUERY_PARSING_ERROR,
+        NeuledgeError.Code.QUERY_PARSING_ERROR,
         `Invalid where operator: '${operator}'`,
       );
     }
@@ -98,7 +98,7 @@ const applyWhereOperatorRecord = (
 
     default: {
       throw new NeuledgeError(
-        NeuledgeErrorCode.QUERY_PARSING_ERROR,
+        NeuledgeError.Code.QUERY_PARSING_ERROR,
         `Invalid operator: ${operator}`,
       );
     }
@@ -148,7 +148,7 @@ const applyWhereInOperatorRecord = (
 ) => {
   if (!Array.isArray(where)) {
     throw new NeuledgeError(
-      NeuledgeErrorCode.QUERY_PARSING_ERROR,
+      NeuledgeError.Code.QUERY_PARSING_ERROR,
       `Invalid where operator: '$in'`,
     );
   }
@@ -168,7 +168,7 @@ const applyWhereNotInOperatorRecord = (
 ) => {
   if (!Array.isArray(where)) {
     throw new NeuledgeError(
-      NeuledgeErrorCode.QUERY_PARSING_ERROR,
+      NeuledgeError.Code.QUERY_PARSING_ERROR,
       `Invalid where operator: '$nin'`,
     );
   }
@@ -190,7 +190,7 @@ const applyWhereOperatorRecordValue = (
   const choices = Object.values(schema[key] ?? {});
   if (!choices?.length) {
     throw new NeuledgeError(
-      NeuledgeErrorCode.QUERY_PARSING_ERROR,
+      NeuledgeError.Code.QUERY_PARSING_ERROR,
       `Unknown where key: '${key}'`,
     );
   }
@@ -214,7 +214,7 @@ const applyWhereOperatorRecordValue = (
       );
     } else {
       throw new NeuledgeError(
-        NeuledgeErrorCode.QUERY_PARSING_ERROR,
+        NeuledgeError.Code.QUERY_PARSING_ERROR,
         `Invalid where operator: '${operator}'`,
       );
     }

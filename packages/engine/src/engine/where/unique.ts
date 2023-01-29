@@ -1,5 +1,5 @@
 import { StateDefinitionWhereRecord } from '@/definitions';
-import { NeuledgeError, NeuledgeErrorCode } from '@/error';
+import { NeuledgeError } from '@/error';
 import { MetadataCollection } from '@/metadata';
 import { StoreWhere, StoreWhereRecord } from '@neuledge/store';
 import { applyWhereRecordTerm } from './term';
@@ -11,7 +11,7 @@ export const convertUniqueWhere = (
 ): StoreWhere => {
   if (where === true) {
     throw new NeuledgeError(
-      NeuledgeErrorCode.QUERY_EXECUTION_ERROR,
+      NeuledgeError.Code.QUERY_EXECUTION_ERROR,
       `This query is not executable`,
     );
   }
@@ -28,7 +28,7 @@ export const convertUniqueWhere = (
     const choices = collection.schema[key] ?? [];
     if (!choices?.length) {
       throw new NeuledgeError(
-        NeuledgeErrorCode.QUERY_PARSING_ERROR,
+        NeuledgeError.Code.QUERY_PARSING_ERROR,
         `Unknown unique key: '${key}'`,
       );
     }
@@ -39,7 +39,7 @@ export const convertUniqueWhere = (
     for (const choice of choices) {
       if (!choice.field) {
         throw new NeuledgeError(
-          NeuledgeErrorCode.QUERY_PARSING_ERROR,
+          NeuledgeError.Code.QUERY_PARSING_ERROR,
           `Unknown unique scalar: '${key}'`,
         );
       }

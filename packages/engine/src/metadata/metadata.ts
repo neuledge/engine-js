@@ -6,7 +6,7 @@ import {
 } from './names';
 import { MetadataState, MetadataStateContext } from './state';
 import { MetadataSnapshot } from './snapshot';
-import { NeuledgeError, NeuledgeErrorCode } from '@/error';
+import { NeuledgeError } from '@/error';
 
 /**
  * Metadata is a snapshot of the current state of the database, including all
@@ -47,7 +47,7 @@ export class Metadata extends MetadataSnapshot<MetadataState> {
       const state = this.findStateByKey(def.$name);
       if (!state) {
         throw new NeuledgeError(
-          NeuledgeErrorCode.METADATA_LOAD_ERROR,
+          NeuledgeError.Code.METADATA_LOAD_ERROR,
           `State "${def.$name}" not found in the engine metadata. Make sure you initialize the engine AFTER declaring the states.`,
         );
       }
@@ -60,7 +60,7 @@ export class Metadata extends MetadataSnapshot<MetadataState> {
 
       if (!collection) {
         throw new NeuledgeError(
-          NeuledgeErrorCode.METADATA_LOAD_ERROR,
+          NeuledgeError.Code.METADATA_LOAD_ERROR,
           `Collection "${name}" not found in the engine metadata. Make sure you initialize the engine AFTER declaring the states.`,
         );
       }

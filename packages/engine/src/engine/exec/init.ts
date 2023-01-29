@@ -1,6 +1,6 @@
 import { MutationDefinition, StateDefinition } from '@/definitions';
 import { Entity, ProjectedEntity, InitiatedEntity } from '@/entity';
-import { NeuledgeError, NeuledgeErrorCode } from '@/error';
+import { NeuledgeError } from '@/error';
 import { EntityList } from '@/list';
 import { InitManyQueryOptions, InitOneQueryOptions, Select } from '@/queries';
 import { chooseStatesCollection } from '../collection';
@@ -22,7 +22,7 @@ export const execInitMany = async <S extends StateDefinition>(
 
   if (fn?.mutation !== 'create') {
     throw new NeuledgeError(
-      NeuledgeErrorCode.INVALID_MUTATION,
+      NeuledgeError.Code.INVALID_MUTATION,
       `Mutation ${String(options.method)} is not an init mutation`,
     );
   }

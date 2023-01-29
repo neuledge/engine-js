@@ -1,11 +1,6 @@
-export class NeuledgeError extends Error {
-  constructor(public readonly code: NeuledgeErrorCode, message: string) {
-    super(message);
-    this.name = 'NeuledgeError';
-  }
-}
+import { StoreError } from '@neuledge/store';
 
-export enum NeuledgeErrorCode {
+enum NeuledgeErrorCode {
   // version checks
   VERSION_MISMATCH = 'VERSION_MISMATCH',
 
@@ -44,3 +39,77 @@ export enum NeuledgeErrorCode {
   INTERNAL_ERROR = 'INTERNAL_ERROR',
   NOT_IMPLEMENTED = 'NOT_IMPLEMENTED',
 }
+
+// eslint-disable-next-line @typescript-eslint/no-namespace
+export namespace NeuledgeError {
+  export type Code = NeuledgeErrorCode;
+}
+
+export class NeuledgeError extends Error {
+  static Code = NeuledgeErrorCode;
+
+  static wrap =
+    (code?: NeuledgeErrorCode, message?: string, hideOriginalError?: boolean) =>
+    (originalError: Error): never => {
+      throw NeuledgeError.fromError(
+        originalError,
+        code,
+        message,
+        hideOriginalError,
+      );
+    };
+
+  static fromError(
+    originalError: Error | unknown,
+    code?: NeuledgeError.Code,
+    message?: string,
+    hideOriginalError?: boolean,
+  ): NeuledgeError {
+    if (originalError instanceof NeuledgeError) {
+      return originalError;
+    }
+
+    const orgMsg = String((originalError as Error)?.message ?? originalError);
+
+    const error = new NeuledgeError(
+      originalError instanceof StoreError
+        ? fromStoreErrorCode(originalError.code, code)
+        : code ?? NeuledgeError.Code.INTERNAL_ERROR,
+      hideOriginalError
+        ? message ?? 'An unknown error occurred'
+        : message != null
+        ? `${message}: ${orgMsg}`
+        : orgMsg,
+    );
+
+    error.stack = (originalError as Error)?.stack;
+    error.originalError = originalError as Error;
+
+    return error;
+  }
+
+  constructor(public readonly code: NeuledgeError.Code, message: string) {
+    super(message);
+    this.name = 'NeuledgeError';
+  }
+
+  public originalError?: Error;
+}
+
+const fromStoreErrorCode = (
+  code: StoreError.Code,
+  defaultCode?: NeuledgeError.Code,
+): NeuledgeError.Code => {
+  switch (code) {
+    case StoreError.Code.INVALID_DATA:
+      return NeuledgeError.Code.CORRUPTED_METADATA;
+
+    case StoreError.Code.NOT_IMPLEMENTED:
+      return NeuledgeError.Code.NOT_IMPLEMENTED;
+
+    // case StoreError.Code.INVALID_INPUT:
+    // case StoreError.Code.INTERNAL_ERROR:
+    default:
+      return defaultCode ?? NeuledgeError.Code.INTERNAL_ERROR;
+  }
+};

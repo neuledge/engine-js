@@ -1,4 +1,4 @@
-import { StoreCollection, StoreScalarValue } from '@neuledge/store';
+import { StoreCollection, StoreError, StoreScalarValue } from '@neuledge/store';
 import { Document, Binary, ObjectId } from 'mongodb';
 import { escapeFieldName, unescapeFieldName } from './fields';
 
@@ -24,8 +24,9 @@ export const escapeDocument = <T>(
     const value = doc[name] as StoreScalarValue;
 
     if (value == null) {
-      throw new Error(
-        `Document is missing the primary key for field '${name as string}'`,
+      throw new StoreError(
+        StoreError.Code.INVALID_INPUT,
+        `A primary key '${name as string}' is missing from the given document`,
       );
     }
 
@@ -37,8 +38,11 @@ export const escapeDocument = <T>(
       const value = doc[name as keyof T] as StoreScalarValue;
 
       if (value == null) {
-        throw new Error(
-          `Document is missing the primary key for field '${name as string}'`,
+        throw new StoreError(
+          StoreError.Code.INVALID_INPUT,
+          `A primary key '${
+            name as string
+          }' is missing from the given document`,
         );
       }
 
@@ -79,8 +83,9 @@ export const unescapeDocument = <T>(
 
   for (const name of primaryKeys) {
     if (idValues[name as never] == null) {
-      throw new Error(
-        `Document is missing the primary key for field '${name as string}'`,
+      throw new StoreError(
+        StoreError.Code.INVALID_DATA,
+        `Missing primary key '${name}' in document storage`,
       );
     }
   }

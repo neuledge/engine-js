@@ -5,7 +5,7 @@ import { Metadata } from '@/metadata/metadata';
 import { StoreDocument, StoreList } from '@neuledge/store';
 import { Select } from '@/queries';
 import { MetadataCollection } from '@/metadata';
-import { NeuledgeError, NeuledgeErrorCode } from '@/error';
+import { NeuledgeError } from '@/error';
 
 export const toEntityList = <S extends StateDefinition>(
   metadata: Metadata,
@@ -34,7 +34,7 @@ export const toEntityListOrThrow = <S extends StateDefinition>(
 
   if (!entities.length) {
     throw new NeuledgeError(
-      NeuledgeErrorCode.DOCUMENT_NOT_FOUND,
+      NeuledgeError.Code.DOCUMENT_NOT_FOUND,
       'Document not found',
     );
   }
@@ -68,7 +68,7 @@ export const toEntityOrThrow = <S extends StateDefinition>(
 
   if (!Buffer.isBuffer(stateHash)) {
     throw new NeuledgeError(
-      NeuledgeErrorCode.DOCUMENT_NOT_FOUND,
+      NeuledgeError.Code.DOCUMENT_NOT_FOUND,
       'Document not found',
     );
   }
@@ -91,7 +91,7 @@ const getStateEntity = <S extends StateDefinition>(
   const state = metadata.findStateByHash(stateHash);
   if (!state) {
     throw new NeuledgeError(
-      NeuledgeErrorCode.ENTITY_STATE_NOT_FOUND,
+      NeuledgeError.Code.ENTITY_STATE_NOT_FOUND,
       `Entity state not found: ${stateHash.toString('base64')}`,
     );
   }

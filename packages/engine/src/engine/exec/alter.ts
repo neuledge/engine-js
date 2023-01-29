@@ -33,7 +33,7 @@ import {
   alterEntityList,
   alterStoreDocuments,
 } from '../mutations';
-import { NeuledgeError, NeuledgeErrorCode } from '@/error';
+import { NeuledgeError } from '@/error';
 import { convertUniqueQuery } from '../unique';
 import {
   Store,
@@ -106,7 +106,7 @@ export const execAlterMany = async <S extends StateDefinition>(
   }
 
   throw new NeuledgeError(
-    NeuledgeErrorCode.VERSION_MISMATCH,
+    NeuledgeError.Code.VERSION_MISMATCH,
     `Version mismatch while altering ${
       documents.length > 1 ? 'entities' : 'entity'
     }`,

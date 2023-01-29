@@ -1,5 +1,5 @@
 import { resolveDefer, StateDefinition } from '@/definitions';
-import { NeuledgeError, NeuledgeErrorCode } from '@/error';
+import { NeuledgeError } from '@/error';
 import { Metadata, MetadataCollection, MetadataState } from '@/metadata';
 
 export const chooseStatesCollection = <S extends StateDefinition>(
@@ -11,13 +11,13 @@ export const chooseStatesCollection = <S extends StateDefinition>(
   if (collections.length !== 1) {
     if (!collections.length) {
       throw new NeuledgeError(
-        NeuledgeErrorCode.NO_COLLECTIONS,
+        NeuledgeError.Code.NO_COLLECTIONS,
         `No collections found for ${states.length} states`,
       );
     }
 
     throw new NeuledgeError(
-      NeuledgeErrorCode.MULTIPLE_COLLECTIONS,
+      NeuledgeError.Code.MULTIPLE_COLLECTIONS,
       `Engine operations can only be used with one collection, got request for ${
         collections.length
       } collections: ${collections.map((c) => c.name).join(', ')}`,

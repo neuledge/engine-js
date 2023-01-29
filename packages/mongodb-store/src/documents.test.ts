@@ -51,13 +51,13 @@ describe('documents', () => {
   describe('escapeDocument()', () => {
     it('should throw if document missing the primary key', () => {
       expect(() => escapeDocument(idCollection, {})).toThrow(
-        "Document is missing the primary key for field 'id'",
+        "A primary key 'id' is missing from the given document",
       );
     });
 
     it('should throw if document missing only one of the primary keys', () => {
       expect(() => escapeDocument(multiCollection, { id: 123 })).toThrow(
-        "Document is missing the primary key for field 'sub_id'",
+        "A primary key 'sub_id' is missing from the given document",
       );
     });
 
@@ -137,14 +137,14 @@ describe('documents', () => {
   describe('unescapeDocument()', () => {
     it('should throw if document missing the primary key', () => {
       expect(() => unescapeDocument(idCollection, {})).toThrow(
-        "Document is missing the primary key for field 'id'",
+        "Missing primary key 'id' in document storage",
       );
     });
 
     it('should throw if document missing only one of the primary keys', () => {
       expect(() =>
         unescapeDocument(multiCollection, { _id: { id: 123 } }),
-      ).toThrow("Document is missing the primary key for field 'sub_id'");
+      ).toThrow("Missing primary key 'sub_id' in document storage");
     });
 
     it('should unescape the document with single primary key', () => {

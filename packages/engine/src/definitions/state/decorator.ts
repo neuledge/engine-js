@@ -1,4 +1,4 @@
-import { NeuledgeError, NeuledgeErrorCode } from '@/error';
+import { NeuledgeError } from '@/error';
 import { neuledgeGlob } from '@/glob';
 import { StateDefinition } from './state';
 
@@ -12,7 +12,7 @@ export const State =
       stateDefinitions.get(state.$name) !== state
     ) {
       throw new NeuledgeError(
-        NeuledgeErrorCode.DUPLICATE_STATE_NAME,
+        NeuledgeError.Code.DUPLICATE_STATE_NAME,
         `State "${state.$name}" is already defined.`,
       );
     }

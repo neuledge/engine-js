@@ -1,5 +1,5 @@
 import { parseSortedField, SortDefinition } from '@/definitions';
-import { NeuledgeError, NeuledgeErrorCode } from '@/error';
+import { NeuledgeError } from '@/error';
 import {
   StoreCollection,
   StoreField,
@@ -143,7 +143,7 @@ const getStoreIndexFields = (
     const choices = schema[name];
     if (!choices) {
       throw new NeuledgeError(
-        NeuledgeErrorCode.UNKNOWN_SORT_FIELD,
+        NeuledgeError.Code.UNKNOWN_SORT_FIELD,
         `Unknown sort field: '${name}'`,
       );
     }

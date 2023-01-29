@@ -6,7 +6,7 @@ import {
   StateDefinitionMutationsReturn,
 } from '@/definitions';
 import { Entity, AlteredEntity } from '@/entity';
-import { NeuledgeError, NeuledgeErrorCode } from '@/error';
+import { NeuledgeError } from '@/error';
 import pLimit from 'p-limit';
 import { StateDefinitionMap } from './states';
 
@@ -44,7 +44,7 @@ const alterEntity = async <
   const state = states[$state];
   if (!state) {
     throw new NeuledgeError(
-      NeuledgeErrorCode.INTERNAL_ERROR,
+      NeuledgeError.Code.INTERNAL_ERROR,
       `State ${$state} not found`,
     );
   }
@@ -74,7 +74,7 @@ const alterEntity = async <
   }
 
   throw new NeuledgeError(
-    NeuledgeErrorCode.INVALID_MUTATION,
+    NeuledgeError.Code.INVALID_MUTATION,
     `Mutation ${String(method)} is not an alter mutation`,
   );
 };

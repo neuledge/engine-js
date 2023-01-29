@@ -1,6 +1,6 @@
 import { StateDefinition } from '@/definitions';
 import { Entity } from '@/entity';
-import { NeuledgeError, NeuledgeErrorCode } from '@/error';
+import { NeuledgeError } from '@/error';
 import { Metadata, MetadataCollection } from '@/metadata';
 import { StoreDocument, StoreScalarValue } from '@neuledge/store';
 
@@ -14,7 +14,7 @@ export const toDocument = <S extends StateDefinition>(
   const state = metadata.findStateByKey($state);
   if (!state) {
     throw new NeuledgeError(
-      NeuledgeErrorCode.ENTITY_STATE_NOT_FOUND,
+      NeuledgeError.Code.ENTITY_STATE_NOT_FOUND,
       `State metadata not found: ${$state}`,
     );
   }

@@ -1,4 +1,4 @@
-import { NeuledgeError, NeuledgeErrorCode } from '@/error';
+import { NeuledgeError } from '@/error';
 import {
   StateSnapshot,
   StateFieldSnapshot,
@@ -38,7 +38,7 @@ export const fromStoreMetadataState = (
 ): StateSnapshot => {
   if (doc.v !== StoreMetadataStateVersion.V0) {
     throw new NeuledgeError(
-      NeuledgeErrorCode.UNSUPPORTED_METADATA,
+      NeuledgeError.Code.UNSUPPORTED_METADATA,
       `Unsupported metadata version: ${doc.v}`,
     );
   }

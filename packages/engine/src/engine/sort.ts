@@ -1,5 +1,5 @@
 import { StateDefinition, SortDefinition } from '@/definitions';
-import { NeuledgeError, NeuledgeErrorCode } from '@/error';
+import { NeuledgeError } from '@/error';
 import { MetadataCollection } from '@/metadata';
 import { SortQueryOptions } from '@/queries';
 import { StoreFindOptions, StoreSort } from '@neuledge/store';
@@ -24,7 +24,7 @@ export const convertSortQuery = <S extends StateDefinition>(
 
     if (typeof sort === 'string') {
       throw new NeuledgeError(
-        NeuledgeErrorCode.UNKNOWN_SORT_INDEX,
+        NeuledgeError.Code.UNKNOWN_SORT_INDEX,
         `Unknown sort index: ${indexKey}`,
       );
     }
@@ -47,7 +47,7 @@ export const convertSortQuery = <S extends StateDefinition>(
 
       default:
         throw new NeuledgeError(
-          NeuledgeErrorCode.UNKNOWN_SORT_DIRECTION,
+          NeuledgeError.Code.UNKNOWN_SORT_DIRECTION,
           `Unknown sort direction: '${key}'`,
         );
     }

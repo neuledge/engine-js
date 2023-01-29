@@ -31,6 +31,7 @@ import {
   InitOneMutation,
   MutationGenerator,
 } from '@/mutations';
+import { NeuledgeError } from '@/error';
 
 export interface NeuledgeEngineOptions {
   store: Store;
@@ -44,7 +45,10 @@ export class NeuledgeEngine {
   constructor(options: NeuledgeEngineOptions) {
     this.store = options.store;
 
-    this.metadata = loadMetadata(this.store, options.metadataCollectionName);
+    this.metadata = loadMetadata(
+      this.store,
+      options.metadataCollectionName,
+    ).catch(NeuledgeError.wrap());
 
     this.metadata.catch(() => {
       // ignore errors here and let the user handle them via the exec methods
