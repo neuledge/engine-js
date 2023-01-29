@@ -147,7 +147,7 @@ export class MongoDBStore implements Store {
     const docs = await query.toArray();
 
     return Object.assign(
-      docs.map((doc) => unescapeDocument<T>(doc)),
+      docs.map((doc) => unescapeDocument<T>(options.collection, doc)),
       {
         nextOffset:
           docs.length < options.limit
@@ -163,7 +163,7 @@ export class MongoDBStore implements Store {
     const collection = await this.collection(options.collection.name);
 
     const res = await collection.insertMany(
-      options.documents.map((doc) => escapeDocument(doc)),
+      options.documents.map((doc) => escapeDocument(options.collection, doc)),
     );
 
     return {

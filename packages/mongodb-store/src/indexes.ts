@@ -18,15 +18,17 @@ export const ensureIndexes = async (
 
   for (const index of indexes) {
     if (index.unique === 'primary') {
-      // FIXME handle primary index as an '_id' field
+      // we can't create a primary index on mongodb. We will use the default `_id` index
+      // which is always unique and primary as our primary index and put all the primary
+      // fields in it. See `escapeDocument()` for more details.
       continue;
     }
 
     if (existMap.has(index.name)) continue;
 
     const indexSpec: Record<string, 1 | -1> = {};
-    for (const indexField of index.fields) {
-      indexSpec[escapeFieldName(indexField.field.name)] =
+    for (const [name, indexField] of Object.entries(index.fields)) {
+      indexSpec[escapeFieldName(name)] =
         indexField.direction === 'asc' ? 1 : -1;
     }
 

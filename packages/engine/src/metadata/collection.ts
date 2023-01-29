@@ -6,7 +6,6 @@ import {
   StoreIndex,
   StoreIndexField,
   StorePrimaryKey,
-  StoreSortDirection,
 } from '@neuledge/store';
 import {
   getMetadataSchema,
@@ -41,11 +40,7 @@ export class MetadataCollection implements StoreCollection {
     this.fields = getStoreCollectionFields(states);
     this.schema = getMetadataSchema(this.states);
 
-    const { indexes, primaryKey } = getStoreIndexes(
-      this.fields,
-      this.schema,
-      states,
-    );
+    const { indexes, primaryKey } = getStoreIndexes(this.schema, states);
 
     this.indexes = indexes;
     this.primaryKey = primaryKey;
@@ -109,14 +104,13 @@ const getStoreField = (field: MetadataStateField): StoreField => ({
 });
 
 const getStoreIndexes = (
-  fields: MetadataCollection['fields'],
   schema: MetadataSchema,
   states: MetadataState[],
 ): Pick<StoreCollection, 'indexes' | 'primaryKey'> => {
   const indexes: StoreCollection['indexes'] = {};
   const primaryKey: StoreCollection['primaryKey'] = {
     name: '', // will be set by `applyPrimaryKey`
-    fields: getStoreIndexFields(fields, schema, states[0].instance.$id.fields),
+    fields: getStoreIndexFields(schema, states[0].instance.$id.fields),
     unique: 'primary',
     auto: states[0].instance.$id.auto,
   };
@@ -125,7 +119,7 @@ const getStoreIndexes = (
     for (const [name, index] of Object.entries(state.instance.$indexes ?? {})) {
       indexes[name] = {
         name,
-        fields: getStoreIndexFields(fields, schema, index.fields),
+        fields: getStoreIndexFields(schema, index.fields),
         unique: index.unique,
       };
     }
@@ -137,14 +131,14 @@ const getStoreIndexes = (
 };
 
 const getStoreIndexFields = (
-  fields: MetadataCollection['fields'],
   schema: MetadataSchema,
   sortDefinition: SortDefinition<Record<string, unknown>>,
 ): StoreIndex['fields'] => {
-  const res: StoreIndex['fields'] = [];
+  const fields: StoreIndex['fields'] = {};
 
   for (const sortField of sortDefinition) {
     const [name, direction] = parseSortedField(sortField);
+    const indexField: StoreIndexField = { direction };
 
     const choices = schema[name];
     if (!choices) {
@@ -154,40 +148,38 @@ const getStoreIndexFields = (
       );
     }
 
-    res.push(...getStoreIndexField(fields, choices, direction));
+    assignStoreIndexField(fields, choices, indexField);
   }
 
-  return res;
+  return fields;
 };
 
-const getStoreIndexField = (
-  fields: MetadataCollection['fields'],
+const assignStoreIndexField = (
+  fields: StoreIndex['fields'],
   choices: (MetadataSchemaChoice | undefined)[],
-  direction: StoreSortDirection,
-): StoreIndexField[] =>
-  choices.flatMap((choice): StoreIndexField[] => {
-    if (!choice) {
-      return [];
-    }
+  indexField: StoreIndexField,
+): void => {
+  for (const choice of choices) {
+    if (!choice) continue;
 
     if (choice.field) {
-      return [{ field: fields[choice.field.name], direction }];
+      fields[choice.field.name] = indexField;
+      continue;
     }
 
-    return getStoreIndexField(
+    assignStoreIndexField(
       fields,
       Object.values(choice.schema).flatMap((item) => item ?? []),
-      direction,
+      indexField,
     );
-  });
+  }
+};
 
 const applyPrimaryKey = (
   indexes: StoreCollection['indexes'],
   primaryKey: StoreCollection['primaryKey'],
 ): void => {
-  const primaryKeyName = primaryKey.fields
-    .map((field) => field.field.name)
-    .join('_');
+  const primaryKeyName = Object.keys(primaryKey.fields).join('_');
 
   primaryKey.name = primaryKeyName;
   for (let i = 2; indexes[primaryKey.name]; i++) {

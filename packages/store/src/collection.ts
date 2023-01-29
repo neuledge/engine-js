@@ -37,7 +37,7 @@ export type StoreFieldType =
 
 export interface StoreIndex {
   name: string;
-  fields: StoreIndexField[];
+  fields: Record<StoreField['name'], StoreIndexField>;
   unique?: boolean | 'primary';
 }
 
@@ -47,6 +47,5 @@ export interface StorePrimaryKey extends StoreIndex {
 }
 
 export interface StoreIndexField {
-  field: StoreField;
   direction: StoreSortDirection;
 }
