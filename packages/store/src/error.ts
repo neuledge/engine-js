@@ -1,6 +1,7 @@
 enum StoreErrorCode {
   // input errors
   INVALID_INPUT = 'INVALID_INPUT',
+  NOT_SUPPORTED = 'NOT_SUPPORTED',
 
   // store errors
   INVALID_DATA = 'INVALID_DATA',

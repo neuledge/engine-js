@@ -22,30 +22,12 @@ export const escapeDocument = <T>(
   if (primaryKeys.length === 1) {
     const name = primaryKeys[0] as keyof T;
     const value = doc[name] as StoreScalarValue;
-
-    if (value == null) {
-      throw new StoreError(
-        StoreError.Code.INVALID_INPUT,
-        `A primary key '${name as string}' is missing from the given document`,
-      );
-    }
-
     id = escapeValue(value);
   } else {
     id = {} as Document;
 
     for (const name of Object.keys(primaryKey.fields)) {
       const value = doc[name as keyof T] as StoreScalarValue;
-
-      if (value == null) {
-        throw new StoreError(
-          StoreError.Code.INVALID_INPUT,
-          `A primary key '${
-            name as string
-          }' is missing from the given document`,
-        );
-      }
-
       id[name] = escapeValue(value);
     }
   }

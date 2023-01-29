@@ -180,19 +180,38 @@ const decorators: Decorators<State> = {
 };
 
 const applyPrimaryKey = (state: State, node: StateNode) => {
-  const { primaryKey, indexes } = state;
+  const { primaryKey, indexes, fields } = state;
 
-  const primaryKeyName = Object.keys(primaryKey.fields).join('_');
-  if (!primaryKeyName) {
+  const primaryKeys = Object.keys(primaryKey.fields);
+  if (!primaryKeys.length) {
     throw new ParsingError(
       node.id,
       'State must have at least one primary key field',
     );
   }
 
-  let i = 0;
+  if (primaryKey.auto && primaryKeys.length > 1) {
+    throw new ParsingError(
+      node.id,
+      'State with auto-incrementing primary key can only have one field',
+    );
+  }
+
+  for (const key of primaryKeys) {
+    const field = fields[key];
+
+    if (field.nullable) {
+      throw new ParsingError(
+        field.node,
+        'Primary key field cannot be nullable',
+      );
+    }
+  }
+
+  const primaryKeyName = primaryKeys.join('_');
   primaryKey.name = primaryKeyName;
 
+  let i = 0;
   while (indexes[primaryKey.name]) {
     primaryKey.name = `${primaryKeyName}_${++i}`;
   }

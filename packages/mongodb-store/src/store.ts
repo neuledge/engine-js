@@ -23,14 +23,25 @@ import {
   Collection,
   CollectionOptions,
 } from 'mongodb';
+import pLimit from 'p-limit';
 import { escapeDocument, unescapeDocument } from './documents';
 import { findFilter } from './filter';
 import { dropIndexes, ensureIndexes } from './indexes';
+import {
+  generateDocumentInsertedId,
+  AutoIncrementDocument,
+} from './primary-key';
 import { projectFilter } from './project';
 import { sortFilter } from './sort';
 import { updateFilter } from './update';
 
-export type MongoDBStoreOptions =
+const AUTO_INCREMENT_COLLECTION_NAME = '__neuledge_auto_increment';
+
+export type MongoDBStoreOptions = MongoDBStoreConnectionOptions & {
+  autoIncrementCollectionName?: string;
+};
+
+export type MongoDBStoreConnectionOptions =
   | {
       url: string;
       client?: MongoClientOptions;
@@ -53,8 +64,15 @@ export type MongoDBStoreOptions =
 export class MongoDBStore implements Store {
   private readonly client: MongoClient;
   private readonly db: Promise<Db>;
+  private readonly autoIncrement: Promise<Collection<AutoIncrementDocument>>;
 
-  constructor({ url, client, name, db }: MongoDBStoreOptions) {
+  constructor({
+    url,
+    client,
+    name,
+    db,
+    autoIncrementCollectionName = AUTO_INCREMENT_COLLECTION_NAME,
+  }: MongoDBStoreOptions) {
     this.client =
       typeof url === 'string'
         ? new MongoClient(url, client)
@@ -67,7 +85,11 @@ export class MongoDBStore implements Store {
             .then((client) => client.db(name, db as DbOptions | undefined))
         : Promise.resolve(db as Db);
 
-    this.db.catch(() => {
+    this.autoIncrement = this.db.then((db) =>
+      db.collection(autoIncrementCollectionName),
+    );
+
+    Promise.all([this.db, this.autoIncrement]).catch(() => {
       // catch error to prevent unhandled promise rejection
     });
   }
@@ -159,18 +181,30 @@ export class MongoDBStore implements Store {
 
   async insert<T = StoreDocument>(
     options: StoreInsertOptions<T>,
-  ): Promise<StoreInsertionResponse> {
+  ): Promise<StoreInsertionResponse<T>> {
     const collection = await this.collection(options.collection.name);
+    const autoIncrement = await this.autoIncrement;
+
+    const asyncLimit = pLimit(10);
+    const insertedIds = await Promise.all(
+      options.documents.map((doc) =>
+        asyncLimit(() =>
+          generateDocumentInsertedId(autoIncrement, options.collection, doc),
+        ),
+      ),
+    );
 
     const res = await collection.insertMany(
-      options.documents.map((doc) => escapeDocument(options.collection, doc)),
+      insertedIds.map((insertedId, i) =>
+        escapeDocument(options.collection, {
+          ...options.documents[i],
+          ...insertedId,
+        }),
+      ),
     );
 
     return {
-      insertedIds: options.documents.map(
-        (doc, i) =>
-          res.insertedIds[i]?.id ?? (doc as StoreDocument)._id ?? null,
-      ),
+      insertedIds: insertedIds,
       affectedCount: res.insertedCount,
     };
   }

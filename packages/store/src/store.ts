@@ -17,20 +17,25 @@ import { StoreWhere } from './where';
 
 export interface Store {
   listCollections(): Promise<StoreCollection_Slim[]>;
+
   describeCollection(
     options: StoreDescribeCollectionOptions,
   ): Promise<StoreCollection>;
+
   ensureCollection(options: StoreEnsureCollectionOptions): Promise<void>;
+
   dropCollection(options: StoreDropCollectionOptions): Promise<void>;
 
   find<T = StoreDocument>(options: StoreFindOptions): Promise<StoreList<T>>;
 
   insert<T = StoreDocument>(
     options: StoreInsertOptions<T>,
-  ): Promise<StoreInsertionResponse>;
+  ): Promise<StoreInsertionResponse<T>>;
+
   update<T = StoreDocument>(
     options: StoreUpdateOptions<T>,
   ): Promise<StoreMutationResponse>;
+
   delete(options: StoreDeleteOptions): Promise<StoreMutationResponse>;
 }
 
@@ -82,8 +87,8 @@ export interface StoreDeleteOptions {
   limit: number;
 }
 
-export interface StoreInsertionResponse extends StoreMutationResponse {
-  insertedIds: StoreScalarValue[];
+export interface StoreInsertionResponse<T> extends StoreMutationResponse {
+  insertedIds: Partial<T>[];
 }
 
 export interface StoreMutationResponse {

@@ -6,7 +6,7 @@ import { InitManyQueryOptions, InitOneQueryOptions, Select } from '@/queries';
 import { chooseStatesCollection } from '../collection';
 import { toDocument } from '../document';
 import { NeuledgeEngine } from '../engine';
-import { projectEntities } from '../entity';
+import { projectEntities, toEntityOrThrow } from '../entity';
 
 export const execInitMany = async <S extends StateDefinition>(
   engine: NeuledgeEngine,
@@ -42,15 +42,17 @@ export const execInitMany = async <S extends StateDefinition>(
     toDocument(metadata, collection, entity),
   );
 
-  await engine.store.insert({
+  const { insertedIds } = await engine.store.insert({
     collection,
     documents,
   });
 
-  const updatedEntities = entities.map((entity, i) => ({
-    entity,
-    document: documents[i],
-  }));
+  const updatedEntities = documents.map((oldDoc, i) => {
+    const document = { ...oldDoc, ...insertedIds[i] };
+    const entity = toEntityOrThrow(metadata, collection, document);
+
+    return { entity, document };
+  });
 
   return projectEntities(updatedEntities, options.select);
 };
