@@ -24,8 +24,7 @@ export const parseCallExpression = (
     type: 'CallExpression',
     node,
     callee,
-    // FIXME `node.arguments` type is `ArgumentNode<ExpressionNode>[]`
-    arguments: parseArguments(node.arguments as never, (node) =>
+    arguments: parseArguments(node.arguments, (node) =>
       parseExpression(params, node),
     ),
   };

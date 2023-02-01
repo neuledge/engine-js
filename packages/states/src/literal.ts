@@ -1,4 +1,8 @@
-import { LiteralNode, LiteralValue } from '@neuledge/states-parser';
+import {
+  LiteralNode,
+  LiteralValue,
+  NullLiteralNode,
+} from '@neuledge/states-parser';
 
 export interface Literal<T extends LiteralValue = LiteralValue> {
   type: 'Literal';
@@ -12,4 +16,16 @@ export const parseLiteral = <T extends LiteralValue = LiteralValue>(
   type: 'Literal',
   node,
   value: node.value,
+});
+
+export interface NullLiteral {
+  type: 'NullLiteral';
+  node: NullLiteralNode;
+  value: null;
+}
+
+export const parseNullLiteral = (node: NullLiteralNode): NullLiteral => ({
+  type: 'NullLiteral',
+  node,
+  value: null,
 });

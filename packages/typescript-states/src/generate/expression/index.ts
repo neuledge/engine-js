@@ -1,9 +1,12 @@
 import { Expression } from '@neuledge/states';
-import { generateLiteral } from '../literal';
+import { generateLiteral, generateNullLiteral } from '../literal';
+import { generateBinaryExpression } from './binary';
 import { generateCallExpression } from './call';
 import { generateIdentifierExpression } from './identifier';
+import { generateLogicalExpression } from './logical';
 import { generateMemberExpression } from './member';
 import { generateThisExpression } from './this';
+import { generateUnaryExpression } from './unary';
 
 export const generateExpression = (
   expression: Expression,
@@ -24,6 +27,18 @@ export const generateExpression = (
 
     case 'Literal':
       return generateLiteral(expression);
+
+    case 'UnaryExpression':
+      return generateUnaryExpression(expression, indent);
+
+    case 'BinaryExpression':
+      return generateBinaryExpression(expression, indent);
+
+    case 'LogicalExpression':
+      return generateLogicalExpression(expression, indent);
+
+    case 'NullLiteral':
+      return generateNullLiteral(expression);
 
     default:
       // @ts-expect-error `expression` type is never
