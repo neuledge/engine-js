@@ -20,11 +20,11 @@ export type StateDefinitionWhereState<S extends StateDefinition> =
 export type StateDefinitionWhereNullableState<S extends StateDefinition> =
   StateDefinitionWhereNullableId<StateId<S>>;
 
-export type StateDefinitionWhereObject<V extends object> =
+export type StateDefinitionWhereUnknown<V extends NonNullable<unknown>> =
   | EqualableFilters<V>
   | ComparableFilters<V>;
 
-export type StateDefinitionWhereNullableObject<V extends object> =
+export type StateDefinitionWhereNullableUnknown<V extends object> =
   | EqualableFilters<V | null>
   | ComparableFilters<V>;
 
@@ -33,6 +33,14 @@ export type StateDefinitionWhereNumber<V extends number> =
   | ComparableFilters<V>;
 
 export type StateDefinitionWhereNullableNumber<V extends number> =
+  | EqualableFilters<V | null>
+  | ComparableFilters<V>;
+
+export type StateDefinitionWhereEnum<V extends string> =
+  | EqualableFilters<V>
+  | ComparableFilters<V>;
+
+export type StateDefinitionWhereNullableEnum<V extends string> =
   | EqualableFilters<V | null>
   | ComparableFilters<V>;
 

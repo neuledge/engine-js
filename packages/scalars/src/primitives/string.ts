@@ -2,14 +2,15 @@ import { createCallableScalar } from '@/generator';
 import { Scalar } from '@/scalar';
 import { z } from 'zod';
 import { BooleanScalar } from './boolean';
-import { NumberScalar } from './number';
+import { IntegerScalar } from './integer';
+import { getStringShape } from './shapes';
 
 export type StringScalar = string;
 
 export const StringScalar = createCallableScalar(
   {
-    min: { type: NumberScalar, nullable: true },
-    max: { type: NumberScalar, nullable: true },
+    min: { type: IntegerScalar({ min: 0 }), nullable: true },
+    max: { type: IntegerScalar({ min: 0 }), nullable: true },
     trim: { type: BooleanScalar, nullable: true },
   },
   ({ min, max, trim }, key): Scalar<StringScalar> => {
@@ -20,6 +21,10 @@ export const StringScalar = createCallableScalar(
     }
 
     if (max != null) {
+      if (min != null && min > max) {
+        throw new Error('`min` cannot be greater than `max`');
+      }
+
       validator = validator.max(max);
     }
 
@@ -29,6 +34,7 @@ export const StringScalar = createCallableScalar(
 
     return {
       type: 'Scalar',
+      shape: getStringShape(max),
       name: `String${key}`,
       description:
         'The `String` scalar type represents textual data, represented as UTF-8 character sequences. The String type is most often used to represent free-form human-readable text.',

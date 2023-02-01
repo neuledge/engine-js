@@ -21,7 +21,9 @@ describe('generate/entity', () => {
         generateEntityType({
           type: 'Scalar',
           node: {} as never,
+          shape: {} as never,
           name: 'MyId',
+          encode: (value: string) => value,
         }),
       ).toBe('MyId');
     });

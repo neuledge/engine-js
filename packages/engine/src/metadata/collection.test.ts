@@ -24,17 +24,19 @@ describe('engine/metadata/collection', () => {
         expect(categoriesCollection.fields).toEqual({
           id: {
             name: 'id',
-            type: 'json',
+            type: 'number',
+            size: 8,
+            scale: 0,
             nullable: false,
           },
           name: {
             name: 'name',
-            type: 'json',
+            type: 'string',
             nullable: false,
           },
           description: {
             name: 'description',
-            type: 'json',
+            type: 'string',
             nullable: true,
           },
         });
@@ -44,27 +46,31 @@ describe('engine/metadata/collection', () => {
         expect(postsCollection.fields).toEqual({
           id: {
             name: 'id',
-            type: 'json',
+            type: 'number',
+            size: 8,
+            scale: 0,
             nullable: false,
           },
           title: {
             name: 'title',
-            type: 'json',
+            type: 'string',
             nullable: false,
           },
           content: {
             name: 'content',
-            type: 'json',
+            type: 'string',
             nullable: true,
           },
           category_id: {
             name: 'category_id',
-            type: 'json',
+            type: 'number',
+            size: 8,
+            scale: 0,
             nullable: true,
           },
           published_at: {
             name: 'published_at',
-            type: 'json',
+            type: 'date-time',
             nullable: true,
           },
         });

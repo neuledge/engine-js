@@ -1,3 +1,4 @@
+import { StoreShapeType } from '@neuledge/store';
 import {
   CustomScalar,
   EntityExpression,
@@ -76,26 +77,19 @@ const generateWhereScalar = (
   nullable: boolean | undefined,
   list: boolean,
 ): string => {
-  if (scalar.node) {
-    throw new Error('Where non built-in scalar is not implemented.');
-  }
+  const nullish = nullable ? 'Nullable' : '';
+  const name = scalar.node ? scalar.name : `$.scalars.${scalar.name}`;
+  const where = list ? 'Array' : WhereShapeTypeMap[scalar.shape.type];
 
-  if (list) {
-    return `$.Where${nullable ? 'Nullable' : ''}Array<$.scalars.${
-      scalar.name
-    }>`;
-  }
+  return `$.Where${nullish}${where}<${name}>`;
+};
 
-  switch (scalar.name) {
-    case 'Boolean':
-    case 'DateTime':
-    case 'Number':
-    case 'String':
-      return `$.Where${nullable ? 'Nullable' : ''}${scalar.name}<$.scalars.${
-        scalar.name
-      }>`;
-
-    default:
-      throw new Error(`Unsupported scalar type: ${scalar.name}`);
-  }
+const WhereShapeTypeMap: Record<StoreShapeType, string> = {
+  boolean: 'Boolean',
+  'date-time': 'DateTime',
+  number: 'Number',
+  string: 'String',
+  binary: 'Buffer',
+  json: 'Unknown',
+  enum: 'Enum',
 };

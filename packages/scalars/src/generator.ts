@@ -1,3 +1,4 @@
+import { StoreValueShapeType } from '@neuledge/store';
 import { ParametersType, Parameters } from './parameters';
 import { Scalar } from './scalar';
 
@@ -14,11 +15,12 @@ export interface ScalarGenerator<
 }
 
 export interface CallableScalar<
-  P extends Parameters = Parameters,
+  P extends Parameters = any, // eslint-disable-line @typescript-eslint/no-explicit-any
   Type = any, // eslint-disable-line @typescript-eslint/no-explicit-any
   Input = Type,
   Value = Type,
-> extends Scalar<Type, Input, Value> {
+  Encoding extends StoreValueShapeType<Value> = StoreValueShapeType<Value>,
+> extends Scalar<Type, Input, Value, Encoding> {
   parameters: P;
   (args: ParametersType<P>): Scalar<Type, Input, Value>;
 }
@@ -38,13 +40,19 @@ export const createScalarGenerator = <P extends Parameters, S extends Scalar>(
   return Object.assign(target, props);
 };
 
-export const createCallableScalar = <P extends Parameters, Type, Input, Value>(
+export const createCallableScalar = <
+  P extends Parameters,
+  Type,
+  Input,
+  Value,
+  Encoding extends StoreValueShapeType<Value>,
+>(
   parameters: P,
   generator: (
     args: ParametersType<P> | Record<string, never>,
     key: string,
-  ) => Scalar<Type, Input, Value>,
-): CallableScalar<P, Type, Input, Value> => {
+  ) => Scalar<Type, Input, Value, Encoding>,
+): CallableScalar<P, Type, Input, Value, Encoding> => {
   const { name, ...props } = generator({}, '');
 
   const target = (parameters: ParametersType<P>): Scalar<Type, Input, Value> =>
@@ -52,7 +60,7 @@ export const createCallableScalar = <P extends Parameters, Type, Input, Value>(
 
   Object.defineProperty(target, 'name', { value: name, writable: false });
 
-  return Object.assign(target, props, { parameters, ...props });
+  return Object.assign(target, { parameters, ...props });
 };
 
 const getParametersKey = <P extends Parameters>(

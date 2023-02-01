@@ -4,7 +4,7 @@ either Post = DraftPost | PublishedPost
 An unpublished post
 """
 state DraftPost {
-  @id(auto: "increment") id: Number = 1
+  @id(auto: "increment") id: Integer = 1
   category?: Category = 2
   title: String = 3
   content?: String = 4

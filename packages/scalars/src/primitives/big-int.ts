@@ -1,12 +1,14 @@
 import { createCallableScalar } from '@/generator';
 import { Scalar } from '@/scalar';
 import { z, ZodType } from 'zod';
+import { getBigIntShape } from './shapes';
 
 export type BigIntScalar = bigint;
 type BigIntScalarInput = bigint | number;
 
 const core: Scalar<BigIntScalar, BigIntScalarInput> = {
   type: 'Scalar',
+  shape: getBigIntShape(),
   name: 'BigInt',
   description:
     'The `BigInt` scalar type represents non-fractional signed whole numeric values that may be larger than 2^53.',
@@ -25,14 +27,18 @@ export const BigIntScalar = createCallableScalar(
     key,
   ): Scalar<BigIntScalar, BigIntScalarInput> => {
     let validator: ZodType<bigint> = z.bigint();
+    let minRange: bigint | null = null;
+    let maxRange: bigint | null = null;
 
     if (min != null) {
+      minRange = min;
       validator = validator.refine((value) => value >= min, {
         message: `Must be greater than or equal to ${min}`,
       });
     }
 
     if (max != null) {
+      maxRange = max;
       validator = validator.refine((value) => value <= max, {
         message: `Must be less than or equal to ${max}`,
       });
@@ -43,6 +49,7 @@ export const BigIntScalar = createCallableScalar(
         throw new Error('Cannot set both `min` and `after`');
       }
 
+      minRange = after + 1n;
       validator = validator.refine((value) => value > after, {
         message: `Must be greater than ${after}`,
       });
@@ -53,15 +60,16 @@ export const BigIntScalar = createCallableScalar(
         throw new Error('Cannot set both `max` and `below`');
       }
 
+      maxRange = below - 1n;
       validator = validator.refine((value) => value < below, {
         message: `Must be less than ${below}`,
       });
     }
 
     return {
-      type: 'Scalar',
+      ...core,
       name: `BigInt${key}`,
-      description: core.description,
+      shape: getBigIntShape(minRange, maxRange),
       encode: (value) => validator.parse(toBigInt(value)),
     };
   },

@@ -1,6 +1,7 @@
 import { createCallableScalar } from '@/generator';
 import { Scalar } from '@/scalar';
 import { z } from 'zod';
+import { dateTimeShape } from './shapes';
 
 const MIN_NUMERIC_DATE = Date.UTC(2000, 0, 1);
 const MAX_NUMERIC_DATE = Date.UTC(2100, 0, 1);
@@ -10,6 +11,7 @@ type DateTimeScalarInput = string | number | Date;
 
 const core: Scalar<DateTimeScalar, DateTimeScalarInput> = {
   type: 'Scalar',
+  shape: dateTimeShape,
   name: 'DateTime',
   description:
     'The `DateTime` scalar type represents a date and time following the ISO-8601 standard.',
@@ -33,9 +35,8 @@ export const DateTimeScalar = createCallableScalar(
     }
 
     return {
-      type: 'Scalar',
+      ...core,
       name: `DateTime${key}`,
-      description: core.description,
       encode: (value) => validator.parse(toDate(value)),
     };
   },

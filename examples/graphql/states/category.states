@@ -2,7 +2,7 @@
 A posts category
 """
 state Category {
-  @id(auto: "increment") id: Number = 1
+  @id(auto: "increment") id: Integer = 1
   name: String = 2
   description?: String = 3
   posts: Post[] = 4

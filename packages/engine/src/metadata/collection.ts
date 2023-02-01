@@ -96,10 +96,7 @@ const getStoreCollectionFields = (
 
 const getStoreField = (field: MetadataStateField): StoreField => ({
   name: field.name,
-  // FIXME handle field properties by type
-  type: 'json',
-  // size: field.size,
-  // values: field.values,
+  ...field.type.shape,
   nullable: field.nullable,
 });
 

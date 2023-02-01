@@ -10,9 +10,13 @@ export class Category {
   static $name = 'Category' as const;
   static $id = { fields: ['+id'], auto: 'increment' } as const;
   static $scalars = () => ({
-    id: { type: $.scalars.Number, index: 1 },
+    id: { type: $.scalars.Integer, index: 1 },
     name: { type: $.scalars.String, index: 2 },
-    description: { type: $.scalars.String, index: 3, nullable: true },
+    description: {
+      type: $.scalars.String({ trim: true }),
+      index: 3,
+      nullable: true,
+    },
   });
   static $find: $.Where<{
     id?: $.WhereNumber<$.scalars.Number>;
@@ -80,7 +84,7 @@ export class DraftPost {
   static $name = 'DraftPost' as const;
   static $id = { fields: ['+id'], auto: 'increment' } as const;
   static $scalars = () => ({
-    id: { type: $.scalars.Number, index: 1 },
+    id: { type: $.scalars.Integer, index: 1 },
     category: { type: [Category], index: 2, nullable: true },
     title: { type: $.scalars.String, index: 3 },
     content: { type: $.scalars.String, index: 4, nullable: true },
@@ -173,7 +177,7 @@ export class PublishedPost {
   static $name = 'PublishedPost' as const;
   static $id = { fields: ['+id'], auto: 'increment' } as const;
   static $scalars = () => ({
-    id: { type: $.scalars.Number, index: 1 },
+    id: { type: $.scalars.Integer, index: 1 },
     category: { type: [Category], index: 256 },
     title: { type: $.scalars.String, index: 3 },
     content: { type: $.scalars.String, index: 257 },

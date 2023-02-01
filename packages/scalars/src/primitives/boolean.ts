@@ -1,5 +1,6 @@
 import { Scalar } from '@/scalar';
 import { z } from 'zod';
+import { booleanShape } from './shapes';
 
 // boolean
 
@@ -8,6 +9,7 @@ type BooleanScalarInput = TrueScalarInput | FalseScalarInput;
 
 export const BooleanScalar: Scalar<BooleanScalar, BooleanScalarInput> = {
   type: 'Scalar',
+  shape: booleanShape,
   name: 'Boolean',
   description: 'The `Boolean` scalar type represents `true` or `false`.',
   encode: (value) =>
@@ -29,6 +31,7 @@ type TrueScalarInput =
 
 export const TrueScalar: Scalar<TrueScalar, TrueScalarInput> = {
   type: 'Scalar',
+  shape: booleanShape,
   name: 'True',
   description: 'The `True` scalar type represents only `true` value.',
   encode: (value) => z.literal(true).or(trueLiterals).parse(value),
@@ -49,6 +52,7 @@ type FalseScalarInput =
 
 export const FalseScalar: Scalar<FalseScalar, FalseScalarInput> = {
   type: 'Scalar',
+  shape: booleanShape,
   name: 'False',
   description: 'The `False` scalar type represents only `false` value.',
   encode: (value) => z.literal(false).or(falseLiterals).parse(value),

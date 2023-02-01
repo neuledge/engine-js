@@ -2,15 +2,16 @@ import { createCallableScalar } from '@/generator';
 import { Scalar } from '@/scalar';
 import { buffer } from 'node:stream/consumers';
 import { z } from 'zod';
-import { NumberScalar } from './number';
+import { IntegerScalar } from './integer';
+import { getBinaryShape } from './shapes';
 
 export type BufferScalar = Buffer;
 type BufferScalarInput = Buffer | string | number[] | Uint8Array | ArrayBuffer;
 
 export const BufferScalar = createCallableScalar(
   {
-    min: { type: NumberScalar, nullable: true },
-    max: { type: NumberScalar, nullable: true },
+    min: { type: IntegerScalar({ min: 0 }), nullable: true },
+    max: { type: IntegerScalar({ min: 0 }), nullable: true },
   },
   ({ min, max }, key): Scalar<BufferScalar> => {
     let validator = z.instanceof(Buffer);
@@ -29,6 +30,7 @@ export const BufferScalar = createCallableScalar(
 
     return {
       type: 'Scalar',
+      shape: getBinaryShape(max),
       name: `Buffer${key}`,
       description:
         'The `Buffer` scalar type represents a binary data with a variable length.',

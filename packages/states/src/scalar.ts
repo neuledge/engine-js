@@ -1,19 +1,22 @@
-import { Scalar as BuiltInScalar, types } from '@neuledge/scalars';
+import {
+  CallableScalar,
+  Scalar as BuiltInScalar,
+  types,
+} from '@neuledge/scalars';
 import { ScalarNode } from '@neuledge/states-parser';
 
 export type Scalar = BuiltInScalar & { node?: never };
 
-export interface CustomScalar<Name extends string = string> {
-  type: 'Scalar';
-  node?: ScalarNode;
+export interface CustomScalar<Name extends string = string>
+  extends BuiltInScalar {
+  type: Scalar['type'];
   name: Name;
-  description?: string;
-  deprecated?: string | true;
+  node?: ScalarNode;
 }
 
 export const builtInScalars: { [K in string]: Scalar & { name: K } } =
   Object.fromEntries(
-    Object.values(types)
-      .filter((value): value is Scalar => value?.type === 'Scalar')
+    (Object.values(types) as CallableScalar[])
+      .filter((value): value is CallableScalar => value?.type === 'Scalar')
       .map((value) => [value.name, value]),
   );
