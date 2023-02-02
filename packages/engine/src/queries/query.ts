@@ -18,7 +18,6 @@ import {
   FindUniqueQueryOptions,
   FindUniqueWhereQuery,
 } from './find-unique';
-import { MatchQueryOptions } from './match';
 import { SelectManyQuery, SelectManyQueryOptions } from './select-many';
 import { SelectOneQuery, SelectOneQueryOptions } from './select-one';
 import {
@@ -42,6 +41,7 @@ import {
   AlterUniqueWhereAndReturnQuery,
   AlterUniqueWhereQuery,
 } from './alter-unique';
+import { FilterQueryOptions } from './filter';
 
 export type Query<
   M extends QueryMode,
@@ -104,7 +104,7 @@ interface QueryOptionsTypes<
   AlterUnique: AlterUniqueQueryOptions<I, O>;
   InitMany: InitManyQueryOptions<I, O>;
   InitOne: InitOneQueryOptions<I, O>;
-  Match: MatchQueryOptions<I>;
+  Filter: FilterQueryOptions<I>;
   FindFirstOrThrow: FindFirstOrThrowQueryOptions<I, O>;
   FindFirst: FindFirstQueryOptions<I, O>;
   FindMany: FindManyQueryOptions<I, O>;

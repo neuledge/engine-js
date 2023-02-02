@@ -1,11 +1,26 @@
 import { resolveDefer, StateDefinition } from '@/definitions';
 import { NeuledgeError } from '@/error';
 import { Metadata, MetadataCollection, MetadataStateField } from '@/metadata';
-import { Match } from '@/queries';
-import { StoreMatch, StoreMatchBy, StoreMatchOptions } from '@neuledge/store';
-import { convertFilterQuery } from './index';
+import { Match, MatchQueryOptions } from '@/queries';
+import {
+  StoreFindOptions,
+  StoreMatch,
+  StoreMatchBy,
+  StoreMatchOptions,
+} from '@neuledge/store';
+import { convertFilterQuery } from './filter';
 
-export const convertMatch = <S extends StateDefinition>(
+export const convertMatchQuery = <S extends StateDefinition>(
+  metadata: Metadata,
+  collection: MetadataCollection,
+  { match }: MatchQueryOptions<S>,
+): Pick<StoreFindOptions, 'match'> => ({
+  ...(match != null
+    ? { match: convertMatch(metadata, collection, match) }
+    : null),
+});
+
+const convertMatch = <S extends StateDefinition>(
   metadata: Metadata,
   collection: MetadataCollection,
   match: Match<S>,
@@ -17,14 +32,14 @@ export const convertMatch = <S extends StateDefinition>(
   );
 
   for (const key in match) {
-    const matchOpts = match[key];
-    if (matchOpts == null) continue;
+    const filterOptions = match[key];
+    if (filterOptions == null) continue;
 
     const fields = collection.getFields(key);
     if (!fields.length) continue;
 
     const states =
-      matchOpts.states ??
+      filterOptions.states ??
       relations.flatMap((relation): readonly StateDefinition[] => {
         const entry = relation[key];
         if (!entry) return [];
@@ -44,7 +59,7 @@ export const convertMatch = <S extends StateDefinition>(
           metadata,
           relCollection.states,
           relCollection,
-          matchOpts,
+          filterOptions,
         ),
       }),
     );
@@ -69,7 +84,7 @@ const getStoreMatchBy = (
       const field = fieldMap.get(refField.path);
       if (!field) continue;
 
-      res[field.name] = refField.name;
+      res[field.name] = { field: refField.name };
       fieldMap.delete(refField.path);
 
       if (!fieldMap.size) {

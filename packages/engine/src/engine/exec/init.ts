@@ -6,7 +6,8 @@ import { InitManyQueryOptions, InitOneQueryOptions, Select } from '@/queries';
 import { chooseStatesCollection } from '../collection';
 import { toDocument } from '../document';
 import { NeuledgeEngine } from '../engine';
-import { projectEntities, toEntityOrThrow } from '../entity';
+import { toEntityOrThrow } from '../entity';
+import { retrieveEntities } from '../retrieve';
 
 export const execInitMany = async <S extends StateDefinition>(
   engine: NeuledgeEngine,
@@ -54,7 +55,7 @@ export const execInitMany = async <S extends StateDefinition>(
     return { entity, document };
   });
 
-  return projectEntities(updatedEntities, options.select);
+  return retrieveEntities(updatedEntities, options);
 };
 
 export const execInitOne = async <S extends StateDefinition>(

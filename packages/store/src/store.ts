@@ -8,10 +8,9 @@ import {
   StoreDocument,
   StoreList,
   StoreListOffset,
-  StoreScalarValue,
   StoreSelect,
 } from './document';
-import { StoreMatch } from './relation';
+import { StoreIncludeFirst, StoreIncludeMany, StoreMatch } from './relation';
 import { StoreSort } from './sort';
 import { StoreWhere } from './where';
 
@@ -45,10 +44,10 @@ export interface StoreDescribeCollectionOptions {
 
 export interface StoreEnsureCollectionOptions {
   collection: StoreCollection;
-  indexes?: StoreIndex[];
-  fields?: StoreField[];
-  dropIndexes?: string[];
-  dropFields?: string[];
+  indexes?: StoreIndex[] | null;
+  fields?: StoreField[] | null;
+  dropIndexes?: string[] | null;
+  dropFields?: string[] | null;
 }
 
 export interface StoreDropCollectionOptions {
@@ -57,15 +56,15 @@ export interface StoreDropCollectionOptions {
 
 export interface StoreFindOptions {
   collection: StoreCollection;
-  select?: StoreSelect;
-  where?: StoreWhere;
-  match?: StoreMatch;
-  // requireFirst?: StoreRequireFirst;
-  // includeFirst?: StoreIncludeFirst;
-  // includeMany?: StoreIncludeMany;
+  select?: StoreSelect | null;
+  where?: StoreWhere | null;
+  match?: StoreMatch | null;
+  requireFirst?: StoreIncludeFirst | null;
+  includeFirst?: StoreIncludeFirst | null;
+  includeMany?: StoreIncludeMany | null;
   limit: number;
-  offset?: StoreListOffset;
-  sort?: StoreSort;
+  offset?: StoreListOffset | null;
+  sort?: StoreSort | null;
 }
 
 export interface StoreInsertOptions<T> {
@@ -75,15 +74,16 @@ export interface StoreInsertOptions<T> {
 
 export interface StoreUpdateOptions<T> {
   collection: StoreCollection;
-  where?: StoreWhere;
+  where?: StoreWhere | null;
+  match?: StoreMatch | null;
   set: T;
   limit: number;
 }
 
 export interface StoreDeleteOptions {
   collection: StoreCollection;
-  where?: StoreWhere;
-  match?: StoreMatch;
+  where?: StoreWhere | null;
+  match?: StoreMatch | null;
   limit: number;
 }
 

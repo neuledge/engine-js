@@ -1,31 +1,39 @@
 import { Entity } from '@/entity';
 import { StateDefinition } from '@/definitions';
 import { ExecQuery, ExecQueryOptions } from './exec';
-import { UniqueFilterQuery, UniqueFilterQueryOptions } from './filter';
-import { RetriveQuery, RetriveQueryOptions } from './retrive';
 import { RootQueryOptions } from './type';
 import { UniqueQuery, UniqueQueryOptions } from './unique';
+import { MatchQuery, MatchQueryOptions } from './match';
+import { IncludeQuery, IncludeQueryOptions } from './include';
+import { RequireQuery, RequireQueryOptions } from './require';
+import { SelectQuery, SelectQueryOptions } from './select';
 
 export interface FindUniqueOrThrowQuery<
   S extends StateDefinition,
   R = Entity<S>,
-> extends RetriveQuery<'FindUniqueOrThrow', S, S, R>,
-    UniqueFilterQuery<S>,
-    UniqueQuery<'FindUniqueWhereOrThrow', S, S, R> {}
+> extends SelectQuery<'FindUniqueOrThrow', S, S, R>,
+    IncludeQuery<'FindUniqueOrThrow', S, S, R>,
+    RequireQuery<'FindUniqueOrThrow', S, S, R>,
+    UniqueQuery<'FindUniqueWhereOrThrow', S, S, R>,
+    MatchQuery<S> {}
 
 export interface FindUniqueWhereOrThrowQuery<
   S extends StateDefinition,
   R = Entity<S>,
-> extends RetriveQuery<'FindUniqueWhereOrThrow', S, S, R>,
-    UniqueFilterQuery<S>,
+> extends SelectQuery<'FindUniqueWhereOrThrow', S, S, R>,
+    IncludeQuery<'FindUniqueWhereOrThrow', S, S, R>,
+    RequireQuery<'FindUniqueWhereOrThrow', S, S, R>,
     UniqueQuery<'FindUniqueWhereOrThrow', S, S, R>,
+    MatchQuery<S>,
     ExecQuery<R> {}
 
 export interface FindUniqueOrThrowQueryOptions<
   I extends StateDefinition,
   O extends StateDefinition,
 > extends RootQueryOptions<'FindUniqueOrThrow', I>,
-    RetriveQueryOptions<O>,
-    UniqueFilterQueryOptions<O>,
+    SelectQueryOptions<O>,
+    IncludeQueryOptions<O>,
+    RequireQueryOptions<O>,
     UniqueQueryOptions<O>,
+    MatchQueryOptions<O>,
     ExecQueryOptions<'FindUniqueOrThrow', I, O> {}

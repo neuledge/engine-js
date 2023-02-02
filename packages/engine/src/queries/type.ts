@@ -14,5 +14,5 @@ export interface ChildQueryOptions<
   S extends StateDefinition,
 > {
   type: T;
-  states?: S[];
+  states?: S[] | null;
 }

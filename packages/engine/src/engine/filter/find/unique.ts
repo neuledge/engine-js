@@ -1,10 +1,22 @@
-import { StateDefinitionWhereRecord } from '@/definitions';
+import { StateDefinition, StateDefinitionWhereRecord } from '@/definitions';
 import { NeuledgeError } from '@/error';
 import { MetadataCollection } from '@/metadata';
-import { StoreWhere, StoreWhereRecord } from '@neuledge/store';
+import { UniqueQueryOptions } from '@/queries';
+import {
+  StoreFindOptions,
+  StoreWhere,
+  StoreWhereRecord,
+} from '@neuledge/store';
 import { applyWhereRecordTerm } from './term';
 
-export const convertUniqueWhere = (
+export const convertUniqueQuery = <S extends StateDefinition>(
+  collection: MetadataCollection,
+  { unique }: UniqueQueryOptions<S>,
+): Pick<StoreFindOptions, 'where'> => ({
+  where: convertUnique(collection, unique),
+});
+
+const convertUnique = (
   collection: MetadataCollection,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   where: StateDefinitionWhereRecord<any> | true,

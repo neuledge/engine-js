@@ -1,10 +1,22 @@
 import { StateDefinition, StateDefinitionWhereRecord } from '@/definitions';
 import { MetadataCollection, MetadataState } from '@/metadata';
-import { StoreWhere, StoreWhereRecord } from '@neuledge/store';
-import { Where } from '@/queries';
+import {
+  StoreFindOptions,
+  StoreWhere,
+  StoreWhereRecord,
+} from '@neuledge/store';
+import { Where, WhereQueryOptions } from '@/queries';
 import { convertWhereRecord } from './record';
 
-export const convertWhere = <S extends StateDefinition>(
+export const convertWhereQuery = <S extends StateDefinition>(
+  states: MetadataState[],
+  collection: MetadataCollection,
+  { where }: WhereQueryOptions<S>,
+): Pick<StoreFindOptions, 'where'> => ({
+  where: convertWhere(states, collection, where ?? null),
+});
+
+const convertWhere = <S extends StateDefinition>(
   states: MetadataState[],
   collection: MetadataCollection,
   where: Where<S> | null,

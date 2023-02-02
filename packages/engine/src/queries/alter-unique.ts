@@ -1,44 +1,54 @@
 import { Entity } from '@/entity';
 import { StateDefinition, StateDefinitionAlterMethods } from '@/definitions';
 import { ExecQuery, ExecQueryOptions } from './exec';
-import { UniqueFilterQuery, UniqueFilterQueryOptions } from './filter';
 import { SingleArgsQueryOptions } from './method';
-import { RetriveQuery, RetriveQueryOptions } from './retrive';
 import { RootQueryOptions } from './type';
 import { UniqueQuery, UniqueQueryOptions } from './unique';
+import { MatchQuery, MatchQueryOptions } from './match';
+import { SelectQuery, SelectQueryOptions } from './select';
+import { IncludeQuery, IncludeQueryOptions } from './include';
+import { RequireQuery, RequireQueryOptions } from './require';
 
 export interface AlterUniqueQuery<
   I extends StateDefinition,
   O extends StateDefinition,
-> extends RetriveQuery<'AlterUniqueAndReturn', I, O, Entity<O>>,
-    UniqueFilterQuery<I>,
+> extends SelectQuery<'AlterUniqueAndReturn', I, O, Entity<O>>,
+    IncludeQuery<'AlterUniqueAndReturn', I, O, Entity<O>>,
+    RequireQuery<'AlterUniqueAndReturn', I, O, Entity<O>>,
     UniqueQuery<'AlterUniqueWhere', I, O, Entity<O>>,
+    MatchQuery<I>,
     ExecQuery<void> {}
 
 export interface AlterUniqueAndReturnQuery<
   I extends StateDefinition,
   O extends StateDefinition,
   R,
-> extends RetriveQuery<'AlterUniqueAndReturn', I, O, R>,
-    UniqueFilterQuery<I>,
-    UniqueQuery<'AlterUniqueWhereAndReturn', I, O, R> {}
+> extends SelectQuery<'AlterUniqueAndReturn', I, O, R>,
+    IncludeQuery<'AlterUniqueAndReturn', I, O, R>,
+    RequireQuery<'AlterUniqueAndReturn', I, O, R>,
+    UniqueQuery<'AlterUniqueWhereAndReturn', I, O, R>,
+    MatchQuery<I> {}
 
 export interface AlterUniqueWhereQuery<
   I extends StateDefinition,
   O extends StateDefinition,
   R,
-> extends RetriveQuery<'AlterUniqueWhereAndReturn', I, O, R>,
-    UniqueFilterQuery<I>,
+> extends SelectQuery<'AlterUniqueWhereAndReturn', I, O, R>,
+    IncludeQuery<'AlterUniqueWhereAndReturn', I, O, R>,
+    RequireQuery<'AlterUniqueWhereAndReturn', I, O, R>,
     UniqueQuery<'AlterUniqueWhere', I, O, R>,
+    MatchQuery<I>,
     ExecQuery<void> {}
 
 export interface AlterUniqueWhereAndReturnQuery<
   I extends StateDefinition,
   O extends StateDefinition,
   R,
-> extends RetriveQuery<'AlterUniqueWhereAndReturn', I, O, R>,
-    UniqueFilterQuery<I>,
+> extends SelectQuery<'AlterUniqueWhereAndReturn', I, O, R>,
+    IncludeQuery<'AlterUniqueWhereAndReturn', I, O, R>,
+    RequireQuery<'AlterUniqueWhereAndReturn', I, O, R>,
     UniqueQuery<'AlterUniqueWhereAndReturn', I, O, R>,
+    MatchQuery<I>,
     ExecQuery<R | null> {}
 
 export interface AlterUniqueQueryOptions<
@@ -46,7 +56,9 @@ export interface AlterUniqueQueryOptions<
   O extends StateDefinition,
 > extends RootQueryOptions<'AlterUnique', I>,
     SingleArgsQueryOptions<I, StateDefinitionAlterMethods<I>>,
-    RetriveQueryOptions<O>,
-    UniqueFilterQueryOptions<I>,
+    SelectQueryOptions<O>,
+    IncludeQueryOptions<O>,
+    RequireQueryOptions<O>,
     UniqueQueryOptions<I>,
+    MatchQueryOptions<I>,
     ExecQueryOptions<'AlterUnique', I, O> {}

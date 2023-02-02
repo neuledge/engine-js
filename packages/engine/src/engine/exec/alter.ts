@@ -15,18 +15,12 @@ import {
 } from '@/queries';
 import { chooseStatesCollection } from '../collection';
 import { NeuledgeEngine } from '../engine';
-import {
-  projectEntities,
-  toEntityList,
-  toEntityListOrThrow,
-  UpdatedEntity,
-} from '../entity';
-import { convertFilterQuery, convertUniqueFilterQuery } from '../filter';
+import { toEntityList, toEntityListOrThrow } from '../entity';
 import {
   convertLimitQuery,
   DEFAULT_QUERY_LIMIT,
   checkLimitedList,
-} from '../limit';
+} from '../pagination';
 import {
   getStateDefinitionMap,
   StateDefinitionMap,
@@ -34,7 +28,6 @@ import {
   alterStoreDocuments,
 } from '../mutations';
 import { NeuledgeError } from '@/error';
-import { convertUniqueQuery } from '../unique';
 import {
   Store,
   StoreDeleteOptions,
@@ -44,6 +37,14 @@ import {
 } from '@neuledge/store';
 import { Metadata, MetadataCollection, MetadataState } from '@/metadata';
 import { toDocument } from '../document';
+import {
+  convertMatchQuery,
+  convertUniqueQuery,
+  convertWhereQuery,
+} from '../filter';
+import { convertIncludeQuery } from '../retrieve/include';
+import { convertRequireQuery } from '../retrieve/require';
+import { retrieveEntities, UpdatedEntity } from '../retrieve';
 
 const ALTER_VERSION_RETRIES = 3;
 
@@ -99,7 +100,7 @@ export const execAlterMany = async <S extends StateDefinition>(
     }
 
     if (!leftDocs?.length) {
-      return projectEntities([...ctx.entities.values()], options.select);
+      return retrieveEntities([...ctx.entities.values()], options);
     }
 
     await alterDocuments(ctx, leftDocs);
@@ -172,15 +173,18 @@ const createStoreFilters = <S extends StateDefinition>(
 ) => ({
   collection,
 
-  // FIXME filter by retrive query as well (requireOne)
-  // ...convertRetriveQuery(collection, options),
+  // we don't use select here, because we need to get all fields to validate the
+  // current state of the entity. we will use select later to project the result
+  // to the user
 
-  ...('unique' in options && options.unique
-    ? {
-        ...convertUniqueFilterQuery(metadata, collection, options),
-        ...convertUniqueQuery(metadata, collection, options),
-      }
-    : convertFilterQuery(metadata, states, collection, options)),
+  ...convertIncludeQuery(metadata, collection, options),
+  ...convertRequireQuery(metadata, collection, options),
+
+  ...('unique' in options
+    ? convertUniqueQuery(collection, options)
+    : convertWhereQuery(states, collection, options)),
+
+  ...convertMatchQuery(metadata, collection, options),
 
   ...(options.type === 'AlterMany' ? convertLimitQuery(options) : { limit: 1 }),
 });

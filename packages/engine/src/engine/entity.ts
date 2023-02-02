@@ -1,9 +1,9 @@
-import { Entity, ProjectedEntity } from '@/entity';
+import { Entity } from '@/entity';
 import { StateDefinition } from '@/definitions';
 import { EntityList } from '@/list';
 import { Metadata } from '@/metadata/metadata';
 import { StoreDocument, StoreList } from '@neuledge/store';
-import { Select } from '@/queries';
+
 import { MetadataCollection } from '@/metadata';
 import { NeuledgeError } from '@/error';
 
@@ -144,54 +144,4 @@ const setEntityValue = (obj: object, path: string, value: unknown): void => {
   }
 
   obj[pathKeys[pathKeys.length - 1] as never] = value as never;
-};
-
-export type UpdatedEntity<S extends StateDefinition> = {
-  entity: Entity<S>;
-  document: StoreDocument;
-};
-
-export const projectEntities = <S extends StateDefinition, P extends Select<S>>(
-  entities: EntityList<UpdatedEntity<S>>,
-  select: P | true | null | undefined,
-): EntityList<ProjectedEntity<S, P>> | EntityList<Entity<S>> | void => {
-  if (!select) return;
-
-  if (select === true) {
-    return Object.assign(
-      entities.map((entity) => entity.entity),
-      { nextOffset: entities.nextOffset },
-    );
-  }
-
-  return Object.assign(
-    entities.map((entity) => projectEntitySelection(entity.entity, select)),
-    { nextOffset: entities.nextOffset },
-  );
-};
-
-export const projectEntity = <S extends StateDefinition, P extends Select<S>>(
-  entity: UpdatedEntity<S>,
-  select: P | true,
-): ProjectedEntity<S, P> | Entity<S> => {
-  if (select === true) {
-    return entity.entity;
-  }
-
-  return projectEntitySelection(entity.entity, select);
-};
-
-const projectEntitySelection = <S extends StateDefinition, P extends Select<S>>(
-  entity: Entity<S>,
-  select: P,
-): ProjectedEntity<S, P> => {
-  const projectedEntity = {} as ProjectedEntity<S, P>;
-
-  for (const [key, value] of Object.entries(select)) {
-    if (!value) continue;
-
-    projectedEntity[key as never] = entity[key] as never;
-  }
-
-  return projectedEntity;
 };

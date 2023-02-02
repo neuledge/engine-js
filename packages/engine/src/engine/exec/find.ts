@@ -11,12 +11,22 @@ import {
 import { chooseStatesCollection } from '../collection';
 import { NeuledgeEngine } from '../engine';
 import { toEntityList, toEntityOrThrow, toMaybeEntity } from '../entity';
-import { convertFilterQuery, convertUniqueFilterQuery } from '../filter';
-import { convertLimitQuery, checkLimitedList } from '../limit';
-import { convertOffsetQuery } from '../offset';
-import { convertRetriveQuery } from '../retrive';
-import { convertSortQuery } from '../sort';
-import { convertUniqueQuery } from '../unique';
+import {
+  convertMatchQuery,
+  convertUniqueQuery,
+  convertWhereQuery,
+} from '../filter';
+import {
+  convertLimitQuery,
+  checkLimitedList,
+  convertOffsetQuery,
+  convertSortQuery,
+} from '../pagination';
+import {
+  convertIncludeQuery,
+  convertRequireQuery,
+  convertSelectQuery,
+} from '../retrieve';
 
 export const execFindMany = async <S extends StateDefinition>(
   engine: NeuledgeEngine,
@@ -33,8 +43,11 @@ export const execFindMany = async <S extends StateDefinition>(
     options,
     await engine.store.find({
       collection,
-      ...convertRetriveQuery(collection, options),
-      ...convertFilterQuery(metadata, states, collection, options),
+      ...convertSelectQuery(collection, options),
+      ...convertIncludeQuery(metadata, collection, options),
+      ...convertRequireQuery(metadata, collection, options),
+      ...convertWhereQuery(states, collection, options),
+      ...convertMatchQuery(metadata, collection, options),
       ...convertOffsetQuery(options),
       ...convertLimitQuery(options),
       ...convertSortQuery(collection, options),
@@ -53,9 +66,11 @@ export const execFindUnique = async <S extends StateDefinition>(
 
   const [document] = await engine.store.find({
     collection,
-    ...convertRetriveQuery(collection, options),
-    ...convertUniqueFilterQuery(metadata, collection, options),
-    ...convertUniqueQuery(metadata, collection, options),
+    ...convertSelectQuery(collection, options),
+    ...convertIncludeQuery(metadata, collection, options),
+    ...convertRequireQuery(metadata, collection, options),
+    ...convertUniqueQuery(collection, options),
+    ...convertMatchQuery(metadata, collection, options),
     limit: 1,
   });
 
@@ -71,9 +86,11 @@ export const execFindUniqueOrThrow = async <S extends StateDefinition>(
 
   const [document] = await engine.store.find({
     collection,
-    ...convertRetriveQuery(collection, options),
-    ...convertUniqueFilterQuery(metadata, collection, options),
-    ...convertUniqueQuery(metadata, collection, options),
+    ...convertSelectQuery(collection, options),
+    ...convertIncludeQuery(metadata, collection, options),
+    ...convertRequireQuery(metadata, collection, options),
+    ...convertUniqueQuery(collection, options),
+    ...convertMatchQuery(metadata, collection, options),
     limit: 1,
   });
 
@@ -93,8 +110,11 @@ export const execFindFirst = async <S extends StateDefinition>(
 
   const [document] = await engine.store.find({
     collection,
-    ...convertRetriveQuery(collection, options),
-    ...convertFilterQuery(metadata, states, collection, options),
+    ...convertSelectQuery(collection, options),
+    ...convertIncludeQuery(metadata, collection, options),
+    ...convertRequireQuery(metadata, collection, options),
+    ...convertWhereQuery(states, collection, options),
+    ...convertMatchQuery(metadata, collection, options),
     ...convertOffsetQuery(options),
     limit: 1,
     ...convertSortQuery(collection, options),
@@ -116,8 +136,11 @@ export const execFindFirstOrThrow = async <S extends StateDefinition>(
 
   const [document] = await engine.store.find({
     collection,
-    ...convertRetriveQuery(collection, options),
-    ...convertFilterQuery(metadata, states, collection, options),
+    ...convertSelectQuery(collection, options),
+    ...convertIncludeQuery(metadata, collection, options),
+    ...convertRequireQuery(metadata, collection, options),
+    ...convertWhereQuery(states, collection, options),
+    ...convertMatchQuery(metadata, collection, options),
     ...convertOffsetQuery(options),
     limit: 1,
     ...convertSortQuery(collection, options),

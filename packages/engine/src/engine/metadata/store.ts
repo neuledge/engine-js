@@ -97,7 +97,7 @@ export const getStoreMetadataSnapshot = async (
     res = await store.find({
       collection: metadataCollection,
       limit: COLLECTION_FIND_LIMIT,
-      offset: res?.nextOffset ?? undefined,
+      offset: res?.nextOffset,
     });
 
     for (const doc of res) {

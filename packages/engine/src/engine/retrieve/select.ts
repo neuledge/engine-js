@@ -1,9 +1,18 @@
 import { StateDefinition } from '@/definitions';
 import { MetadataCollection } from '@/metadata';
-import { Select } from '@/queries';
-import { StoreSelect } from '@neuledge/store';
+import { Select, SelectQueryOptions } from '@/queries';
+import { StoreFindOptions, StoreSelect } from '@neuledge/store';
 
 export const convertSelectQuery = <S extends StateDefinition>(
+  collection: MetadataCollection,
+  { select }: SelectQueryOptions<S>,
+): Pick<StoreFindOptions, 'select'> => ({
+  ...(select != null && select !== true
+    ? { select: convertSelect(collection, select) }
+    : null),
+});
+
+const convertSelect = <S extends StateDefinition>(
   collection: MetadataCollection,
   select: Select<S>,
 ): StoreSelect => {
