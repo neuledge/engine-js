@@ -30,10 +30,10 @@ export class QueryClass<
   O extends StateDefinition,
 > implements
     SelectQuery<any, I, O, any>, // eslint-disable-line @typescript-eslint/no-explicit-any
-    IncludeQuery<any, I, O, any>, // eslint-disable-line @typescript-eslint/no-explicit-any
-    RequireQuery<any, I, O, any>, // eslint-disable-line @typescript-eslint/no-explicit-any
+    IncludeQuery<any, I, O, any, any>, // eslint-disable-line @typescript-eslint/no-explicit-any
+    RequireQuery<any, I, O, any, any>, // eslint-disable-line @typescript-eslint/no-explicit-any
     WhereQuery<I>,
-    UniqueQuery<any, I, O, any>, // eslint-disable-line @typescript-eslint/no-explicit-any
+    UniqueQuery<any, I, O, any, any>, // eslint-disable-line @typescript-eslint/no-explicit-any
     MatchQuery<I>,
     LimitQuery,
     OffsetQuery,
@@ -58,7 +58,7 @@ export class QueryClass<
     states?: StateDefinitionRelationState<O, K>[] | null,
     query?: (
       query: SelectManyQuery<StateDefinitionRelationState<O, K>>,
-    ) => SelectManyQuery<StateDefinitionRelationState<O, K>, unknown>,
+    ) => SelectManyQuery<StateDefinitionRelationState<O, K>>,
   ): this {
     let rel: QueryClass<
       'SelectMany',
@@ -92,7 +92,7 @@ export class QueryClass<
     states?: StateDefinitionRelationState<O, K>[] | null,
     query?: (
       rel: SelectOneQuery<StateDefinitionRelationState<O, K>>,
-    ) => SelectOneQuery<StateDefinitionRelationState<O, K>, unknown>,
+    ) => SelectOneQuery<StateDefinitionRelationState<O, K>>,
   ): this {
     let rel: QueryClass<
       'SelectOne',
@@ -126,7 +126,7 @@ export class QueryClass<
     states?: StateDefinitionRelationState<O, K>[] | null,
     query?: (
       rel: SelectOneQuery<StateDefinitionRelationState<O, K>>,
-    ) => SelectOneQuery<StateDefinitionRelationState<O, K>, unknown>,
+    ) => SelectOneQuery<StateDefinitionRelationState<O, K>>,
   ): this {
     let rel: QueryClass<
       'SelectOne',

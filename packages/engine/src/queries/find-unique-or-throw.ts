@@ -1,4 +1,3 @@
-import { Entity } from '@/entity';
 import { StateDefinition } from '@/definitions';
 import { ExecQuery, ExecQueryOptions } from './exec';
 import { RootQueryOptions } from './type';
@@ -6,26 +5,33 @@ import { UniqueQuery, UniqueQueryOptions } from './unique';
 import { MatchQuery, MatchQueryOptions } from './match';
 import { IncludeQuery, IncludeQueryOptions } from './include';
 import { RequireQuery, RequireQueryOptions } from './require';
-import { SelectQuery, SelectQueryOptions } from './select';
+import {
+  QueryEntity,
+  QueryProjection,
+  SelectQuery,
+  SelectQueryOptions,
+} from './select';
 
 export interface FindUniqueOrThrowQuery<
   S extends StateDefinition,
-  R = Entity<S>,
+  P extends QueryProjection<S> = true,
+  R = NonNullable<unknown>,
 > extends SelectQuery<'FindUniqueOrThrow', S, S, R>,
-    IncludeQuery<'FindUniqueOrThrow', S, S, R>,
-    RequireQuery<'FindUniqueOrThrow', S, S, R>,
-    UniqueQuery<'FindUniqueWhereOrThrow', S, S, R>,
+    IncludeQuery<'FindUniqueOrThrow', S, S, P, R>,
+    RequireQuery<'FindUniqueOrThrow', S, S, P, R>,
+    UniqueQuery<'FindUniqueWhereOrThrow', S, S, P, R>,
     MatchQuery<S> {}
 
 export interface FindUniqueWhereOrThrowQuery<
   S extends StateDefinition,
-  R = Entity<S>,
+  P extends QueryProjection<S> = true,
+  R = NonNullable<unknown>,
 > extends SelectQuery<'FindUniqueWhereOrThrow', S, S, R>,
-    IncludeQuery<'FindUniqueWhereOrThrow', S, S, R>,
-    RequireQuery<'FindUniqueWhereOrThrow', S, S, R>,
-    UniqueQuery<'FindUniqueWhereOrThrow', S, S, R>,
+    IncludeQuery<'FindUniqueWhereOrThrow', S, S, P, R>,
+    RequireQuery<'FindUniqueWhereOrThrow', S, S, P, R>,
+    UniqueQuery<'FindUniqueWhereOrThrow', S, S, P, R>,
     MatchQuery<S>,
-    ExecQuery<R> {}
+    ExecQuery<QueryEntity<S, P, R>> {}
 
 export interface FindUniqueOrThrowQueryOptions<
   I extends StateDefinition,

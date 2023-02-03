@@ -1,4 +1,3 @@
-import { Entity } from '@/entity';
 import { StateDefinition } from '@/definitions';
 import { LimitQuery, LimitQueryOptions } from './limit';
 import { OffsetQuery, OffsetQueryOptions } from './offset';
@@ -6,14 +5,17 @@ import { SortQuery, SortQueryOptions } from './sort';
 import { ChildQueryOptions } from './type';
 import { WhereQuery, WhereQueryOptions } from './where';
 import { MatchQuery, MatchQueryOptions } from './match';
-import { SelectQuery, SelectQueryOptions } from './select';
+import { QueryProjection, SelectQuery, SelectQueryOptions } from './select';
 import { IncludeQuery, IncludeQueryOptions } from './include';
 import { RequireQuery, RequireQueryOptions } from './require';
 
-export interface SelectManyQuery<S extends StateDefinition, R = Entity<S>>
-  extends SelectQuery<'SelectMany', S, S, R>,
-    IncludeQuery<'SelectMany', S, S, R>,
-    RequireQuery<'SelectMany', S, S, R>,
+export interface SelectManyQuery<
+  S extends StateDefinition,
+  P extends QueryProjection<S> = true,
+  R = NonNullable<unknown>,
+> extends SelectQuery<'SelectMany', S, S, R>,
+    IncludeQuery<'SelectMany', S, S, P, R>,
+    RequireQuery<'SelectMany', S, S, P, R>,
     WhereQuery<S>,
     MatchQuery<S>,
     SortQuery<S>,

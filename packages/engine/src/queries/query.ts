@@ -1,4 +1,3 @@
-import { Entity } from '@/entity';
 import { StateDefinition } from '@/definitions';
 import { InitManyAndReturnQuery, InitManyQueryOptions } from './init-many';
 import { InitOneAndReturnQuery, InitOneQueryOptions } from './init-one';
@@ -42,13 +41,15 @@ import {
   AlterUniqueWhereQuery,
 } from './alter-unique';
 import { FilterQueryOptions } from './filter';
+import { QueryProjection } from './select';
 
 export type Query<
   M extends QueryMode,
-  I extends StateDefinition,
-  O extends StateDefinition,
-  R = Entity<O>,
-> = QueryModes<I, O, R>[M];
+  I extends StateDefinition, // input state
+  O extends StateDefinition, // output state
+  P extends QueryProjection<O> = true, // projection
+  R = NonNullable<unknown>, // relations
+> = QueryModes<I, O, P, R>[M];
 
 export type QueryOptions<
   T extends QueryType,
@@ -57,40 +58,46 @@ export type QueryOptions<
 > = QueryOptionsTypes<I, O>[T];
 
 export type QueryType = keyof QueryOptionsTypes<never, never>;
-export type QueryMode = keyof QueryModes<never, never, never>;
+export type QueryMode = keyof QueryModes<never, never, never, never>;
 
-interface QueryModes<I extends StateDefinition, O extends StateDefinition, R> {
+interface QueryModes<
+  I extends StateDefinition,
+  O extends StateDefinition,
+  P extends QueryProjection<O>,
+  R,
+> {
   // AlterMany: never;
-  AlterManyAndReturn: AlterManyAndReturnQuery<I, O, R>;
+  AlterManyAndReturn: AlterManyAndReturnQuery<I, O, P, R>;
   // AlterFirst: never,
-  AlterFirstAndReturn: AlterFirstAndReturnQuery<I, O, R>;
+  AlterFirstAndReturn: AlterFirstAndReturnQuery<I, O, P, R>;
   // AlterFirstOrThrow: never,
-  AlterFirstAndReturnOrThrow: AlterFirstAndReturnOrThrowQuery<I, O, R>;
+  AlterFirstAndReturnOrThrow: AlterFirstAndReturnOrThrowQuery<I, O, P, R>;
   // AlterUnique: never;
-  AlterUniqueAndReturn: AlterUniqueAndReturnQuery<I, O, R>;
-  AlterUniqueWhere: AlterUniqueWhereQuery<I, O, R>;
-  AlterUniqueWhereAndReturn: AlterUniqueWhereAndReturnQuery<I, O, R>;
+  AlterUniqueAndReturn: AlterUniqueAndReturnQuery<I, O, P, R>;
+  AlterUniqueWhere: AlterUniqueWhereQuery<I, O, P, R>;
+  AlterUniqueWhereAndReturn: AlterUniqueWhereAndReturnQuery<I, O, P, R>;
   // AlterUniqueOrThrow: never;
-  AlterUniqueAndReturnOrThrow: AlterUniqueAndReturnOrThrowQuery<I, O, R>;
-  AlterUniqueWhereOrThrow: AlterUniqueWhereOrThrowQuery<I, O, R>;
+  AlterUniqueAndReturnOrThrow: AlterUniqueAndReturnOrThrowQuery<I, O, P, R>;
+  AlterUniqueWhereOrThrow: AlterUniqueWhereOrThrowQuery<I, O, P, R>;
   AlterUniqueWhereAndReturnOrThrow: AlterUniqueWhereAndReturnOrThrowQuery<
     I,
     O,
+    P,
     R
   >;
-  FindMany: FindManyQuery<O, R>;
-  FindFirst: FindFirstQuery<O, R>;
-  FindFirstOrThrow: FindFirstOrThrowQuery<O, R>;
-  FindUnique: FindUniqueQuery<O, R>;
-  FindUniqueWhere: FindUniqueWhereQuery<O, R>;
-  FindUniqueOrThrow: FindUniqueOrThrowQuery<O, R>;
-  FindUniqueWhereOrThrow: FindUniqueWhereOrThrowQuery<O, R>;
+  FindMany: FindManyQuery<O, P, R>;
+  FindFirst: FindFirstQuery<O, P, R>;
+  FindFirstOrThrow: FindFirstOrThrowQuery<O, P, R>;
+  FindUnique: FindUniqueQuery<O, P, R>;
+  FindUniqueWhere: FindUniqueWhereQuery<O, P, R>;
+  FindUniqueOrThrow: FindUniqueOrThrowQuery<O, P, R>;
+  FindUniqueWhereOrThrow: FindUniqueWhereOrThrowQuery<O, P, R>;
   // InitMany: never,
-  InitManyAndReturn: InitManyAndReturnQuery<O, R>;
+  InitManyAndReturn: InitManyAndReturnQuery<O, P, R>;
   // InitOne: never;
-  InitOneAndReturn: InitOneAndReturnQuery<O, R>;
-  SelectMany: SelectManyQuery<O, R>;
-  SelectOne: SelectOneQuery<O, R>;
+  InitOneAndReturn: InitOneAndReturnQuery<O, P, R>;
+  SelectMany: SelectManyQuery<O, P, R>;
+  SelectOne: SelectOneQuery<O, P, R>;
 }
 
 interface QueryOptionsTypes<

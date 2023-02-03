@@ -1,4 +1,3 @@
-import { Entity } from '@/entity';
 import { StateDefinition } from '@/definitions';
 import { EntityList } from '@/list';
 import { ExecQuery, ExecQueryOptions } from './exec';
@@ -8,20 +7,28 @@ import { SortQuery, SortQueryOptions } from './sort';
 import { RootQueryOptions } from './type';
 import { MatchQuery, MatchQueryOptions } from './match';
 import { WhereQuery, WhereQueryOptions } from './where';
-import { SelectQuery, SelectQueryOptions } from './select';
+import {
+  QueryEntity,
+  QueryProjection,
+  SelectQuery,
+  SelectQueryOptions,
+} from './select';
 import { IncludeQuery, IncludeQueryOptions } from './include';
 import { RequireQuery, RequireQueryOptions } from './require';
 
-export interface FindManyQuery<S extends StateDefinition, R = Entity<S>>
-  extends SelectQuery<'FindMany', S, S, R>,
-    IncludeQuery<'FindMany', S, S, R>,
-    RequireQuery<'FindMany', S, S, R>,
+export interface FindManyQuery<
+  S extends StateDefinition,
+  P extends QueryProjection<S> = true,
+  R = NonNullable<unknown>,
+> extends SelectQuery<'FindMany', S, S, R>,
+    IncludeQuery<'FindMany', S, S, P, R>,
+    RequireQuery<'FindMany', S, S, P, R>,
     WhereQuery<S>,
     MatchQuery<S>,
     SortQuery<S>,
     LimitQuery,
     OffsetQuery,
-    ExecQuery<EntityList<R>> {}
+    ExecQuery<EntityList<QueryEntity<S, P, R>>> {}
 
 export interface FindManyQueryOptions<
   I extends StateDefinition,

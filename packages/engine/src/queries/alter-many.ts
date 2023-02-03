@@ -1,4 +1,3 @@
-import { Entity } from '@/entity';
 import { StateDefinition, StateDefinitionAlterMethods } from '@/definitions';
 import { ExecQuery, ExecQueryOptions } from './exec';
 import { LimitQuery, LimitQueryOptions } from './limit';
@@ -6,16 +5,21 @@ import { SingleArgsQueryOptions } from './method';
 import { RootQueryOptions } from './type';
 import { WhereQuery, WhereQueryOptions } from './where';
 import { MatchQuery, MatchQueryOptions } from './match';
-import { SelectQuery, SelectQueryOptions } from './select';
+import {
+  QueryEntity,
+  QueryProjection,
+  SelectQuery,
+  SelectQueryOptions,
+} from './select';
 import { IncludeQuery, IncludeQueryOptions } from './include';
 import { RequireQuery, RequireQueryOptions } from './require';
 
 export interface AlterManyQuery<
   I extends StateDefinition,
   O extends StateDefinition,
-> extends SelectQuery<'AlterManyAndReturn', I, O, Entity<O>>,
-    IncludeQuery<'AlterManyAndReturn', I, O, Entity<O>>,
-    RequireQuery<'AlterManyAndReturn', I, O, Entity<O>>,
+> extends SelectQuery<'AlterManyAndReturn', I, O>,
+    IncludeQuery<'AlterManyAndReturn', I, O>,
+    RequireQuery<'AlterManyAndReturn', I, O>,
     WhereQuery<I>,
     MatchQuery<I>,
     LimitQuery,
@@ -24,14 +28,15 @@ export interface AlterManyQuery<
 export interface AlterManyAndReturnQuery<
   I extends StateDefinition,
   O extends StateDefinition,
-  R,
+  P extends QueryProjection<O> = true,
+  R = NonNullable<unknown>,
 > extends SelectQuery<'AlterManyAndReturn', I, O, R>,
-    IncludeQuery<'AlterManyAndReturn', I, O, R>,
-    RequireQuery<'AlterManyAndReturn', I, O, R>,
+    IncludeQuery<'AlterManyAndReturn', I, O, P, R>,
+    RequireQuery<'AlterManyAndReturn', I, O, P, R>,
     WhereQuery<I>,
     MatchQuery<I>,
     LimitQuery,
-    ExecQuery<R[]> {}
+    ExecQuery<QueryEntity<O, P, R>[]> {}
 
 export interface AlterManyQueryOptions<
   I extends StateDefinition,

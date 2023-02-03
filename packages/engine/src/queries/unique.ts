@@ -1,20 +1,25 @@
 import { StateDefinition, StateName, StateUnique } from '@/definitions';
 import { QueryMode } from './query';
 import { Query } from './query';
+import { QueryProjection } from './select';
 import { AllKeys } from './utils';
+
+// This query is very similar to the `WhereQuery`, if you make changes here, you
+// probably want to make the same changes there.
 
 export interface UniqueQuery<
   M extends QueryMode,
   I extends StateDefinition,
   O extends StateDefinition,
-  R,
+  P extends QueryProjection<O> = true,
+  R = NonNullable<unknown>,
 > {
   /**
    * Filter the returned entities by a unique where clause.
    * The where clause must match exactly one entity. Only uniquely identifiable
    * indexes can be used in the where clause.
    */
-  unique(where: Unique<I>): Query<M, I, O, R>;
+  unique(where: Unique<I>): Query<M, I, O, P, R>;
 }
 
 export interface UniqueQueryOptions<S extends StateDefinition> {

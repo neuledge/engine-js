@@ -6,12 +6,17 @@ import {
 } from '@/definitions';
 import { Query, QueryMode } from './query';
 import { SelectOneQuery, SelectOneQueryOptions } from './select-one';
+import { QueryEntity, QueryProjection } from './select';
+
+// This query is very similar to `IncludeQuery`. If you make changes here, you
+// probably want to make the same changes there.
 
 export interface RequireQuery<
   M extends QueryMode,
   I extends StateDefinition,
   O extends StateDefinition,
-  R,
+  P extends QueryProjection<O> = true,
+  R = NonNullable<unknown>,
 > {
   /**
    * Require a one-to-many relation in the query.
@@ -24,6 +29,7 @@ export interface RequireQuery<
     M,
     I,
     O,
+    P,
     R & { [k in K]: Entity<StateDefinitionRelationState<O, K>> }
   >;
 
@@ -35,24 +41,34 @@ export interface RequireQuery<
    */
   requireOne<
     K extends StateDefinitionRequireOneKeys<O>,
-    RS extends StateDefinitionRelationState<O, K>,
+    QS extends StateDefinitionRelationState<O, K>,
   >(
     key: K,
-    states: RS[],
-  ): Query<M, I, O, R & { [k in K]: Entity<RS> }>;
+    states: QS[],
+  ): Query<M, I, O, P, R & { [k in K]: Entity<QS> }>;
 
   /**
    * Query a one-to-one relation and require the matching entity in the query.
    * If no entity matches, the parent entity will be excluded from the result
    * and an error may be thrown, depending on the query mode.
    */
-  requireOne<K extends StateDefinitionRequireOneKeys<O>, RR>(
+  requireOne<
+    K extends StateDefinitionRequireOneKeys<O>,
+    QP extends QueryProjection<StateDefinitionRelationState<O, K>>,
+    QR,
+  >(
     key: K,
     states: null,
     query: (
       rel: SelectOneQuery<StateDefinitionRelationState<O, K>>,
-    ) => SelectOneQuery<StateDefinitionRelationState<O, K>, RR>,
-  ): Query<M, I, O, R & { [k in K]: RR }>;
+    ) => SelectOneQuery<StateDefinitionRelationState<O, K>, QP, QR>,
+  ): Query<
+    M,
+    I,
+    O,
+    P,
+    R & { [k in K]: QueryEntity<StateDefinitionRelationState<O, K>, QP, QR> }
+  >;
 
   /**
    * Choose only specific states from a one-to-one relation, query and
@@ -62,13 +78,14 @@ export interface RequireQuery<
    */
   requireOne<
     K extends StateDefinitionRequireOneKeys<O>,
-    RS extends StateDefinitionRelationState<O, K>,
-    RR,
+    QS extends StateDefinitionRelationState<O, K>,
+    QP extends QueryProjection<QS>,
+    QR,
   >(
     key: K,
-    states: RS[],
-    query: (rel: SelectOneQuery<RS>) => SelectOneQuery<RS, RR>,
-  ): Query<M, I, O, R & { [k in K]: RR }>;
+    states: QS[],
+    query: (rel: SelectOneQuery<QS>) => SelectOneQuery<QS, QP, QR>,
+  ): Query<M, I, O, P, R & { [k in K]: QueryEntity<QS, QP, QR> }>;
 }
 
 export interface RequireQueryOptions<S extends StateDefinition> {

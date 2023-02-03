@@ -1,6 +1,9 @@
 import { StateDefinition, StateName, StateFind } from '@/definitions';
 import { AllKeys } from './utils';
 
+// This query is very similar to the `UniqueQuery`, if you make changes here,
+// you probably want to make the same changes there.
+
 export interface WhereQuery<S extends StateDefinition> {
   /**
    * Filter the returned entities by a where clause.

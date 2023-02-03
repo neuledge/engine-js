@@ -1,23 +1,28 @@
-import { Entity } from '@/entity';
 import { StateDefinition, StateDefinitionInitMethods } from '@/definitions';
 import { EntityList } from '@/list';
 import { ExecQuery, ExecQueryOptions } from './exec';
 import { MultiArgsQueryOptions } from './method';
 import { RootQueryOptions } from './type';
 import { IncludeQuery, IncludeQueryOptions } from './include';
-import { SelectQuery, SelectQueryOptions } from './select';
+import {
+  QueryEntity,
+  QueryProjection,
+  SelectQuery,
+  SelectQueryOptions,
+} from './select';
 
 export interface InitManyQuery<S extends StateDefinition>
-  extends SelectQuery<'InitManyAndReturn', S, S, Entity<S>>,
-    IncludeQuery<'InitManyAndReturn', S, S, Entity<S>>,
+  extends SelectQuery<'InitManyAndReturn', S, S>,
+    IncludeQuery<'InitManyAndReturn', S, S>,
     ExecQuery<void> {}
 
 export interface InitManyAndReturnQuery<
   S extends StateDefinition,
-  R = Entity<S>,
+  P extends QueryProjection<S> = true,
+  R = NonNullable<unknown>,
 > extends SelectQuery<'InitManyAndReturn', S, S, R>,
-    IncludeQuery<'InitManyAndReturn', S, S, R>,
-    ExecQuery<EntityList<R>> {}
+    IncludeQuery<'InitManyAndReturn', S, S, P, R>,
+    ExecQuery<EntityList<QueryEntity<S, P, R>>> {}
 
 export interface InitManyQueryOptions<
   I extends StateDefinition,

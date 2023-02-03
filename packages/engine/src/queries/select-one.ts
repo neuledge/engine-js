@@ -1,16 +1,18 @@
-import { Entity } from '@/entity';
 import { StateDefinition } from '@/definitions';
 import { ChildQueryOptions } from './type';
 import { WhereQuery, WhereQueryOptions } from './where';
 import { MatchQuery, MatchQueryOptions } from './match';
 import { IncludeQuery, IncludeQueryOptions } from './include';
 import { RequireQuery, RequireQueryOptions } from './require';
-import { SelectQuery, SelectQueryOptions } from './select';
+import { QueryProjection, SelectQuery, SelectQueryOptions } from './select';
 
-export interface SelectOneQuery<S extends StateDefinition, R = Entity<S>>
-  extends SelectQuery<'SelectOne', S, S, R>,
-    IncludeQuery<'SelectOne', S, S, R>,
-    RequireQuery<'SelectOne', S, S, R>,
+export interface SelectOneQuery<
+  S extends StateDefinition,
+  P extends QueryProjection<S> = true,
+  R = NonNullable<unknown>,
+> extends SelectQuery<'SelectOne', S, S, R>,
+    IncludeQuery<'SelectOne', S, S, P, R>,
+    RequireQuery<'SelectOne', S, S, P, R>,
     WhereQuery<S>,
     MatchQuery<S> {}
 

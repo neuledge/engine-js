@@ -1,20 +1,27 @@
-import { Entity } from '@/entity';
 import { StateDefinition, StateDefinitionInitMethods } from '@/definitions';
 import { ExecQuery, ExecQueryOptions } from './exec';
 import { SingleArgsQueryOptions } from './method';
 import { RootQueryOptions } from './type';
 import { IncludeQuery, IncludeQueryOptions } from './include';
-import { SelectQuery, SelectQueryOptions } from './select';
+import {
+  QueryEntity,
+  QueryProjection,
+  SelectQuery,
+  SelectQueryOptions,
+} from './select';
 
 export interface InitOneQuery<S extends StateDefinition>
-  extends SelectQuery<'InitOneAndReturn', S, S, Entity<S>>,
-    IncludeQuery<'InitOneAndReturn', S, S, Entity<S>>,
+  extends SelectQuery<'InitOneAndReturn', S, S>,
+    IncludeQuery<'InitOneAndReturn', S, S>,
     ExecQuery<void> {}
 
-export interface InitOneAndReturnQuery<S extends StateDefinition, R = Entity<S>>
-  extends SelectQuery<'InitOneAndReturn', S, S, R>,
-    IncludeQuery<'InitOneAndReturn', S, S, R>,
-    ExecQuery<R> {}
+export interface InitOneAndReturnQuery<
+  S extends StateDefinition,
+  P extends QueryProjection<S> = true,
+  R = NonNullable<unknown>,
+> extends SelectQuery<'InitOneAndReturn', S, S, R>,
+    IncludeQuery<'InitOneAndReturn', S, S, P, R>,
+    ExecQuery<QueryEntity<S, P, R>> {}
 
 export interface InitOneQueryOptions<
   I extends StateDefinition,
