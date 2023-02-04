@@ -11,7 +11,7 @@ export interface UniqueQuery<
   M extends QueryMode,
   I extends StateDefinition,
   O extends StateDefinition,
-  P extends QueryProjection<O> = true,
+  P extends QueryProjection<O> = null,
   R = NonNullable<unknown>,
 > {
   /**

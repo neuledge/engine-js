@@ -14,7 +14,7 @@ import {
 
 export interface FindUniqueQuery<
   S extends StateDefinition,
-  P extends QueryProjection<S> = true,
+  P extends QueryProjection<S> = null,
   R = NonNullable<unknown>,
 > extends SelectQuery<'FindUnique', S, S, R>,
     IncludeQuery<'FindUnique', S, S, P, R>,
@@ -24,7 +24,7 @@ export interface FindUniqueQuery<
 
 export interface FindUniqueWhereQuery<
   S extends StateDefinition,
-  P extends QueryProjection<S> = true,
+  P extends QueryProjection<S> = null,
   R = NonNullable<unknown>,
 > extends SelectQuery<'FindUniqueWhere', S, S, R>,
     IncludeQuery<'FindUniqueWhere', S, S, P, R>,

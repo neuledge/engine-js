@@ -23,6 +23,7 @@ import { SelectOneQuery } from './select-one';
 import { MatchQuery } from './match';
 import { IncludeQuery, IncludeQueryOptions } from './include';
 import { RequireQuery, RequireQueryOptions } from './require';
+import { Return, AlterReturnQuery, AlterReturnQueryOptions } from './return';
 
 export class QueryClass<
   T extends QueryType,
@@ -32,6 +33,7 @@ export class QueryClass<
     SelectQuery<any, I, O, any>, // eslint-disable-line @typescript-eslint/no-explicit-any
     IncludeQuery<any, I, O, any, any>, // eslint-disable-line @typescript-eslint/no-explicit-any
     RequireQuery<any, I, O, any, any>, // eslint-disable-line @typescript-eslint/no-explicit-any
+    AlterReturnQuery<any, I, O>, // eslint-disable-line @typescript-eslint/no-explicit-any
     WhereQuery<I>,
     UniqueQuery<any, I, O, any, any>, // eslint-disable-line @typescript-eslint/no-explicit-any
     MatchQuery<I>,
@@ -48,8 +50,13 @@ export class QueryClass<
     }
   }
 
+  return(returns?: Return) {
+    (this.options as AlterReturnQueryOptions).returns = returns ?? 'new';
+    return this;
+  }
+
   select<P extends Select<O>>(select?: Subset<P, Select<O>>): this {
-    (this.options as SelectQueryOptions<O>).select = select ?? true;
+    (this.options as SelectQueryOptions<O>).select = select;
     return this;
   }
 

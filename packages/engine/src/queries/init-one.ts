@@ -9,15 +9,15 @@ import {
   SelectQuery,
   SelectQueryOptions,
 } from './select';
+import { InitReturnQuery, InitReturnQueryOptions } from './return';
 
 export interface InitOneQuery<S extends StateDefinition>
-  extends SelectQuery<'InitOneAndReturn', S, S>,
-    IncludeQuery<'InitOneAndReturn', S, S>,
+  extends InitReturnQuery<'InitOneAndReturn', S>,
     ExecQuery<void> {}
 
 export interface InitOneAndReturnQuery<
   S extends StateDefinition,
-  P extends QueryProjection<S> = true,
+  P extends QueryProjection<S> = null,
   R = NonNullable<unknown>,
 > extends SelectQuery<'InitOneAndReturn', S, S, R>,
     IncludeQuery<'InitOneAndReturn', S, S, P, R>,
@@ -28,6 +28,7 @@ export interface InitOneQueryOptions<
   O extends StateDefinition,
 > extends RootQueryOptions<'InitOne', I>,
     SingleArgsQueryOptions<I, StateDefinitionInitMethods<I>>,
+    InitReturnQueryOptions,
     SelectQueryOptions<O>,
     IncludeQueryOptions<O>,
     ExecQueryOptions<'InitOne', I, O> {

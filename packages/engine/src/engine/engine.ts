@@ -148,7 +148,7 @@ export class NeuledgeEngine {
   /**
    * Call a create mutation for the given state and create multiple new
    * entities.
-   * Returns void by default. Use the `.select()` method to return the created
+   * Returns void by default. Use the `.return()` method to return the created
    * entities.
    *
    * For example, for a state `DraftPost` with the create mutation `create`:
@@ -170,7 +170,7 @@ export class NeuledgeEngine {
 
   /**
    * Call a create mutation for the given state and create a new entity.
-   * Returns void by default. Use the `.select()` method to return the created
+   * Returns void by default. Use the `.return()` method to return the created
    * entity.
    *
    * For example, for a state `DraftPost` with the create mutation `create`:
@@ -195,9 +195,9 @@ export class NeuledgeEngine {
   /**
    * Call an update or delete mutation for the given states and alter multiple
    * entities at once.
-   * Returns void by default. Use the `.select()` method to return the altered
-   * entities. You may filter and limit the entities that are altered by using
-   * `.where()` or other methods.
+   * Returns void by default. Use the `.return()` method to return the original
+   * or altered entities. You may filter and limit the entities that are altered
+   * by using `.where()` or other methods.
    *
    * For example, for a state `DraftPost` with the update mutation `update`:
    * ```
@@ -220,9 +220,9 @@ export class NeuledgeEngine {
   /**
    * Call an update or delete mutation for the given states and alter the first
    * matching entity.
-   * Returns void by default. Use the `.select()` method to return the altered
-   * entity. You may filter and limit the entities that are altered by using
-   * `.where()` or other methods.
+   * Returns void by default. Use the `.return()` method to return the original
+   * or altered entities. You may filter and limit the entities that are altered
+   * by using `.where()` or other methods.
    *
    * For example, for a state `DraftPost` with the update mutation `update`:
    * ```
@@ -245,9 +245,10 @@ export class NeuledgeEngine {
   /**
    * Call an update or delete mutation for the given states and alter the first
    * matching entity.
-   * Returns void by default. Use the `.select()` method to return the altered
-   * entity. Throws an error if no entity was found. You may filter and limit
-   * the entities that are altered by using `.where()` or other methods.
+   * Returns void by default. Throws an error if no entity was found. Use the
+   * `.return()` method to return the original or altered entities. You may
+   * filter and limit the entities that are altered by using `.where()` or other
+   * methods.
    *
    * For example, for a state `DraftPost` with the update mutation `update`:
    * ```
@@ -272,8 +273,8 @@ export class NeuledgeEngine {
   /**
    * Call an update or delete mutation for the given states and alter the
    * uniquely matching entity.
-   * Returns void by default. Use the `.select()` method to return the altered
-   * entity. Use the `.unique()` method to specify the unique fields.
+   * Returns void by default. Use the `.return()` method to return the original
+   * or altered entity. Use the `.unique()` method to specify the unique fields.
    *
    * For example, for a state `DraftPost` with the update mutation `update`:
    * ```
@@ -299,9 +300,9 @@ export class NeuledgeEngine {
   /**
    * Call an update or delete mutation for the given states and alter the
    * uniquely matching entity.
-   * Returns void by default. Use the `.select()` method to return the altered
-   * entity. Throws an error if no entity was found. Use the `.unique()` method
-   * to specify the unique fields.
+   * Returns void by default. Throws an error if no entity was found. Use the
+   * `.return()` method to return the original or altered entity. Use the
+   * `.unique()` method to specify the unique fields.
    *
    * For example, for a state `DraftPost` with the update mutation `update`:
    * ```

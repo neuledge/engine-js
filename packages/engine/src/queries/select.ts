@@ -7,13 +7,13 @@ export interface SelectQuery<
   M extends QueryMode,
   I extends StateDefinition,
   O extends StateDefinition,
-  R = NonNullable<unknown>, // relations
+  R = NonNullable<unknown>,
 > {
   /**
    * Select and return all properties of the entity.
    * The return type will be the entity itself.
    */
-  select(): Query<M, I, O, true, R>;
+  select(): Query<M, I, O, null, R>;
 
   /**
    * Select and return a subset of the entity's properties.
@@ -28,14 +28,14 @@ export interface SelectQueryOptions<
   S extends StateDefinition,
   P extends Select<S> = Select<S>,
 > {
-  select?: P | true | null;
+  select?: P | null;
 }
 
 export type Select<S extends StateDefinition> = {
   [K in keyof Merge<StateType<S>>]?: boolean;
 };
 
-export type QueryProjection<S extends StateDefinition> = Select<S> | true;
+export type QueryProjection<S extends StateDefinition> = Select<S> | null;
 
 export type QueryEntity<
   S extends StateDefinition,

@@ -16,7 +16,7 @@ import { RequireQuery, RequireQueryOptions } from './require';
 
 export interface FindFirstOrThrowQuery<
   S extends StateDefinition,
-  P extends QueryProjection<S> = true,
+  P extends QueryProjection<S> = null,
   R = NonNullable<unknown>,
 > extends SelectQuery<'FindFirstOrThrow', S, S, R>,
     IncludeQuery<'FindFirstOrThrow', S, S, P, R>,

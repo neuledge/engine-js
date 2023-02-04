@@ -47,7 +47,7 @@ export type Query<
   M extends QueryMode,
   I extends StateDefinition, // input state
   O extends StateDefinition, // output state
-  P extends QueryProjection<O> = true, // projection
+  P extends QueryProjection<O> = null, // projection
   R = NonNullable<unknown>, // relations
 > = QueryModes<I, O, P, R>[M];
 

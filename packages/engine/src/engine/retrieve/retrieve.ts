@@ -3,44 +3,50 @@ import { StateDefinition } from '@/definitions';
 import { Entity, ProjectedEntity } from '@/entity';
 import { NeuledgeError } from '@/error';
 import { EntityList } from '@/list';
-import {
-  IncludeQueryOptions,
-  RequireQueryOptions,
-  Select,
-  SelectQueryOptions,
-} from '@/queries';
+import { IncludeQueryOptions, Select, SelectQueryOptions } from '@/queries';
+import { AlterReturnQueryOptions } from '@/queries/return';
 
-export type UpdatedEntity<S extends StateDefinition> = {
+export interface AlteredEntity<S extends StateDefinition> {
+  oldEntity: Entity<S> | null;
   entity: Entity<S>;
   document: StoreDocument;
-};
+}
 
 export const retrieveEntities = async <
   S extends StateDefinition,
   P extends Select<S>,
 >(
-  entities: EntityList<UpdatedEntity<S>>,
+  entities: EntityList<AlteredEntity<S>>,
   {
+    returns,
     select,
     includeOne,
     includeMany,
-    requireOne,
-  }: SelectQueryOptions<S, P> & IncludeQueryOptions<S> & RequireQueryOptions<S>,
+  }: AlterReturnQueryOptions &
+    SelectQueryOptions<S, P> &
+    IncludeQueryOptions<S>,
 ): Promise<
   EntityList<ProjectedEntity<S, P>> | EntityList<Entity<S>> | void
 > => {
-  if (!select) return;
+  if (!returns) return;
 
-  if (includeOne || includeMany || requireOne) {
-    // FIXME support include and require options
+  if (includeOne || includeMany) {
+    // FIXME support include options
 
     throw new NeuledgeError(
       NeuledgeError.Code.NOT_IMPLEMENTED,
-      'Include and require options are not supported yet',
+      'Include options are not supported yet',
     );
   }
 
-  if (select === true) {
+  if (returns === 'old') {
+    return Object.assign(
+      entities.map((entity) => entity.oldEntity as Entity<S>),
+      { nextOffset: entities.nextOffset },
+    );
+  }
+
+  if (select == null) {
     return Object.assign(
       entities.map((entity) => entity.entity),
       { nextOffset: entities.nextOffset },

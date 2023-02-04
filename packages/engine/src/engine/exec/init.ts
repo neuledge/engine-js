@@ -52,7 +52,7 @@ export const execInitMany = async <S extends StateDefinition>(
     const document = { ...oldDoc, ...insertedIds[i] };
     const entity = toEntityOrThrow(metadata, collection, document);
 
-    return { entity, document };
+    return { entity, document, oldEntity: null };
   });
 
   return retrieveEntities(updatedEntities, options);

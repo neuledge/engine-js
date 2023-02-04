@@ -11,14 +11,12 @@ import {
   SelectQueryOptions,
 } from './select';
 import { IncludeQuery, IncludeQueryOptions } from './include';
-import { RequireQuery, RequireQueryOptions } from './require';
+import { AlterReturnQuery, AlterReturnQueryOptions } from './return';
 
 export interface AlterFirstQuery<
   I extends StateDefinition,
   O extends StateDefinition,
-> extends SelectQuery<'AlterFirstAndReturn', I, O>,
-    IncludeQuery<'AlterFirstAndReturn', I, O>,
-    RequireQuery<'AlterFirstAndReturn', I, O>,
+> extends AlterReturnQuery<'AlterFirstAndReturn', I, O>,
     WhereQuery<I>,
     MatchQuery<I>,
     ExecQuery<void> {}
@@ -26,11 +24,10 @@ export interface AlterFirstQuery<
 export interface AlterFirstAndReturnQuery<
   I extends StateDefinition,
   O extends StateDefinition,
-  P extends QueryProjection<O> = true,
+  P extends QueryProjection<O> = null,
   R = NonNullable<unknown>,
 > extends SelectQuery<'AlterFirstAndReturn', I, O, R>,
     IncludeQuery<'AlterFirstAndReturn', I, O, P, R>,
-    RequireQuery<'AlterFirstAndReturn', I, O, P, R>,
     WhereQuery<I>,
     MatchQuery<I>,
     ExecQuery<QueryEntity<O, P, R> | null> {}
@@ -40,9 +37,9 @@ export interface AlterFirstQueryOptions<
   O extends StateDefinition,
 > extends RootQueryOptions<'AlterFirst', I>,
     SingleArgsQueryOptions<I, StateDefinitionAlterMethods<I>>,
+    AlterReturnQueryOptions,
     SelectQueryOptions<O>,
     IncludeQueryOptions<O>,
-    RequireQueryOptions<O>,
     WhereQueryOptions<I>,
     MatchQueryOptions<I>,
     ExecQueryOptions<'AlterFirst', I, O> {}

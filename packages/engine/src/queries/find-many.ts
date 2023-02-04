@@ -18,7 +18,7 @@ import { RequireQuery, RequireQueryOptions } from './require';
 
 export interface FindManyQuery<
   S extends StateDefinition,
-  P extends QueryProjection<S> = true,
+  P extends QueryProjection<S> = null,
   R = NonNullable<unknown>,
 > extends SelectQuery<'FindMany', S, S, R>,
     IncludeQuery<'FindMany', S, S, P, R>,

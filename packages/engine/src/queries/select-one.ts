@@ -8,7 +8,7 @@ import { QueryProjection, SelectQuery, SelectQueryOptions } from './select';
 
 export interface SelectOneQuery<
   S extends StateDefinition,
-  P extends QueryProjection<S> = true,
+  P extends QueryProjection<S> = null,
   R = NonNullable<unknown>,
 > extends SelectQuery<'SelectOne', S, S, R>,
     IncludeQuery<'SelectOne', S, S, P, R>,

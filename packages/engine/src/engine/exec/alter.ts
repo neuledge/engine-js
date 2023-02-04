@@ -43,8 +43,7 @@ import {
   convertWhereQuery,
 } from '../filter';
 import { convertIncludeQuery } from '../retrieve/include';
-import { convertRequireQuery } from '../retrieve/require';
-import { retrieveEntities, UpdatedEntity } from '../retrieve';
+import { retrieveEntities, AlteredEntity } from '../retrieve';
 
 const ALTER_VERSION_RETRIES = 3;
 
@@ -64,7 +63,7 @@ type ReturnState<S extends StateDefinition> = StateDefinitionMutationsReturn<
 >;
 
 type AlterContext<S extends StateDefinition> = {
-  entities: Map<string, UpdatedEntity<ReturnState<S>>>;
+  entities: Map<string, AlteredEntity<ReturnState<S>>>;
   metadata: Metadata;
   store: Store;
   collection: MetadataCollection;
@@ -152,7 +151,7 @@ const preprareAlter = async <S extends StateDefinition>(
     return deleteDocuments(engine.store, storeFilters, options);
   }
 
-  const res = new Map<string, UpdatedEntity<ReturnState<S>>>();
+  const res = new Map<string, AlteredEntity<ReturnState<S>>>();
 
   return {
     entities: res,
@@ -178,7 +177,6 @@ const createStoreFilters = <S extends StateDefinition>(
   // to the user
 
   ...convertIncludeQuery(metadata, collection, options),
-  ...convertRequireQuery(metadata, collection, options),
 
   ...('unique' in options
     ? convertUniqueQuery(collection, options)
@@ -264,7 +262,7 @@ const alterDocuments = async <S extends StateDefinition>(
 
     const key = getDocumentKey(ctx.collection, document);
 
-    ctx.entities.set(key, { document, entity });
+    ctx.entities.set(key, { document, entity, oldEntity: entities[i] });
   }
 };
 

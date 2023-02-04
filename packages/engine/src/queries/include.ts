@@ -18,7 +18,7 @@ export interface IncludeQuery<
   M extends QueryMode,
   I extends StateDefinition,
   O extends StateDefinition,
-  P extends QueryProjection<O> = true, // projection
+  P extends QueryProjection<O> = null, // projection
   R = NonNullable<unknown>, // relations
 > {
   /**

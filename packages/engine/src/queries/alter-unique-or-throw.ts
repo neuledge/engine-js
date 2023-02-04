@@ -11,14 +11,12 @@ import {
   SelectQueryOptions,
 } from './select';
 import { IncludeQuery, IncludeQueryOptions } from './include';
-import { RequireQuery, RequireQueryOptions } from './require';
+import { AlterReturnQuery, AlterReturnQueryOptions } from './return';
 
 export interface AlterUniqueOrThrowQuery<
   I extends StateDefinition,
   O extends StateDefinition,
-> extends SelectQuery<'AlterUniqueAndReturnOrThrow', I, O>,
-    IncludeQuery<'AlterUniqueAndReturnOrThrow', I, O>,
-    RequireQuery<'AlterUniqueAndReturnOrThrow', I, O>,
+> extends AlterReturnQuery<'AlterUniqueAndReturnOrThrow', I, O>,
     UniqueQuery<'AlterUniqueWhereOrThrow', I, O>,
     MatchQuery<I>,
     ExecQuery<void> {}
@@ -26,22 +24,19 @@ export interface AlterUniqueOrThrowQuery<
 export interface AlterUniqueAndReturnOrThrowQuery<
   I extends StateDefinition,
   O extends StateDefinition,
-  P extends QueryProjection<O> = true,
+  P extends QueryProjection<O> = null,
   R = NonNullable<unknown>,
 > extends SelectQuery<'AlterUniqueAndReturnOrThrow', I, O, R>,
     IncludeQuery<'AlterUniqueAndReturnOrThrow', I, O, P, R>,
-    RequireQuery<'AlterUniqueAndReturnOrThrow', I, O, P, R>,
     UniqueQuery<'AlterUniqueWhereAndReturnOrThrow', I, O, P, R>,
     MatchQuery<I> {}
 
 export interface AlterUniqueWhereOrThrowQuery<
   I extends StateDefinition,
   O extends StateDefinition,
-  P extends QueryProjection<O> = true,
+  P extends QueryProjection<O> = null,
   R = NonNullable<unknown>,
-> extends SelectQuery<'AlterUniqueWhereAndReturnOrThrow', I, O, R>,
-    IncludeQuery<'AlterUniqueWhereAndReturnOrThrow', I, O, P, R>,
-    RequireQuery<'AlterUniqueWhereAndReturnOrThrow', I, O, P, R>,
+> extends AlterReturnQuery<'AlterUniqueWhereAndReturnOrThrow', I, O>,
     UniqueQuery<'AlterUniqueWhereOrThrow', I, O, P, R>,
     MatchQuery<I>,
     ExecQuery<void> {}
@@ -49,11 +44,10 @@ export interface AlterUniqueWhereOrThrowQuery<
 export interface AlterUniqueWhereAndReturnOrThrowQuery<
   I extends StateDefinition,
   O extends StateDefinition,
-  P extends QueryProjection<O> = true,
+  P extends QueryProjection<O> = null,
   R = NonNullable<unknown>,
 > extends SelectQuery<'AlterUniqueWhereAndReturnOrThrow', I, O, R>,
     IncludeQuery<'AlterUniqueWhereAndReturnOrThrow', I, O, P, R>,
-    RequireQuery<'AlterUniqueWhereAndReturnOrThrow', I, O, P, R>,
     UniqueQuery<'AlterUniqueWhereAndReturnOrThrow', I, O, P, R>,
     MatchQuery<I>,
     ExecQuery<QueryEntity<O, P, R>> {}
@@ -63,9 +57,9 @@ export interface AlterUniqueOrThrowQueryOptions<
   O extends StateDefinition,
 > extends RootQueryOptions<'AlterUniqueOrThrow', I>,
     SingleArgsQueryOptions<I, StateDefinitionAlterMethods<I>>,
+    AlterReturnQueryOptions,
     SelectQueryOptions<O>,
     IncludeQueryOptions<O>,
-    RequireQueryOptions<O>,
     UniqueQueryOptions<I>,
     MatchQueryOptions<I>,
     ExecQueryOptions<'AlterUniqueOrThrow', I, O> {}
