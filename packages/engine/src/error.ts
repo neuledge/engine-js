@@ -4,6 +4,9 @@ enum NeuledgeErrorCode {
   // version checks
   VERSION_MISMATCH = 'VERSION_MISMATCH',
 
+  // argument errors
+  INVALID_ARGUMENT = 'INVALID_ARGUMENT',
+
   // document checks
   DOCUMENT_NOT_FOUND = 'DOCUMENT_NOT_FOUND',
 

@@ -22,9 +22,9 @@ export const loadMetadata = async (
     await getStoreMetadataSnapshot(metadata, store, metadataCollection),
   );
 
-  for (const change of changes) {
-    // FIXME handle changes
-  }
+  // FIXME handle changes
+  // for (const change of changes) {
+  // }
 
   await syncStoreMetadata(store, metadataCollection, changes);
 

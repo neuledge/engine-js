@@ -48,7 +48,7 @@ export const resolvers: Resolvers = {
           content: data.content,
           category: data.categoryId ? { id: data.categoryId } : null,
         })
-        .return(),
+        .select(),
 
     updatePost: async (_, { id, data }) =>
       engine
@@ -59,10 +59,10 @@ export const resolvers: Resolvers = {
           category: { id: data.categoryId },
         })
         .unique({ id })
-        .return(),
+        .select(),
 
     publishPost: async (_, { id }) =>
-      engine.alterUniqueOrThrow(DraftPost).publish().unique({ id }).return(),
+      engine.alterUniqueOrThrow(DraftPost).publish().unique({ id }).select(),
 
     deletePost: async (_, { id }) =>
       engine
@@ -72,10 +72,10 @@ export const resolvers: Resolvers = {
         .then(() => null),
 
     createCategory: async (_, { data }) =>
-      engine.initOne(Category).create(data).return(),
+      engine.initOne(Category).create(data).select(),
 
     updateCategory: async (_, { id, data }) =>
-      engine.alterUniqueOrThrow(Category).update(data).unique({ id }).return(),
+      engine.alterUniqueOrThrow(Category).update(data).unique({ id }).select(),
 
     deleteCategory: async (_, { id }) =>
       engine

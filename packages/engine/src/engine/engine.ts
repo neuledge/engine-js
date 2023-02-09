@@ -79,6 +79,7 @@ export class NeuledgeEngine {
     return new QueryClass({
       type: 'FindMany',
       states,
+      select: true,
       exec: (options) => execFindMany(this, options),
     });
   }
@@ -93,6 +94,7 @@ export class NeuledgeEngine {
     return new QueryClass({
       type: 'FindUnique',
       states,
+      select: true,
       unique: true,
       exec: (options) => execFindUnique(this, options),
     });
@@ -110,6 +112,7 @@ export class NeuledgeEngine {
     return new QueryClass({
       type: 'FindUniqueOrThrow',
       states,
+      select: true,
       unique: true,
       exec: (options) => execFindUniqueOrThrow(this, options),
     });
@@ -124,6 +127,7 @@ export class NeuledgeEngine {
     return new QueryClass({
       type: 'FindFirst',
       states,
+      select: true,
       exec: (options) => execFindFirst(this, options),
     });
   }
@@ -139,6 +143,7 @@ export class NeuledgeEngine {
     return new QueryClass({
       type: 'FindFirstOrThrow',
       states,
+      select: true,
       exec: (options) => execFindFirstOrThrow(this, options),
     });
   }
@@ -148,7 +153,7 @@ export class NeuledgeEngine {
   /**
    * Call a create mutation for the given state and create multiple new
    * entities.
-   * Returns void by default. Use the `.return()` method to return the created
+   * Returns void by default. Use the `.select()` method to return the created
    * entities.
    *
    * For example, for a state `DraftPost` with the create mutation `create`:
@@ -170,7 +175,7 @@ export class NeuledgeEngine {
 
   /**
    * Call a create mutation for the given state and create a new entity.
-   * Returns void by default. Use the `.return()` method to return the created
+   * Returns void by default. Use the `.select()` method to return the created
    * entity.
    *
    * For example, for a state `DraftPost` with the create mutation `create`:
@@ -211,6 +216,7 @@ export class NeuledgeEngine {
       (options) =>
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         new QueryClass<'AlterMany', S, any>({
+          returns: 'new',
           ...options,
           exec: (options) => execAlterMany(this, options),
         }),
@@ -236,6 +242,7 @@ export class NeuledgeEngine {
       (options) =>
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         new QueryClass<'AlterFirst', S, any>({
+          returns: 'new',
           ...options,
           exec: (options) => execAlterOne(this, options),
         }),
@@ -264,6 +271,7 @@ export class NeuledgeEngine {
       (options) =>
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         new QueryClass<'AlterFirstOrThrow', S, any>({
+          returns: 'new',
           ...options,
           exec: (options) => execAlterOne(this, options),
         }),
@@ -290,6 +298,7 @@ export class NeuledgeEngine {
       (options) =>
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         new QueryClass<'AlterUnique', S, any>({
+          returns: 'new',
           ...options,
           unique: true,
           exec: (options) => execAlterOne(this, options),
@@ -318,6 +327,7 @@ export class NeuledgeEngine {
       (options) =>
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         new QueryClass<'AlterUniqueOrThrow', S, any>({
+          returns: 'new',
           ...options,
           unique: true,
           exec: (options) => execAlterOne(this, options),

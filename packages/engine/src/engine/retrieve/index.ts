@@ -1,4 +1,4 @@
-export * from './include';
-export * from './require';
+export * from './expand';
+export * from './populate';
 export * from './retrieve';
 export * from './select';

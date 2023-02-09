@@ -1,0 +1,51 @@
+import { StateDefinition, StateDefinitionAlterMethods } from '@/definitions';
+import {
+  ExecQuery,
+  ExecQueryOptions,
+  MatchQuery,
+  MatchQueryOptions,
+  PopulateQuery,
+  PopulateQueryOptions,
+  QueryEntity,
+  QueryProjection,
+  ReturnQuery,
+  ReturnQueryOptions,
+  RootQueryOptions,
+  SelectQuery,
+  SelectQueryOptions,
+  SingleArgsQueryOptions,
+  WhereQuery,
+  WhereQueryOptions,
+} from '../raw';
+
+export interface AlterFirstOrThrowQuery<
+  I extends StateDefinition,
+  O extends StateDefinition,
+> extends ReturnQuery<'AlterFirstAndReturnOrThrow', I, O>,
+    SelectQuery<'AlterFirstAndReturnOrThrow', I, O>,
+    WhereQuery<I>,
+    MatchQuery<I>,
+    ExecQuery<void> {}
+
+export interface AlterFirstAndReturnOrThrowQuery<
+  I extends StateDefinition,
+  O extends StateDefinition,
+  P extends QueryProjection<O>,
+  R,
+> extends SelectQuery<'AlterFirstAndReturnOrThrow', I, O, R>,
+    PopulateQuery<'AlterFirstAndReturnOrThrow', I, O, P, R>,
+    WhereQuery<I>,
+    MatchQuery<I>,
+    ExecQuery<QueryEntity<O, P, R>> {}
+
+export interface AlterFirstOrThrowQueryOptions<
+  I extends StateDefinition,
+  O extends StateDefinition,
+> extends RootQueryOptions<'AlterFirstOrThrow', I>,
+    SingleArgsQueryOptions<I, StateDefinitionAlterMethods<I>>,
+    ReturnQueryOptions,
+    SelectQueryOptions<O>,
+    PopulateQueryOptions<O>,
+    WhereQueryOptions<I>,
+    MatchQueryOptions<I>,
+    ExecQueryOptions<'AlterFirstOrThrow', I, O> {}

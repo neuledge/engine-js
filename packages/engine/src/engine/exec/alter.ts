@@ -42,8 +42,11 @@ import {
   convertUniqueQuery,
   convertWhereQuery,
 } from '../filter';
-import { convertIncludeQuery } from '../retrieve/include';
-import { retrieveEntities, AlteredEntity } from '../retrieve';
+import {
+  retrieveEntities,
+  AlteredEntity,
+  convertPopulateQuery,
+} from '../retrieve';
 
 const ALTER_VERSION_RETRIES = 3;
 
@@ -176,7 +179,7 @@ const createStoreFilters = <S extends StateDefinition>(
   // current state of the entity. we will use select later to project the result
   // to the user
 
-  ...convertIncludeQuery(metadata, collection, options),
+  ...convertPopulateQuery(metadata, collection, options),
 
   ...('unique' in options
     ? convertUniqueQuery(collection, options)

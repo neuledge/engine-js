@@ -1,54 +1,55 @@
 import { StateDefinition } from '@/definitions';
-import { InitManyAndReturnQuery, InitManyQueryOptions } from './init-many';
-import { InitOneAndReturnQuery, InitOneQueryOptions } from './init-one';
+import {
+  InitManyAndReturnQuery,
+  InitManyQueryOptions,
+  InitOneAndReturnQuery,
+  InitOneQueryOptions,
+} from './init';
+import { FilterQueryOptions } from './raw';
+import {
+  AlterFirstAndReturnOrThrowQuery,
+  AlterFirstAndReturnQuery,
+  AlterFirstOrThrowQueryOptions,
+  AlterFirstQueryOptions,
+  AlterManyAndReturnQuery,
+  AlterManyQueryOptions,
+  AlterUniqueAndReturnOrThrowQuery,
+  AlterUniqueAndReturnQuery,
+  AlterUniqueOrThrowQueryOptions,
+  AlterUniqueQueryOptions,
+  AlterUniqueWhereAndReturnOrThrowQuery,
+  AlterUniqueWhereAndReturnQuery,
+  AlterUniqueWhereOrThrowQuery,
+  AlterUniqueWhereQuery,
+} from './alter';
 import {
   FindFirstOrThrowQuery,
   FindFirstOrThrowQueryOptions,
-} from './find-first-or-throw';
-import { FindFirstQuery, FindFirstQueryOptions } from './find-first';
-import { FindManyQuery, FindManyQueryOptions } from './find-many';
-import {
+  FindFirstQuery,
+  FindFirstQueryOptions,
+  FindManyQuery,
+  FindManyQueryOptions,
   FindUniqueOrThrowQuery,
   FindUniqueOrThrowQueryOptions,
-  FindUniqueWhereOrThrowQuery,
-} from './find-unique-or-throw';
-import {
   FindUniqueQuery,
   FindUniqueQueryOptions,
+  FindUniqueWhereOrThrowQuery,
   FindUniqueWhereQuery,
-} from './find-unique';
-import { SelectManyQuery, SelectManyQueryOptions } from './select-many';
-import { SelectOneQuery, SelectOneQueryOptions } from './select-one';
+} from './find';
 import {
-  AlterFirstAndReturnOrThrowQuery,
-  AlterFirstOrThrowQueryOptions,
-} from './alter-first-or-throw';
-import {
-  AlterFirstAndReturnQuery,
-  AlterFirstQueryOptions,
-} from './alter-first';
-import { AlterManyAndReturnQuery, AlterManyQueryOptions } from './alter-many';
-import {
-  AlterUniqueAndReturnOrThrowQuery,
-  AlterUniqueOrThrowQueryOptions,
-  AlterUniqueWhereAndReturnOrThrowQuery,
-  AlterUniqueWhereOrThrowQuery,
-} from './alter-unique-or-throw';
-import {
-  AlterUniqueAndReturnQuery,
-  AlterUniqueQueryOptions,
-  AlterUniqueWhereAndReturnQuery,
-  AlterUniqueWhereQuery,
-} from './alter-unique';
-import { FilterQueryOptions } from './filter';
-import { QueryProjection } from './select';
+  QueryProjection,
+  SelectManyQuery,
+  SelectManyQueryOptions,
+  SelectOneQuery,
+  SelectOneQueryOptions,
+} from './raw';
 
 export type Query<
   M extends QueryMode,
   I extends StateDefinition, // input state
   O extends StateDefinition, // output state
-  P extends QueryProjection<O> = null, // projection
-  R = NonNullable<unknown>, // relations
+  P extends QueryProjection<O>, // projection
+  R, // relations
 > = QueryModes<I, O, P, R>[M];
 
 export type QueryOptions<
@@ -117,6 +118,6 @@ interface QueryOptionsTypes<
   FindMany: FindManyQueryOptions<I, O>;
   FindUniqueOrThrow: FindUniqueOrThrowQueryOptions<I, O>;
   FindUnique: FindUniqueQueryOptions<I, O>;
-  SelectMany: SelectManyQueryOptions<I, O>;
-  SelectOne: SelectOneQueryOptions<I, O>;
+  SelectMany: SelectManyQueryOptions<O>;
+  SelectOne: SelectOneQueryOptions<O>;
 }

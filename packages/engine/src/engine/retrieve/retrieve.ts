@@ -3,8 +3,12 @@ import { StateDefinition } from '@/definitions';
 import { Entity, ProjectedEntity } from '@/entity';
 import { NeuledgeError } from '@/error';
 import { EntityList } from '@/list';
-import { IncludeQueryOptions, Select, SelectQueryOptions } from '@/queries';
-import { AlterReturnQueryOptions } from '@/queries/return';
+import {
+  PopulateQueryOptions,
+  ReturnQueryOptions,
+  Select,
+  SelectQueryOptions,
+} from '@/queries';
 
 export interface AlteredEntity<S extends StateDefinition> {
   oldEntity: Entity<S> | null;
@@ -20,22 +24,22 @@ export const retrieveEntities = async <
   {
     returns,
     select,
-    includeOne,
-    includeMany,
-  }: AlterReturnQueryOptions &
+    populateMany,
+    populateOne,
+  }: Partial<ReturnQueryOptions> &
     SelectQueryOptions<S, P> &
-    IncludeQueryOptions<S>,
+    PopulateQueryOptions<S>,
 ): Promise<
   EntityList<ProjectedEntity<S, P>> | EntityList<Entity<S>> | void
 > => {
-  if (!returns) return;
+  if (!select) return;
 
-  if (includeOne || includeMany) {
-    // FIXME support include options
+  if (populateMany || populateOne) {
+    // FIXME support populate options
 
     throw new NeuledgeError(
       NeuledgeError.Code.NOT_IMPLEMENTED,
-      'Include options are not supported yet',
+      'Populate options are not supported yet',
     );
   }
 
@@ -46,7 +50,7 @@ export const retrieveEntities = async <
     );
   }
 
-  if (select == null) {
+  if (select == true) {
     return Object.assign(
       entities.map((entity) => entity.entity),
       { nextOffset: entities.nextOffset },

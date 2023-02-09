@@ -1,39 +1,56 @@
 import {
+  StateAllRelations,
   StateDefinition,
-  StateDefinitionIncludeManyKeys,
-  StateDefinitionIncludeOneKeys,
-  StateDefinitionMatchKeys,
-  StateDefinitionRelationState,
-  StateDefinitionRequireOneKeys,
+  StateManyRelations,
+  StateOneRelations,
+  StateRelationStates,
 } from '@/definitions';
 import { EntityListOffset } from '@/list';
-import { ExecQuery, ExecQueryOptions } from './exec';
-import { FilterQuery, FilterQueryOptions } from './filter';
-import { LimitQuery, LimitQueryOptions } from './limit';
-import { OffsetQuery, OffsetQueryOptions } from './offset';
+import {
+  ExecQuery,
+  ExecQueryOptions,
+  ExpandQuery,
+  ExpandQueryOptions,
+  ExpandQueryParam,
+  FilterQueryOptions,
+  LimitQuery,
+  LimitQueryOptions,
+  MatchQuery,
+  MatchQueryParam,
+  OffsetQuery,
+  OffsetQueryOptions,
+  PopulateManyQueryParam,
+  PopulateOneQueryParam,
+  PopulateQuery,
+  PopulateQueryOptions,
+  Return,
+  ReturnQuery,
+  ReturnQueryOptions,
+  Select,
+  SelectParam,
+  SelectQuery,
+  SelectQueryOptions,
+  SortField,
+  SortIndex,
+  SortQueryOptions,
+  Unique,
+  UniqueQuery,
+  UniqueQueryOptions,
+  Where,
+  WhereQuery,
+} from './raw';
 import { QueryOptions, QueryType } from './query';
-import { SortField, SortIndex, SortQueryOptions } from './sort';
-import { Unique, UniqueQuery, UniqueQueryOptions } from './unique';
-import { Subset } from './utils';
-import { Where, WhereQuery } from './where';
-import { Select, SelectQuery, SelectQueryOptions } from './select';
 import { NeuledgeError } from '@/error';
-import { SelectManyQuery } from './select-many';
-import { SelectOneQuery } from './select-one';
-import { MatchQuery } from './match';
-import { IncludeQuery, IncludeQueryOptions } from './include';
-import { RequireQuery, RequireQueryOptions } from './require';
-import { Return, AlterReturnQuery, AlterReturnQueryOptions } from './return';
 
 export class QueryClass<
   T extends QueryType,
   I extends StateDefinition,
   O extends StateDefinition,
 > implements
+    ReturnQuery<any, I, O>, // eslint-disable-line @typescript-eslint/no-explicit-any
     SelectQuery<any, I, O, any>, // eslint-disable-line @typescript-eslint/no-explicit-any
-    IncludeQuery<any, I, O, any, any>, // eslint-disable-line @typescript-eslint/no-explicit-any
-    RequireQuery<any, I, O, any, any>, // eslint-disable-line @typescript-eslint/no-explicit-any
-    AlterReturnQuery<any, I, O>, // eslint-disable-line @typescript-eslint/no-explicit-any
+    ExpandQuery<any, I, O, any, any>, // eslint-disable-line @typescript-eslint/no-explicit-any
+    PopulateQuery<any, I, O, any, any>, // eslint-disable-line @typescript-eslint/no-explicit-any
     WhereQuery<I>,
     UniqueQuery<any, I, O, any, any>, // eslint-disable-line @typescript-eslint/no-explicit-any
     MatchQuery<I>,
@@ -51,113 +68,122 @@ export class QueryClass<
   }
 
   return(returns?: Return) {
-    (this.options as AlterReturnQueryOptions).returns = returns ?? 'new';
+    (this.options as ReturnQueryOptions).returns = returns ?? 'new';
+    (this.options as SelectQueryOptions<O>).select = true;
+
     return this;
   }
 
-  select<P extends Select<O>>(select?: Subset<P, Select<O>>): this {
-    (this.options as SelectQueryOptions<O>).select = select;
+  select<P extends Select<O>>(select?: SelectParam<O, P>): this {
+    (this.options as SelectQueryOptions<O>).select = select ?? true;
     return this;
   }
 
-  includeMany<K extends StateDefinitionIncludeManyKeys<O>>(
+  expand<K extends StateOneRelations<O>>(
     key: K,
-    states?: StateDefinitionRelationState<O, K>[] | null,
-    query?: (
-      query: SelectManyQuery<StateDefinitionRelationState<O, K>>,
-    ) => SelectManyQuery<StateDefinitionRelationState<O, K>>,
+    states?:
+      | StateRelationStates<O, K>[]
+      | ExpandQueryParam<StateRelationStates<O, K>>,
+    query?: ExpandQueryParam<StateRelationStates<O, K>>,
   ): this {
-    let rel: QueryClass<
+    if (states !== undefined && !Array.isArray(states)) {
+      query = states;
+      states = undefined;
+    }
+
+    let rel = new QueryClass<
+      'SelectOne',
+      StateRelationStates<O, K>,
+      StateRelationStates<O, K>
+    >({
+      type: 'SelectOne',
+      states,
+    });
+
+    if (query) {
+      rel = query(rel) as typeof rel;
+    } else {
+      rel.select();
+    }
+
+    const options = this.options as ExpandQueryOptions<O>;
+
+    if (!options.expand) {
+      options.expand = {};
+    }
+    options.expand[key] = rel.options;
+
+    return this;
+  }
+
+  populateOne<K extends StateOneRelations<O>>(
+    key: K,
+    states?:
+      | StateRelationStates<O, K>[]
+      | PopulateOneQueryParam<StateRelationStates<O, K>>,
+    query?: PopulateOneQueryParam<StateRelationStates<O, K>>,
+  ): this {
+    if (states !== undefined && !Array.isArray(states)) {
+      query = states;
+      states = undefined;
+    }
+
+    let rel = new QueryClass<
+      'SelectOne',
+      StateRelationStates<O, K>,
+      StateRelationStates<O, K>
+    >({
+      type: 'SelectOne',
+      select: true,
+      states,
+    });
+
+    if (query) {
+      rel = query(rel) as typeof rel;
+    }
+
+    const options = this.options as PopulateQueryOptions<O>;
+
+    if (!options.populateOne) {
+      options.populateOne = {};
+    }
+    options.populateOne[key] = rel.options;
+
+    return this;
+  }
+
+  populateMany<K extends StateManyRelations<O>>(
+    key: K,
+    states?:
+      | StateRelationStates<O, K>[]
+      | PopulateManyQueryParam<StateRelationStates<O, K>>,
+    query?: PopulateManyQueryParam<StateRelationStates<O, K>>,
+  ): this {
+    if (states !== undefined && !Array.isArray(states)) {
+      query = states;
+      states = undefined;
+    }
+
+    let rel = new QueryClass<
       'SelectMany',
-      StateDefinitionRelationState<O, K>,
-      StateDefinitionRelationState<O, K>
-    > = new QueryClass({
+      StateRelationStates<O, K>,
+      StateRelationStates<O, K>
+    >({
       type: 'SelectMany',
+      select: true,
       states,
     });
 
     if (query) {
-      rel = query(rel) as QueryClass<
-        'SelectMany',
-        StateDefinitionRelationState<O, K>,
-        StateDefinitionRelationState<O, K>
-      >;
+      rel = query(rel) as typeof rel;
     }
 
-    const options = this.options as IncludeQueryOptions<O>;
+    const options = this.options as PopulateQueryOptions<O>;
 
-    if (!options.includeMany) {
-      options.includeMany = {};
+    if (!options.populateMany) {
+      options.populateMany = {};
     }
-    options.includeMany[key] = rel.options;
-
-    return this;
-  }
-
-  includeOne<K extends StateDefinitionIncludeOneKeys<O>>(
-    key: K,
-    states?: StateDefinitionRelationState<O, K>[] | null,
-    query?: (
-      rel: SelectOneQuery<StateDefinitionRelationState<O, K>>,
-    ) => SelectOneQuery<StateDefinitionRelationState<O, K>>,
-  ): this {
-    let rel: QueryClass<
-      'SelectOne',
-      StateDefinitionRelationState<O, K>,
-      StateDefinitionRelationState<O, K>
-    > = new QueryClass({
-      type: 'SelectOne',
-      states,
-    });
-
-    if (query) {
-      rel = query(rel) as QueryClass<
-        'SelectOne',
-        StateDefinitionRelationState<O, K>,
-        StateDefinitionRelationState<O, K>
-      >;
-    }
-
-    const options = this.options as IncludeQueryOptions<O>;
-
-    if (!options.includeOne) {
-      options.includeOne = {};
-    }
-    options.includeOne[key] = rel.options;
-
-    return this;
-  }
-
-  requireOne<K extends StateDefinitionRequireOneKeys<O>>(
-    key: K,
-    states?: StateDefinitionRelationState<O, K>[] | null,
-    query?: (
-      rel: SelectOneQuery<StateDefinitionRelationState<O, K>>,
-    ) => SelectOneQuery<StateDefinitionRelationState<O, K>>,
-  ): this {
-    let rel: QueryClass<
-      'SelectOne',
-      StateDefinitionRelationState<O, K>,
-      StateDefinitionRelationState<O, K>
-    > = new QueryClass({
-      type: 'SelectOne',
-      states,
-    });
-
-    if (query) {
-      rel = query(rel) as QueryClass<
-        'SelectOne',
-        StateDefinitionRelationState<O, K>,
-        StateDefinitionRelationState<O, K>
-      >;
-    }
-
-    const options = this.options as RequireQueryOptions<O>;
-
-    if (!options.requireOne) {
-      options.requireOne = {};
-    }
-    options.requireOne[key] = rel.options;
+    options.populateMany[key] = rel.options;
 
     return this;
   }
@@ -176,28 +202,29 @@ export class QueryClass<
     return this;
   }
 
-  match<K extends StateDefinitionMatchKeys<I>>(
+  match<K extends StateAllRelations<I>>(
     key: K,
-    states: StateDefinitionRelationState<I, K>[] | null,
-    query?: (
-      query: FilterQuery<StateDefinitionRelationState<I, K>>,
-    ) => FilterQuery<StateDefinitionRelationState<I, K>>,
+    states?:
+      | StateRelationStates<I, K>[]
+      | MatchQueryParam<StateRelationStates<I, K>>,
+    query?: MatchQueryParam<StateRelationStates<I, K>>,
   ): this {
+    if (states !== undefined && !Array.isArray(states)) {
+      query = states;
+      states = undefined;
+    }
+
     let rel: QueryClass<
       'Filter',
-      StateDefinitionRelationState<I, K>,
-      StateDefinitionRelationState<I, K>
+      StateRelationStates<I, K>,
+      StateRelationStates<I, K>
     > = new QueryClass({
       type: 'Filter',
       states,
     });
 
     if (query) {
-      rel = query(rel) as QueryClass<
-        'Filter',
-        StateDefinitionRelationState<I, K>,
-        StateDefinitionRelationState<I, K>
-      >;
+      rel = query(rel) as typeof rel;
     }
 
     const options = this.options as FilterQueryOptions<I>;

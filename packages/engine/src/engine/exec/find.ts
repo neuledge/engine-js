@@ -11,11 +11,7 @@ import {
 import { chooseStatesCollection } from '../collection';
 import { NeuledgeEngine } from '../engine';
 import { toEntityList, toEntityOrThrow, toMaybeEntity } from '../entity';
-import {
-  convertMatchQuery,
-  convertUniqueQuery,
-  convertWhereQuery,
-} from '../filter';
+import { convertUniqueQuery, convertWhereQuery } from '../filter';
 import {
   convertLimitQuery,
   checkLimitedList,
@@ -23,8 +19,8 @@ import {
   convertSortQuery,
 } from '../pagination';
 import {
-  convertIncludeQuery,
-  convertRequireQuery,
+  convertExpandQuery,
+  convertPopulateQuery,
   convertSelectQuery,
 } from '../retrieve';
 
@@ -44,10 +40,9 @@ export const execFindMany = async <S extends StateDefinition>(
     await engine.store.find({
       collection,
       ...convertSelectQuery(collection, options),
-      ...convertIncludeQuery(metadata, collection, options),
-      ...convertRequireQuery(metadata, collection, options),
+      ...convertExpandQuery(metadata, collection, options),
+      ...convertPopulateQuery(metadata, collection, options),
       ...convertWhereQuery(states, collection, options),
-      ...convertMatchQuery(metadata, collection, options),
       ...convertOffsetQuery(options),
       ...convertLimitQuery(options),
       ...convertSortQuery(collection, options),
@@ -67,10 +62,9 @@ export const execFindUnique = async <S extends StateDefinition>(
   const [document] = await engine.store.find({
     collection,
     ...convertSelectQuery(collection, options),
-    ...convertIncludeQuery(metadata, collection, options),
-    ...convertRequireQuery(metadata, collection, options),
+    ...convertExpandQuery(metadata, collection, options),
+    ...convertPopulateQuery(metadata, collection, options),
     ...convertUniqueQuery(collection, options),
-    ...convertMatchQuery(metadata, collection, options),
     limit: 1,
   });
 
@@ -87,10 +81,9 @@ export const execFindUniqueOrThrow = async <S extends StateDefinition>(
   const [document] = await engine.store.find({
     collection,
     ...convertSelectQuery(collection, options),
-    ...convertIncludeQuery(metadata, collection, options),
-    ...convertRequireQuery(metadata, collection, options),
+    ...convertExpandQuery(metadata, collection, options),
+    ...convertPopulateQuery(metadata, collection, options),
     ...convertUniqueQuery(collection, options),
-    ...convertMatchQuery(metadata, collection, options),
     limit: 1,
   });
 
@@ -111,10 +104,9 @@ export const execFindFirst = async <S extends StateDefinition>(
   const [document] = await engine.store.find({
     collection,
     ...convertSelectQuery(collection, options),
-    ...convertIncludeQuery(metadata, collection, options),
-    ...convertRequireQuery(metadata, collection, options),
+    ...convertExpandQuery(metadata, collection, options),
+    ...convertPopulateQuery(metadata, collection, options),
     ...convertWhereQuery(states, collection, options),
-    ...convertMatchQuery(metadata, collection, options),
     ...convertOffsetQuery(options),
     limit: 1,
     ...convertSortQuery(collection, options),
@@ -137,10 +129,9 @@ export const execFindFirstOrThrow = async <S extends StateDefinition>(
   const [document] = await engine.store.find({
     collection,
     ...convertSelectQuery(collection, options),
-    ...convertIncludeQuery(metadata, collection, options),
-    ...convertRequireQuery(metadata, collection, options),
+    ...convertExpandQuery(metadata, collection, options),
+    ...convertPopulateQuery(metadata, collection, options),
     ...convertWhereQuery(states, collection, options),
-    ...convertMatchQuery(metadata, collection, options),
     ...convertOffsetQuery(options),
     limit: 1,
     ...convertSortQuery(collection, options),

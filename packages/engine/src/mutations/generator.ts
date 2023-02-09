@@ -10,7 +10,9 @@ export interface MutationGeneratorMethod {
   (...args: Record<string, never>[]): Query<
     QueryMode,
     StateDefinition,
-    StateDefinition
+    StateDefinition,
+    null,
+    NonNullable<unknown>
   >;
 }
 
@@ -25,7 +27,13 @@ export const MutationGenerator = <
       QueryOptions<T, I, StateDefinition>,
       'type' | 'states' | 'method' | 'args'
     >,
-  ) => Query<QueryMode, StateDefinition, StateDefinition>,
+  ) => Query<
+    QueryMode,
+    StateDefinition,
+    StateDefinition,
+    null,
+    NonNullable<unknown>
+  >,
 ): Mutation<T, I> =>
   new Proxy({} as Mutation<T, I>, {
     get: (_, method): MutationGeneratorMethod | undefined =>
