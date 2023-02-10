@@ -8,12 +8,12 @@
     },
     "types": {
       "dependsOn": ["^types", "generate"],
-      "inputs": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.js", "src/**/*.jsx"],
+      "inputs": ["src/**/*.ts", "src/**/*.tsx"],
       "outputs": ["dist/**/*.d.ts", "dist/**/*.d.ts.map"]
     },
     "build": {
       "dependsOn": ["^build", "^types", "generate"],
-      "inputs": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.js", "src/**/*.jsx"],
+      "inputs": ["src/**"],
       "outputs": [
         "dist/**/*.js",
         "dist/**/*.js.map",
@@ -23,7 +23,7 @@
     },
     "test": {
       "dependsOn": ["^test", "build", "types"],
-      "inputs": ["src/**/*.test.ts", "src/**/__tests__/*.ts"]
+      "inputs": ["src/**", "test/**"]
     },
     "lint": {},
     "lint:strict": {},
