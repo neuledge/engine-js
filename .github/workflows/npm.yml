@@ -15,6 +15,11 @@ jobs:
     runs-on: ubuntu-latest
     environment: production
 
+    strategy:
+      matrix:
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+        node-version: [18.x, 19.x]
+
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -22,7 +27,7 @@ jobs:
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
-          node-version: 18.x
+          node-version: ${{ matrix.node-version }}
           cache: 'yarn'
 
       - name: Cache Trubo
