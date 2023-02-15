@@ -34,6 +34,6 @@ jobs:
       - name: Yarn install
         run: yarn --frozen-lockfile
 
-      - name: Turbo build test lint:strict
+      - name: Yarn test
         # FIXME test for lint:strict when go to production
         run: yarn test --cache-dir=.turbo
