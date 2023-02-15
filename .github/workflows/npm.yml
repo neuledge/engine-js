@@ -18,7 +18,7 @@ jobs:
     strategy:
       matrix:
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
-        node-version: [18.x, 19.x]
+        node-version: [18.x]
 
     steps:
       - name: Checkout
@@ -34,7 +34,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: .turbo
-          key: ${{ runner.os }}-turbo
+          key: ${{ runner.os }}-${{ matrix.node-version }}-turbo
 
       - name: Yarn install
         run: yarn --frozen-lockfile
