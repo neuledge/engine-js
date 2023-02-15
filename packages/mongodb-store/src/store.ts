@@ -13,6 +13,7 @@ import {
   StoreCollection_Slim,
   StoreCollection,
   StoreInsertionResponse,
+  StoreError,
 } from '@neuledge/store';
 import {
   Db,
@@ -106,8 +107,10 @@ export class MongoDBStore implements Store {
   }
 
   async describeCollection(
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     options: StoreDescribeCollectionOptions,
   ): Promise<StoreCollection> {
+    // FIXME implement mongodb store describeCollection
     throw new Error('Method not implemented.');
 
     //     const collection = await this.collection(options.name);
@@ -156,7 +159,13 @@ export class MongoDBStore implements Store {
       query = query.project(projectFilter(options.select));
     }
 
-    // FIXME support `match`
+    if (options.leftJoin || options.innerJoin) {
+      // FIXME support `join` in mongodb store
+      throw new StoreError(
+        StoreError.Code.NOT_IMPLEMENTED,
+        'join is not implemented yet in mongodb store',
+      );
+    }
 
     if (options.offset != null) {
       query = query.skip(options.offset as number);
@@ -218,6 +227,14 @@ export class MongoDBStore implements Store {
     const update = updateFilter(options.set as Document);
     let res;
 
+    if (options.innerJoin) {
+      // FIXME support `join` in mongodb store
+      throw new StoreError(
+        StoreError.Code.NOT_IMPLEMENTED,
+        'join is not implemented yet in mongodb store',
+      );
+    }
+
     if (options.limit === 1) {
       res = await collection.updateOne(filter, update);
     } else {
@@ -250,6 +267,14 @@ export class MongoDBStore implements Store {
 
     const filter = options.where ? findFilter(options.where) : {};
     let res;
+
+    if (options.innerJoin) {
+      // FIXME support `join` in mongodb store
+      throw new StoreError(
+        StoreError.Code.NOT_IMPLEMENTED,
+        'join is not implemented yet in mongodb store',
+      );
+    }
 
     if (options.limit === 1) {
       res = await collection.deleteOne(filter);

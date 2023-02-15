@@ -7,8 +7,13 @@ import { parseStateField } from './field';
 
 const generateState = (source: string) => {
   const ctx = new StatesContext();
-  const doc = parseStates(source);
+  ctx['entityMap']['Foo'] = {
+    type: 'State',
+    name: 'Foo',
+    fields: {},
+  } as never;
 
+  const doc = parseStates(source);
   const state = doc.body[0] as StateNode;
 
   return { ctx, nodes: state.fields as FieldNode[] };
@@ -178,7 +183,7 @@ describe('state/field', () => {
           entity: StringScalar,
           list: false,
         },
-        stateIndex: {
+        sortingIndex: {
           name: 'email',
           fields: { email: 'asc' },
           unique: true,
@@ -224,7 +229,7 @@ describe('state/field', () => {
           entity: StringScalar,
           list: false,
         },
-        stateIndex: {
+        sortingIndex: {
           name: 'name',
           fields: { name: 'asc' },
         },
@@ -241,7 +246,7 @@ describe('state/field', () => {
           entity: StringScalar,
           list: false,
         },
-        stateIndex: {
+        sortingIndex: {
           name: 'email',
           fields: { email: 'desc' },
           unique: true,
@@ -261,6 +266,112 @@ describe('state/field', () => {
       expect(() => parseStateField(ctx, nodes[1], 0)).toThrow(
         "Invalid '@index()' decorator on argument 'unique': Expected boolean, received number",
       );
+    });
+
+    it('should generate scalar field for direct relation', () => {
+      const { ctx, nodes } = generateState(`
+            state User {
+                @id id: Number = 1
+                name?: String = 2
+                email: String = 3
+                creator: Foo = 4
+            }
+        `);
+
+      expect(parseStateField(ctx, nodes[3], 0)).toMatchObject({
+        type: 'ScalarField',
+        node: nodes[3],
+        name: 'creator',
+        nullable: false,
+        index: 4,
+        as: {
+          type: 'EntityExpression',
+          entity: ctx.entity('Foo'),
+          list: false,
+        },
+      });
+    });
+
+    it('should generate relation field for @reference annotation', () => {
+      const { ctx, nodes } = generateState(`
+            state User {
+                @id id: Number = 1
+                name?: String = 2
+                email: String = 3
+                test?: User = 4
+                @reference(field: 'test') admin?: Foo = 5
+            }
+        `);
+
+      expect(parseStateField(ctx, nodes[4], 0)).toMatchObject({
+        type: 'RelationField',
+        node: nodes[4],
+        name: 'admin',
+        nullable: true,
+        index: 5,
+        as: {
+          type: 'EntityExpression',
+          entity: ctx.entity('Foo'),
+          list: false,
+        },
+        referenceField: 'test',
+      });
+    });
+
+    it('should throw on missing @reference annotation', () => {
+      const { ctx, nodes } = generateState(`
+            state User {
+                @id id: Number = 1
+                name?: String = 2
+                email: String = 3
+                managers: Foo[] = 4
+            }
+        `);
+
+      expect(() => parseStateField(ctx, nodes[3], 0)).toThrow(
+        "Relation field 'managers' must have a '@reference()' field annotation",
+      );
+    });
+
+    it('should throw on invalid @reference annotation', () => {
+      const { ctx, nodes } = generateState(`
+            state User {
+                @id id: Number = 1
+                name?: String = 2
+                email: String = 3
+                @reference(field: 3) managers: Foo[] = 4
+            }
+        `);
+
+      expect(() => parseStateField(ctx, nodes[3], 0)).toThrow(
+        "Invalid '@reference()' decorator on argument 'field': Expected string, received number",
+      );
+    });
+
+    it('should generate foreign key field for @reference annotation', () => {
+      const { ctx, nodes } = generateState(`
+            state User {
+                @id id: Number = 1
+                name?: String = 2
+                email: String = 3
+                creator?: Foo = 4
+                @reference(field: 'creator') childUsers: Foo[] = 5
+            }
+        `);
+
+      expect(parseStateField(ctx, nodes[4], 0)).toMatchObject({
+        type: 'RelationField',
+        node: nodes[4],
+        name: 'childUsers',
+        nullable: false,
+        index: 5,
+        as: {
+          type: 'EntityExpression',
+          entity: ctx.entity('Foo'),
+          list: true,
+        },
+        referenceField: 'creator',
+      });
     });
   });
 });

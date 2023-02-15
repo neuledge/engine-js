@@ -4,7 +4,7 @@ import { ParsingError, StateNode } from '@neuledge/states-parser';
 import { z } from 'zod';
 import { StateField } from './field';
 import {
-  StateIndex,
+  StateSortingIndex,
   StateIndexNameRegex,
   StatePrimaryKey,
 } from './state-index';
@@ -17,7 +17,7 @@ export interface State<N extends string = string> {
   deprecated?: boolean | string;
   fields: Record<string, StateField>;
   primaryKey: StatePrimaryKey;
-  indexes: Record<string, StateIndex>;
+  indexes: Record<string, StateSortingIndex>;
   mutations: Record<string, Mutation>;
   baseIndex: number;
 }
@@ -47,17 +47,17 @@ export const parseState = (
   for (const field of Object.values(fields)) {
     if (field.type !== 'ScalarField') continue;
 
-    const { stateIndex, primaryKey } = field;
+    const { sortingIndex, primaryKey } = field;
 
-    if (stateIndex) {
-      if (state.indexes[stateIndex.name]) {
+    if (sortingIndex) {
+      if (state.indexes[sortingIndex.name]) {
         throw new ParsingError(
           field.node,
-          `Index '${stateIndex.name}' already exists`,
+          `Index '${sortingIndex.name}' already exists`,
         );
       }
 
-      state.indexes[stateIndex.name] = stateIndex;
+      state.indexes[sortingIndex.name] = sortingIndex;
     }
 
     if (primaryKey) {
@@ -146,7 +146,7 @@ const decorators: Decorators<State> = {
         ? fields.map((field): [string, 'asc'] => [field, 'asc'])
         : Object.entries(fields);
 
-      const index: StateIndex = {
+      const index: StateSortingIndex = {
         name: name || fieldsEntries.map(([key]) => key).join('_'),
         fields: {},
         unique,

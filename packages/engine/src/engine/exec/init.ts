@@ -7,7 +7,7 @@ import { chooseStatesCollection } from '../collection';
 import { toDocument } from '../document';
 import { NeuledgeEngine } from '../engine';
 import { toEntityOrThrow } from '../entity';
-import { retrieveEntities } from '../retrieve';
+import { retrieveEntities } from '../relations';
 
 export const execInitMany = async <S extends StateDefinition>(
   engine: NeuledgeEngine,

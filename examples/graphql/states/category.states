@@ -5,7 +5,7 @@ state Category {
   @id(auto: "increment") id: Integer = 1
   name: String = 2
   description?: String = 3
-  posts: Post[] = 4
+  @reference(field: 'category') posts: Post[] = 4
 }
 
 """

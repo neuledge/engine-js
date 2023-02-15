@@ -1,4 +1,4 @@
-import { ScalarField, State, StateIndex } from '@neuledge/states';
+import { ScalarField, State, StateSortingIndex } from '@neuledge/states';
 import { generateWhereEntityExpression } from '../entity';
 import { generateTypeScalar } from '../type';
 
@@ -98,7 +98,7 @@ const generateStateUniqueType = (state: State, indent: string): string =>
 
 const getIndexTypePaths = (
   state: State,
-  indexes: StateIndex[],
+  indexes: StateSortingIndex[],
 ): ScalarField[][] => {
   type FieldMap = Map<string, { children: FieldMap; field: ScalarField }>;
   const fields: FieldMap = new Map();

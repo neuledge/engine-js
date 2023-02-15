@@ -48,13 +48,18 @@ export class MetadataCollection implements StoreCollection {
     this.reservedNames = this.states[0].reservedNames;
   }
 
+  /**
+   * @deprecated
+   */
   getFields(rootPath: string): MetadataStateField[] {
+    // FIXME remove this method
     return this.states.flatMap((state) =>
       state.fields.filter((field) => isRootPath(rootPath, field.path)),
     );
   }
 
   getFieldNames(rootPath: string): string[] {
+    // FIXME refactor this method to use `this.fields` or `this.schema`
     return [...new Set(this.getFields(rootPath).map((field) => field.name))];
   }
 }

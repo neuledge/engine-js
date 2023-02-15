@@ -12,23 +12,19 @@ export class Category {
   static $scalars = () => ({
     id: { type: $.scalars.Integer, index: 1 },
     name: { type: $.scalars.String, index: 2 },
-    description: {
-      type: $.scalars.String({ trim: true }),
-      index: 3,
-      nullable: true,
-    },
+    description: { type: $.scalars.String, index: 3, nullable: true },
   });
   static $find: $.Where<{
-    id?: $.WhereNumber<$.scalars.Number>;
+    id?: $.WhereNumber<$.scalars.Integer>;
   }>;
   static $unique: {
-    id: $.scalars.Number;
+    id: $.scalars.Integer;
   };
   static $relations = () => ({
-    posts: [[...Post]] as const,
+    posts: { states: [...Post], list: true, reference: 'category' } as const,
   });
 
-  id!: $.scalars.Number;
+  id!: $.scalars.Integer;
   name!: $.scalars.String;
   description?: $.scalars.String | null;
 
@@ -90,17 +86,17 @@ export class DraftPost {
     content: { type: $.scalars.String, index: 4, nullable: true },
   });
   static $find: $.Where<{
-    id?: $.WhereNumber<$.scalars.Number>;
+    id?: $.WhereNumber<$.scalars.Integer>;
   }>;
   static $unique: {
-    id: $.scalars.Number;
+    id: $.scalars.Integer;
   };
   static $relations = () => ({
-    category: [Category] as const,
+    category: { states: [Category] } as const,
   });
   static $transforms = () => [PublishedPost];
 
-  id!: $.scalars.Number;
+  id!: $.scalars.Integer;
   category?: $.Id<typeof Category> | null;
   title!: $.scalars.String;
   content?: $.scalars.String | null;
@@ -192,20 +188,20 @@ export class PublishedPost {
         title?: $.WhereString<$.scalars.String>;
       }
     | {
-        id?: $.WhereNumber<$.scalars.Number>;
+        id?: $.WhereNumber<$.scalars.Integer>;
       }
   >;
   static $unique: {
-    id: $.scalars.Number;
+    id: $.scalars.Integer;
   };
   static $relations = () => ({
-    category: [Category] as const,
+    category: { states: [Category] } as const,
   });
   static $indexes = {
     category_title: { fields: ['+category', '+title'] } as const,
   };
 
-  id!: $.scalars.Number;
+  id!: $.scalars.Integer;
   category!: $.Id<typeof Category>;
   title!: $.scalars.String;
   content!: $.scalars.String;

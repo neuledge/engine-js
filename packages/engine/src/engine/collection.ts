@@ -40,15 +40,13 @@ export const getCollectionRelationStates = (
 ): StateDefinition[] => [
   ...new Map(
     collection.states
-      .flatMap((s): StateDefinition[] => {
+      .flatMap((s) => {
         const relations = resolveDefer(s.instance.$relations, {})[key];
         if (!relations) {
           return [];
         }
 
-        return Array.isArray(relations[0])
-          ? (relations[0] as StateDefinition[])
-          : (relations as StateDefinition[]);
+        return relations.states;
       })
       .map((s) => [s.$name, s]),
   ).values(),

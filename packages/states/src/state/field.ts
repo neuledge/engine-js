@@ -4,7 +4,7 @@ import { parseType, Type } from '@/type';
 import { FieldNode, ParsingError } from '@neuledge/states-parser';
 import { z } from 'zod';
 import {
-  StateIndex,
+  StateSortingIndex,
   StateIndexNameRegex,
   StatePrimaryKey,
 } from './state-index';
@@ -18,7 +18,7 @@ export type StateField = ScalarField | RelationField;
  */
 export interface ScalarField extends AbstractField {
   type: 'ScalarField';
-  stateIndex?: StateIndex;
+  sortingIndex?: StateSortingIndex;
   primaryKey?: StatePrimaryKey;
 }
 
@@ -28,6 +28,7 @@ export interface ScalarField extends AbstractField {
  */
 export interface RelationField extends AbstractField {
   type: 'RelationField';
+  referenceField: ScalarField['name'];
 }
 
 interface AbstractField {
@@ -47,9 +48,7 @@ export const parseStateField = (
 ): StateField => {
   const as = parseType(ctx, node.as);
 
-  const field: StateField = {
-    type:
-      as.entity.type === 'Scalar' || !as.list ? 'ScalarField' : 'RelationField',
+  const base: AbstractField = {
     node,
     name: node.key.name,
     nullable: node.nullable,
@@ -58,7 +57,26 @@ export const parseStateField = (
     as,
   };
 
+  const field: StateField =
+    as.entity.type === 'Scalar' || !as.list
+      ? {
+          type: 'ScalarField',
+          ...base,
+        }
+      : {
+          type: 'RelationField',
+          ...base,
+          referenceField: null as never,
+        };
+
   applyDecorators(field, node.decorators, decorators);
+
+  if (field.type === 'RelationField' && !field.referenceField) {
+    throw new ParsingError(
+      node,
+      `Relation field '${field.name}' must have a '@reference()' field annotation`,
+    );
+  }
 
   return field;
 };
@@ -135,14 +153,14 @@ const decorators: Decorators<StateField> = {
         );
       }
 
-      if (field.stateIndex) {
+      if (field.sortingIndex) {
         throw new ParsingError(
           field.node,
           `Duplicate @index or @unique on field '${field.name}'`,
         );
       }
 
-      field.stateIndex = {
+      field.sortingIndex = {
         name: name || field.name,
         fields: {
           [field.name]:
@@ -175,14 +193,14 @@ const decorators: Decorators<StateField> = {
         );
       }
 
-      if (field.stateIndex) {
+      if (field.sortingIndex) {
         throw new ParsingError(
           field.node,
           `Duplicate @unique or @index on field '${field.name}'`,
         );
       }
 
-      field.stateIndex = {
+      field.sortingIndex = {
         name: name || field.name,
         fields: {
           [field.name]:
@@ -192,6 +210,25 @@ const decorators: Decorators<StateField> = {
         },
         unique: true,
       };
+    },
+  ),
+
+  reference: createDecorator(
+    z.object({
+      field: z.string().regex(/^[_a-z]\w*$/i),
+    }),
+    (field, { field: referenceField }) => {
+      if (field.type === 'RelationField' && field.referenceField) {
+        throw new ParsingError(
+          field.node,
+          `Duplicate @reference on field '${field.name}'`,
+        );
+      }
+
+      Object.assign(field, {
+        type: 'RelationField',
+        referenceField,
+      });
     },
   ),
 };

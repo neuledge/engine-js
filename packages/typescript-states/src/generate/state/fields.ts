@@ -1,5 +1,6 @@
 import { ScalarField, State } from '@neuledge/states';
 import { generateDescriptionComment } from '../comments';
+import { generateEntityScalar } from '../entity';
 import { generateTypeScalar, generateTypeType } from '../type';
 
 export const generateStateScalars = (state: State, indent: string): string =>
@@ -41,7 +42,13 @@ export const generateStateOptionalRelations = (
   return `() => ({${fields
     .map(
       (item) =>
-        `\n${indent}  ${item.name}: ${generateTypeScalar(item.as)} as const,`,
+        `\n${indent}  ${item.name}: { states: ${generateEntityScalar(
+          item.as.entity,
+        )}${item.as.list ? ', list: true' : ''}${
+          item.type === 'RelationField' && item.referenceField
+            ? `, reference: '${item.referenceField.replace(/('|\\)/g, '\\$1')}'`
+            : ''
+        } } as const,`,
     )
     .join('')}\n${indent}})`;
 };

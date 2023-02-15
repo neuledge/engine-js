@@ -11,18 +11,15 @@ import {
 import { chooseStatesCollection } from '../collection';
 import { NeuledgeEngine } from '../engine';
 import { toEntityList, toEntityOrThrow, toMaybeEntity } from '../entity';
-import { convertUniqueQuery, convertWhereQuery } from '../filter';
+import { convertUniqueQuery, convertWhereQuery } from '../find';
 import {
   convertLimitQuery,
   checkLimitedList,
   convertOffsetQuery,
   convertSortQuery,
 } from '../pagination';
-import {
-  convertExpandQuery,
-  convertPopulateQuery,
-  convertSelectQuery,
-} from '../retrieve';
+import { convertExpandQuery, convertPopulateOneQuery } from '../relations';
+import { convertSelectQuery } from '../select';
 
 export const execFindMany = async <S extends StateDefinition>(
   engine: NeuledgeEngine,
@@ -41,7 +38,7 @@ export const execFindMany = async <S extends StateDefinition>(
       collection,
       ...convertSelectQuery(collection, options),
       ...convertExpandQuery(metadata, collection, options),
-      ...convertPopulateQuery(metadata, collection, options),
+      ...convertPopulateOneQuery(metadata, collection, options),
       ...convertWhereQuery(states, collection, options),
       ...convertOffsetQuery(options),
       ...convertLimitQuery(options),
@@ -63,7 +60,7 @@ export const execFindUnique = async <S extends StateDefinition>(
     collection,
     ...convertSelectQuery(collection, options),
     ...convertExpandQuery(metadata, collection, options),
-    ...convertPopulateQuery(metadata, collection, options),
+    ...convertPopulateOneQuery(metadata, collection, options),
     ...convertUniqueQuery(collection, options),
     limit: 1,
   });
@@ -82,7 +79,7 @@ export const execFindUniqueOrThrow = async <S extends StateDefinition>(
     collection,
     ...convertSelectQuery(collection, options),
     ...convertExpandQuery(metadata, collection, options),
-    ...convertPopulateQuery(metadata, collection, options),
+    ...convertPopulateOneQuery(metadata, collection, options),
     ...convertUniqueQuery(collection, options),
     limit: 1,
   });
@@ -105,7 +102,7 @@ export const execFindFirst = async <S extends StateDefinition>(
     collection,
     ...convertSelectQuery(collection, options),
     ...convertExpandQuery(metadata, collection, options),
-    ...convertPopulateQuery(metadata, collection, options),
+    ...convertPopulateOneQuery(metadata, collection, options),
     ...convertWhereQuery(states, collection, options),
     ...convertOffsetQuery(options),
     limit: 1,
@@ -130,7 +127,7 @@ export const execFindFirstOrThrow = async <S extends StateDefinition>(
     collection,
     ...convertSelectQuery(collection, options),
     ...convertExpandQuery(metadata, collection, options),
-    ...convertPopulateQuery(metadata, collection, options),
+    ...convertPopulateOneQuery(metadata, collection, options),
     ...convertWhereQuery(states, collection, options),
     ...convertOffsetQuery(options),
     limit: 1,

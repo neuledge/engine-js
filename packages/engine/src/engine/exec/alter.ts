@@ -38,15 +38,12 @@ import {
 import { Metadata, MetadataCollection, MetadataState } from '@/metadata';
 import { toDocument } from '../document';
 import {
-  convertMatchQuery,
-  convertUniqueQuery,
-  convertWhereQuery,
-} from '../filter';
-import {
   retrieveEntities,
   AlteredEntity,
-  convertPopulateQuery,
-} from '../retrieve';
+  convertPopulateOneQuery,
+  convertMatchQuery,
+} from '../relations';
+import { convertUniqueQuery, convertWhereQuery } from '../find';
 
 const ALTER_VERSION_RETRIES = 3;
 
@@ -179,7 +176,7 @@ const createStoreFilters = <S extends StateDefinition>(
   // current state of the entity. we will use select later to project the result
   // to the user
 
-  ...convertPopulateQuery(metadata, collection, options),
+  ...convertPopulateOneQuery(metadata, collection, options),
 
   ...('unique' in options
     ? convertUniqueQuery(collection, options)

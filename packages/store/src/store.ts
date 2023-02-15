@@ -10,7 +10,7 @@ import {
   StoreListOffset,
   StoreSelect,
 } from './document';
-import { StoreIncludeFirst, StoreIncludeMany, StoreMatch } from './relation';
+import { StoreJoin, StoreMatch } from './relation';
 import { StoreSort } from './sort';
 import { StoreWhere } from './where';
 
@@ -58,10 +58,8 @@ export interface StoreFindOptions {
   collection: StoreCollection;
   select?: StoreSelect | null;
   where?: StoreWhere | null;
-  match?: StoreMatch | null;
-  requireFirst?: StoreIncludeFirst | null;
-  includeFirst?: StoreIncludeFirst | null;
-  includeMany?: StoreIncludeMany | null;
+  innerJoin?: StoreJoin | null;
+  leftJoin?: StoreJoin | null;
   limit: number;
   offset?: StoreListOffset | null;
   sort?: StoreSort | null;
@@ -75,7 +73,7 @@ export interface StoreInsertOptions<T> {
 export interface StoreUpdateOptions<T> {
   collection: StoreCollection;
   where?: StoreWhere | null;
-  match?: StoreMatch | null;
+  innerJoin?: StoreMatch | null;
   set: T;
   limit: number;
 }
@@ -83,7 +81,7 @@ export interface StoreUpdateOptions<T> {
 export interface StoreDeleteOptions {
   collection: StoreCollection;
   where?: StoreWhere | null;
-  match?: StoreMatch | null;
+  innerJoin?: StoreMatch | null;
   limit: number;
 }
 

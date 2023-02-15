@@ -3,6 +3,7 @@ import {
   StateDefinitionId as StateDefinitionId,
   StateDefinitionIndex,
 } from './indexes';
+import { StateDefinitionRelation } from './relations';
 import { StateDefintionScalar } from './scalar';
 import { SortDefinitionKey } from './sort';
 import { StateDefinitionUnique, StateDefinitionWhere } from './where';
@@ -14,12 +15,7 @@ export interface StateDefinition<N extends string = string, T = any> {
   $scalars: Defer<{ [K in keyof T]: StateDefintionScalar<T[K]> }>;
   $find: StateDefinitionWhere;
   $unique: StateDefinitionUnique<T>;
-  $relations?: Defer<
-    Record<
-      string,
-      readonly StateDefinition[] | readonly [readonly StateDefinition[]]
-    >
-  >;
+  $relations?: Defer<Record<string, StateDefinitionRelation>>;
   $transforms?: Defer<readonly StateDefinition[]>;
   $indexes?: Record<string, StateDefinitionIndex<T>>;
 

@@ -38,13 +38,11 @@ export interface MatchQuery<S extends StateDefinition> {
 }
 
 export interface MatchQueryOptions<S extends StateDefinition> {
-  match?: Match<S>;
+  match?: {
+    [K in StateAllRelations<S>]?: FilterQueryOptions<StateRelationStates<S, K>>;
+  };
 }
 
 export type MatchQueryParam<S extends StateDefinition> = (
   query: FilterQuery<S>,
 ) => FilterQuery<S>;
-
-export type Match<S extends StateDefinition> = {
-  [K in StateAllRelations<S>]?: FilterQueryOptions<StateRelationStates<S, K>>;
-};

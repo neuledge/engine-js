@@ -1,23 +1,23 @@
 import { State } from './state';
 
-export interface StateIndex {
+export interface StateSortingIndex {
   name: string;
   fields: Record<string, 'asc' | 'desc'>;
   unique?: boolean;
 }
 
-export interface StatePrimaryKey extends StateIndex {
+export interface StatePrimaryKey extends StateSortingIndex {
   unique: true;
   auto?: 'increment';
 }
 
 export const StateIndexNameRegex = /^[\w.]+$/i;
 
-export const isStateIndexEquals = (
+export const isStateSortingIndexEquals = (
   sa: State,
-  ia: StateIndex,
+  ia: StateSortingIndex,
   sb: State,
-  ib: StateIndex,
+  ib: StateSortingIndex,
 ): boolean => {
   if (
     !ia.unique !== !ib.unique &&

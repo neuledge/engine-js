@@ -40,7 +40,20 @@ export class Metadata extends MetadataSnapshot<MetadataState> {
     this.collections = collections;
   }
 
-  getCollections(states: StateDefinition[]): MetadataCollection[] {
+  getCollectionByMetadataState(state: MetadataState): MetadataCollection {
+    const collection = this.collections[state.collectionName];
+
+    if (!collection) {
+      throw new NeuledgeError(
+        NeuledgeError.Code.METADATA_LOAD_ERROR,
+        `Collection "${state.collectionName}" not found in the engine metadata. Make sure you initialize the engine AFTER declaring the states.`,
+      );
+    }
+
+    return collection;
+  }
+
+  getCollections(states: readonly StateDefinition[]): MetadataCollection[] {
     const collectionNames = new Set<MetadataState['collectionName']>();
 
     for (const def of states) {

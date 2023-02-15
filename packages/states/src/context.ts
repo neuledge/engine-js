@@ -15,7 +15,7 @@ import { Entity } from './entity';
 import { Mutation, parseMutation } from './mutation';
 import { builtInScalars, CustomScalar } from './scalar';
 import {
-  isStateIndexEquals,
+  isStateSortingIndexEquals,
   parseState,
   parseStateField,
   State,
@@ -27,10 +27,11 @@ import { Void } from './void';
  * The order in which the context processes its entities.
  */
 enum ProcessingOrder {
-  Eithers = 1,
-  States = 2,
-  Mutations = 3,
-  Transforms = 4,
+  Eithers = 10,
+  States = 20,
+  StateRelations = 21,
+  Mutations = 30,
+  Transforms = 40,
 }
 
 export class StatesContext {
@@ -201,8 +202,8 @@ export class StatesContext {
     this.entityMap[name] = ref as Entity;
 
     this.processing.push({
-      process: () => Object.assign(ref, process(ref)),
       order,
+      process: () => Object.assign(ref, process(ref)),
     });
   }
 
@@ -235,7 +236,47 @@ export class StatesContext {
       );
     });
 
+    this.registerStateRelations(node);
+    this.registerStateTransforms(node);
+  }
+
+  private registerStateRelations(node: StateNode): void {
     this.processing.push({
+      order: ProcessingOrder.StateRelations,
+      process: () => {
+        const state = this.entity(node.id.name) as State;
+
+        for (const field of Object.values(state.fields)) {
+          if (field.type !== 'RelationField') continue;
+
+          const { entity } = field.as;
+
+          if (entity.type === 'Scalar') {
+            throw new ParsingError(
+              field.node,
+              `A relation field '${field.name}' must be a state or an either`,
+            );
+          }
+
+          const states = entity.type === 'State' ? [entity] : entity.states;
+          const { referenceField } = field;
+
+          for (const state of states) {
+            if (state.fields[referenceField]) continue;
+
+            throw new ParsingError(
+              field.node,
+              `A relation field '${field.name}' must reference a field '${referenceField}' in state '${state.name}', but it does not exist`,
+            );
+          }
+        }
+      },
+    });
+  }
+
+  private registerStateTransforms(node: StateNode): void {
+    this.processing.push({
+      order: ProcessingOrder.Transforms,
       process: () => {
         const state = this.entity(node.id.name) as State;
         const mutations = this.mutationMap[node.id.name] ?? {};
@@ -247,7 +288,7 @@ export class StatesContext {
           if (transformed.name !== state.name) continue;
 
           if (
-            !isStateIndexEquals(
+            !isStateSortingIndexEquals(
               state,
               state.primaryKey,
               transformed,
@@ -261,7 +302,6 @@ export class StatesContext {
           }
         }
       },
-      order: ProcessingOrder.Transforms,
     });
   }
 
@@ -287,8 +327,8 @@ export class StatesContext {
     entry[node.key.name] = ref as Mutation;
 
     this.processing.push({
-      process: () => Object.assign(ref, parseMutation(this, node)),
       order: ProcessingOrder.Mutations,
+      process: () => Object.assign(ref, parseMutation(this, node)),
     });
   }
 
