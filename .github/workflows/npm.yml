@@ -15,26 +15,21 @@ jobs:
     runs-on: ubuntu-latest
     environment: production
 
-    strategy:
-      matrix:
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
-        node-version: [18.x]
-
     steps:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Use Node.js ${{ matrix.node-version }}
+      - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: 18
           cache: 'yarn'
 
       - name: Cache Trubo
         uses: actions/cache@v3
         with:
           path: .turbo
-          key: ${{ runner.os }}-${{ matrix.node-version }}-turbo
+          key: ${{ runner.os }}-turbo
 
       - name: Yarn install
         run: yarn --frozen-lockfile
