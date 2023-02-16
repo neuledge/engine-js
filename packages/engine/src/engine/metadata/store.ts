@@ -92,7 +92,7 @@ export const getStoreMetadataSnapshot = async (
     return type;
   };
 
-  let res: StoreList<StoreMetadataState> | undefined;
+  let res: StoreList | undefined;
   do {
     res = await store.find({
       collection: metadataCollection,
@@ -101,10 +101,19 @@ export const getStoreMetadataSnapshot = async (
     });
 
     for (const doc of res) {
-      entities[doc.hash.toString(HASH_ENCODING)] = fromStoreMetadataState(
+      if (!(doc.hash instanceof Buffer)) {
+        throw new NeuledgeError(
+          NeuledgeError.Code.CORRUPTED_METADATA,
+          `Invalid state document: ${doc.hash}`,
+        );
+      }
+
+      const state = doc as unknown as StoreMetadataState;
+
+      entities[state.hash.toString(HASH_ENCODING)] = fromStoreMetadataState(
         getState,
         getType,
-        doc,
+        state,
       );
     }
   } while (res.length >= COLLECTION_FIND_LIMIT);
@@ -120,7 +129,10 @@ export const syncStoreMetadata = async (
   const { inserts, updates, deletes } = getStoreMetadataChanges(changes);
 
   if (inserts.length > 0) {
-    await store.insert({ collection: metadataCollection, documents: inserts });
+    await store.insert({
+      collection: metadataCollection,
+      documents: inserts as never[],
+    });
   }
 
   if (updates.length > 0) {
@@ -132,7 +144,7 @@ export const syncStoreMetadata = async (
           store.update({
             collection: metadataCollection,
             where: { hash: { $eq: hash } },
-            set,
+            set: set as never,
             limit: 1,
           }),
         ),

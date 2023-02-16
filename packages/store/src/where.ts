@@ -1,4 +1,4 @@
-import { StoreScalarValue } from './document';
+import { StoreScalarValue } from './value';
 
 export type StoreWhere = StoreWhereRecord | StoreWhereOr;
 

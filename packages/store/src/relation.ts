@@ -1,5 +1,6 @@
 import { StoreCollection } from './collection';
-import { StoreScalarValue, StoreSelect } from './document';
+import { StoreSelect } from './document';
+import { StoreScalarValue } from './value';
 import { StoreWhere } from './where';
 
 /**

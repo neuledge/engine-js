@@ -28,6 +28,7 @@ import pLimit from 'p-limit';
 import { escapeDocument, unescapeDocument } from './documents';
 import { findFilter } from './filter';
 import { dropIndexes, ensureIndexes } from './indexes';
+import { applyJoinQuery, getJoinQueries, JoinQuery } from './join';
 import {
   generateDocumentInsertedId,
   AutoIncrementDocument,
@@ -37,9 +38,13 @@ import { sortFilter } from './sort';
 import { updateFilter } from './update';
 
 const AUTO_INCREMENT_COLLECTION_NAME = '__neuledge_auto_increment';
+const DEFAULT_READ_CONCURRENCY = 2;
+const DEFAULT_WRITE_CONCURRENCY = 2;
 
 export type MongoDBStoreOptions = MongoDBStoreConnectionOptions & {
   autoIncrementCollectionName?: string;
+  readConcurrency?: number;
+  writeConcurrency?: number;
 };
 
 export type MongoDBStoreConnectionOptions =
@@ -66,6 +71,8 @@ export class MongoDBStore implements Store {
   private readonly client: MongoClient;
   private readonly db: Promise<Db>;
   private readonly autoIncrement: Promise<Collection<AutoIncrementDocument>>;
+  private readonly readConcurrency: number;
+  private readonly writeConcurrency: number;
 
   constructor({
     url,
@@ -73,6 +80,8 @@ export class MongoDBStore implements Store {
     name,
     db,
     autoIncrementCollectionName = AUTO_INCREMENT_COLLECTION_NAME,
+    readConcurrency = DEFAULT_READ_CONCURRENCY,
+    writeConcurrency = DEFAULT_WRITE_CONCURRENCY,
   }: MongoDBStoreOptions) {
     this.client =
       typeof url === 'string'
@@ -89,6 +98,9 @@ export class MongoDBStore implements Store {
     this.autoIncrement = this.db.then((db) =>
       db.collection(autoIncrementCollectionName),
     );
+
+    this.readConcurrency = readConcurrency;
+    this.writeConcurrency = writeConcurrency;
 
     Promise.all([this.db, this.autoIncrement]).catch(() => {
       // catch error to prevent unhandled promise rejection
@@ -144,9 +156,7 @@ export class MongoDBStore implements Store {
     await db.dropCollection(options.collection.name);
   }
 
-  async find<T = StoreDocument>(
-    options: StoreFindOptions,
-  ): Promise<StoreList<T>> {
+  async find(options: StoreFindOptions): Promise<StoreList> {
     const collection = await this.collection(options.collection.name);
 
     let query = collection
@@ -159,14 +169,6 @@ export class MongoDBStore implements Store {
       query = query.project(projectFilter(options.select));
     }
 
-    if (options.leftJoin || options.innerJoin) {
-      // FIXME support `join` in mongodb store
-      throw new StoreError(
-        StoreError.Code.NOT_IMPLEMENTED,
-        'join is not implemented yet in mongodb store',
-      );
-    }
-
     if (options.offset != null) {
       query = query.skip(options.offset as number);
     }
@@ -175,26 +177,26 @@ export class MongoDBStore implements Store {
       query = query.sort(sortFilter(options.sort));
     }
 
-    const docs = await query.toArray();
+    const rawDocs = await query.toArray();
+    let docs = rawDocs.map((doc) => unescapeDocument(options.collection, doc));
 
-    return Object.assign(
-      docs.map((doc) => unescapeDocument<T>(options.collection, doc)),
-      {
-        nextOffset:
-          docs.length < options.limit
-            ? null
-            : ((options.offset ?? 0) as number) + docs.length,
-      },
-    );
+    if (docs.length && (options.leftJoin || options.innerJoin)) {
+      docs = await this.handleJoins(options, docs);
+    }
+
+    return Object.assign(docs, {
+      nextOffset:
+        docs.length < options.limit
+          ? null
+          : ((options.offset ?? 0) as number) + docs.length,
+    });
   }
 
-  async insert<T = StoreDocument>(
-    options: StoreInsertOptions<T>,
-  ): Promise<StoreInsertionResponse<T>> {
+  async insert(options: StoreInsertOptions): Promise<StoreInsertionResponse> {
     const collection = await this.collection(options.collection.name);
     const autoIncrement = await this.autoIncrement;
 
-    const asyncLimit = pLimit(10);
+    const asyncLimit = pLimit(this.writeConcurrency);
     const insertedIds = await Promise.all(
       options.documents.map((doc) =>
         asyncLimit(() =>
@@ -218,9 +220,7 @@ export class MongoDBStore implements Store {
     };
   }
 
-  async update<T = StoreDocument>(
-    options: StoreUpdateOptions<T>,
-  ): Promise<StoreMutationResponse> {
+  async update(options: StoreUpdateOptions): Promise<StoreMutationResponse> {
     const collection = await this.collection(options.collection.name);
 
     const filter = options.where ? findFilter(options.where) : {};
@@ -309,5 +309,73 @@ export class MongoDBStore implements Store {
   ): Promise<Collection> {
     const db = await this.db;
     return db.collection(collectionName, options);
+  }
+
+  private async handleJoins(
+    options: StoreFindOptions,
+    docs: StoreDocument[],
+  ): Promise<StoreDocument[]> {
+    const innerJoinQueries = getJoinQueries(options.innerJoin ?? {}, docs);
+    const leftJoinQueries = getJoinQueries(options.leftJoin ?? {}, docs);
+
+    const asyncLimit = pLimit(this.readConcurrency);
+
+    const [innerJoinedDocs, leftJoinDocs] = await Promise.all([
+      Promise.all(
+        Object.values(innerJoinQueries).map((joinQueries) =>
+          Promise.all(
+            joinQueries.map((joinQuery) =>
+              asyncLimit(() => this.queryJoin(joinQuery)),
+            ),
+          ),
+        ),
+      ),
+      Promise.all(
+        Object.values(leftJoinQueries).map((joinQueries) =>
+          Promise.all(
+            joinQueries.map((joinQuery) =>
+              asyncLimit(() => this.queryJoin(joinQuery)),
+            ),
+          ),
+        ),
+      ),
+    ]);
+
+    for (const [i, key] of Object.keys(innerJoinQueries).entries()) {
+      docs = applyJoinQuery(
+        docs,
+        key,
+        innerJoinQueries[key].map(({ options: { by } }) => by),
+        innerJoinedDocs[i],
+        true,
+      );
+    }
+
+    for (const [i, key] of Object.keys(leftJoinQueries).entries()) {
+      docs = applyJoinQuery(
+        docs,
+        key,
+        leftJoinQueries[key].map(({ options: { by } }) => by),
+        leftJoinDocs[i],
+      );
+    }
+
+    return docs;
+  }
+
+  private async queryJoin(join: JoinQuery): Promise<StoreDocument[]> {
+    const collection = await this.collection(join.collection.name);
+
+    // unicon issue: https://github.com/sindresorhus/eslint-plugin-unicorn/issues/1947
+    // eslint-disable-next-line unicorn/no-array-callback-reference
+    let query = collection.find(join.find).limit(join.limit);
+
+    if (join.project) {
+      query = query.project(join.project ?? { _id: 1 });
+    }
+
+    const rawDocs = await query.toArray();
+
+    return rawDocs.map((doc) => unescapeDocument(join.collection, doc));
   }
 }

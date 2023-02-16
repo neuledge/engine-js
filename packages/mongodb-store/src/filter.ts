@@ -1,6 +1,7 @@
 import { StoreScalarValue, StoreWhere, StoreWhereTerm } from '@neuledge/store';
 import { Filter, Document, FilterOperators } from 'mongodb';
 import { escapeFieldName } from './fields';
+import { escapeValue } from './values';
 
 export const findFilter = (where: StoreWhere): Filter<Document> => {
   if (Array.isArray(where.$or)) {
@@ -33,7 +34,7 @@ const filterTerm = (
       case '$gte':
       case '$in':
       case '$nin': {
-        res[operator] = value;
+        res[operator] = escapeValue(value) as never;
         break;
       }
 

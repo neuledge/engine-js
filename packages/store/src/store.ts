@@ -25,15 +25,11 @@ export interface Store {
 
   dropCollection(options: StoreDropCollectionOptions): Promise<void>;
 
-  find<T = StoreDocument>(options: StoreFindOptions): Promise<StoreList<T>>;
+  find(options: StoreFindOptions): Promise<StoreList>;
 
-  insert<T = StoreDocument>(
-    options: StoreInsertOptions<T>,
-  ): Promise<StoreInsertionResponse<T>>;
+  insert(options: StoreInsertOptions): Promise<StoreInsertionResponse>;
 
-  update<T = StoreDocument>(
-    options: StoreUpdateOptions<T>,
-  ): Promise<StoreMutationResponse>;
+  update(options: StoreUpdateOptions): Promise<StoreMutationResponse>;
 
   delete(options: StoreDeleteOptions): Promise<StoreMutationResponse>;
 }
@@ -65,16 +61,16 @@ export interface StoreFindOptions {
   sort?: StoreSort | null;
 }
 
-export interface StoreInsertOptions<T> {
+export interface StoreInsertOptions {
   collection: StoreCollection;
-  documents: T[];
+  documents: StoreDocument[];
 }
 
-export interface StoreUpdateOptions<T> {
+export interface StoreUpdateOptions {
   collection: StoreCollection;
   where?: StoreWhere | null;
   innerJoin?: StoreMatch | null;
-  set: T;
+  set: StoreDocument;
   limit: number;
 }
 
@@ -85,8 +81,8 @@ export interface StoreDeleteOptions {
   limit: number;
 }
 
-export interface StoreInsertionResponse<T> extends StoreMutationResponse {
-  insertedIds: Partial<T>[];
+export interface StoreInsertionResponse extends StoreMutationResponse {
+  insertedIds: StoreDocument[];
 }
 
 export interface StoreMutationResponse {

@@ -1,14 +1,6 @@
-export type StoreDocument = { [key in string]?: StoreScalarValue };
+import { StoreScalarValue } from './value';
 
-export type StoreScalarValue =
-  | null
-  | string
-  | number
-  | bigint
-  | boolean
-  | Buffer
-  | { [key in string]?: StoreScalarValue }
-  | StoreScalarValue[];
+export type StoreDocument = { [key in string]?: StoreScalarValue };
 
 export type StoreListOffset = string | number | Buffer;
 
