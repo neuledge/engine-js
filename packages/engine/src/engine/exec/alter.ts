@@ -176,7 +176,8 @@ const createStoreFilters = <S extends StateDefinition>(
   // current state of the entity. we will use select later to project the result
   // to the user
 
-  ...convertPopulateOneQuery(metadata, collection, options),
+  // FIXME populate should be on output type, not on input type
+  // ...convertPopulateOneQuery(metadata, collection, options),
 
   ...('unique' in options
     ? convertUniqueQuery(collection, options)
@@ -190,7 +191,7 @@ const createStoreFilters = <S extends StateDefinition>(
 const isAlterDeleteOnly = <S extends StateDefinition>(
   options: AlterQueryOptions<S>,
 ): boolean => {
-  if (options.select) {
+  if (options.select || options.match) {
     return false;
   }
 

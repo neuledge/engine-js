@@ -10,7 +10,7 @@ import {
   StoreListOffset,
   StoreSelect,
 } from './document';
-import { StoreJoin, StoreMatch } from './relation';
+import { StoreJoin } from './relation';
 import { StoreSort } from './sort';
 import { StoreWhere } from './where';
 
@@ -69,7 +69,6 @@ export interface StoreInsertOptions {
 export interface StoreUpdateOptions {
   collection: StoreCollection;
   where?: StoreWhere | null;
-  innerJoin?: StoreMatch | null;
   set: StoreDocument;
   limit: number;
 }
@@ -77,7 +76,6 @@ export interface StoreUpdateOptions {
 export interface StoreDeleteOptions {
   collection: StoreCollection;
   where?: StoreWhere | null;
-  innerJoin?: StoreMatch | null;
   limit: number;
 }
 

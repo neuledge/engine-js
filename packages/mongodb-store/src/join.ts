@@ -21,7 +21,6 @@ import { escapeValue } from './values';
 export interface JoinQuery {
   options: StoreJoinOptions;
   collection: StoreCollection;
-  returns: boolean;
   project?: Document | null;
   find: Filter<Document>;
   limit: number;
@@ -41,7 +40,7 @@ export const getJoinQueries = (
 export const applyJoinQuery = (
   docs: StoreDocument[],
   key: string,
-  joinByQueries: StoreJoinBy[],
+  joins: StoreJoinOptions[],
   joinDocs: StoreDocument[][],
   required?: boolean,
 ): StoreDocument[] => {
@@ -49,23 +48,30 @@ export const applyJoinQuery = (
 
   const joinDocMap: Map<unknown, StoreDocument>[] = [];
 
-  for (const [i, by] of joinByQueries.entries()) {
-    joinDocMap.push(getDocumentMap(by, joinDocs[i]));
+  for (const [i, join] of joins.entries()) {
+    joinDocMap.push(getDocumentMap(join.by, joinDocs[i]));
   }
 
   for (const doc of docs) {
-    let joinDoc;
-    for (const [i, by] of joinByQueries.entries()) {
-      joinDoc = joinDocMap[i].get(getDocumentKey(by, doc, true));
-      if (joinDoc) break;
+    let joinDoc, returns;
+    for (const [i, join] of joins.entries()) {
+      joinDoc = joinDocMap[i].get(getDocumentKey(join.by, doc, true));
+      if (joinDoc) {
+        returns = !!join.select;
+        break;
+      }
     }
 
-    if (joinDoc) {
+    if (!joinDoc && required) {
+      continue;
+    }
+
+    if (joinDoc && returns) {
       res.push({
         ...doc,
         [key]: joinDoc,
       });
-    } else if (!required) {
+    } else {
       res.push(doc);
     }
   }
@@ -77,19 +83,15 @@ const getJoinQuery = (
   options: StoreJoinOptions,
   docs: StoreDocument[],
 ): JoinQuery => {
-  let returns;
   let project: Document | null = Object.fromEntries(
     Object.keys(options.by).map((key) => [escapeFieldName(key), 1]),
   );
 
   if (options.select) {
-    returns = true;
     project =
       typeof options.select === 'object'
         ? { ...projectFilter(options.select), ...project }
         : null;
-  } else {
-    returns = false;
   }
 
   if (options.innerJoin || options.leftJoin) {
@@ -106,7 +108,6 @@ const getJoinQuery = (
   return {
     options,
     collection: options.collection,
-    returns,
     project,
     find: options.where ? { $and: [find, findFilter(options.where)] } : find,
     limit,

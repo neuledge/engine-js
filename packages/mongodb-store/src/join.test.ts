@@ -29,7 +29,6 @@ describe('join', () => {
           {
             options: join.category[0],
             collection: { name: 'category' },
-            returns: false,
             project: { id: 1 },
             find: {
               id: { $in: [1, 2] },
@@ -61,7 +60,6 @@ describe('join', () => {
           {
             options: join.category[0],
             collection: { name: 'category' },
-            returns: true,
             project: null,
             find: {
               id: { $eq: 1 },
@@ -95,7 +93,6 @@ describe('join', () => {
           {
             options: join.category[0],
             collection: { name: 'category' },
-            returns: false,
             project: { id: 1, sub_id: 1 },
             find: {
               id: { $in: [1, 2] },
@@ -131,7 +128,6 @@ describe('join', () => {
           {
             options: join.category[0],
             collection: { name: 'category' },
-            returns: true,
             project: { id: 1, sub_id: 1, name: 1 },
             find: {
               $or: [
@@ -158,7 +154,7 @@ describe('join', () => {
             { id: 4, category_id: 3 },
           ],
           'category',
-          [{ id: { field: 'category_id' } }],
+          [{ select: true, by: { id: { field: 'category_id' } } } as never],
           [
             [
               { id: 1, name: 'Category 1' },
@@ -184,7 +180,7 @@ describe('join', () => {
             { id: 4, category_id: 3 },
           ],
           'category',
-          [{ id: { field: 'category_id' } }],
+          [{ select: true, by: { id: { field: 'category_id' } } } as never],
           [
             [
               { id: 1, name: 'Category 1' },
@@ -197,6 +193,32 @@ describe('join', () => {
         { id: 1, category_id: 1, category: { id: 1, name: 'Category 1' } },
         { id: 2, category_id: 1, category: { id: 1, name: 'Category 1' } },
         { id: 3, category_id: 2, category: { id: 2, name: 'Category 2' } },
+      ]);
+    });
+
+    it('should apply required join query no select', () => {
+      expect(
+        applyJoinQuery(
+          [
+            { id: 1, category_id: 1 },
+            { id: 2, category_id: 1 },
+            { id: 3, category_id: 2 },
+            { id: 4, category_id: 3 },
+          ],
+          'category',
+          [{ by: { id: { field: 'category_id' } } } as never],
+          [
+            [
+              { id: 1, name: 'Category 1' },
+              { id: 2, name: 'Category 2' },
+            ],
+          ],
+          true,
+        ),
+      ).toEqual([
+        { id: 1, category_id: 1 },
+        { id: 2, category_id: 1 },
+        { id: 3, category_id: 2 },
       ]);
     });
   });

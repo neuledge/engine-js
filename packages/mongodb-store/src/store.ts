@@ -13,7 +13,6 @@ import {
   StoreCollection_Slim,
   StoreCollection,
   StoreInsertionResponse,
-  StoreError,
 } from '@neuledge/store';
 import {
   Db,
@@ -227,14 +226,6 @@ export class MongoDBStore implements Store {
     const update = updateFilter(options.set as Document);
     let res;
 
-    if (options.innerJoin) {
-      // FIXME support `join` in mongodb store
-      throw new StoreError(
-        StoreError.Code.NOT_IMPLEMENTED,
-        'join is not implemented yet in mongodb store',
-      );
-    }
-
     if (options.limit === 1) {
       res = await collection.updateOne(filter, update);
     } else {
@@ -267,14 +258,6 @@ export class MongoDBStore implements Store {
 
     const filter = options.where ? findFilter(options.where) : {};
     let res;
-
-    if (options.innerJoin) {
-      // FIXME support `join` in mongodb store
-      throw new StoreError(
-        StoreError.Code.NOT_IMPLEMENTED,
-        'join is not implemented yet in mongodb store',
-      );
-    }
 
     if (options.limit === 1) {
       res = await collection.deleteOne(filter);
@@ -345,7 +328,7 @@ export class MongoDBStore implements Store {
       docs = applyJoinQuery(
         docs,
         key,
-        innerJoinQueries[key].map(({ options: { by } }) => by),
+        innerJoinQueries[key].map(({ options }) => options),
         innerJoinedDocs[i],
         true,
       );
@@ -355,7 +338,7 @@ export class MongoDBStore implements Store {
       docs = applyJoinQuery(
         docs,
         key,
-        leftJoinQueries[key].map(({ options: { by } }) => by),
+        leftJoinQueries[key].map(({ options }) => options),
         leftJoinDocs[i],
       );
     }
