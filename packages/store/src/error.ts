@@ -1,4 +1,7 @@
 enum StoreErrorCode {
+  // abort errors
+  ABORTED = 'ABORTED',
+
   // input errors
   INVALID_INPUT = 'INVALID_INPUT',
   NOT_SUPPORTED = 'NOT_SUPPORTED',

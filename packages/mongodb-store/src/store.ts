@@ -13,6 +13,7 @@ import {
   StoreCollection_Slim,
   StoreCollection,
   StoreInsertionResponse,
+  StoreError,
 } from '@neuledge/store';
 import {
   Db,
@@ -27,7 +28,7 @@ import pLimit from 'p-limit';
 import { escapeDocument, unescapeDocument } from './documents';
 import { findFilter } from './filter';
 import { dropIndexes, ensureIndexes } from './indexes';
-import { applyJoinQuery, getJoinQueries, JoinQuery } from './join';
+import { applyJoins, JoinQuery } from './join';
 import {
   generateDocumentInsertedId,
   AutoIncrementDocument,
@@ -179,9 +180,10 @@ export class MongoDBStore implements Store {
     const rawDocs = await query.toArray();
     let docs = rawDocs.map((doc) => unescapeDocument(options.collection, doc));
 
-    if (docs.length && (options.leftJoin || options.innerJoin)) {
-      docs = await this.handleJoins(options, docs);
-    }
+    const asyncLimit = pLimit(this.readConcurrency);
+    docs = await applyJoins(options, docs, (query, signal) =>
+      asyncLimit(() => this.queryJoin(query, signal)),
+    );
 
     return Object.assign(docs, {
       nextOffset:
@@ -294,60 +296,19 @@ export class MongoDBStore implements Store {
     return db.collection(collectionName, options);
   }
 
-  private async handleJoins(
-    options: StoreFindOptions,
-    docs: StoreDocument[],
+  private async queryJoin(
+    join: JoinQuery,
+    signal: AbortSignal,
   ): Promise<StoreDocument[]> {
-    const innerJoinQueries = getJoinQueries(options.innerJoin ?? {}, docs);
-    const leftJoinQueries = getJoinQueries(options.leftJoin ?? {}, docs);
-
-    const asyncLimit = pLimit(this.readConcurrency);
-
-    const [innerJoinedDocs, leftJoinDocs] = await Promise.all([
-      Promise.all(
-        Object.values(innerJoinQueries).map((joinQueries) =>
-          Promise.all(
-            joinQueries.map((joinQuery) =>
-              asyncLimit(() => this.queryJoin(joinQuery)),
-            ),
-          ),
-        ),
-      ),
-      Promise.all(
-        Object.values(leftJoinQueries).map((joinQueries) =>
-          Promise.all(
-            joinQueries.map((joinQuery) =>
-              asyncLimit(() => this.queryJoin(joinQuery)),
-            ),
-          ),
-        ),
-      ),
-    ]);
-
-    for (const [i, key] of Object.keys(innerJoinQueries).entries()) {
-      docs = applyJoinQuery(
-        docs,
-        key,
-        innerJoinQueries[key].map(({ options }) => options),
-        innerJoinedDocs[i],
-        true,
-      );
+    if (signal.aborted) {
+      throw new StoreError(StoreError.Code.ABORTED, 'Aborted');
     }
 
-    for (const [i, key] of Object.keys(leftJoinQueries).entries()) {
-      docs = applyJoinQuery(
-        docs,
-        key,
-        leftJoinQueries[key].map(({ options }) => options),
-        leftJoinDocs[i],
-      );
-    }
-
-    return docs;
-  }
-
-  private async queryJoin(join: JoinQuery): Promise<StoreDocument[]> {
     const collection = await this.collection(join.collection.name);
+
+    if (signal.aborted) {
+      throw new StoreError(StoreError.Code.ABORTED, 'Aborted');
+    }
 
     // unicon issue: https://github.com/sindresorhus/eslint-plugin-unicorn/issues/1947
     // eslint-disable-next-line unicorn/no-array-callback-reference

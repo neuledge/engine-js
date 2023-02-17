@@ -1,225 +1,465 @@
-import { StoreJoin } from '@neuledge/store';
-import { applyJoinQuery, getJoinQueries } from './join';
+import { applyJoins } from './join';
 
 /* eslint-disable max-lines-per-function */
 
 describe('join', () => {
-  describe('getJoinQueries()', () => {
-    it('should return an empty array if no join is provided', () => {
-      expect(getJoinQueries({}, [{ id: 1 }])).toEqual({});
+  describe('applyJoins()', () => {
+    it('should return same documents if no joins provided', async () => {
+      const queryJoin = jest.fn(async () => []);
+
+      await expect(applyJoins({}, [{ id: 1 }], queryJoin)).resolves.toEqual([
+        { id: 1 },
+      ]);
+
+      expect(queryJoin).not.toHaveBeenCalled();
     });
 
-    it('should join by post.category_id', () => {
-      const join: StoreJoin = {
-        category: [
-          {
-            collection: { name: 'category' } as never,
-            by: { id: { field: 'category_id' } },
-          },
-        ],
-      };
-      const docs = [
-        { id: 101, category_id: 1 },
-        { id: 102, category_id: 1 },
-        { id: 103, category_id: 2 },
-      ];
+    it('should ignore join if no documents provided', async () => {
+      const queryJoin = jest.fn(async () => []);
 
-      expect(getJoinQueries(join, docs)).toEqual({
-        category: [
+      await expect(
+        applyJoins(
           {
-            options: join.category[0],
-            collection: { name: 'category' },
-            project: { id: 1 },
-            find: {
-              id: { $in: [1, 2] },
+            innerJoin: {
+              category: [
+                {
+                  collection: { name: 'category' } as never,
+                  by: { id: { field: 'category_id' } },
+                },
+              ],
             },
-            limit: 2,
           },
-        ],
-      });
+          [],
+          queryJoin,
+        ),
+      ).resolves.toEqual([]);
+
+      expect(queryJoin).not.toHaveBeenCalled();
     });
 
-    it('should join by post.category_id with same category', () => {
-      const join: StoreJoin = {
-        category: [
+    it('should join by post.category_id', async () => {
+      const queryJoin = jest.fn(async () => [{ id: 1 }, { id: 2 }]);
+
+      await expect(
+        applyJoins(
           {
+            innerJoin: {
+              category: [
+                {
+                  collection: { name: 'category' } as never,
+                  by: { id: { field: 'category_id' } },
+                  select: true,
+                },
+              ],
+            },
+          },
+          [
+            { id: 101, category_id: 1 },
+            { id: 102, category_id: 1 },
+            { id: 103, category_id: 2 },
+          ],
+          queryJoin,
+        ),
+      ).resolves.toEqual([
+        { id: 101, category_id: 1, category: { id: 1 } },
+        { id: 102, category_id: 1, category: { id: 1 } },
+        { id: 103, category_id: 2, category: { id: 2 } },
+      ]);
+
+      expect(queryJoin).toHaveBeenCalledTimes(1);
+      expect(queryJoin).toHaveBeenCalledWith(
+        {
+          collection: { name: 'category' },
+          options: {
             collection: { name: 'category' } as never,
             by: { id: { field: 'category_id' } },
             select: true,
           },
-        ],
-      };
-      const docs = [
+          project: null,
+          find: { id: { $in: [1, 2] } },
+          limit: 2,
+        },
+        expect.any(AbortSignal),
+      );
+    });
+
+    it('should join by post.category_id and project', async () => {
+      const queryJoin = jest.fn(async () => [
+        { id: 1, name: 'Category 1' },
+        { id: 2, name: 'Category 2' },
+      ]);
+
+      await expect(
+        applyJoins(
+          {
+            innerJoin: {
+              category: [
+                {
+                  collection: { name: 'category' } as never,
+                  by: { id: { field: 'category_id' } },
+                  select: { name: true },
+                },
+              ],
+            },
+          },
+          [
+            { id: 101, category_id: 1 },
+            { id: 102, category_id: 1 },
+            { id: 103, category_id: 2 },
+          ],
+          queryJoin,
+        ),
+      ).resolves.toEqual([
+        { id: 101, category_id: 1, category: { id: 1, name: 'Category 1' } },
+        { id: 102, category_id: 1, category: { id: 1, name: 'Category 1' } },
+        { id: 103, category_id: 2, category: { id: 2, name: 'Category 2' } },
+      ]);
+
+      expect(queryJoin).toHaveBeenCalledTimes(1);
+      expect(queryJoin).toHaveBeenCalledWith(
+        {
+          collection: { name: 'category' },
+          options: {
+            collection: { name: 'category' } as never,
+            by: { id: { field: 'category_id' } },
+            select: { name: true },
+          },
+          project: { id: 1, name: 1 },
+          find: { id: { $in: [1, 2] } },
+          limit: 2,
+        },
+        expect.any(AbortSignal),
+      );
+    });
+
+    it('should join by post.category_id and filter missing joins', async () => {
+      const queryJoin = jest.fn(async () => [{ id: 1 }]);
+
+      await expect(
+        applyJoins(
+          {
+            innerJoin: {
+              category: [
+                {
+                  collection: { name: 'category' } as never,
+                  by: { id: { field: 'category_id' } },
+                  select: true,
+                },
+              ],
+            },
+          },
+          [
+            { id: 101, category_id: 1 },
+            { id: 102, category_id: 1 },
+            { id: 103, category_id: 2 },
+          ],
+          queryJoin,
+        ),
+      ).resolves.toEqual([
+        { id: 101, category_id: 1, category: { id: 1 } },
+        { id: 102, category_id: 1, category: { id: 1 } },
+      ]);
+
+      expect(queryJoin).toHaveBeenCalledTimes(1);
+      expect(queryJoin).toHaveBeenCalledWith(
+        {
+          collection: { name: 'category' },
+          options: {
+            collection: { name: 'category' } as never,
+            by: { id: { field: 'category_id' } },
+            select: true,
+          },
+          project: null,
+          find: { id: { $in: [1, 2] } },
+          limit: 2,
+        },
+        expect.any(AbortSignal),
+      );
+    });
+
+    it('should join by post.category_id and keep missing joins', async () => {
+      const queryJoin = jest.fn(async () => [{ id: 1 }]);
+
+      await expect(
+        applyJoins(
+          {
+            leftJoin: {
+              category: [
+                {
+                  collection: { name: 'category' } as never,
+                  by: { id: { field: 'category_id' } },
+                  select: true,
+                },
+              ],
+            },
+          },
+          [
+            { id: 101, category_id: 1 },
+            { id: 102, category_id: 1 },
+            { id: 103, category_id: 2 },
+          ],
+          queryJoin,
+        ),
+      ).resolves.toEqual([
+        { id: 101, category_id: 1, category: { id: 1 } },
+        { id: 102, category_id: 1, category: { id: 1 } },
+        { id: 103, category_id: 2 },
+      ]);
+
+      expect(queryJoin).toHaveBeenCalledTimes(1);
+      expect(queryJoin).toHaveBeenCalledWith(
+        {
+          collection: { name: 'category' },
+          options: {
+            collection: { name: 'category' } as never,
+            by: { id: { field: 'category_id' } },
+            select: true,
+          },
+          project: null,
+          find: { id: { $in: [1, 2] } },
+          limit: 2,
+        },
+        expect.any(AbortSignal),
+      );
+    });
+
+    it('should join without select by post.category_id and filter missing joins', async () => {
+      const queryJoin = jest.fn(async () => [{ id: 1 }]);
+
+      await expect(
+        applyJoins(
+          {
+            innerJoin: {
+              category: [
+                {
+                  collection: { name: 'category' } as never,
+                  by: { id: { field: 'category_id' } },
+                },
+              ],
+            },
+          },
+          [
+            { id: 101, category_id: 1 },
+            { id: 102, category_id: 1 },
+            { id: 103, category_id: 2 },
+          ],
+          queryJoin,
+        ),
+      ).resolves.toEqual([
         { id: 101, category_id: 1 },
         { id: 102, category_id: 1 },
-        { id: 103, category_id: 1 },
-      ];
+      ]);
 
-      expect(getJoinQueries(join, docs)).toEqual({
-        category: [
-          {
-            options: join.category[0],
-            collection: { name: 'category' },
-            project: null,
-            find: {
-              id: { $eq: 1 },
-            },
-            limit: 1,
+      expect(queryJoin).toHaveBeenCalledTimes(1);
+      expect(queryJoin).toHaveBeenCalledWith(
+        {
+          collection: { name: 'category' },
+          options: {
+            collection: { name: 'category' } as never,
+            by: { id: { field: 'category_id' } },
           },
-        ],
-      });
+          project: { id: 1 },
+          find: { id: { $in: [1, 2] } },
+          limit: 2,
+        },
+        expect.any(AbortSignal),
+      );
+    });
+
+    it('should join by post.category_id with same category', () => {
+      const queryJoin = jest.fn(async () => [{ id: 1 }]);
+
+      expect(
+        applyJoins(
+          {
+            innerJoin: {
+              category: [
+                {
+                  collection: { name: 'category' } as never,
+                  by: { id: { field: 'category_id' } },
+                  select: true,
+                },
+              ],
+            },
+          },
+          [
+            { id: 101, category_id: 1 },
+            { id: 102, category_id: 1 },
+            { id: 103, category_id: 1 },
+          ],
+          queryJoin,
+        ),
+      ).resolves.toEqual([
+        { id: 101, category_id: 1, category: { id: 1 } },
+        { id: 102, category_id: 1, category: { id: 1 } },
+        { id: 103, category_id: 1, category: { id: 1 } },
+      ]);
+
+      expect(queryJoin).toHaveBeenCalledTimes(1);
+      expect(queryJoin).toHaveBeenCalledWith(
+        {
+          collection: { name: 'category' },
+          options: {
+            collection: { name: 'category' } as never,
+            by: { id: { field: 'category_id' } },
+            select: true,
+          },
+          project: null,
+          find: { id: { $eq: 1 } },
+          limit: 1,
+        },
+        expect.any(AbortSignal),
+      );
     });
 
     it('should join by post.category_id and single post.category_sub_id', () => {
-      const join: StoreJoin = {
-        category: [
+      const queryJoin = jest.fn(async () => [
+        { id: 1, sub_id: 1 },
+        { id: 2, sub_id: 1 },
+      ]);
+
+      expect(
+        applyJoins(
           {
+            innerJoin: {
+              category: [
+                {
+                  collection: { name: 'category' } as never,
+                  by: {
+                    id: { field: 'category_id' },
+                    sub_id: { field: 'category_sub_id' },
+                  },
+                  select: true,
+                },
+              ],
+            },
+          },
+          [
+            { id: 101, category_id: 1, category_sub_id: 1 },
+            { id: 102, category_id: 1, category_sub_id: 1 },
+            { id: 103, category_id: 2, category_sub_id: 1 },
+          ],
+          queryJoin,
+        ),
+      ).resolves.toEqual([
+        {
+          id: 101,
+          category_id: 1,
+          category_sub_id: 1,
+          category: { id: 1, sub_id: 1 },
+        },
+        {
+          id: 102,
+          category_id: 1,
+          category_sub_id: 1,
+          category: { id: 1, sub_id: 1 },
+        },
+        {
+          id: 103,
+          category_id: 2,
+          category_sub_id: 1,
+          category: { id: 2, sub_id: 1 },
+        },
+      ]);
+
+      expect(queryJoin).toHaveBeenCalledTimes(1);
+      expect(queryJoin).toHaveBeenCalledWith(
+        {
+          collection: { name: 'category' },
+          options: {
             collection: { name: 'category' } as never,
             by: {
               id: { field: 'category_id' },
               sub_id: { field: 'category_sub_id' },
             },
+            select: true,
           },
-        ],
-      };
-      const docs = [
-        { id: 101, category_id: 1, category_sub_id: 1 },
-        { id: 102, category_id: 1, category_sub_id: 1 },
-        { id: 103, category_id: 2, category_sub_id: 1 },
-      ];
-
-      expect(getJoinQueries(join, docs)).toEqual({
-        category: [
-          {
-            options: join.category[0],
-            collection: { name: 'category' },
-            project: { id: 1, sub_id: 1 },
-            find: {
-              id: { $in: [1, 2] },
-              sub_id: { $eq: 1 },
-            },
-            limit: 2,
+          project: null,
+          find: {
+            id: { $in: [1, 2] },
+            sub_id: { $eq: 1 },
           },
-        ],
-      });
+          limit: 2,
+        },
+        expect.any(AbortSignal),
+      );
     });
 
     it('should join by post.category_id and multiple post.category_sub_id', () => {
-      const join: StoreJoin = {
-        category: [
+      const queryJoin = jest.fn(async () => [
+        { id: 1, sub_id: 1 },
+        { id: 1, sub_id: 2 },
+        { id: 2, sub_id: 1 },
+      ]);
+
+      expect(
+        applyJoins(
           {
+            innerJoin: {
+              category: [
+                {
+                  collection: { name: 'category' } as never,
+                  by: {
+                    id: { field: 'category_id' },
+                    sub_id: { field: 'category_sub_id' },
+                  },
+                  select: true,
+                },
+              ],
+            },
+          },
+          [
+            { id: 101, category_id: 1, category_sub_id: 1 },
+            { id: 102, category_id: 1, category_sub_id: 2 },
+            { id: 103, category_id: 2, category_sub_id: 1 },
+          ],
+          queryJoin,
+        ),
+      ).resolves.toEqual([
+        {
+          id: 101,
+          category_id: 1,
+          category_sub_id: 1,
+          category: { id: 1, sub_id: 1 },
+        },
+        {
+          id: 102,
+          category_id: 1,
+          category_sub_id: 2,
+          category: { id: 1, sub_id: 2 },
+        },
+        {
+          id: 103,
+          category_id: 2,
+          category_sub_id: 1,
+          category: { id: 2, sub_id: 1 },
+        },
+      ]);
+
+      expect(queryJoin).toHaveBeenCalledTimes(1);
+      expect(queryJoin).toHaveBeenCalledWith(
+        {
+          collection: { name: 'category' },
+          options: {
             collection: { name: 'category' } as never,
             by: {
               id: { field: 'category_id' },
               sub_id: { field: 'category_sub_id' },
             },
-            select: { name: true },
+            select: true,
           },
-        ],
-      };
-      const docs = [
-        { id: 101, category_id: 1, category_sub_id: 1 },
-        { id: 102, category_id: 1, category_sub_id: 2 },
-        { id: 103, category_id: 2, category_sub_id: 1 },
-      ];
-
-      expect(getJoinQueries(join, docs)).toEqual({
-        category: [
-          {
-            options: join.category[0],
-            collection: { name: 'category' },
-            project: { id: 1, sub_id: 1, name: 1 },
-            find: {
-              $or: [
-                { id: { $eq: 1 }, sub_id: { $eq: 1 } },
-                { id: { $eq: 1 }, sub_id: { $eq: 2 } },
-                { id: { $eq: 2 }, sub_id: { $eq: 1 } },
-              ],
-            },
-            limit: 3,
+          project: null,
+          find: {
+            $or: [
+              { id: { $eq: 1 }, sub_id: { $eq: 1 } },
+              { id: { $eq: 1 }, sub_id: { $eq: 2 } },
+              { id: { $eq: 2 }, sub_id: { $eq: 1 } },
+            ],
           },
-        ],
-      });
-    });
-  });
-
-  describe('applyJoinQuery()', () => {
-    it('should apply join query', () => {
-      expect(
-        applyJoinQuery(
-          [
-            { id: 1, category_id: 1 },
-            { id: 2, category_id: 1 },
-            { id: 3, category_id: 2 },
-            { id: 4, category_id: 3 },
-          ],
-          'category',
-          [{ select: true, by: { id: { field: 'category_id' } } } as never],
-          [
-            [
-              { id: 1, name: 'Category 1' },
-              { id: 2, name: 'Category 2' },
-            ],
-          ],
-        ),
-      ).toEqual([
-        { id: 1, category_id: 1, category: { id: 1, name: 'Category 1' } },
-        { id: 2, category_id: 1, category: { id: 1, name: 'Category 1' } },
-        { id: 3, category_id: 2, category: { id: 2, name: 'Category 2' } },
-        { id: 4, category_id: 3 },
-      ]);
-    });
-
-    it('should apply required join query', () => {
-      expect(
-        applyJoinQuery(
-          [
-            { id: 1, category_id: 1 },
-            { id: 2, category_id: 1 },
-            { id: 3, category_id: 2 },
-            { id: 4, category_id: 3 },
-          ],
-          'category',
-          [{ select: true, by: { id: { field: 'category_id' } } } as never],
-          [
-            [
-              { id: 1, name: 'Category 1' },
-              { id: 2, name: 'Category 2' },
-            ],
-          ],
-          true,
-        ),
-      ).toEqual([
-        { id: 1, category_id: 1, category: { id: 1, name: 'Category 1' } },
-        { id: 2, category_id: 1, category: { id: 1, name: 'Category 1' } },
-        { id: 3, category_id: 2, category: { id: 2, name: 'Category 2' } },
-      ]);
-    });
-
-    it('should apply required join query no select', () => {
-      expect(
-        applyJoinQuery(
-          [
-            { id: 1, category_id: 1 },
-            { id: 2, category_id: 1 },
-            { id: 3, category_id: 2 },
-            { id: 4, category_id: 3 },
-          ],
-          'category',
-          [{ by: { id: { field: 'category_id' } } } as never],
-          [
-            [
-              { id: 1, name: 'Category 1' },
-              { id: 2, name: 'Category 2' },
-            ],
-          ],
-          true,
-        ),
-      ).toEqual([
-        { id: 1, category_id: 1 },
-        { id: 2, category_id: 1 },
-        { id: 3, category_id: 2 },
-      ]);
+          limit: 3,
+        },
+        expect.any(AbortSignal),
+      );
     });
   });
 });
