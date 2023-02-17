@@ -90,12 +90,11 @@ const applyJoinOptions = async (
       const res = await queryJoinEntries(option, refs, queryJoin, abort.signal);
       if (abort.signal.aborted) return;
 
-      for (const [j, entry] of res.entries()) {
+      for (const [j, ref] of refs.entries()) {
+        const entry = res[j];
         if (!entry) continue;
 
-        const ref = refs[j];
-
-        if (option.select) {
+        if (option.select && ref.doc[key] == null) {
           ref.doc[key] = entry;
         }
         left.delete(ref);
@@ -125,7 +124,14 @@ const queryJoinEntries = async (
   const { find, limit } = joinByFilter(option.by, refs);
 
   const query = getJoinQuery(option, find, limit);
-  const docs = await queryJoin(query, signal);
+  let docs = await queryJoin(query, signal);
+
+  if (signal.aborted) {
+    throw new StoreError(StoreError.Code.ABORTED, 'Aborted');
+  }
+
+  // handle recursive joins
+  docs = await applyJoins(option, docs, queryJoin);
 
   if (signal.aborted) {
     throw new StoreError(StoreError.Code.ABORTED, 'Aborted');
@@ -152,15 +158,6 @@ const getJoinQuery = (
       typeof options.select === 'object'
         ? { ...projectFilter(options.select), ...project }
         : null;
-  }
-
-  if (options.innerJoin || options.leftJoin) {
-    // FIXME support recursive joins
-
-    throw new StoreError(
-      StoreError.Code.NOT_IMPLEMENTED,
-      'Recursive joins are not implemented yet',
-    );
   }
 
   return {
