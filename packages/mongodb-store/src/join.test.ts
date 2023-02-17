@@ -1,4 +1,4 @@
-import { applyJoins } from './join';
+import { applyJoinOptions } from './join';
 
 /* eslint-disable max-lines-per-function */
 
@@ -7,9 +7,9 @@ describe('join', () => {
     it('should return same documents if no joins provided', async () => {
       const queryJoin = jest.fn(async () => []);
 
-      await expect(applyJoins({}, [{ id: 1 }], queryJoin)).resolves.toEqual([
-        { id: 1 },
-      ]);
+      await expect(
+        applyJoinOptions({}, [{ id: 1 }], queryJoin),
+      ).resolves.toEqual([{ id: 1 }]);
 
       expect(queryJoin).not.toHaveBeenCalled();
     });
@@ -18,7 +18,7 @@ describe('join', () => {
       const queryJoin = jest.fn(async () => []);
 
       await expect(
-        applyJoins(
+        applyJoinOptions(
           {
             innerJoin: {
               category: [
@@ -41,7 +41,7 @@ describe('join', () => {
       const queryJoin = jest.fn(async () => [{ id: 1 }, { id: 2 }]);
 
       await expect(
-        applyJoins(
+        applyJoinOptions(
           {
             innerJoin: {
               category: [
@@ -70,7 +70,7 @@ describe('join', () => {
       expect(queryJoin).toHaveBeenCalledWith(
         {
           collection: { name: 'category' },
-          options: {
+          choice: {
             collection: { name: 'category' } as never,
             by: { id: { field: 'category_id' } },
             select: true,
@@ -90,7 +90,7 @@ describe('join', () => {
       ]);
 
       await expect(
-        applyJoins(
+        applyJoinOptions(
           {
             innerJoin: {
               category: [
@@ -119,7 +119,7 @@ describe('join', () => {
       expect(queryJoin).toHaveBeenCalledWith(
         {
           collection: { name: 'category' },
-          options: {
+          choice: {
             collection: { name: 'category' } as never,
             by: { id: { field: 'category_id' } },
             select: { name: true },
@@ -136,7 +136,7 @@ describe('join', () => {
       const queryJoin = jest.fn(async () => [{ id: 1 }]);
 
       await expect(
-        applyJoins(
+        applyJoinOptions(
           {
             innerJoin: {
               category: [
@@ -164,7 +164,7 @@ describe('join', () => {
       expect(queryJoin).toHaveBeenCalledWith(
         {
           collection: { name: 'category' },
-          options: {
+          choice: {
             collection: { name: 'category' } as never,
             by: { id: { field: 'category_id' } },
             select: true,
@@ -181,7 +181,7 @@ describe('join', () => {
       const queryJoin = jest.fn(async () => [{ id: 1 }]);
 
       await expect(
-        applyJoins(
+        applyJoinOptions(
           {
             leftJoin: {
               category: [
@@ -210,7 +210,7 @@ describe('join', () => {
       expect(queryJoin).toHaveBeenCalledWith(
         {
           collection: { name: 'category' },
-          options: {
+          choice: {
             collection: { name: 'category' } as never,
             by: { id: { field: 'category_id' } },
             select: true,
@@ -227,7 +227,7 @@ describe('join', () => {
       const queryJoin = jest.fn(async () => [{ id: 1 }]);
 
       await expect(
-        applyJoins(
+        applyJoinOptions(
           {
             innerJoin: {
               category: [
@@ -254,7 +254,7 @@ describe('join', () => {
       expect(queryJoin).toHaveBeenCalledWith(
         {
           collection: { name: 'category' },
-          options: {
+          choice: {
             collection: { name: 'category' } as never,
             by: { id: { field: 'category_id' } },
           },
@@ -270,7 +270,7 @@ describe('join', () => {
       const queryJoin = jest.fn(async () => [{ id: 1 }]);
 
       await expect(
-        applyJoins(
+        applyJoinOptions(
           {
             innerJoin: {
               category: [
@@ -299,7 +299,7 @@ describe('join', () => {
       expect(queryJoin).toHaveBeenCalledWith(
         {
           collection: { name: 'category' },
-          options: {
+          choice: {
             collection: { name: 'category' } as never,
             by: { id: { field: 'category_id' } },
             select: true,
@@ -319,7 +319,7 @@ describe('join', () => {
       ]);
 
       await expect(
-        applyJoins(
+        applyJoinOptions(
           {
             innerJoin: {
               category: [
@@ -366,7 +366,7 @@ describe('join', () => {
       expect(queryJoin).toHaveBeenCalledWith(
         {
           collection: { name: 'category' },
-          options: {
+          choice: {
             collection: { name: 'category' } as never,
             by: {
               id: { field: 'category_id' },
@@ -393,7 +393,7 @@ describe('join', () => {
       ]);
 
       await expect(
-        applyJoins(
+        applyJoinOptions(
           {
             innerJoin: {
               category: [
@@ -440,7 +440,7 @@ describe('join', () => {
       expect(queryJoin).toHaveBeenCalledWith(
         {
           collection: { name: 'category' },
-          options: {
+          choice: {
             collection: { name: 'category' } as never,
             by: {
               id: { field: 'category_id' },
@@ -482,7 +482,7 @@ describe('join', () => {
       });
 
       await expect(
-        applyJoins(
+        applyJoinOptions(
           {
             innerJoin: {
               category: [
@@ -533,7 +533,7 @@ describe('join', () => {
         1,
         {
           collection: { name: 'category' },
-          options: {
+          choice: {
             collection: { name: 'category' } as never,
             by: { id: { field: 'category_id' } },
             select: true,
@@ -557,7 +557,7 @@ describe('join', () => {
         2,
         {
           collection: { name: 'menu' },
-          options: {
+          choice: {
             collection: { name: 'menu' } as never,
             by: { id: { field: 'menu_id' } },
             select: true,

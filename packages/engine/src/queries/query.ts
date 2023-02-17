@@ -5,7 +5,6 @@ import {
   InitOneAndReturnQuery,
   InitOneQueryOptions,
 } from './init';
-import { FilterQueryOptions } from './raw';
 import {
   AlterFirstAndReturnOrThrowQuery,
   AlterFirstAndReturnQuery,
@@ -37,6 +36,7 @@ import {
   FindUniqueWhereQuery,
 } from './find';
 import {
+  FilterQueryOptions,
   QueryProjection,
   SelectManyQuery,
   SelectManyQueryOptions,

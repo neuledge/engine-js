@@ -3,20 +3,34 @@ import {
   Post,
 } from '@/definitions/__fixtures__/category-post-example';
 import { Metadata, MetadataCollection } from '@/metadata';
-import { convertSelectQuery } from './select';
+import {
+  convertJoinSelectQuery,
+  convertLeftJoinSelectQuery,
+  convertSelectQuery,
+} from './select';
+
+/* eslint-disable max-lines-per-function */
 
 describe('engine/retrive/select', () => {
-  describe('convertSelectQuery', () => {
-    let postsCollection: MetadataCollection;
+  let postsCollection: MetadataCollection;
 
-    beforeAll(() => {
-      const metadata = new Metadata([Category, ...Post]);
+  beforeAll(() => {
+    const metadata = new Metadata([Category, ...Post]);
 
-      postsCollection = metadata.getCollections(Post)[0];
-    });
+    postsCollection = metadata.getCollections(Post)[0];
+  });
 
+  describe('convertSelectQuery()', () => {
     it('should convert an empty object', () => {
       const res = convertSelectQuery(postsCollection, {});
+
+      expect(res).toEqual({});
+    });
+
+    it('should ignore select enabled', () => {
+      const res = convertSelectQuery(postsCollection, {
+        select: true,
+      });
 
       expect(res).toEqual({});
     });
@@ -49,6 +63,78 @@ describe('engine/retrive/select', () => {
 
       expect(res).toEqual({
         select: {
+          id: true,
+        },
+      });
+    });
+  });
+
+  describe('convertJoinSelectQuery()', () => {
+    it('should convert an empty object', () => {
+      const res = convertJoinSelectQuery(postsCollection, {});
+
+      expect(res).toEqual({});
+    });
+
+    it('should convert select enabled', () => {
+      const res = convertJoinSelectQuery(postsCollection, {
+        select: true,
+      });
+
+      expect(res).toEqual({
+        select: true,
+      });
+    });
+
+    it('should convert a select object', () => {
+      const res = convertJoinSelectQuery(postsCollection, {
+        select: {
+          title: true,
+          id: true,
+          content: false,
+        },
+      });
+
+      expect(res).toEqual({
+        select: {
+          title: true,
+          id: true,
+        },
+      });
+    });
+  });
+
+  describe('convertLeftJoinSelectQuery()', () => {
+    it('should convert an empty object', () => {
+      const res = convertLeftJoinSelectQuery(postsCollection, {});
+
+      expect(res).toEqual({
+        select: true,
+      });
+    });
+
+    it('should convert select enabled', () => {
+      const res = convertLeftJoinSelectQuery(postsCollection, {
+        select: true,
+      });
+
+      expect(res).toEqual({
+        select: true,
+      });
+    });
+
+    it('should convert a select object', () => {
+      const res = convertLeftJoinSelectQuery(postsCollection, {
+        select: {
+          title: true,
+          id: true,
+          content: false,
+        },
+      });
+
+      expect(res).toEqual({
+        select: {
+          title: true,
           id: true,
         },
       });

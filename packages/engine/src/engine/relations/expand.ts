@@ -4,7 +4,7 @@ import { Metadata, MetadataCollection } from '@/metadata';
 import { ExpandQueryOptions } from '@/queries';
 import { convertRelationQueryOptions } from './relation';
 import { convertWhereQuery } from '../find';
-import { convertSelectQuery } from '../select';
+import { convertJoinSelectQuery } from '../select';
 import { convertPopulateOneQuery } from './populate';
 
 export const convertExpandQuery = <S extends StateDefinition>(
@@ -29,7 +29,7 @@ const convertExpand = <S extends StateDefinition>(
     ({ collection, by, query }) => ({
       collection,
       by,
-      ...convertSelectQuery(collection, query),
+      ...convertJoinSelectQuery(collection, query),
       ...convertWhereQuery(collection.states, collection, query),
       ...convertExpandQuery(metadata, collection, query),
       ...convertPopulateOneQuery(metadata, collection, query),

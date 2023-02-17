@@ -1,4 +1,4 @@
-import { StoreJoin, StoreJoinBy, StoreJoinOptions } from '@neuledge/store';
+import { StoreJoin, StoreJoinBy, StoreJoinChoice } from '@neuledge/store';
 import {
   Metadata,
   MetadataCollection,
@@ -24,7 +24,7 @@ interface RelationOptions<T extends { states?: StateDefinition[] | null }> {
  */
 export const convertRelationQueryOptions = <
   T extends { [key in string]?: { states?: StateDefinition[] | null } },
-  R extends StoreJoinOptions,
+  R extends StoreJoinChoice,
 >(
   metadata: Metadata,
   collection: MetadataCollection,

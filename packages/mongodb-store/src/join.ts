@@ -10,7 +10,7 @@ import {
 import {
   StoreJoin,
   StoreJoinBy,
-  StoreJoinOptions,
+  StoreJoinChoice,
   StoreScalarValue,
 } from '@neuledge/store';
 import { Document, Filter } from 'mongodb';
@@ -20,7 +20,7 @@ import { projectFilter } from './project';
 import { escapeValue } from './values';
 
 export interface JoinQuery {
-  options: StoreJoinOptions;
+  choice: StoreJoinChoice;
   collection: StoreCollection;
   project?: Document | null;
   find: Filter<Document>;
@@ -37,7 +37,7 @@ type QueryJoinFn = (
   signal: AbortSignal,
 ) => Promise<StoreDocument[]>;
 
-export const applyJoins = async (
+export const applyJoinOptions = async (
   options: Pick<StoreFindOptions, 'innerJoin' | 'leftJoin'>,
   docs: StoreDocument[],
   queryJoin: QueryJoinFn,
@@ -54,14 +54,14 @@ export const applyJoins = async (
   );
 
   await Promise.all([
-    getJoinDocs(innerJoin ?? {}, refs, queryJoin, true),
-    getJoinDocs(leftJoin ?? {}, refs, queryJoin, false),
+    applyJoinKeys(innerJoin ?? {}, refs, queryJoin, true),
+    applyJoinKeys(leftJoin ?? {}, refs, queryJoin, false),
   ]);
 
   return refs.filter((ref) => !ref.removed).map((ref) => ref.doc);
 };
 
-const getJoinDocs = async (
+const applyJoinKeys = async (
   join: StoreJoin,
   refs: StoreDocumentReference[],
   queryJoin: QueryJoinFn,
@@ -70,13 +70,13 @@ const getJoinDocs = async (
   await Promise.all(
     Object.entries(join).map(async ([key, options]) => [
       key,
-      await applyJoinOptions(options, key, refs, queryJoin, required),
+      await applyJoin(options, key, refs, queryJoin, required),
     ]),
   );
 };
 
-const applyJoinOptions = async (
-  options: StoreJoinOptions[],
+const applyJoin = async (
+  choices: StoreJoinChoice[],
   key: string,
   refs: StoreDocumentReference[],
   queryJoin: QueryJoinFn,
@@ -86,8 +86,8 @@ const applyJoinOptions = async (
   const abort = new AbortController();
 
   await Promise.all(
-    options.map(async (option) => {
-      const res = await queryJoinEntries(option, refs, queryJoin, abort.signal);
+    choices.map(async (option) => {
+      const res = await queryJoinChoice(option, refs, queryJoin, abort.signal);
       if (abort.signal.aborted) return;
 
       for (const [j, ref] of refs.entries()) {
@@ -115,15 +115,15 @@ const applyJoinOptions = async (
   }
 };
 
-const queryJoinEntries = async (
-  option: StoreJoinOptions,
+const queryJoinChoice = async (
+  choice: StoreJoinChoice,
   refs: StoreDocumentReference[],
   queryJoin: QueryJoinFn,
   signal: AbortSignal,
 ): Promise<(StoreDocument | undefined)[]> => {
-  const { find, limit } = joinByFilter(option.by, refs);
+  const { find, limit } = joinByFilter(choice.by, refs);
 
-  const query = getJoinQuery(option, find, limit);
+  const query = getJoinQuery(choice, find, limit);
   let docs = await queryJoin(query, signal);
 
   if (signal.aborted) {
@@ -131,40 +131,40 @@ const queryJoinEntries = async (
   }
 
   // handle recursive joins
-  docs = await applyJoins(option, docs, queryJoin);
+  docs = await applyJoinOptions(choice, docs, queryJoin);
 
   if (signal.aborted) {
     throw new StoreError(StoreError.Code.ABORTED, 'Aborted');
   }
 
-  const docMap = getDocumentMap(option.by, docs);
+  const docMap = getDocumentMap(choice.by, docs);
 
   return refs.map((ref) =>
-    docMap.get(getDocumentKey(option.by, ref.doc, true)),
+    docMap.get(getDocumentKey(choice.by, ref.doc, true)),
   );
 };
 
 const getJoinQuery = (
-  options: StoreJoinOptions,
+  choice: StoreJoinChoice,
   find: JoinQuery['find'],
   limit: JoinQuery['limit'],
 ): JoinQuery => {
   let project: Document | null = Object.fromEntries(
-    Object.keys(options.by).map((key) => [escapeFieldName(key), 1]),
+    Object.keys(choice.by).map((key) => [escapeFieldName(key), 1]),
   );
 
-  if (options.select) {
+  if (choice.select) {
     project =
-      typeof options.select === 'object'
-        ? { ...projectFilter(options.select), ...project }
+      typeof choice.select === 'object'
+        ? { ...projectFilter(choice.select), ...project }
         : null;
   }
 
   return {
-    options,
-    collection: options.collection,
+    choice: choice,
+    collection: choice.collection,
     project,
-    find: options.where ? { $and: [find, findFilter(options.where)] } : find,
+    find: choice.where ? { $and: [find, findFilter(choice.where)] } : find,
     limit,
   };
 };

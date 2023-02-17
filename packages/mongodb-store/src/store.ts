@@ -28,7 +28,7 @@ import pLimit from 'p-limit';
 import { escapeDocument, unescapeDocument } from './documents';
 import { findFilter } from './filter';
 import { dropIndexes, ensureIndexes } from './indexes';
-import { applyJoins, JoinQuery } from './join';
+import { applyJoinOptions, JoinQuery } from './join';
 import {
   generateDocumentInsertedId,
   AutoIncrementDocument,
@@ -181,7 +181,7 @@ export class MongoDBStore implements Store {
     let docs = rawDocs.map((doc) => unescapeDocument(options.collection, doc));
 
     const asyncLimit = pLimit(this.readConcurrency);
-    docs = await applyJoins(options, docs, (query, signal) =>
+    docs = await applyJoinOptions(options, docs, (query, signal) =>
       asyncLimit(() => this.queryJoin(query, signal)),
     );
 

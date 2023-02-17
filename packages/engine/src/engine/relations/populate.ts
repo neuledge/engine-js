@@ -1,9 +1,9 @@
-import { StoreFindOptions, StoreJoin } from '@neuledge/store';
+import { StoreFindOptions, StoreLeftJoin } from '@neuledge/store';
 import { StateDefinition } from '@/definitions';
 import { Metadata, MetadataCollection } from '@/metadata';
 import { PopulateQueryOptions } from '@/queries';
 import { convertRelationQueryOptions } from './relation';
-import { convertSelectQuery } from '../select';
+import { convertLeftJoinSelectQuery } from '../select';
 import { convertWhereQuery } from '../find';
 import { convertExpandQuery } from './expand';
 
@@ -23,7 +23,7 @@ const convertPopulateOne = <S extends StateDefinition>(
   metadata: Metadata,
   collection: MetadataCollection,
   populateOne: NonNullable<PopulateQueryOptions<S>['populateOne']>,
-): StoreJoin =>
+): StoreLeftJoin =>
   convertRelationQueryOptions(
     metadata,
     collection,
@@ -31,7 +31,7 @@ const convertPopulateOne = <S extends StateDefinition>(
     ({ collection, by, query }) => ({
       collection,
       by,
-      ...convertSelectQuery(collection, query),
+      ...convertLeftJoinSelectQuery(collection, query),
       ...convertWhereQuery(collection.states, collection, query),
       ...convertExpandQuery(metadata, collection, query),
       ...convertPopulateOneQuery(metadata, collection, query),

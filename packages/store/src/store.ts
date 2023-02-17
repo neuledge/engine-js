@@ -10,7 +10,7 @@ import {
   StoreListOffset,
   StoreSelect,
 } from './document';
-import { StoreJoin } from './relation';
+import { StoreJoin, StoreLeftJoin } from './join';
 import { StoreSort } from './sort';
 import { StoreWhere } from './where';
 
@@ -55,7 +55,7 @@ export interface StoreFindOptions {
   select?: StoreSelect | null;
   where?: StoreWhere | null;
   innerJoin?: StoreJoin | null;
-  leftJoin?: StoreJoin | null;
+  leftJoin?: StoreLeftJoin | null;
   limit: number;
   offset?: StoreListOffset | null;
   sort?: StoreSort | null;
