@@ -85,7 +85,7 @@ const applyJoin = async (
   const left = new Set(refs);
   const abort = new AbortController();
 
-  await Promise.all(
+  const handleChoices = Promise.all(
     choices.map(async (option) => {
       const res = await queryJoinChoice(option, refs, queryJoin, abort.signal);
       if (abort.signal.aborted) return;
@@ -102,10 +102,18 @@ const applyJoin = async (
 
       if (!left.size) abort.abort();
     }),
-  ).catch((error) => {
-    if (abort.signal.aborted) return;
+  );
 
-    throw error;
+  await new Promise((resolve, reject) => {
+    handleChoices.then(resolve, (error) => {
+      // prevent race condition
+      if (abort.signal.aborted) return;
+
+      reject(error);
+      abort.abort();
+    });
+
+    abort.signal.addEventListener('abort', resolve);
   });
 
   if (required && left.size) {
@@ -122,6 +130,10 @@ const queryJoinChoice = async (
   signal: AbortSignal,
 ): Promise<(StoreDocument | undefined)[]> => {
   const { find, limit } = joinByFilter(choice.by, refs);
+
+  if (!limit) {
+    return [];
+  }
 
   const query = getJoinQuery(choice, find, limit);
   let docs = await queryJoin(query, signal);
@@ -183,7 +195,9 @@ const joinByFilter = (
   if (filters.length === 1) {
     const [key, values] = filters[0];
 
-    const uniqueValues = uniqueStoreScalarValues(values);
+    const uniqueValues = uniqueStoreScalarValues(
+      values.filter((v) => v != null),
+    );
     find[escapeFieldName(key)] = {
       $in: uniqueValues.map((v) => escapeValue(v)),
     };
@@ -195,19 +209,30 @@ const joinByFilter = (
     return { find, limit: 1 };
   }
 
+  const $or: Filter<Document>[] = [];
+
+  for (let i = 0; i < refs.length; i += 1) {
+    const or: Filter<Document> = { ...find };
+    let skip = false;
+
+    for (const [key, values] of filters) {
+      const value = values[i];
+
+      if (value == null) {
+        skip = true;
+        continue;
+      }
+
+      or[escapeFieldName(key)] = { $eq: escapeValue(value) };
+    }
+
+    if (skip) continue;
+    $or.push(or);
+  }
+
   return {
-    find: {
-      $or: refs.map((ref, i) => ({
-        ...find,
-        ...Object.fromEntries(
-          filters.map(([key, values]) => [
-            escapeFieldName(key),
-            { $eq: escapeValue(values[i]) },
-          ]),
-        ),
-      })),
-    },
-    limit: refs.length,
+    find: { $or },
+    limit: $or.length,
   };
 };
 
@@ -231,16 +256,17 @@ const parseJoinByDocuments = (
     }
 
     const values = refs.map((ref) => ref.doc[value.field]);
+    const existValues = values.filter((v) => v != null);
 
     if (
-      values.length > 1 &&
-      !values.every((v) => isStoreScalarValueEqual(v, values[0]))
+      existValues.length >= 1 &&
+      existValues.every((v) => isStoreScalarValueEqual(v, existValues[0]))
     ) {
-      filters.push([key, values]);
+      find[escapeFieldName(key)] = { $eq: escapeValue(existValues[0]) };
       continue;
     }
 
-    find[escapeFieldName(key)] = { $eq: escapeValue(values[0]) };
+    filters.push([key, values]);
   }
 
   return { find, filters };
