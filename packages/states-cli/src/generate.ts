@@ -28,8 +28,8 @@ const action = async (
   files: string[],
   options: BuildOptions,
 ): Promise<void> => {
-  const asyncLimit = pLimit(10);
   const resolvedFiles = await resolveFiles(files, options.basepath);
+  const asyncLimit = pLimit(10);
 
   const inputs = await Promise.all(
     resolvedFiles.map((filepath) =>
@@ -55,23 +55,23 @@ const resolveFiles = async (
   files: string[],
   basepath?: string,
 ): Promise<string[]> => {
-  const resolvedFiles = [];
+  const staticFiles = [];
   const dynamicFiles = [];
 
   for (const file of files) {
     if (fg.isDynamicPattern(file)) {
       dynamicFiles.push(file);
     } else {
-      resolvedFiles.push(resolve(basepath ?? '', file));
+      staticFiles.push(file);
     }
   }
 
   return [
-    ...resolvedFiles,
+    ...staticFiles,
     ...(await fg(dynamicFiles, {
       cwd: basepath,
       onlyFiles: true,
       unique: true,
     })),
-  ];
+  ].map((file) => resolve(basepath ?? '', file));
 };

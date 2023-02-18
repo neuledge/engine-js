@@ -1,0 +1,62 @@
+either Post = DraftPost | PublishedPost
+
+"""
+An unpublished post
+"""
+state DraftPost {
+  @id(auto: "increment") id: Integer = 1
+  category?: Category = 2
+  title: String = 3
+  content?: String = 4
+}
+
+"""
+A published post
+"""
+@index(fields: ["category", "title"])
+state PublishedPost from DraftPost {
+  category: Category = 1
+  content: String = 2
+  publishedAt: DateTime = 3
+}
+
+"""
+Create a new draft post
+"""
+create(
+  title: String
+  content?: String
+  category?: Category
+): DraftPost
+
+"""
+Update a draft post
+"""
+DraftPost.update(
+  title: String
+  content?: String
+  category?: Category
+): DraftPost
+
+"""
+Update a published post
+"""
+PublishedPost.update(
+  title: String
+  content: String
+  category: Category
+): PublishedPost
+
+"""
+Publish a draft post
+"""
+DraftPost.publish(): PublishedPost => {
+  content: Required(value: this.content),
+  category: Required(value: this.category),
+  publishedAt: DateTime(),
+}
+
+"""
+Delete a post
+"""
+Post.delete(): Void
