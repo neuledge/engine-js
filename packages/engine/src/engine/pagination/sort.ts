@@ -54,7 +54,7 @@ export const convertSortQuery = <S extends StateDefinition>(
 
     const field = key.slice(1);
 
-    for (const name of collection.getFieldNames(field)) {
+    for (const name of collection.getSchemaFieldNames(field)) {
       res[name] = direction;
     }
   }

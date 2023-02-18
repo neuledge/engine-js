@@ -4,8 +4,6 @@ import {
   ExecQueryOptions,
   MatchQuery,
   MatchQueryOptions,
-  PopulateQuery,
-  PopulateQueryOptions,
   QueryEntity,
   QueryProjection,
   ReturnQuery,
@@ -27,13 +25,15 @@ export interface AlterFirstOrThrowQuery<
     MatchQuery<I>,
     ExecQuery<void> {}
 
+// TODO enable populate support for alterFirstOrThrow query
+
 export interface AlterFirstAndReturnOrThrowQuery<
   I extends StateDefinition,
   O extends StateDefinition,
   P extends QueryProjection<O>,
   R,
 > extends SelectQuery<'AlterFirstAndReturnOrThrow', I, O, R>,
-    PopulateQuery<'AlterFirstAndReturnOrThrow', I, O, P, R>,
+    // PopulateQuery<'AlterFirstAndReturnOrThrow', I, O, P, R>,
     WhereQuery<I>,
     MatchQuery<I>,
     ExecQuery<QueryEntity<O, P, R>> {}
@@ -45,7 +45,7 @@ export interface AlterFirstOrThrowQueryOptions<
     SingleArgsQueryOptions<I, StateDefinitionAlterMethods<I>>,
     ReturnQueryOptions,
     SelectQueryOptions<O>,
-    PopulateQueryOptions<O>,
+    // PopulateQueryOptions<O>,
     WhereQueryOptions<I>,
     MatchQueryOptions<I>,
     ExecQueryOptions<'AlterFirstOrThrow', I, O> {}

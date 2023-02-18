@@ -26,10 +26,10 @@ describe('engine/metadata/schema', () => {
 
     it('should return Category schema', () => {
       expect(getMetadataSchema(categoriesCollection.states)).toEqual({
-        id: [{ field: categoriesCollection.getFields('id')[0] }],
-        name: [{ field: categoriesCollection.getFields('name')[0] }],
+        id: [{ field: categoriesCollection.getSchemaFields('id')[0] }],
+        name: [{ field: categoriesCollection.getSchemaFields('name')[0] }],
         description: [
-          { field: categoriesCollection.getFields('description')[0] },
+          { field: categoriesCollection.getSchemaFields('description')[0] },
         ],
       });
     });
@@ -39,37 +39,49 @@ describe('engine/metadata/schema', () => {
         category: [
           {
             schema: {
-              id: [{ field: postsCollection.getFields('category.id')[0] }],
+              id: [
+                { field: postsCollection.getSchemaFields('category.id')[0] },
+              ],
             },
           },
         ],
         'category.id': [
           {
             field: {
-              ...postsCollection.getFields('category.id')[0],
+              ...postsCollection.getSchemaFields('category.id')[0],
               indexes: [2, 1],
             },
           },
           {
             field: {
-              ...postsCollection.getFields('category.id')[1],
+              ...postsCollection.getSchemaFields('category.id')[1],
               indexes: [256, 1],
             },
           },
         ],
         id: [
-          { field: { ...postsCollection.getFields('id')[0], indexes: [1] } },
+          {
+            field: {
+              ...postsCollection.getSchemaFields('id')[0],
+              indexes: [1],
+            },
+          },
         ],
         title: [
           {
-            field: { ...postsCollection.getFields('title')[0], indexes: [3] },
+            field: {
+              ...postsCollection.getSchemaFields('title')[0],
+              indexes: [3],
+            },
           },
         ],
         content: [
-          { field: postsCollection.getFields('content')[0] },
-          { field: postsCollection.getFields('content')[1] },
+          { field: postsCollection.getSchemaFields('content')[0] },
+          { field: postsCollection.getSchemaFields('content')[1] },
         ],
-        publishedAt: [{ field: postsCollection.getFields('publishedAt')[0] }],
+        publishedAt: [
+          { field: postsCollection.getSchemaFields('publishedAt')[0] },
+        ],
       });
     });
   });

@@ -176,9 +176,6 @@ const createStoreFilters = <S extends StateDefinition>(
   // current state of the entity. we will use select later to project the result
   // to the user
 
-  // FIXME populate should be on output type, not on input type
-  // ...convertPopulateOneQuery(metadata, collection, options),
-
   ...('unique' in options
     ? convertUniqueQuery(collection, options)
     : convertWhereQuery(states, collection, options)),

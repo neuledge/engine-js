@@ -1,14 +1,8 @@
 import { StoreDocument } from '@neuledge/store';
 import { StateDefinition } from '@/definitions';
 import { Entity, ProjectedEntity } from '@/entity';
-import { NeuledgeError } from '@/error';
 import { EntityList } from '@/list';
-import {
-  PopulateQueryOptions,
-  ReturnQueryOptions,
-  Select,
-  SelectQueryOptions,
-} from '@/queries';
+import { ReturnQueryOptions, Select, SelectQueryOptions } from '@/queries';
 
 export interface AlteredEntity<S extends StateDefinition> {
   oldEntity: Entity<S> | null;
@@ -21,27 +15,11 @@ export const retrieveEntities = async <
   P extends Select<S>,
 >(
   entities: EntityList<AlteredEntity<S>>,
-  {
-    returns,
-    select,
-    populateMany,
-    populateOne,
-  }: Partial<ReturnQueryOptions> &
-    SelectQueryOptions<S, P> &
-    PopulateQueryOptions<S>,
+  { returns, select }: Partial<ReturnQueryOptions> & SelectQueryOptions<S, P>,
 ): Promise<
   EntityList<ProjectedEntity<S, P>> | EntityList<Entity<S>> | void
 > => {
   if (!select) return;
-
-  if (populateMany || populateOne) {
-    // FIXME support populate options
-
-    throw new NeuledgeError(
-      NeuledgeError.Code.NOT_IMPLEMENTED,
-      'Populate options are not supported yet',
-    );
-  }
 
   if (returns === 'old') {
     return Object.assign(

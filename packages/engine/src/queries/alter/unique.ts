@@ -4,8 +4,6 @@ import {
   ExecQueryOptions,
   MatchQuery,
   MatchQueryOptions,
-  PopulateQuery,
-  PopulateQueryOptions,
   QueryEntity,
   QueryProjection,
   ReturnQuery,
@@ -27,13 +25,15 @@ export interface AlterUniqueQuery<
     MatchQuery<I>,
     ExecQuery<void> {}
 
+// TODO enable populate support for alterUnique query
+
 export interface AlterUniqueAndReturnQuery<
   I extends StateDefinition,
   O extends StateDefinition,
   P extends QueryProjection<O>,
   R,
 > extends SelectQuery<'AlterUniqueAndReturn', I, O, R>,
-    PopulateQuery<'AlterUniqueAndReturn', I, O, P, R>,
+    // PopulateQuery<'AlterUniqueAndReturn', I, O, P, R>,
     UniqueQuery<'AlterUniqueWhereAndReturn', I, O, P, R>,
     MatchQuery<I> {}
 
@@ -54,7 +54,7 @@ export interface AlterUniqueWhereAndReturnQuery<
   P extends QueryProjection<O>,
   R,
 > extends SelectQuery<'AlterUniqueWhereAndReturn', I, O, R>,
-    PopulateQuery<'AlterUniqueWhereAndReturn', I, O, P, R>,
+    // PopulateQuery<'AlterUniqueWhereAndReturn', I, O, P, R>,
     UniqueQuery<'AlterUniqueWhereAndReturn', I, O, P, R>,
     MatchQuery<I>,
     ExecQuery<QueryEntity<O, P, R> | null> {}
@@ -66,7 +66,7 @@ export interface AlterUniqueQueryOptions<
     SingleArgsQueryOptions<I, StateDefinitionAlterMethods<I>>,
     ReturnQueryOptions,
     SelectQueryOptions<O>,
-    PopulateQueryOptions<O>,
+    // PopulateQueryOptions<O>,
     UniqueQueryOptions<I>,
     MatchQueryOptions<I>,
     ExecQueryOptions<'AlterUnique', I, O> {}

@@ -56,7 +56,7 @@ export const convertRelationQueryOptions = <
 
     for (const [reference, collectionMap] of referenceCollectionMap) {
       for (const [targerCollection, refCollections] of collectionMap) {
-        const fields = targerCollection.getFields(reference);
+        const fields = targerCollection.getSchemaFields(reference);
 
         values.push(
           ...refCollections.map((relCollection) => {

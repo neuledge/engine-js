@@ -4,8 +4,6 @@ import {
   ExecQueryOptions,
   MatchQuery,
   MatchQueryOptions,
-  PopulateQuery,
-  PopulateQueryOptions,
   QueryEntity,
   QueryProjection,
   ReturnQuery,
@@ -27,13 +25,15 @@ export interface AlterUniqueOrThrowQuery<
     MatchQuery<I>,
     ExecQuery<void> {}
 
+// TODO enable populate support for alterUniqueOrThrow query
+
 export interface AlterUniqueAndReturnOrThrowQuery<
   I extends StateDefinition,
   O extends StateDefinition,
   P extends QueryProjection<O>,
   R,
 > extends SelectQuery<'AlterUniqueAndReturnOrThrow', I, O, R>,
-    PopulateQuery<'AlterUniqueAndReturnOrThrow', I, O, P, R>,
+    // PopulateQuery<'AlterUniqueAndReturnOrThrow', I, O, P, R>,
     UniqueQuery<'AlterUniqueWhereAndReturnOrThrow', I, O, P, R>,
     MatchQuery<I> {}
 
@@ -54,7 +54,7 @@ export interface AlterUniqueWhereAndReturnOrThrowQuery<
   P extends QueryProjection<O>,
   R,
 > extends SelectQuery<'AlterUniqueWhereAndReturnOrThrow', I, O, R>,
-    PopulateQuery<'AlterUniqueWhereAndReturnOrThrow', I, O, P, R>,
+    // PopulateQuery<'AlterUniqueWhereAndReturnOrThrow', I, O, P, R>,
     UniqueQuery<'AlterUniqueWhereAndReturnOrThrow', I, O, P, R>,
     MatchQuery<I>,
     ExecQuery<QueryEntity<O, P, R>> {}
@@ -66,7 +66,7 @@ export interface AlterUniqueOrThrowQueryOptions<
     SingleArgsQueryOptions<I, StateDefinitionAlterMethods<I>>,
     ReturnQueryOptions,
     SelectQueryOptions<O>,
-    PopulateQueryOptions<O>,
+    // PopulateQueryOptions<O>,
     UniqueQueryOptions<I>,
     MatchQueryOptions<I>,
     ExecQueryOptions<'AlterUniqueOrThrow', I, O> {}

@@ -6,8 +6,6 @@ import {
   LimitQueryOptions,
   MatchQuery,
   MatchQueryOptions,
-  PopulateQuery,
-  PopulateQueryOptions,
   QueryEntity,
   QueryProjection,
   ReturnQuery,
@@ -30,13 +28,15 @@ export interface AlterManyQuery<
     LimitQuery,
     ExecQuery<void> {}
 
+// TODO enable populate support for alterMany query
+
 export interface AlterManyAndReturnQuery<
   I extends StateDefinition,
   O extends StateDefinition,
   P extends QueryProjection<O>,
   R,
 > extends SelectQuery<'AlterManyAndReturn', I, O, R>,
-    PopulateQuery<'AlterManyAndReturn', I, O, P, R>,
+    // PopulateQuery<'AlterManyAndReturn', I, O, P, R>,
     WhereQuery<I>,
     MatchQuery<I>,
     LimitQuery,
@@ -49,7 +49,7 @@ export interface AlterManyQueryOptions<
     SingleArgsQueryOptions<I, StateDefinitionAlterMethods<I>>,
     ReturnQueryOptions,
     SelectQueryOptions<O>,
-    PopulateQueryOptions<O>,
+    // PopulateQueryOptions<O>,
     WhereQueryOptions<I>,
     MatchQueryOptions<I>,
     LimitQueryOptions,

@@ -49,18 +49,38 @@ export class MetadataCollection implements StoreCollection {
   }
 
   /**
-   * @deprecated
+   * Traverse the collection schema and all fields under the given path.
    */
-  getFields(rootPath: string): MetadataStateField[] {
-    // FIXME remove this method
-    return this.states.flatMap((state) =>
-      state.fields.filter((field) => isRootPath(rootPath, field.path)),
-    );
+  getSchemaFields(rootPath: string): MetadataStateField[] {
+    let choices = this.schema[rootPath];
+    if (!choices) return [];
+
+    choices = [...choices].reverse();
+    const res: MetadataStateField[] = [];
+
+    while (choices.length) {
+      const choice = choices.pop() as MetadataSchemaChoice;
+
+      if (choice.field) {
+        res.push(choice.field);
+        continue;
+      }
+
+      for (const schemaChoices of Object.values(choice.schema)) {
+        if (!schemaChoices) continue;
+
+        choices.push(...[...schemaChoices].reverse());
+      }
+    }
+
+    return res;
   }
 
-  getFieldNames(rootPath: string): string[] {
-    // FIXME refactor this method to use `this.fields` or `this.schema`
-    return [...new Set(this.getFields(rootPath).map((field) => field.name))];
+  /**
+   * Traverse the collection schema and all field names under the given path.
+   */
+  getSchemaFieldNames(rootPath: string): string[] {
+    return this.getSchemaFields(rootPath).map((field) => field.name);
   }
 }
 
@@ -190,7 +210,3 @@ const applyPrimaryKey = (
 
   indexes[primaryKey.name] = primaryKey;
 };
-
-const isRootPath = (rootPath: string, path: string): boolean =>
-  path.startsWith(rootPath) &&
-  (path.length === rootPath.length || path[rootPath.length] === '.');

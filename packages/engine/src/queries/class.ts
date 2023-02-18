@@ -1,7 +1,6 @@
 import {
   StateAllRelations,
   StateDefinition,
-  StateManyRelations,
   StateOneRelations,
   StateRelationStates,
 } from '@/definitions';
@@ -19,7 +18,6 @@ import {
   MatchQueryParam,
   OffsetQuery,
   OffsetQueryOptions,
-  PopulateManyQueryParam,
   PopulateOneQueryParam,
   PopulateQuery,
   PopulateQueryOptions,
@@ -152,41 +150,41 @@ export class QueryClass<
     return this;
   }
 
-  populateMany<K extends StateManyRelations<O>>(
-    key: K,
-    states?:
-      | StateRelationStates<O, K>[]
-      | PopulateManyQueryParam<StateRelationStates<O, K>>,
-    query?: PopulateManyQueryParam<StateRelationStates<O, K>>,
-  ): this {
-    if (states !== undefined && !Array.isArray(states)) {
-      query = states;
-      states = undefined;
-    }
-
-    let rel = new QueryClass<
-      'SelectMany',
-      StateRelationStates<O, K>,
-      StateRelationStates<O, K>
-    >({
-      type: 'SelectMany',
-      select: true,
-      states,
-    });
-
-    if (query) {
-      rel = query(rel) as typeof rel;
-    }
-
-    const options = this.options as PopulateQueryOptions<O>;
-
-    if (!options.populateMany) {
-      options.populateMany = {};
-    }
-    options.populateMany[key] = rel.options;
-
-    return this;
-  }
+  //   populateMany<K extends StateManyRelations<O>>(
+  //     key: K,
+  //     states?:
+  //       | StateRelationStates<O, K>[]
+  //       | PopulateManyQueryParam<StateRelationStates<O, K>>,
+  //     query?: PopulateManyQueryParam<StateRelationStates<O, K>>,
+  //   ): this {
+  //     if (states !== undefined && !Array.isArray(states)) {
+  //       query = states;
+  //       states = undefined;
+  //     }
+  //
+  //     let rel = new QueryClass<
+  //       'SelectMany',
+  //       StateRelationStates<O, K>,
+  //       StateRelationStates<O, K>
+  //     >({
+  //       type: 'SelectMany',
+  //       select: true,
+  //       states,
+  //     });
+  //
+  //     if (query) {
+  //       rel = query(rel) as typeof rel;
+  //     }
+  //
+  //     const options = this.options as PopulateQueryOptions<O>;
+  //
+  //     if (!options.populateMany) {
+  //       options.populateMany = {};
+  //     }
+  //     options.populateMany[key] = rel.options;
+  //
+  //     return this;
+  //   }
 
   unique(where: Unique<I>): this {
     (this.options as UniqueQueryOptions<I>).unique = where;

@@ -7,8 +7,6 @@ import { convertLeftJoinSelectQuery } from '../select';
 import { convertWhereQuery } from '../find';
 import { convertExpandQuery } from './expand';
 
-// FIXME handle populate many as well
-
 export const convertPopulateOneQuery = <S extends StateDefinition>(
   metadata: Metadata,
   collection: MetadataCollection,

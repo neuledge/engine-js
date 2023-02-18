@@ -129,5 +129,45 @@ describe('engine/metadata/collection', () => {
         });
       });
     });
+
+    describe('.getFields()', () => {
+      it('should return exact field', () => {
+        expect(categoriesCollection.getSchemaFields('name')).toEqual([
+          categoriesCollection.states[0].fields.find((f) => f.name === 'name'),
+        ]);
+      });
+
+      it('should return single option of field', () => {
+        expect(postsCollection.getSchemaFields('title')).toEqual([
+          postsCollection.states[0].fields.find((f) => f.name === 'title'),
+        ]);
+      });
+
+      it('should return nullable field of relation', () => {
+        expect(postsCollection.getSchemaFields('category')).toEqual([
+          postsCollection.states[0].fields.find(
+            (f) => f.name === 'category_id' && f.nullable,
+          ),
+        ]);
+      });
+    });
+
+    describe('.getFieldNames()', () => {
+      it('should return exact name', () => {
+        expect(categoriesCollection.getSchemaFieldNames('name')).toEqual([
+          'name',
+        ]);
+      });
+
+      it('should return single name of field', () => {
+        expect(postsCollection.getSchemaFieldNames('title')).toEqual(['title']);
+      });
+
+      it('should return names of relation', () => {
+        expect(postsCollection.getSchemaFieldNames('category')).toEqual([
+          'category_id',
+        ]);
+      });
+    });
   });
 });

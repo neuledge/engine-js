@@ -45,7 +45,7 @@ const convertSelect = <S extends StateDefinition>(
   for (const key in select) {
     if (!select[key]) continue;
 
-    for (const fieldName of collection.getFieldNames(key)) {
+    for (const fieldName of collection.getSchemaFieldNames(key)) {
       res[fieldName] = true;
     }
   }
