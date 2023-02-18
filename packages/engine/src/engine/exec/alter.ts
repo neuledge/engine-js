@@ -40,7 +40,6 @@ import { toDocument } from '../document';
 import {
   retrieveEntities,
   AlteredEntity,
-  convertPopulateOneQuery,
   convertMatchQuery,
 } from '../relations';
 import { convertUniqueQuery, convertWhereQuery } from '../find';

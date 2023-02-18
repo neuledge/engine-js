@@ -72,7 +72,7 @@ export class QueryClass<
     return this;
   }
 
-  select<P extends Select<O>>(select?: SelectParam<O, P>): this {
+  select<P extends Select<O>>(select?: SelectParam<O, P> | true): this {
     (this.options as SelectQueryOptions<O>).select = select ?? true;
     return this;
   }

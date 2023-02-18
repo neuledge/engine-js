@@ -11,6 +11,7 @@ export type StateAllRelations<S extends StateDefinition> =
 
 export type StateManyRelations<S extends StateDefinition> = {
   [K in keyof StateRelations<S>]: StateRelations<S>[K] extends {
+    states: readonly StateDefinition[];
     list: true;
   }
     ? K
@@ -19,6 +20,7 @@ export type StateManyRelations<S extends StateDefinition> = {
 
 export type StateOneRelations<S extends StateDefinition> = {
   [K in keyof StateRelations<S>]: StateRelations<S>[K] extends {
+    states: readonly StateDefinition[];
     list?: false | null;
   }
     ? K

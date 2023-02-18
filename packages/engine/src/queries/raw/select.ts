@@ -13,7 +13,7 @@ export interface SelectQuery<
    * Select and return all properties of the entity.
    * The return type will be the entity itself.
    */
-  select(): Query<M, I, O, true, R>;
+  select(select?: true): Query<M, I, O, true, R>;
 
   /**
    * Select and return a subset of the entity's properties.
