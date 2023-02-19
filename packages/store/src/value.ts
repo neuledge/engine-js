@@ -5,6 +5,7 @@ export type StoreScalarValue =
   | bigint
   | boolean
   | Buffer
+  | Date
   | { [key in string]?: StoreScalarValue }
   | StoreScalarValue[];
 
@@ -32,7 +33,15 @@ export const isStoreScalarValueEqual = (
     return a.equals(b);
   }
 
-  if (b instanceof Buffer) {
+  if (a instanceof Date) {
+    if (!(b instanceof Date)) {
+      return false;
+    }
+
+    return a.getTime() === b.getTime();
+  }
+
+  if (b instanceof Buffer || b instanceof Date) {
     return false;
   }
 
@@ -94,6 +103,10 @@ export const getStoreScalarValueKey = (
 
       if (value instanceof Buffer) {
         return value.toString('base64');
+      }
+
+      if (value instanceof Date) {
+        return value.toISOString();
       }
 
       if (Array.isArray(value)) {

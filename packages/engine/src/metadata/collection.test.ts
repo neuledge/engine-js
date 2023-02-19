@@ -122,7 +122,7 @@ describe('engine/metadata/collection', () => {
           category_title: {
             name: 'category_title',
             fields: {
-              category_id: { direction: 'asc' },
+              category_id: { direction: 'desc' },
               title: { direction: 'asc' },
             },
           },

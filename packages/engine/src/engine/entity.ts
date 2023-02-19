@@ -86,7 +86,6 @@ const getStateEntity = <S extends StateDefinition>(
   collection: MetadataCollection,
   stateHash: Buffer,
   document: StoreDocument,
-  prefix = '',
 ): Entity<S> => {
   const state = metadata.findStateByHash(stateHash);
   if (!state) {
@@ -102,28 +101,28 @@ const getStateEntity = <S extends StateDefinition>(
   } as Entity<S>;
 
   for (const field of state.fields) {
-    const key = `${prefix}${field.name}`;
-    if (!(key in document) || !field.path) continue;
+    if (!(field.name in document) || !field.path) continue;
 
-    const rawValue = document[key];
+    const rawValue = document[field.name];
     const value = field.type.decode ? field.type.decode(rawValue) : rawValue;
 
     setEntityValue(entity, field.path, value);
   }
 
   for (const relation of state.relations) {
-    const key = `${prefix}${relation.name}`;
     if (!relation.path) continue;
 
-    const childStateHash = document[`${key}_${collection.reservedNames.hash}`];
+    const childDocument = document[relation.name] as StoreDocument | undefined;
+    if (childDocument == null) continue;
+
+    const childStateHash = childDocument[collection.reservedNames.hash];
     if (!Buffer.isBuffer(childStateHash)) continue;
 
     const childEntity = getStateEntity(
       metadata,
       collection,
       childStateHash,
-      document,
-      `${key}_`,
+      childDocument,
     );
 
     setEntityValue(entity, relation.path, childEntity);

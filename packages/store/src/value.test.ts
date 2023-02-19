@@ -38,6 +38,7 @@ describe('value', () => {
       expect(isStoreScalarValueEqual(Buffer.from('a'), Buffer.from('a'))).toBe(
         true,
       );
+      expect(isStoreScalarValueEqual(new Date(0), new Date(0))).toBe(true);
     });
 
     it('should return false if values are not deeply equal', () => {
@@ -47,6 +48,7 @@ describe('value', () => {
       expect(isStoreScalarValueEqual(Buffer.from('a'), Buffer.from('b'))).toBe(
         false,
       );
+      expect(isStoreScalarValueEqual(new Date(0), new Date(1))).toBe(false);
     });
 
     it('should return false if values are not of the same type', () => {
@@ -70,6 +72,8 @@ describe('value', () => {
       expect(isStoreScalarValueEqual(Buffer.from('a'), { a: 1 })).toBe(false);
       expect(isStoreScalarValueEqual([1], Buffer.from('a'))).toBe(false);
       expect(isStoreScalarValueEqual(Buffer.from('a'), [1])).toBe(false);
+      expect(isStoreScalarValueEqual([0], new Date(0))).toBe(false);
+      expect(isStoreScalarValueEqual(new Date(0), [0])).toBe(false);
     });
   });
 
@@ -105,25 +109,38 @@ describe('value', () => {
         uniqueStoreScalarValues([
           null,
           1,
+          new Date(1),
           1n,
           true,
+          Buffer.from('b'),
           false,
+          { a: 1, b: 2 },
           'a',
           Buffer.from('a'),
+          new Date(0),
+          2,
           { a: 1 },
+          true,
           { a: 1, b: 2 },
+          new Date(0),
+          Buffer.from('a'),
           [1, 2, 3],
+          2,
         ]),
       ).toEqual([
         null,
         1,
+        new Date(1),
         1n,
         true,
+        Buffer.from('b'),
         false,
+        { a: 1, b: 2 },
         'a',
         Buffer.from('a'),
+        new Date(0),
+        2,
         { a: 1 },
-        { a: 1, b: 2 },
         [1, 2, 3],
       ]);
     });
@@ -145,6 +162,9 @@ describe('value', () => {
       expect(getStoreScalarValueKey({ a: 1, b: 2 })).toBe('{"a":1,"b":2}');
       expect(getStoreScalarValueKey([1, 2, 3])).toBe('[1,2,3]');
       expect(getStoreScalarValueKey(Buffer.from('a'))).toBe('YQ==');
+      expect(getStoreScalarValueKey(new Date(0))).toBe(
+        '1970-01-01T00:00:00.000Z',
+      );
     });
   });
 });

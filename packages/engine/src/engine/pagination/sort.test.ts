@@ -34,7 +34,7 @@ describe('engine/sort', () => {
         sort: '+category_title',
       });
 
-      expect(res).toEqual({ sort: { category_id: 'asc', title: 'asc' } });
+      expect(res).toEqual({ sort: { category_id: 'desc', title: 'asc' } });
       expect(Object.keys(res.sort ?? {})).toEqual(['category_id', 'title']);
     });
 
@@ -43,7 +43,7 @@ describe('engine/sort', () => {
         sort: '-category_title',
       });
 
-      expect(res).toEqual({ sort: { category_id: 'desc', title: 'desc' } });
+      expect(res).toEqual({ sort: { category_id: 'asc', title: 'desc' } });
       expect(Object.keys(res.sort ?? {})).toEqual(['category_id', 'title']);
     });
 

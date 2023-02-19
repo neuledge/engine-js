@@ -46,6 +46,8 @@ describe('engine/retrive/select', () => {
 
       expect(res).toEqual({
         select: {
+          __h: true,
+          __v: true,
           title: true,
           id: true,
         },
@@ -63,6 +65,8 @@ describe('engine/retrive/select', () => {
 
       expect(res).toEqual({
         select: {
+          __h: true,
+          __v: true,
           id: true,
         },
       });
@@ -97,6 +101,8 @@ describe('engine/retrive/select', () => {
 
       expect(res).toEqual({
         select: {
+          __h: true,
+          __v: true,
           title: true,
           id: true,
         },
@@ -134,6 +140,8 @@ describe('engine/retrive/select', () => {
 
       expect(res).toEqual({
         select: {
+          __h: true,
+          __v: true,
           title: true,
           id: true,
         },

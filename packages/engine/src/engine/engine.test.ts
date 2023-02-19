@@ -114,7 +114,7 @@ describe('engine/engine', () => {
       expect(engine.store.find).toHaveBeenCalledTimes(1);
       expect(engine.store.find).toHaveBeenCalledWith({
         collection: metadata['collections']['categories'],
-        select: { id: true, name: true },
+        select: { __h: true, __v: true, id: true, name: true },
         where: {
           __h: { $in: [metadata.findStateByKey(Category.$name)?.hash] },
         },
@@ -138,7 +138,7 @@ describe('engine/engine', () => {
         where: {
           __h: { $in: [metadata.findStateByKey(PublishedPost.$name)?.hash] },
         },
-        sort: { category_id: 'desc', title: 'desc' },
+        sort: { category_id: 'asc', title: 'desc' },
         limit: 10,
       });
 

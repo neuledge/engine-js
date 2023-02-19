@@ -40,7 +40,10 @@ const convertSelect = <S extends StateDefinition>(
   collection: MetadataCollection,
   select: Select<S>,
 ): StoreSelect => {
-  const res: StoreSelect = {};
+  const res: StoreSelect = {
+    [collection.reservedNames.hash]: true,
+    [collection.reservedNames.version]: true,
+  };
 
   for (const key in select) {
     if (!select[key]) continue;
