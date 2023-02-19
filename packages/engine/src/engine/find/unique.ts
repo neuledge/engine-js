@@ -1,6 +1,6 @@
 import { StateDefinition, StateDefinitionWhereRecord } from '@/definitions';
 import { NeuledgeError } from '@/error';
-import { MetadataCollection } from '@/metadata';
+import { MetadataCollection, MetadataState } from '@/metadata';
 import { UniqueQueryOptions } from '@/queries';
 import {
   StoreFindOptions,
@@ -10,13 +10,15 @@ import {
 import { applyWhereRecordTerm } from './term';
 
 export const convertUniqueQuery = <S extends StateDefinition>(
+  states: MetadataState[],
   collection: MetadataCollection,
   { unique }: UniqueQueryOptions<S>,
 ): Pick<StoreFindOptions, 'where'> => ({
-  where: convertUnique(collection, unique),
+  where: convertUnique(states, collection, unique),
 });
 
 const convertUnique = (
+  states: MetadataState[],
   collection: MetadataCollection,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   where: StateDefinitionWhereRecord<any> | true,
@@ -31,7 +33,7 @@ const convertUnique = (
   let records: StoreWhereRecord[] = [
     {
       [collection.reservedNames.hash]: {
-        $in: collection.states.map((s) => s.hash),
+        $in: states.map((s) => s.hash),
       },
     },
   ];

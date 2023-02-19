@@ -176,7 +176,7 @@ const createStoreFilters = <S extends StateDefinition>(
   // to the user
 
   ...('unique' in options
-    ? convertUniqueQuery(collection, options)
+    ? convertUniqueQuery(states, collection, options)
     : convertWhereQuery(states, collection, options)),
 
   ...convertMatchQuery(metadata, collection, options),
