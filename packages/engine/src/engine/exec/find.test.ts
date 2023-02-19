@@ -3,7 +3,7 @@ import {
   Category,
   DraftPost,
   PublishedPost,
-} from '@/definitions/__fixtures__/category-post-example/states.codegen';
+} from '@/definitions/__fixtures__/category-post-example';
 import { Metadata } from '@/metadata';
 import { NeuledgeEngine } from '../engine';
 import { DummyStore } from '../__fixtures__/dummy-store';

@@ -3,7 +3,7 @@ import { Metadata } from '@/metadata';
 import { NeuledgeEngine } from '../engine';
 import { DummyStore } from '../__fixtures__/dummy-store';
 import { execInitMany, execInitOne } from './init';
-import { Category } from '@/definitions/__fixtures__/category-post-example/states.codegen';
+import { Category } from '@/definitions/__fixtures__/category-post-example';
 
 /* eslint-disable max-lines-per-function */
 
