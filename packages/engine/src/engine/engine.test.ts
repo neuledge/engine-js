@@ -1,169 +1,209 @@
 import {
   Category,
-  PublishedPost,
+  Post,
 } from '@/definitions/__fixtures__/category-post-example';
 import { DummyStore } from './__fixtures__/dummy-store';
 import { NeuledgeEngine } from './engine';
-import { jest } from '@jest/globals';
-import { Metadata } from '@/metadata';
+import { QueryClass } from '@/index';
 
 /* eslint-disable max-lines-per-function */
 
 describe('engine/engine', () => {
   describe('NeuledgeEngine()', () => {
-    it('should create new', async () => {
-      const engine = new NeuledgeEngine({} as never);
-
-      expect(engine);
-    });
-  });
-
-  describe('NeuledgeEngine#findMany()', () => {
     let engine: NeuledgeEngine;
-    let metadata: Metadata;
 
-    beforeEach(async () => {
-      engine = await new NeuledgeEngine({
+    beforeEach(() => {
+      engine = new NeuledgeEngine({
         store: new DummyStore(),
-      }).ready();
-
-      metadata = await engine.metadata;
+      });
     });
 
-    it('should find empty query', async () => {
-      jest.spyOn(engine.store, 'find');
-
-      const result = await engine.findMany(Category);
-
-      expect(engine.store.find).toHaveBeenCalledTimes(1);
-      expect(engine.store.find).toHaveBeenCalledWith({
-        collection: metadata['collections']['categories'],
-        where: {
-          __h: { $in: [metadata.findStateByKey(Category.$name)?.hash] },
-        },
-        limit: 1000,
+    describe('.ready()', () => {
+      it('should be ready', async () => {
+        await expect(engine.ready()).resolves.toBe(engine);
       });
-
-      expect(result).toEqual([]);
     });
 
-    it('should find empty query with a limit', async () => {
-      jest.spyOn(engine.store, 'find');
+    describe('.findMany()', () => {
+      it('should return "FindMany" query class', async () => {
+        const query = engine.findMany(...Post);
 
-      const result = await engine.findMany(Category).limit(10);
+        expect(query).toBeInstanceOf(QueryClass);
 
-      expect(engine.store.find).toHaveBeenCalledTimes(1);
-      expect(engine.store.find).toHaveBeenCalledWith({
-        collection: metadata['collections']['categories'],
-        where: {
-          __h: { $in: [metadata.findStateByKey(Category.$name)?.hash] },
-        },
-        limit: 10,
+        expect(query['options' as never]).toMatchObject({
+          type: 'FindMany',
+          states: [...Post],
+        });
       });
-
-      expect(result).toEqual([]);
     });
 
-    it('should find empty query with a offset', async () => {
-      jest.spyOn(engine.store, 'find');
+    describe('.findFirst()', () => {
+      it('should return "FindFirst" query class', async () => {
+        const query = engine.findFirst(Category);
 
-      const result = await engine.findMany(Category).limit(10).offset('foo');
+        expect(query).toBeInstanceOf(QueryClass);
 
-      expect(engine.store.find).toHaveBeenCalledTimes(1);
-      expect(engine.store.find).toHaveBeenCalledWith({
-        collection: metadata['collections']['categories'],
-        where: {
-          __h: { $in: [metadata.findStateByKey(Category.$name)?.hash] },
-        },
-        limit: 10,
-        offset: 'foo',
+        expect(query['options' as never]).toMatchObject({
+          type: 'FindFirst',
+          states: [Category],
+        });
       });
-
-      expect(result).toEqual([]);
     });
 
-    it('should find empty query with where', async () => {
-      jest.spyOn(engine.store, 'find');
+    describe('.findFirstOrThrow()', () => {
+      it('should return "FindFirstOrThrow" query class', async () => {
+        const query = engine.findFirstOrThrow(Category);
 
-      const result = await engine
-        .findMany(Category)
-        .where({ id: { $gt: 3 } })
-        .limit(10);
+        expect(query).toBeInstanceOf(QueryClass);
 
-      expect(engine.store.find).toHaveBeenCalledTimes(1);
-      expect(engine.store.find).toHaveBeenCalledWith({
-        collection: metadata['collections']['categories'],
-        where: {
-          __h: { $in: [metadata.findStateByKey(Category.$name)?.hash] },
-          id: { $gt: 3 },
-        },
-        limit: 10,
+        expect(query['options' as never]).toMatchObject({
+          type: 'FindFirstOrThrow',
+          states: [Category],
+        });
       });
-
-      expect(result).toEqual([]);
     });
 
-    it('should find empty query with select', async () => {
-      jest.spyOn(engine.store, 'find');
+    describe('.findUnique()', () => {
+      it('should return "FindUnique" query class', async () => {
+        const query = engine.findUnique(Category);
 
-      const result = await engine
-        .findMany(Category)
-        .select({ id: true, name: true })
-        .limit(10);
+        expect(query).toBeInstanceOf(QueryClass);
 
-      expect(engine.store.find).toHaveBeenCalledTimes(1);
-      expect(engine.store.find).toHaveBeenCalledWith({
-        collection: metadata['collections']['categories'],
-        select: { __h: true, __v: true, id: true, name: true },
-        where: {
-          __h: { $in: [metadata.findStateByKey(Category.$name)?.hash] },
-        },
-        limit: 10,
+        expect(query['options' as never]).toMatchObject({
+          type: 'FindUnique',
+          states: [Category],
+        });
       });
-
-      expect(result).toEqual([]);
     });
 
-    it('should find empty query with string sort', async () => {
-      jest.spyOn(engine.store, 'find');
+    describe('.findUniqueOrThrow()', () => {
+      it('should return "FindUniqueOrThrow" query class', async () => {
+        const query = engine.findUniqueOrThrow(Category);
 
-      const result = await engine
-        .findMany(PublishedPost)
-        .sort('-category_title')
-        .limit(10);
+        expect(query).toBeInstanceOf(QueryClass);
 
-      expect(engine.store.find).toHaveBeenCalledTimes(1);
-      expect(engine.store.find).toHaveBeenCalledWith({
-        collection: metadata['collections']['posts'],
-        where: {
-          __h: { $in: [metadata.findStateByKey(PublishedPost.$name)?.hash] },
-        },
-        sort: { category_id: 'asc', title: 'desc' },
-        limit: 10,
+        expect(query['options' as never]).toMatchObject({
+          type: 'FindUniqueOrThrow',
+          states: [Category],
+        });
       });
-
-      expect(result).toEqual([]);
     });
 
-    it('should find empty query with custom sort', async () => {
-      jest.spyOn(engine.store, 'find');
+    describe('.initMany()', () => {
+      it('should return "InitMany" query class', async () => {
+        const query = engine
+          .initMany(Category)
+          .create({ name: 'test 1' }, { name: 'test 2' });
 
-      const result = await engine
-        .findMany(PublishedPost)
-        .sort('*', '-content', '+id')
-        .limit(10);
+        expect(query).toBeInstanceOf(QueryClass);
 
-      expect(engine.store.find).toHaveBeenCalledTimes(1);
-      expect(engine.store.find).toHaveBeenCalledWith({
-        collection: metadata['collections']['posts'],
-        where: {
-          __h: { $in: [metadata.findStateByKey(PublishedPost.$name)?.hash] },
-        },
-        sort: { content: 'desc', id: 'asc' },
-        limit: 10,
+        expect(query['options' as never]).toMatchObject({
+          type: 'InitMany',
+          states: [Category],
+          method: 'create',
+          args: [{ name: 'test 1' }, { name: 'test 2' }],
+        });
       });
+    });
 
-      expect(result).toEqual([]);
+    describe('.initOne()', () => {
+      it('should return "InitOne" query class', async () => {
+        const query = engine.initOne(Category).create({ name: 'test 1' });
+
+        expect(query).toBeInstanceOf(QueryClass);
+
+        expect(query['options' as never]).toMatchObject({
+          type: 'InitOne',
+          states: [Category],
+          method: 'create',
+          args: [{ name: 'test 1' }],
+        });
+      });
+    });
+
+    describe('.alterMany()', () => {
+      it('should return "AlterMany" query class', async () => {
+        const query = engine.alterMany(Category).update({
+          name: 'test 1',
+        });
+
+        expect(query).toBeInstanceOf(QueryClass);
+
+        expect(query['options' as never]).toMatchObject({
+          type: 'AlterMany',
+          states: [Category],
+          method: 'update',
+          args: [{ name: 'test 1' }],
+        });
+      });
+    });
+
+    describe('.alterFirst()', () => {
+      it('should return "AlterFirst" query class', async () => {
+        const query = engine.alterFirst(Category).update({
+          name: 'test 1',
+        });
+
+        expect(query).toBeInstanceOf(QueryClass);
+
+        expect(query['options' as never]).toMatchObject({
+          type: 'AlterFirst',
+          states: [Category],
+          method: 'update',
+          args: [{ name: 'test 1' }],
+        });
+      });
+    });
+
+    describe('.alterFirstOrThrow()', () => {
+      it('should return "AlterFirstOrThrow" query class', async () => {
+        const query = engine.alterFirstOrThrow(Category).update({
+          name: 'test 1',
+        });
+
+        expect(query).toBeInstanceOf(QueryClass);
+
+        expect(query['options' as never]).toMatchObject({
+          type: 'AlterFirstOrThrow',
+          states: [Category],
+          method: 'update',
+          args: [{ name: 'test 1' }],
+        });
+      });
+    });
+
+    describe('.alterUnique()', () => {
+      it('should return "AlterUnique" query class', async () => {
+        const query = engine.alterUnique(Category).update({
+          name: 'test 1',
+        });
+
+        expect(query).toBeInstanceOf(QueryClass);
+
+        expect(query['options' as never]).toMatchObject({
+          type: 'AlterUnique',
+          states: [Category],
+          method: 'update',
+          args: [{ name: 'test 1' }],
+        });
+      });
+    });
+
+    describe('.alterUniqueOrThrow()', () => {
+      it('should return "AlterUniqueOrThrow" query class', async () => {
+        const query = engine.alterUniqueOrThrow(Category).update({
+          name: 'test 1',
+        });
+
+        expect(query).toBeInstanceOf(QueryClass);
+
+        expect(query['options' as never]).toMatchObject({
+          type: 'AlterUniqueOrThrow',
+          states: [Category],
+          method: 'update',
+          args: [{ name: 'test 1' }],
+        });
+      });
     });
   });
 });
