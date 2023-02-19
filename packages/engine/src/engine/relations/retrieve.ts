@@ -45,7 +45,10 @@ const projectEntity = <S extends StateDefinition, P extends Select<S>>(
   entity: Entity<S>,
   select: P,
 ): ProjectedEntity<S, P> => {
-  const projectedEntity = {} as ProjectedEntity<S, P>;
+  const projectedEntity = {
+    $state: (entity as Entity<StateDefinition>).$state,
+    $version: (entity as Entity<StateDefinition>).$version,
+  } as ProjectedEntity<S, P>;
 
   for (const [key, value] of Object.entries(select)) {
     if (!value) continue;
