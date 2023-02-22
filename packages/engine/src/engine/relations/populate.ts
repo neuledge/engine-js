@@ -4,7 +4,7 @@ import { Metadata, MetadataCollection } from '@/metadata';
 import { PopulateQueryOptions } from '@/queries';
 import { convertRelationQueryOptions } from './relation';
 import { convertLeftJoinSelectQuery } from '../select';
-import { convertWhereQuery } from '../find';
+import { convertFilterQuery } from '../find';
 import { convertExpandQuery } from './expand';
 
 export const convertPopulateOneQuery = <S extends StateDefinition>(
@@ -30,7 +30,7 @@ const convertPopulateOne = <S extends StateDefinition>(
       collection,
       by,
       ...convertLeftJoinSelectQuery(collection, query),
-      ...convertWhereQuery(collection.states, collection, query),
+      ...convertFilterQuery(collection.states, collection, query),
       ...convertExpandQuery(metadata, collection, query),
       ...convertPopulateOneQuery(metadata, collection, query),
     }),

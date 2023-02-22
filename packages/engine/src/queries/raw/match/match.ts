@@ -3,7 +3,7 @@ import {
   StateDefinition,
   StateRelationStates,
 } from '@/definitions';
-import { FilterQuery, FilterQueryOptions } from './filter';
+import { RefineQuery, RefineQueryOptions } from './refine';
 
 export interface MatchQuery<S extends StateDefinition> {
   /**
@@ -39,10 +39,10 @@ export interface MatchQuery<S extends StateDefinition> {
 
 export interface MatchQueryOptions<S extends StateDefinition> {
   match?: {
-    [K in StateAllRelations<S>]?: FilterQueryOptions<StateRelationStates<S, K>>;
+    [K in StateAllRelations<S>]?: RefineQueryOptions<StateRelationStates<S, K>>;
   };
 }
 
 export type MatchQueryParam<S extends StateDefinition> = (
-  query: FilterQuery<S>,
-) => FilterQuery<S>;
+  query: RefineQuery<S>,
+) => RefineQuery<S>;

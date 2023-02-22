@@ -4,6 +4,8 @@ import {
   ExecQueryOptions,
   ExpandQuery,
   ExpandQueryOptions,
+  FilterQuery,
+  FilterQueryOptions,
   OffsetQuery,
   OffsetQueryOptions,
   PopulateQuery,
@@ -27,6 +29,7 @@ export interface FindFirstQuery<
     ExpandQuery<'FindFirst', S, S, P, R>,
     PopulateQuery<'FindFirst', S, S, P, R>,
     WhereQuery<S>,
+    FilterQuery<S>,
     SortQuery<S>,
     OffsetQuery,
     ExecQuery<QueryEntity<S, P, R> | null> {}
@@ -39,6 +42,7 @@ export interface FindFirstQueryOptions<
     ExpandQueryOptions<O>,
     PopulateQueryOptions<O>,
     WhereQueryOptions<I>,
+    FilterQueryOptions<I>,
     SortQueryOptions<O>,
     OffsetQueryOptions,
     ExecQueryOptions<'FindFirst', I, O> {}

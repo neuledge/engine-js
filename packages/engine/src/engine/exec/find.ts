@@ -11,7 +11,7 @@ import {
 import { chooseStatesCollection } from '../collection';
 import { NeuledgeEngine } from '../engine';
 import { toEntityList, toEntityOrThrow, toMaybeEntity } from '../entity';
-import { convertUniqueQuery, convertWhereQuery } from '../find';
+import { convertUniqueQuery, convertWhereFilterQuery } from '../find';
 import {
   convertLimitQuery,
   checkLimitedList,
@@ -39,7 +39,7 @@ export const execFindMany = async <S extends StateDefinition>(
       ...convertSelectQuery(collection, options),
       ...convertExpandQuery(metadata, collection, options),
       ...convertPopulateOneQuery(metadata, collection, options),
-      ...convertWhereQuery(states, collection, options),
+      ...convertWhereFilterQuery(states, collection, options),
       ...convertOffsetQuery(options),
       ...convertLimitQuery(options),
       ...convertSortQuery(collection, options),
@@ -111,7 +111,7 @@ export const execFindFirst = async <S extends StateDefinition>(
     ...convertSelectQuery(collection, options),
     ...convertExpandQuery(metadata, collection, options),
     ...convertPopulateOneQuery(metadata, collection, options),
-    ...convertWhereQuery(states, collection, options),
+    ...convertWhereFilterQuery(states, collection, options),
     ...convertOffsetQuery(options),
     limit: 1,
     ...convertSortQuery(collection, options),
@@ -136,7 +136,7 @@ export const execFindFirstOrThrow = async <S extends StateDefinition>(
     ...convertSelectQuery(collection, options),
     ...convertExpandQuery(metadata, collection, options),
     ...convertPopulateOneQuery(metadata, collection, options),
-    ...convertWhereQuery(states, collection, options),
+    ...convertWhereFilterQuery(states, collection, options),
     ...convertOffsetQuery(options),
     limit: 1,
     ...convertSortQuery(collection, options),

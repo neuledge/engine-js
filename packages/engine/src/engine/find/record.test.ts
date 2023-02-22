@@ -76,6 +76,7 @@ describe('engine/filter/where/record', () => {
     it('should throw an error if the operator is unknown', () => {
       expect(() =>
         convertWhereRecord(basicCollection.states, basicCollection, {
+          // @ts-expect-error $unknown is not a valid operator
           foo: { $unknown: 1 },
         }),
       ).toThrow('Invalid operator: $unknown');

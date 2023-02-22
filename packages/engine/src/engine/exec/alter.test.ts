@@ -229,8 +229,8 @@ describe('engine/exec/alter', () => {
           args: [{ title: 'foo', content: 'bar', category: { id: 1 } }],
           match: {
             category: {
-              type: 'Filter',
-              where: { id: { $eq: 2 } },
+              type: 'Refine',
+              filter: { id: { $eq: 2 } },
             },
           },
           returns: 'new',

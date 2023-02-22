@@ -20,8 +20,7 @@ export const convertUniqueQuery = <S extends StateDefinition>(
 const convertUnique = (
   states: MetadataState[],
   collection: MetadataCollection,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  where: StateDefinitionWhereRecord<any> | true,
+  where: StateDefinitionWhereRecord | true,
 ): StoreWhere => {
   if (where === true) {
     throw new NeuledgeError(

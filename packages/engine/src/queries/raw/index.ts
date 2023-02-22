@@ -1,5 +1,6 @@
 export * from './exec';
 export * from './limit';
+export * from './filter';
 export * from './match';
 export * from './method';
 export * from './offset';

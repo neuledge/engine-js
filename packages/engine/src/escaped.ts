@@ -1,7 +1,6 @@
 export {
   State,
   type StateId as Id,
-  type StateDefinitionWhere as Where,
   type StateDefinitionWhereId as WhereId,
   type StateDefinitionWhereNullableId as WhereNullableId,
   type StateDefinitionWhereEnum as WhereEnum,
@@ -20,6 +19,8 @@ export {
   type StateDefinitionWhereNullableBuffer as WhereNullableBuffer,
   type StateDefinitionWhereState as WhereState,
   type StateDefinitionWhereNullableState as WhereNullableState,
+  type StateDefinitionWhereListState as WhereListState,
+  type StateDefinitionWhereNullableListState as WhereNullableListState,
   type StateDefinitionWhereArray as WhereArray,
   type StateDefinitionWhereNullableArray as WhereNullableArray,
   type EitherDefintion as Either,

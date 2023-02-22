@@ -4,6 +4,8 @@ import {
   ExecQueryOptions,
   ExpandQuery,
   ExpandQueryOptions,
+  FilterQuery,
+  FilterQueryOptions,
   PopulateQuery,
   PopulateQueryOptions,
   QueryEntity,
@@ -22,7 +24,8 @@ export interface FindUniqueQuery<
 > extends SelectQuery<'FindUnique', S, S, R>,
     ExpandQuery<'FindUnique', S, S, P, R>,
     PopulateQuery<'FindUnique', S, S, P, R>,
-    UniqueQuery<'FindUniqueWhere', S, S, P, R> {}
+    UniqueQuery<'FindUniqueWhere', S, S, P, R>,
+    FilterQuery<S> {}
 
 export interface FindUniqueWhereQuery<
   S extends StateDefinition,
@@ -32,6 +35,7 @@ export interface FindUniqueWhereQuery<
     ExpandQuery<'FindUniqueWhere', S, S, P, R>,
     PopulateQuery<'FindUniqueWhere', S, S, P, R>,
     UniqueQuery<'FindUniqueWhere', S, S, P, R>,
+    FilterQuery<S>,
     ExecQuery<QueryEntity<S, P, R> | null> {}
 
 export interface FindUniqueQueryOptions<
@@ -41,5 +45,6 @@ export interface FindUniqueQueryOptions<
     SelectQueryOptions<O>,
     ExpandQueryOptions<O>,
     PopulateQueryOptions<O>,
-    UniqueQueryOptions<O>,
+    UniqueQueryOptions<I>,
+    FilterQueryOptions<I>,
     ExecQueryOptions<'FindUnique', I, O> {}

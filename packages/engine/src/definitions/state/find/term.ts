@@ -15,10 +15,16 @@ export type StateDefinitionWhereNullableId<V extends object> =
   EqualableFilters<V | null>;
 
 export type StateDefinitionWhereState<S extends StateDefinition> =
-  StateDefinitionWhereId<StateId<S>>;
+  EqualableFilters<StateId<S>>;
 
 export type StateDefinitionWhereNullableState<S extends StateDefinition> =
-  StateDefinitionWhereNullableId<StateId<S>>;
+  EqualableFilters<StateId<S> | null>;
+
+export type StateDefinitionWhereListState<S extends StateDefinition> =
+  EqualableFilters<StateId<S>[]>;
+
+export type StateDefinitionWhereNullableListState<S extends StateDefinition> =
+  EqualableFilters<StateId<S>[] | null>;
 
 export type StateDefinitionWhereUnknown<V extends NonNullable<unknown>> =
   | EqualableFilters<V>

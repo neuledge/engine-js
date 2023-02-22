@@ -42,7 +42,7 @@ import {
   AlteredEntity,
   convertMatchQuery,
 } from '../relations';
-import { convertUniqueQuery, convertWhereQuery } from '../find';
+import { convertUniqueQuery, convertWhereFilterQuery } from '../find';
 
 const ALTER_VERSION_RETRIES = 3;
 
@@ -177,7 +177,7 @@ const createStoreFilters = <S extends StateDefinition>(
 
   ...('unique' in options
     ? convertUniqueQuery(states, collection, options)
-    : convertWhereQuery(states, collection, options)),
+    : convertWhereFilterQuery(states, collection, options)),
 
   ...convertMatchQuery(metadata, collection, options),
 

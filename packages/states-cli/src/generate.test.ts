@@ -35,11 +35,14 @@ export class Foo {
   static $scalars = () => ({
     id: { type: $.scalars.Number, index: 1 },
   });
-  static $find: $.Where<{
-    id?: $.WhereNumber<$.scalars.Number>;
-  }>;
+  static $where: {
+    id?: $.WhereNumber<$.scalars.Number> | null;
+  };
   static $unique: {
     id: $.scalars.Number;
+  };
+  static $filter: {
+    id?: $.WhereNumber<$.scalars.Number> | null;
   };
 
   id!: $.scalars.Number;

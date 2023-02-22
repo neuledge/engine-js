@@ -1,33 +1,33 @@
 import {
   StateDefinition,
   StateDefinitionWhere,
+  StateFilter,
   StateName,
-  StateWhere,
 } from '@/definitions';
 import { AllKeys } from './utils';
 
 // This query is very similar to the `UniqueQuery`, if you make changes here,
 // you probably want to make the same changes there.
 
-export interface WhereQuery<S extends StateDefinition> {
+export interface FilterQuery<S extends StateDefinition> {
   /**
-   * Filter the returned entities by a where clause using an index.
-   * This is the fastest way to filter entities but you can only filter by
-   * indexed fields. If you want to filter by a field that is not indexed, you
-   * should use the `.filter()` method.
+   * Filter the returned entities by a where clause without using the indexes.
+   * This is useful when you want to filter by a field that is not indexed.
+   * Please note that this will be much slower (and sometimes costly) than using
+   * the index.
    */
-  where(where: Where<S> | null): this;
+  filter(filter: Filter<S> | null): this;
 }
 
-export interface WhereQueryOptions<S extends StateDefinition> {
-  where?: Where<S> | null;
+export interface FilterQueryOptions<S extends StateDefinition> {
+  filter?: Filter<S> | null;
 }
 
-export type Where<S extends StateDefinition> = StateDefinitionWhere<
-  NonCommonWhereKeys<S> extends never
-    ? StateWhere<S>
-    : StateWhere<S> & {
-        [K in NonCommonWhereKeys<S>]?: null;
+export type Filter<S extends StateDefinition> = StateDefinitionWhere<
+  NonCommonFilterKeys<S> extends never
+    ? StateFilter<S>
+    : StateFilter<S> & {
+        [K in NonCommonFilterKeys<S>]?: null;
       }
 >;
 
@@ -46,9 +46,9 @@ export type Where<S extends StateDefinition> = StateDefinitionWhere<
 //   2. Combine result with an OR operator (`category`)
 //   3. Forbidden the result from all keys (`id`)
 
-type NonCommonWhereKeys<S extends StateDefinition> = {
-  [N in StateName<S>]: Exclude<
-    AllKeys<StateWhere<S>>,
-    S extends StateDefinition<N> ? AllKeys<StateWhere<S>> : never
+type NonCommonFilterKeys<S extends StateDefinition> = {
+  [K in StateName<S>]: Exclude<
+    AllKeys<StateFilter<S>>,
+    S extends StateDefinition<K> ? AllKeys<StateFilter<S>> : never
   >;
 }[StateName<S>];

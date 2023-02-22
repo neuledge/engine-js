@@ -213,7 +213,7 @@ describe('queries/class', () => {
         });
 
         await expect(
-          query.expand('category', (q) => q.where({ id: { $gt: 2 } })),
+          query.expand('category', (q) => q.filter({ name: { $eq: 'foo' } })),
         ).resolves.toEqual([]);
 
         expect(exec).toHaveBeenCalledTimes(1);
@@ -224,7 +224,7 @@ describe('queries/class', () => {
           expand: {
             category: {
               type: 'SelectOne',
-              where: { id: { $gt: 2 } },
+              filter: { name: { $eq: 'foo' } },
             },
           },
           exec,
@@ -277,7 +277,7 @@ describe('queries/class', () => {
 
         await expect(
           query.expand('category', [Category], (q) =>
-            q.where({ id: { $lt: 5 } }),
+            q.filter({ name: { $eq: 'foo' } }),
           ),
         ).resolves.toEqual([]);
 
@@ -290,7 +290,7 @@ describe('queries/class', () => {
             category: {
               type: 'SelectOne',
               states: [Category],
-              where: { id: { $lt: 5 } },
+              filter: { name: { $eq: 'foo' } },
             },
           },
           exec,
@@ -343,7 +343,9 @@ describe('queries/class', () => {
         });
 
         await expect(
-          query.populateOne('category', (q) => q.where({ id: { $gt: 2 } })),
+          query.populateOne('category', (q) =>
+            q.filter({ name: { $eq: 'foo' } }),
+          ),
         ).resolves.toEqual([]);
 
         expect(exec).toHaveBeenCalledTimes(1);
@@ -355,7 +357,7 @@ describe('queries/class', () => {
             category: {
               type: 'SelectOne',
               select: true,
-              where: { id: { $gt: 2 } },
+              filter: { name: { $eq: 'foo' } },
             },
           },
           exec,
@@ -410,7 +412,7 @@ describe('queries/class', () => {
 
         await expect(
           query.populateOne('category', [Category], (q) =>
-            q.where({ id: { $lt: 5 } }),
+            q.filter({ name: { $eq: 'foo' } }),
           ),
         ).resolves.toEqual([]);
 
@@ -424,55 +426,9 @@ describe('queries/class', () => {
               type: 'SelectOne',
               states: [Category],
               select: true,
-              where: { id: { $lt: 5 } },
+              filter: { name: { $eq: 'foo' } },
             },
           },
-          exec,
-        });
-      });
-    });
-
-    describe('.unique()', () => {
-      it('should not allow .then() until unique set', async () => {
-        const exec = jest.fn().mockResolvedValue([]);
-
-        const query = new QueryClass({
-          type: 'FindUnique',
-          states: [Category],
-          unique: true,
-          exec,
-        });
-
-        expect(query.then).toBeNull();
-        expect(await query).toBe(query);
-
-        await expect(query.exec()).rejects.toThrow(
-          "Can't resolve a unique query without the '.unique()' clause",
-        );
-
-        expect(exec).toHaveBeenCalledTimes(0);
-      });
-
-      it('should set query unique', async () => {
-        const exec = jest.fn().mockResolvedValue([]);
-
-        const query = new QueryClass({
-          type: 'FindUnique',
-          states: [Category],
-          unique: true,
-          exec,
-        });
-
-        await expect(
-          query.unique({ id: { $eq: '1' }, name: { $eq: 'foo' } }),
-        ).resolves.toEqual([]);
-
-        expect(exec).toHaveBeenCalledTimes(1);
-
-        expect(exec).toHaveBeenCalledWith({
-          type: 'FindUnique',
-          states: [Category],
-          unique: { id: { $eq: '1' }, name: { $eq: 'foo' } },
           exec,
         });
       });
@@ -525,6 +481,99 @@ describe('queries/class', () => {
       });
     });
 
+    describe('.unique()', () => {
+      it('should not allow .then() until unique set', async () => {
+        const exec = jest.fn().mockResolvedValue([]);
+
+        const query = new QueryClass({
+          type: 'FindUnique',
+          states: [Category],
+          unique: true,
+          exec,
+        });
+
+        expect(query.then).toBeNull();
+        expect(await query).toBe(query);
+
+        await expect(query.exec()).rejects.toThrow(
+          "Can't resolve a unique query without the '.unique()' clause",
+        );
+
+        expect(exec).toHaveBeenCalledTimes(0);
+      });
+
+      it('should set query unique', async () => {
+        const exec = jest.fn().mockResolvedValue([]);
+
+        const query = new QueryClass({
+          type: 'FindUnique',
+          states: [Category],
+          unique: true,
+          exec,
+        });
+
+        await expect(
+          query.unique({ id: { $eq: '1' }, name: { $eq: 'foo' } }),
+        ).resolves.toEqual([]);
+
+        expect(exec).toHaveBeenCalledTimes(1);
+
+        expect(exec).toHaveBeenCalledWith({
+          type: 'FindUnique',
+          states: [Category],
+          unique: { id: { $eq: '1' }, name: { $eq: 'foo' } },
+          exec,
+        });
+      });
+    });
+
+    describe('.filter()', () => {
+      it('should set query filter', async () => {
+        const exec = jest.fn().mockResolvedValue([]);
+
+        const query = new QueryClass({
+          type: 'FindMany',
+          states: [Category],
+          exec,
+        });
+
+        await expect(
+          query.filter({ description: { $eq: 'foo' } }),
+        ).resolves.toEqual([]);
+
+        expect(exec).toHaveBeenCalledTimes(1);
+
+        expect(exec).toHaveBeenCalledWith({
+          type: 'FindMany',
+          states: [Category],
+          filter: { description: { $eq: 'foo' } },
+          exec,
+        });
+      });
+
+      it('should clear query filter', async () => {
+        const exec = jest.fn().mockResolvedValue([]);
+
+        const query = new QueryClass({
+          type: 'FindMany',
+          states: [Category],
+          filter: { description: { $eq: 'foo' } },
+          exec,
+        });
+
+        await expect(query.filter(null)).resolves.toEqual([]);
+
+        expect(exec).toHaveBeenCalledTimes(1);
+
+        expect(exec).toHaveBeenCalledWith({
+          type: 'FindMany',
+          states: [Category],
+          filter: null,
+          exec,
+        });
+      });
+    });
+
     describe('.match()', () => {
       it('should set query match with key only', async () => {
         const exec = jest.fn().mockResolvedValue([]);
@@ -551,7 +600,7 @@ describe('queries/class', () => {
           states: [PublishedPost],
           match: {
             category: {
-              type: 'Filter',
+              type: 'Refine',
             },
           },
           method: 'update',
@@ -578,7 +627,7 @@ describe('queries/class', () => {
         });
 
         await expect(
-          query.match('category', (q) => q.where({ id: { $gt: 2 } })),
+          query.match('category', (q) => q.filter({ name: { $eq: 'foo' } })),
         ).resolves.toEqual([]);
 
         expect(exec).toHaveBeenCalledTimes(1);
@@ -588,8 +637,8 @@ describe('queries/class', () => {
           states: [PublishedPost],
           match: {
             category: {
-              type: 'Filter',
-              where: { id: { $gt: 2 } },
+              type: 'Refine',
+              filter: { name: { $eq: 'foo' } },
             },
           },
           method: 'update',
@@ -617,7 +666,7 @@ describe('queries/class', () => {
 
         await expect(
           query.match('category', (q) =>
-            q.where({ id: { $gt: 2 } }).match('posts', [PublishedPost]),
+            q.filter({ name: { $eq: 'foo' } }).match('posts', [PublishedPost]),
           ),
         ).resolves.toEqual([]);
 
@@ -628,11 +677,11 @@ describe('queries/class', () => {
           states: [PublishedPost],
           match: {
             category: {
-              type: 'Filter',
-              where: { id: { $gt: 2 } },
+              type: 'Refine',
+              filter: { name: { $eq: 'foo' } },
               match: {
                 posts: {
-                  type: 'Filter',
+                  type: 'Refine',
                   states: [PublishedPost],
                 },
               },
@@ -670,7 +719,7 @@ describe('queries/class', () => {
           states: [PublishedPost],
           match: {
             category: {
-              type: 'Filter',
+              type: 'Refine',
               states: [Category],
             },
           },
@@ -699,7 +748,7 @@ describe('queries/class', () => {
 
         await expect(
           query.match('category', [Category], (q) =>
-            q.where({ id: { $lt: 5 } }),
+            q.filter({ name: { $eq: 'foo' } }),
           ),
         ).resolves.toEqual([]);
 
@@ -710,9 +759,9 @@ describe('queries/class', () => {
           states: [PublishedPost],
           match: {
             category: {
-              type: 'Filter',
+              type: 'Refine',
               states: [Category],
-              where: { id: { $lt: 5 } },
+              filter: { name: { $eq: 'foo' } },
             },
           },
           method: 'update',

@@ -36,7 +36,7 @@ import {
   FindUniqueWhereQuery,
 } from './find';
 import {
-  FilterQueryOptions,
+  RefineQueryOptions,
   QueryProjection,
   SelectManyQuery,
   SelectManyQueryOptions,
@@ -112,7 +112,7 @@ interface QueryOptionsTypes<
   AlterUnique: AlterUniqueQueryOptions<I, O>;
   InitMany: InitManyQueryOptions<I, O>;
   InitOne: InitOneQueryOptions<I, O>;
-  Filter: FilterQueryOptions<I>;
+  Refine: RefineQueryOptions<I>;
   FindFirstOrThrow: FindFirstOrThrowQueryOptions<I, O>;
   FindFirst: FindFirstQueryOptions<I, O>;
   FindMany: FindManyQueryOptions<I, O>;

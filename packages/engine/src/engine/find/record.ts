@@ -10,18 +10,26 @@ import { applyWhereOperatorTerm, applyWhereRecordTerm } from './term';
 export const convertWhereRecord = (
   states: MetadataState[],
   collection: MetadataCollection,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  where: StateDefinitionWhereRecord<any> | null,
-): StoreWhereRecord[] => {
-  let records: StoreWhereRecord[] = [
-    {
-      [collection.reservedNames.hash]: {
-        $in: states.map((s) => s.hash),
+  where: StateDefinitionWhereRecord | null,
+): StoreWhereRecord[] =>
+  applyFilterRecord(
+    [
+      {
+        [collection.reservedNames.hash]: {
+          $in: states.map((s) => s.hash),
+        },
       },
-    },
-  ];
+    ],
+    collection,
+    where,
+  );
 
-  for (const [key, term] of Object.entries(where ?? {})) {
+export const applyFilterRecord = (
+  records: StoreWhereRecord[],
+  collection: MetadataCollection,
+  filter: StateDefinitionWhereRecord | null,
+): StoreWhereRecord[] => {
+  for (const [key, term] of Object.entries(filter ?? {})) {
     if (term == null) continue;
 
     const choices = collection.schema[key] ?? [];

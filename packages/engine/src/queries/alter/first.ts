@@ -2,6 +2,8 @@ import { StateDefinition, StateDefinitionAlterMethods } from '@/definitions';
 import {
   ExecQuery,
   ExecQueryOptions,
+  FilterQuery,
+  FilterQueryOptions,
   MatchQuery,
   MatchQueryOptions,
   QueryEntity,
@@ -22,6 +24,7 @@ export interface AlterFirstQuery<
 > extends ReturnQuery<'AlterFirstAndReturn', I, O>,
     SelectQuery<'AlterFirstAndReturn', I, O>,
     WhereQuery<I>,
+    FilterQuery<I>,
     MatchQuery<I>,
     ExecQuery<void> {}
 
@@ -35,6 +38,7 @@ export interface AlterFirstAndReturnQuery<
 > extends SelectQuery<'AlterFirstAndReturn', I, O, R>,
     // PopulateQuery<'AlterFirstAndReturn', I, O, P, R>,
     WhereQuery<I>,
+    FilterQuery<I>,
     MatchQuery<I>,
     ExecQuery<QueryEntity<O, P, R> | null> {}
 
@@ -47,5 +51,6 @@ export interface AlterFirstQueryOptions<
     SelectQueryOptions<O>,
     // PopulateQueryOptions<O>,
     WhereQueryOptions<I>,
+    FilterQueryOptions<I>,
     MatchQueryOptions<I>,
     ExecQueryOptions<'AlterFirst', I, O> {}

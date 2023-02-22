@@ -24,11 +24,16 @@ describe('generate/state', () => {
             name: { type: $.scalars.String, index: 2 },
             email: { type: $.scalars.String, index: 3, nullable: true },
           });
-          static $find: $.Where<{
-            id?: $.WhereNumber<$.scalars.Number>;
-          }>;
+          static $where: {
+            id?: $.WhereNumber<$.scalars.Number> | null;
+          };
           static $unique: {
             id: $.scalars.Number;
+          };
+          static $filter: {
+            id?: $.WhereNumber<$.scalars.Number> | null;
+            name?: $.WhereString<$.scalars.String> | null;
+            email?: $.WhereNullableString<$.scalars.String> | null;
           };
 
           id!: $.scalars.Number;

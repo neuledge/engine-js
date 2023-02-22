@@ -16,8 +16,9 @@ export const generateStateQueryIndexes = (
   state: State,
   indent: string,
 ): string =>
-  `static $find: $.Where<${generateStateFindType(state, indent)}>;\n` +
-  `${indent}static $unique: ${generateStateUniqueType(state, indent)};`;
+  `static $where: ${generateStateWhereType(state, indent)};\n` +
+  `${indent}static $unique: ${generateStateUniqueType(state, indent)};\n` +
+  `${indent}static $filter: ${generateStateFilterType(state, indent)};`;
 
 export const generateStateOptionalIndexes = (
   state: State,
@@ -52,32 +53,51 @@ export const generateStateOptionalIndexes = (
   );
 };
 
-const generateStateFindType = (state: State, indent: string): string => {
+const generateStateFilterType = (state: State, indent: string): string =>
+  `{${Object.values(state.fields)
+    .filter((field) => field.type === 'ScalarField')
+    .map(
+      (item) =>
+        `\n${indent}  ${item.name}?: ${generateWhereEntityExpression(
+          item.as,
+          item.nullable,
+        )} | null;`,
+    )
+    .join('')}\n${indent}}`;
+
+const generateStateWhereType = (state: State, indent: string): string => {
   const paths = getIndexTypePaths(state, Object.values(state.indexes));
   const multiPaths = paths.length > 1 || paths[0].length > 1;
 
-  return (
-    paths
-      .flatMap((fields) =>
-        fields.map(
-          (field, i) =>
-            `${multiPaths ? `\n${indent}  | {` : '{'}${fields
-              .slice(0, i)
-              .map(
-                (item) =>
-                  `\n${multiPaths ? `${indent}    ` : indent}  ${
-                    item.name
-                  }: ${generateWhereEntityExpression(item.as, item.nullable)};`,
-              )
-              .join('')}\n${indent}${multiPaths ? '    ' : ''}  ${
-              field.name
-            }?: ${generateWhereEntityExpression(field.as, field.nullable)};\n${
-              multiPaths ? `${indent}    ` : indent
-            }}`,
-        ),
-      )
-      .join(multiPaths ? '' : ' | ') + (multiPaths ? `\n${indent}` : '')
-  );
+  return paths
+    .flatMap((fields) =>
+      fields.map(
+        (field, i) =>
+          `${multiPaths ? `\n${indent}  | {` : '{'}${fields
+            .slice(0, i)
+            .map(
+              (item) =>
+                `\n${multiPaths ? `${indent}    ` : indent}  ${
+                  item.name
+                }: ${generateWhereEntityExpression(item.as, item.nullable)};`,
+            )
+            .join('')}\n${indent}${multiPaths ? '    ' : ''}  ${
+            field.name
+          }?: ${generateWhereEntityExpression(
+            field.as,
+            field.nullable,
+          )} | null;${fields
+            .slice(i + 1)
+            .map(
+              (item) =>
+                `\n${multiPaths ? `${indent}    ` : indent}  ${
+                  item.name
+                }?: null;`,
+            )
+            .join('')}\n${multiPaths ? `${indent}    ` : indent}}`,
+      ),
+    )
+    .join(multiPaths ? '' : ' | ');
 };
 
 const generateStateUniqueType = (state: State, indent: string): string =>

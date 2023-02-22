@@ -107,11 +107,14 @@ describe('generate/state/indexes', () => {
           '  ',
         ),
       ).toMatchInlineSnapshot(`
-        "static $find: $.Where<{
-            id?: $.WhereNumber<$.scalars.Number>;
-          }>;
+        "static $where: {
+            id?: $.WhereNumber<$.scalars.Number> | null;
+          };
           static $unique: {
             id: $.scalars.Number;
+          };
+          static $filter: {
+            id?: $.WhereNumber<$.scalars.Number> | null;
           };"
       `);
     });
@@ -148,6 +151,19 @@ describe('generate/state/indexes', () => {
                 },
                 index: 2,
               },
+              posts: {
+                type: 'RelationField',
+                name: 'posts',
+                node: null as never,
+                as: {
+                  type: 'EntityExpression',
+                  entity: {} as never,
+                  list: true,
+                  node: null as never,
+                },
+                referenceField: 'author_id',
+                index: 3,
+              },
             },
             primaryKey: null as never,
             indexes: {
@@ -163,18 +179,22 @@ describe('generate/state/indexes', () => {
           '  ',
         ),
       ).toMatchInlineSnapshot(`
-        "static $find: $.Where<
+        "static $where: 
             | {
-                id?: $.WhereNumber<$.scalars.Number>;
+                id?: $.WhereNumber<$.scalars.Number> | null;
+                name?: null;
               }
             | {
                 id: $.WhereNumber<$.scalars.Number>;
-                name?: $.WhereString<$.scalars.String>;
-              }
-          >;
+                name?: $.WhereString<$.scalars.String> | null;
+              };
           static $unique: {
             id: $.scalars.Number;
             name: $.scalars.String;
+          };
+          static $filter: {
+            id?: $.WhereNumber<$.scalars.Number> | null;
+            name?: $.WhereString<$.scalars.String> | null;
           };"
       `);
     });
@@ -231,16 +251,19 @@ describe('generate/state/indexes', () => {
           '  ',
         ),
       ).toMatchInlineSnapshot(`
-        "static $find: $.Where<
+        "static $where: 
             | {
-                id?: $.WhereNumber<$.scalars.Number>;
+                id?: $.WhereNumber<$.scalars.Number> | null;
               }
             | {
-                name?: $.WhereNullableString<$.scalars.String>;
-              }
-          >;
+                name?: $.WhereNullableString<$.scalars.String> | null;
+              };
           static $unique: {
             id: $.scalars.Number;
+          };
+          static $filter: {
+            id?: $.WhereNumber<$.scalars.Number> | null;
+            name?: $.WhereNullableString<$.scalars.String> | null;
           };"
       `);
     });

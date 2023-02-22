@@ -2,6 +2,8 @@ import { StateDefinition, StateDefinitionAlterMethods } from '@/definitions';
 import {
   ExecQuery,
   ExecQueryOptions,
+  FilterQuery,
+  FilterQueryOptions,
   MatchQuery,
   MatchQueryOptions,
   QueryEntity,
@@ -22,6 +24,7 @@ export interface AlterUniqueQuery<
 > extends ReturnQuery<'AlterUniqueAndReturn', I, O>,
     SelectQuery<'AlterUniqueAndReturn', I, O>,
     UniqueQuery<'AlterUniqueWhere', I, O>,
+    FilterQuery<I>,
     MatchQuery<I>,
     ExecQuery<void> {}
 
@@ -35,6 +38,7 @@ export interface AlterUniqueAndReturnQuery<
 > extends SelectQuery<'AlterUniqueAndReturn', I, O, R>,
     // PopulateQuery<'AlterUniqueAndReturn', I, O, P, R>,
     UniqueQuery<'AlterUniqueWhereAndReturn', I, O, P, R>,
+    FilterQuery<I>,
     MatchQuery<I> {}
 
 export interface AlterUniqueWhereQuery<
@@ -45,6 +49,7 @@ export interface AlterUniqueWhereQuery<
 > extends ReturnQuery<'AlterUniqueWhereAndReturn', I, O>,
     SelectQuery<'AlterUniqueWhereAndReturn', I, O, R>,
     UniqueQuery<'AlterUniqueWhere', I, O, P, R>,
+    FilterQuery<I>,
     MatchQuery<I>,
     ExecQuery<void> {}
 
@@ -56,6 +61,7 @@ export interface AlterUniqueWhereAndReturnQuery<
 > extends SelectQuery<'AlterUniqueWhereAndReturn', I, O, R>,
     // PopulateQuery<'AlterUniqueWhereAndReturn', I, O, P, R>,
     UniqueQuery<'AlterUniqueWhereAndReturn', I, O, P, R>,
+    FilterQuery<I>,
     MatchQuery<I>,
     ExecQuery<QueryEntity<O, P, R> | null> {}
 
@@ -68,5 +74,6 @@ export interface AlterUniqueQueryOptions<
     SelectQueryOptions<O>,
     // PopulateQueryOptions<O>,
     UniqueQueryOptions<I>,
+    FilterQueryOptions<I>,
     MatchQueryOptions<I>,
     ExecQueryOptions<'AlterUnique', I, O> {}

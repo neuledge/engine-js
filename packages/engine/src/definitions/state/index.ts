@@ -4,4 +4,4 @@ export * from './relations';
 export * from './scalar';
 export * from './sort';
 export * from './state';
-export * from './where';
+export * from './find';

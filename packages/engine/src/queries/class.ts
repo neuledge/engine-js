@@ -11,7 +11,7 @@ import {
   ExpandQuery,
   ExpandQueryOptions,
   ExpandQueryParam,
-  FilterQueryOptions,
+  RefineQueryOptions,
   LimitQuery,
   LimitQueryOptions,
   MatchQuery,
@@ -36,6 +36,10 @@ import {
   UniqueQueryOptions,
   Where,
   WhereQuery,
+  Filter,
+  FilterQueryOptions,
+  FilterQuery,
+  WhereQueryOptions,
 } from './raw';
 import { QueryOptions, QueryType } from './query';
 import { NeuledgeError } from '@/error';
@@ -51,6 +55,7 @@ export class QueryClass<
     PopulateQuery<any, I, O, any, any>, // eslint-disable-line @typescript-eslint/no-explicit-any
     WhereQuery<I>,
     UniqueQuery<any, I, O, any, any>, // eslint-disable-line @typescript-eslint/no-explicit-any
+    FilterQuery<I>,
     MatchQuery<I>,
     LimitQuery,
     OffsetQuery,
@@ -186,6 +191,11 @@ export class QueryClass<
   //     return this;
   //   }
 
+  where(where: Where<I> | null): this {
+    (this.options as WhereQueryOptions<I>).where = where;
+    return this;
+  }
+
   unique(where: Unique<I>): this {
     (this.options as UniqueQueryOptions<I>).unique = where;
 
@@ -195,8 +205,8 @@ export class QueryClass<
     return this;
   }
 
-  where(where: Where<I> | null): this {
-    (this.options as FilterQueryOptions<I>).where = where;
+  filter(filter: Filter<I> | null): this {
+    (this.options as FilterQueryOptions<I>).filter = filter;
     return this;
   }
 
@@ -213,11 +223,11 @@ export class QueryClass<
     }
 
     let rel: QueryClass<
-      'Filter',
+      'Refine',
       StateRelationStates<I, K>,
       StateRelationStates<I, K>
     > = new QueryClass({
-      type: 'Filter',
+      type: 'Refine',
       states,
     });
 
@@ -225,7 +235,7 @@ export class QueryClass<
       rel = query(rel) as typeof rel;
     }
 
-    const options = this.options as FilterQueryOptions<I>;
+    const options = this.options as RefineQueryOptions<I>;
 
     if (!options.match) {
       options.match = {};

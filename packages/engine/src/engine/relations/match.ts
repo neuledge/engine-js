@@ -2,7 +2,7 @@ import { StateDefinition } from '@/definitions';
 import { Metadata, MetadataCollection } from '@/metadata';
 import { MatchQueryOptions } from '@/queries';
 import { StoreFindOptions, StoreJoin } from '@neuledge/store';
-import { convertWhereQuery } from '../find';
+import { convertFilterQuery } from '../find';
 import { convertRelationQueryOptions } from './relation';
 
 export const convertMatchQuery = <S extends StateDefinition>(
@@ -27,7 +27,7 @@ const convertMatch = <S extends StateDefinition>(
     ({ collection, by, query }) => ({
       collection,
       by,
-      ...convertWhereQuery(collection.states, collection, query),
+      ...convertFilterQuery(collection.states, collection, query),
       ...convertMatchQuery(metadata, collection, query),
     }),
   );

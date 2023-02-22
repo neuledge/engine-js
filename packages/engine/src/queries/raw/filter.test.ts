@@ -2,12 +2,14 @@ import {
   Post,
   PublishedPost,
 } from '@/definitions/__fixtures__/category-post-example';
-import { Where } from './where';
+import { Filter } from './filter';
 
-describe('queries/where', () => {
-  describe('Where<>', () => {
+/* eslint-disable max-lines-per-function */
+
+describe('queries/filter', () => {
+  describe('Filter<>', () => {
     it('should have all fields for single state', () => {
-      type t = Where<typeof PublishedPost>;
+      type t = Filter<typeof PublishedPost>;
 
       expect<t>({ id: null });
       expect<t>({ id: { $eq: 123 } });
@@ -19,20 +21,24 @@ describe('queries/where', () => {
       expect<t>({ category: { $eq: { id: 123 } } });
       expect<t>({ category: { $eq: { id: 123 } }, title: { $eq: 'Hello' } });
 
-      // @ts-expect-error should not allow title without category
       expect<t>({ title: { $eq: 'Hello' } });
+
+      expect<t>({ publishedAt: { $eq: new Date('2020-01-01') } });
     });
 
     it('should allow $or on single state', () => {
-      type t = Where<typeof PublishedPost>;
+      type t = Filter<typeof PublishedPost>;
 
       expect<t>({
-        $or: [{ category: { $eq: { id: 123 } } }, { id: { $eq: 456 } }],
+        $or: [
+          { publishedAt: { $eq: new Date('2020-01-01') } },
+          { id: { $eq: 456 } },
+        ],
       });
     });
 
     it('should have common fields for multiple states', () => {
-      type t = Where<typeof Post[number]>;
+      type t = Filter<typeof Post[number]>;
 
       expect<t>({ id: { $eq: 123 } });
       expect<t>({ id: null });
@@ -40,28 +46,32 @@ describe('queries/where', () => {
 
       expect<t>({ category: null });
       expect<t>({ title: null });
-
-      // @ts-expect-error Property 'category' does not defined
       expect<t>({ category: { $eq: { id: 123 } } });
-
-      // @ts-expect-error Property 'title' can't assign without category
       expect<t>({ title: { $eq: 'Hello' } });
+
+      expect<t>({ publishedAt: null });
+
+      // @ts-expect-error Property 'publishedAt' does not defined on both states
+      expect<t>({ publishedAt: { $eq: new Date('2020-01-01') } });
     });
 
     it('should allow $or on multiple states', () => {
-      type t = Where<typeof Post[number]>;
+      type t = Filter<typeof Post[number]>;
 
       expect<t>({
-        $or: [{ id: { $eq: 123 } }, { id: { $eq: 456 } }],
+        $or: [{ title: { $eq: 'Hello' } }, { id: { $eq: 456 } }],
       });
 
       expect<t>({
-        $or: [{ category: null }, { id: { $eq: 456 } }],
+        $or: [{ publishedAt: null }, { id: { $eq: 456 } }],
       });
 
-      // @ts-expect-error Property 'category' does not defined
       expect<t>({
-        $or: [{ category: { $eq: { id: 123 } } }, { id: { $eq: 456 } }],
+        $or: [
+          // @ts-expect-error Property 'publishedAt' doesn't defined
+          { publishedAt: { $eq: new Date('2020-01-01') } },
+          { id: { $eq: 456 } },
+        ],
       });
     });
   });

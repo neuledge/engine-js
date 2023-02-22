@@ -3,10 +3,10 @@ import { LimitQuery, LimitQueryOptions } from '../limit';
 import { OffsetQuery, OffsetQueryOptions } from '../offset';
 import { SortQuery, SortQueryOptions } from '../sort';
 import { ChildQueryOptions } from '../type';
-import { WhereQuery, WhereQueryOptions } from '../where';
 import { QueryProjection, SelectQuery, SelectQueryOptions } from '../select';
 import { PopulateQuery, PopulateQueryOptions } from './populate';
 import { ExpandQuery, ExpandQueryOptions } from './expand';
+import { FilterQuery, FilterQueryOptions } from '../filter';
 
 export interface SelectManyQuery<
   S extends StateDefinition,
@@ -15,7 +15,7 @@ export interface SelectManyQuery<
 > extends SelectQuery<'SelectMany', S, S, R>,
     ExpandQuery<'SelectMany', S, S, P, R>,
     PopulateQuery<'SelectMany', S, S, P, R>,
-    WhereQuery<S>,
+    FilterQuery<S>,
     SortQuery<S>,
     LimitQuery,
     OffsetQuery {}
@@ -25,7 +25,7 @@ export interface SelectManyQueryOptions<S extends StateDefinition>
     SelectQueryOptions<S>,
     ExpandQueryOptions<S>,
     PopulateQueryOptions<S>,
-    WhereQueryOptions<S>,
+    FilterQueryOptions<S>,
     SortQueryOptions<S>,
     LimitQueryOptions,
     OffsetQueryOptions {}

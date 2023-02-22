@@ -4,6 +4,8 @@ import {
   ExecQueryOptions,
   ExpandQuery,
   ExpandQueryOptions,
+  FilterQuery,
+  FilterQueryOptions,
   PopulateQuery,
   PopulateQueryOptions,
   QueryEntity,
@@ -22,13 +24,15 @@ export interface FindUniqueOrThrowQuery<
 > extends SelectQuery<'FindUniqueOrThrow', S, S, R>,
     ExpandQuery<'FindUniqueOrThrow', S, S, P, R>,
     PopulateQuery<'FindUniqueOrThrow', S, S, P, R>,
-    UniqueQuery<'FindUniqueWhereOrThrow', S, S, P, R> {}
+    UniqueQuery<'FindUniqueWhereOrThrow', S, S, P, R>,
+    FilterQuery<S> {}
 
 export interface FindUniqueWhereOrThrowQuery<
   S extends StateDefinition,
   P extends QueryProjection<S> = null,
   R = NonNullable<unknown>,
 > extends SelectQuery<'FindUniqueWhereOrThrow', S, S, R>,
+    FilterQuery<S>,
     ExpandQuery<'FindUniqueWhereOrThrow', S, S, P, R>,
     PopulateQuery<'FindUniqueWhereOrThrow', S, S, P, R>,
     UniqueQuery<'FindUniqueWhereOrThrow', S, S, P, R>,
@@ -41,5 +45,6 @@ export interface FindUniqueOrThrowQueryOptions<
     SelectQueryOptions<O>,
     ExpandQueryOptions<O>,
     PopulateQueryOptions<O>,
-    UniqueQueryOptions<O>,
+    UniqueQueryOptions<I>,
+    FilterQueryOptions<I>,
     ExecQueryOptions<'FindUniqueOrThrow', I, O> {}

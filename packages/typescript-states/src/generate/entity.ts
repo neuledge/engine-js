@@ -46,29 +46,27 @@ export const generateWhereEntityExpression = (
 ): string => {
   switch (entity.type) {
     case 'Either': {
-      if (list) {
-        throw new Error('Where list of eithers is not supported.');
-      }
+      const type = list ? 'ListState' : 'State';
+      const nullish = nullable ? 'Nullable' : '';
 
-      return `$.Where${nullable ? 'Nullable' : ''}State<typeof ${
-        entity.name
-      }[number]>`;
+      return `$.Where${nullish}${type}<typeof ${entity.name}[number]>`;
     }
 
     case 'State': {
-      if (list) {
-        throw new Error('Where list of states is not supported.');
-      }
+      const type = list ? 'ListState' : 'State';
+      const nullish = nullable ? 'Nullable' : '';
 
-      return `$.Where${nullable ? 'Nullable' : ''}State<typeof ${entity.name}>`;
+      return `$.Where${nullish}${type}<typeof ${entity.name}>`;
     }
 
-    case 'Scalar':
+    case 'Scalar': {
       return generateWhereScalar(entity, nullable, list);
+    }
 
-    default:
+    default: {
       // @ts-expect-error `entity` is never
       throw new TypeError(`Unexpected entity type: ${entity.type}`);
+    }
   }
 };
 

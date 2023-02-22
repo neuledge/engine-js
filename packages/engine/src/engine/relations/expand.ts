@@ -3,7 +3,7 @@ import { StateDefinition } from '@/definitions';
 import { Metadata, MetadataCollection } from '@/metadata';
 import { ExpandQueryOptions } from '@/queries';
 import { convertRelationQueryOptions } from './relation';
-import { convertWhereQuery } from '../find';
+import { convertFilterQuery } from '../find';
 import { convertJoinSelectQuery } from '../select';
 import { convertPopulateOneQuery } from './populate';
 
@@ -30,7 +30,7 @@ const convertExpand = <S extends StateDefinition>(
       collection,
       by,
       ...convertJoinSelectQuery(collection, query),
-      ...convertWhereQuery(collection.states, collection, query),
+      ...convertFilterQuery(collection.states, collection, query),
       ...convertExpandQuery(metadata, collection, query),
       ...convertPopulateOneQuery(metadata, collection, query),
     }),
