@@ -2075,6 +2075,15 @@
     "@jridgewell/resolve-uri" "3.1.0"
     "@jridgewell/sourcemap-codec" "1.4.14"
 
+"@mercuriusjs/subscription-client@^0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@mercuriusjs/subscription-client/-/subscription-client-0.1.0.tgz#1e8490cd9b02daebd37560bff1536e5772765668"
+  integrity sha512-ivqMmSQ4kwroK/uUZVwOnd5QEAsjrEy/EqSsEqhtEObA/Zqkc44Fgi543Mml3XjoGopY1y1rJYQSl/gzfyfgrw==
+  dependencies:
+    "@fastify/error" "^3.0.0"
+    secure-json-parse "^2.4.0"
+    ws "^8.2.2"
+
 "@neuledge/eslint-config@^1.0.0-alpha.14":
   version "1.0.0-alpha.14"
   resolved "https://registry.yarnpkg.com/@neuledge/eslint-config/-/eslint-config-1.0.0-alpha.14.tgz#558e64f58d68fd991efcefb59bdfce867f810449"
@@ -4183,11 +4192,6 @@ event-target-shim@^5.0.0:
   resolved "https://registry.yarnpkg.com/event-target-shim/-/event-target-shim-5.0.1.tgz#5d4d3ebdf9583d63a5333ce2deb7480ab2b05789"
   integrity sha512-i/2XbnSz/uxRCU6+NdVJgKWDTM427+MqYbkQzD321DuCQJUqOuJKIA0IM2+W2xtYHdKOmZ4dR6fExsd4SXL+WQ==
 
-events.on@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/events.on/-/events.on-1.0.1.tgz#9fe6c69c0c5da10d4988eeffc476f6f9eeb540a3"
-  integrity sha512-yT4htzImIQAf7mFV3heqTRNVwysZIgQjrribiCYQk152gcG6shz/WU/6xVGr0oDzkzcDPhMcCYy4lEKBiadSRA==
-
 events@^3.3.0:
   version "3.3.0"
   resolved "https://registry.yarnpkg.com/events/-/events-3.3.0.tgz#31a95ad0a924e2d2c419a813aeb2c4e878ea7400"
@@ -5961,15 +5965,15 @@ memory-pager@^1.0.2:
   resolved "https://registry.yarnpkg.com/memory-pager/-/memory-pager-1.5.0.tgz#d8751655d22d384682741c972f2c3d6dfa3e66b5"
   integrity sha512-ZS4Bp4r/Zoeq6+NLJpP+0Zzm0pR8whtGPf1XExKLJBAczGMnSi3It14OiNCStjQjM6NU1okjQGSxgEZN8eBYKg==
 
-mercurius@^11.0.1:
-  version "11.0.1"
-  resolved "https://registry.yarnpkg.com/mercurius/-/mercurius-11.0.1.tgz#5e97252dbc7606e6777200cdda0d363e8ff44494"
-  integrity sha512-gas4uY4QaUi98icFOYT3oGVYqg0QZNGpaO9Nz/K148vD9/PcYLdVLnuzbjciqO5DpxHK0PpgoQywdNLt+A371A==
+mercurius@^11.5.0:
+  version "11.5.0"
+  resolved "https://registry.yarnpkg.com/mercurius/-/mercurius-11.5.0.tgz#07b2c6fbe0136ae23a1ad315361ae996586e7af7"
+  integrity sha512-e2ZGC9OyX8eY7Dt/gUrTvzjVDojXECgv4dkjOz7Mux80V0D8ZC7im2cuywsInIQw6pEK1/p8WeVzuIADdWAJag==
   dependencies:
     "@fastify/error" "^3.0.0"
     "@fastify/static" "^6.0.0"
     "@fastify/websocket" "^7.0.0"
-    events.on "^1.0.1"
+    "@mercuriusjs/subscription-client" "^0.1.0"
     fastify-plugin "^4.2.0"
     graphql "^16.0.0"
     graphql-jit "^0.7.3"
