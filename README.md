@@ -1,8 +1,10 @@
 <p align=center>
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://cdn.neuledge.com/images/logo/dark.svg">
-    <img alt="Neuledge" src="https://cdn.neuledge.com/images/logo/light.svg" height="150">
-  </picture>
+  <a href="https://neuledge.com">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="https://cdn.neuledge.com/images/logo/dark.svg">
+      <img alt="Neuledge" src="https://cdn.neuledge.com/images/logo/light.svg" height="140">
+    </picture>
+  </a>
 </p>
 
 <p align=center>
@@ -10,7 +12,7 @@
 </p>
 <br>
 
-Neuledge is an ORM and a schema language that improves data integrity and simplifies business logic interfaces. Neuledge schema language helps enforcing business rules and consistent data usage across the application and database.
+[Neuledge](https://neuledge.com) is an ORM and a schema language that improves data integrity and simplifies business logic interfaces. Neuledge schema language helps enforcing business rules and consistent data usage across the application and database.
 
 ### Main features
 
@@ -23,10 +25,9 @@ Neuledge is an ORM and a schema language that improves data integrity and simpli
 - **Automatic data models for popular frameworks**: Generate clean and elegant business-logic code for your framework that scales fast and evolves with your project needs.
 - **No breaking changes during deployment**: Migrate and deploy schemas automatically, remove deprecated versions safely, and keep your data organized.
 
-### Sponsored by ❤️
+## ❤️ Sponsored by
 
-If you like this project, please [consider sponsoring us](https://github.com/sponsors/neuledge) to help us continue to maintain and improve
-this project.
+If you find Neuledge useful and would like to support its ongoing development and maintenance, please consider [sponsoring us](https://github.com/sponsors/neuledge). Your sponsorship will help us to continue to improve and evolve this project. Thank you for your support!
 
 <br>
 
@@ -35,8 +36,7 @@ this project.
 - [Alpha release](#-alpha-release)
 - [How it works](#-how-it-works)
 - [Getting started](#-getting-started)
-- [Documentation](#-documentation)
-- [Examples](#-examples)
+- [Documentation](#-documentation-examples)
 - [Join the community](#-join-the-community)
 - [License](#-license)
 
@@ -194,15 +194,11 @@ const categories = await engine.findMany(Category);
 await engine.alterUniqueOrThrow(Category).delete().unique({ id: category.id });
 ```
 
-# 📚 Documentation
+# 📚 Documentation & examples
 
 For more information, please visit [neuledge.com/docs](https://neuledge.com/docs).
 
-# 📚 Examples
-
-For more examples, please check the [examples](/examples/) folder.
-
-# 🤝 Join the community
+For examples, please check the [examples](/examples/) folder.
 
 # 🤝 Join the community
 
