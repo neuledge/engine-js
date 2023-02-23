@@ -10,6 +10,26 @@
 <p align=center>
   <strong>Predictable data schema and business logic definitions for databases.</strong>
 </p>
+<p align="center">
+  <!-- <a href="https://www.npmjs.org/package/engine-js">
+    <img src="http://img.shields.io/npm/v/engine-js.svg" alt="View On NPM">
+  </a> -->
+  <a href="https://github.com/neuledge/engine-js/actions/workflows/npm.yml">
+    <img src="https://github.com/neuledge/engine-js/actions/workflows/npm.yml/badge.svg"
+      alt="Build Status">
+  </a>
+  <a href="https://depfu.com/github/neuledge/engine-js?project_id=37965">
+    <img src="https://badges.depfu.com/badges/2c05ca219e802269062aac09ed69994b/overview.svg"
+      alt="Dependency Status">
+  </a>
+  <!-- <a href="https://codecov.io/gh/neuledge/engine-js">
+    <img src="https://codecov.io/gh/neuledge/engine-js/branch/master/graph/badge.svg?token=4YPG4FPM23"
+      alt="Coverage Status" />
+  </a> -->
+  <a href="LICENSE">
+    <img src="https://img.shields.io/github/license/neuledge/engine-js" alt="License">
+  </a>
+</p>
 <br>
 
 [Neuledge](https://neuledge.com) is an ORM and a schema language that improves data integrity and simplifies business logic interfaces. Neuledge schema language helps enforcing business rules and consistent data usage across the application and database.
@@ -214,6 +234,8 @@ For examples, please check the [examples](/examples/) folder.
 
 To get involved in the Neuledge community:
 
+- Give us a star ⭐️ on GitHub.
+- Follow us on [Twitter](https://twitter.com/neuledge).
 - Join our [Discord community](https://discord.gg/49JMwxKvhF) to connect with other users and get help.
 - Subscribe to our [newsletter](https://neuledge.com/#join) to stay up to date on the latest news and updates.
 - If you find any bugs or have any suggestions, please [open an issue](https://github.com/neuledge/engine-js/issues/new/choose) on GitHub or let us know on our Discord community.
