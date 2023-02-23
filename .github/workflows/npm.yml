@@ -13,7 +13,6 @@ jobs:
   yarn:
     name: Install dependencies
     runs-on: ubuntu-latest
-    environment: production
 
     steps:
       - name: Checkout
@@ -37,7 +36,6 @@ jobs:
   test:
     name: Test repository
     runs-on: ubuntu-latest
-    environment: production
     needs: yarn
 
     steps:
@@ -67,7 +65,6 @@ jobs:
   lint:
     name: Lint repository
     runs-on: ubuntu-latest
-    environment: production
     needs: yarn
     continue-on-error: true
 
