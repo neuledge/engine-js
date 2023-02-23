@@ -81,5 +81,5 @@ jobs:
           path: .turbo
           key: ${{ runner.os }}-turbo-lint
 
-      - name: Yarn test
+      - name: Yarn lint:strict
         run: yarn lint:strict --cache-dir=.turbo
