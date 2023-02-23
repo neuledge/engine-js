@@ -7,6 +7,7 @@ import {
 import { MetadataState, MetadataStateContext } from './state';
 import { MetadataSnapshot } from './snapshot';
 import { NeuledgeError } from '@/error';
+import { MetadataChange } from './change';
 
 /**
  * Metadata is a snapshot of the current state of the database, including all
@@ -14,7 +15,7 @@ import { NeuledgeError } from '@/error';
  * codebase.
  */
 export class Metadata extends MetadataSnapshot<MetadataState> {
-  private readonly collections: Partial<Record<string, MetadataCollection>>;
+  private collections: Partial<Record<string, MetadataCollection>>;
 
   constructor(states: Iterable<StateDefinition>) {
     const stateGroups = groupStatesByCollectionName(states);
@@ -38,6 +39,10 @@ export class Metadata extends MetadataSnapshot<MetadataState> {
     super(allStates);
 
     this.collections = collections;
+  }
+
+  get listCollections(): MetadataCollection[] {
+    return Object.values(this.collections) as MetadataCollection[];
   }
 
   getCollectionByMetadataState(state: MetadataState): MetadataCollection {
@@ -80,5 +85,30 @@ export class Metadata extends MetadataSnapshot<MetadataState> {
 
       return collection;
     });
+  }
+
+  sync(snapshot: MetadataSnapshot): MetadataChange[] {
+    const changes = super.sync(snapshot);
+
+    // recreate collections as some state names may have changed
+
+    const collectionStates: Record<string, MetadataState[]> = {};
+    for (const state of this.states) {
+      let entry = collectionStates[state.collectionName];
+
+      if (!entry) {
+        entry = collectionStates[state.collectionName] = [];
+      }
+
+      entry.push(state);
+    }
+
+    const collections: Record<string, MetadataCollection> = {};
+    for (const [name, states] of Object.entries(collectionStates)) {
+      collections[name] = new MetadataCollection(name, states);
+    }
+
+    this.collections = collections;
+    return changes;
   }
 }

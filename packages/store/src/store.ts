@@ -35,7 +35,7 @@ export interface Store {
 }
 
 export interface StoreDescribeCollectionOptions {
-  collection: StoreCollection;
+  collection: StoreCollection_Slim | StoreCollection;
 }
 
 export interface StoreEnsureCollectionOptions {

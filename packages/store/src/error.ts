@@ -6,6 +6,9 @@ enum StoreErrorCode {
   INVALID_INPUT = 'INVALID_INPUT',
   NOT_SUPPORTED = 'NOT_SUPPORTED',
 
+  // collection errors
+  COLLECTION_NOT_FOUND = 'COLLECTION_NOT_FOUND',
+
   // store errors
   INVALID_DATA = 'INVALID_DATA',
 

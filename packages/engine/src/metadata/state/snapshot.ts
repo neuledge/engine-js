@@ -19,25 +19,38 @@ export class StateSnapshot {
   instance?: StateDefinition;
   relations!: StateRelationSnapshot[];
 
-  matches(target: StateSnapshot): boolean {
-    if (this.hash.equals(target.hash)) return true;
+  /**
+   * Check that the origin state matches the current state signature.
+   * The state can match if one of the following conditions is true:
+   * - the hash is the same
+   * - the current state has all the required fields of the origin state
+   */
+  matches(origin: StateSnapshot): boolean {
+    if (this.hash.equals(origin.hash)) return true;
 
-    const actualFields = new Map(
+    const existingFields = new Map(
       this.fields.map((item) => [getMetadataStateFieldKey(item), item]),
     );
 
-    return Object.values(target.fields).every((targetField) => {
-      const actualField = actualFields.get(
-        getMetadataStateFieldKey(targetField),
+    return Object.values(origin.fields).every((originField) => {
+      const existsField = existingFields.get(
+        getMetadataStateFieldKey(originField),
       );
-      if (!actualField) {
-        return targetField.nullable;
+      if (!existsField) {
+        return originField.nullable;
       }
 
-      return !actualField.nullable || targetField.nullable;
+      return !existsField.nullable || originField.nullable;
     });
   }
 
+  /**
+   * Sync the current state with the origin state.
+   * This will update the collection name and store field names to match the
+   * origin state representation on the store. This is useful when the state
+   * rename a field and we want to keep the same name on the store for backward
+   * compatibility.
+   */
   sync(origin: StateSnapshot): void {
     this.collectionName = origin.collectionName;
 

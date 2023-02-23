@@ -14,6 +14,9 @@ import {
   StoreCollection,
   StoreInsertionResponse,
   StoreError,
+  StoreIndex,
+  StoreIndexField,
+  StorePrimaryKey,
 } from '@neuledge/store';
 import {
   Db,
@@ -22,7 +25,6 @@ import {
   MongoClient,
   MongoClientOptions,
   Collection,
-  CollectionOptions,
 } from 'mongodb';
 import pLimit from 'p-limit';
 import { escapeDocument, unescapeDocument } from './documents';
@@ -70,6 +72,7 @@ export type MongoDBStoreConnectionOptions =
 export class MongoDBStore implements Store {
   private readonly client: MongoClient;
   private readonly db: Promise<Db>;
+  private readonly collections: Partial<Record<string, Promise<Collection>>>;
   private readonly autoIncrement: Promise<Collection<AutoIncrementDocument>>;
   private readonly readConcurrency: number;
   private readonly writeConcurrency: number;
@@ -95,6 +98,7 @@ export class MongoDBStore implements Store {
             .then((client) => client.db(name, db as DbOptions | undefined))
         : Promise.resolve(db as Db);
 
+    this.collections = {};
     this.autoIncrement = this.db.then((db) =>
       db.collection(autoIncrementCollectionName),
     );
@@ -119,25 +123,53 @@ export class MongoDBStore implements Store {
   }
 
   async describeCollection(
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     options: StoreDescribeCollectionOptions,
   ): Promise<StoreCollection> {
-    // FIXME implement mongodb store describeCollection
-    throw new Error('Method not implemented.');
+    const collection = await this.collection(options.collection.name);
+    const indexes = await collection.listIndexes().toArray();
 
-    //     const collection = await this.collection(options.name);
-    //
-    //     const indexes = await collection.indexes();
-    //
-    //     return {
-    //       name: collection.collectionName,
-    //       indexes: [],
-    //       fields: [],
-    //     };
+    const storeIndexes = indexes.map(
+      (index): StoreIndex => ({
+        name: index.name,
+        fields: Object.fromEntries(
+          Object.entries(index.key).map(
+            ([key, value]): [string, StoreIndexField] => [
+              key,
+              { direction: value === 1 ? 'asc' : 'desc' },
+            ],
+          ),
+        ),
+        unique:
+          index.unique &&
+          (index.key._id === 1 && Object.keys(index.key).length === 1
+            ? 'primary'
+            : true),
+      }),
+    );
+
+    const primaryKey = storeIndexes.find(
+      (index): index is StorePrimaryKey => index.unique === 'primary',
+    );
+    if (!primaryKey) {
+      throw new StoreError(
+        StoreError.Code.INTERNAL_ERROR,
+        'No primary key found',
+      );
+    }
+
+    return {
+      name: collection.collectionName,
+      primaryKey,
+      indexes: Object.fromEntries(
+        storeIndexes.map((index) => [index.name, index]),
+      ),
+      fields: (options.collection as StoreCollection).fields ?? {},
+    };
   }
 
   async ensureCollection(options: StoreEnsureCollectionOptions): Promise<void> {
     const db = await this.db;
+
     const collection = await db
       .createCollection(options.collection.name)
       .catch(() => db.collection(options.collection.name));
@@ -288,12 +320,32 @@ export class MongoDBStore implements Store {
 
   // private helpers
 
-  private async collection(
-    collectionName: string,
-    options?: CollectionOptions,
-  ): Promise<Collection> {
-    const db = await this.db;
-    return db.collection(collectionName, options);
+  private collection(collectionName: string): Promise<Collection> {
+    let collection = this.collections[collectionName];
+
+    if (!collection) {
+      this.collections[collectionName] = collection = this.db.then(
+        async (db) => {
+          const [exists] = await db
+            .listCollections({ name: collectionName }, { nameOnly: true })
+            .toArray();
+
+          if (!exists) {
+            // allow retry on next call
+            delete this.collections[collectionName];
+
+            throw new StoreError(
+              StoreError.Code.COLLECTION_NOT_FOUND,
+              `Collection "${collectionName}" not found`,
+            );
+          }
+
+          return db.collection(collectionName);
+        },
+      );
+    }
+
+    return collection;
   }
 
   private async queryJoin(

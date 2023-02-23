@@ -14,6 +14,7 @@
     "build": "turbo run build",
     "types": "turbo run types",
     "test": "turbo run test lint",
+    "test:strict": "turbo run test lint:strict",
     "lint": "turbo run lint",
     "lint:strict": "turbo run lint:strict",
     "format": "prettier --write \"**/*.{ts,tsx,md}\""

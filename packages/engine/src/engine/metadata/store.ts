@@ -1,10 +1,5 @@
 import { NeuledgeError } from '@/error';
-import {
-  Metadata,
-  MetadataChange,
-  StateSnapshot,
-  METADATA_HASH_BYTES,
-} from '@/metadata';
+import { MetadataChange, StateSnapshot, METADATA_HASH_BYTES } from '@/metadata';
 import { MetadataSnapshot } from '@/metadata/snapshot';
 import {
   Store,
@@ -62,7 +57,7 @@ export const ensureMetadataCollection = async (
 };
 
 export const getStoreMetadataSnapshot = async (
-  metadata: Metadata,
+  snapshot: MetadataSnapshot,
   store: Store,
   metadataCollection: StoreCollection,
 ): Promise<MetadataSnapshot> => {
@@ -81,7 +76,7 @@ export const getStoreMetadataSnapshot = async (
   };
 
   const getType = (key: string) => {
-    const type = metadata.findType(key);
+    const type = snapshot.findType(key);
     if (!type) {
       throw new NeuledgeError(
         NeuledgeError.Code.CORRUPTED_METADATA,
@@ -126,7 +121,7 @@ export const syncStoreMetadata = async (
   metadataCollection: StoreCollection,
   changes: MetadataChange[],
 ): Promise<void> => {
-  const { inserts, updates, deletes } = getStoreMetadataChanges(changes);
+  const { inserts, updates } = getStoreMetadataChanges(changes);
 
   if (inserts.length > 0) {
     await store.insert({
@@ -151,20 +146,11 @@ export const syncStoreMetadata = async (
       ),
     );
   }
-
-  if (deletes.length > 0) {
-    await store.delete({
-      collection: metadataCollection,
-      where: { hash: { $in: deletes } },
-      limit: deletes.length,
-    });
-  }
 };
 
 const getStoreMetadataChanges = (changes: MetadataChange[]) => {
   const inserts: StoreMetadataState[] = [];
   const updates: StoreMetadataState[] = [];
-  const deletes: Buffer[] = [];
 
   for (const change of changes) {
     switch (change.type) {
@@ -178,11 +164,6 @@ const getStoreMetadataChanges = (changes: MetadataChange[]) => {
         break;
       }
 
-      case 'deleted': {
-        deletes.push(change.origin.hash);
-        break;
-      }
-
       default: {
         throw new NeuledgeError(
           NeuledgeError.Code.METADATA_SAVE_ERROR,
@@ -193,5 +174,5 @@ const getStoreMetadataChanges = (changes: MetadataChange[]) => {
     }
   }
 
-  return { inserts, updates, deletes };
+  return { inserts, updates };
 };
