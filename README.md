@@ -40,11 +40,15 @@ If you find Neuledge useful and would like to support its ongoing development an
 - [Join the community](#-join-the-community)
 - [License](#-license)
 
+<br>
+
 # 🏁 Alpha release
 
 Neuledge is currently in alpha release. We are working hard to make it stable and ready for production. If you are interested in using Neuledge in your project, please [join our community](#-join-the-community) and help us improve it and give us a star ⭐️.
 
 For more information, please visit [neuledge.com](https://neuledge.com).
+
+<br>
 
 # 🤔 How it works
 
@@ -77,6 +81,8 @@ DraftPost.publish(): PublishedPost => {
   publishedAt: DateTime(),
 }
 ```
+
+<br>
 
 # 🚀 Getting started
 
@@ -194,11 +200,15 @@ const categories = await engine.findMany(Category);
 await engine.alterUniqueOrThrow(Category).delete().unique({ id: category.id });
 ```
 
+<br>
+
 # 📚 Documentation & examples
 
 For more information, please visit [neuledge.com/docs](https://neuledge.com/docs).
 
 For examples, please check the [examples](/examples/) folder.
+
+<br>
 
 # 🤝 Join the community
 
@@ -207,6 +217,8 @@ To get involved in the Neuledge community:
 - Join our [Discord community](https://discord.gg/49JMwxKvhF) to connect with other users and get help.
 - Subscribe to our [newsletter](https://neuledge.com/#join) to stay up to date on the latest news and updates.
 - If you find any bugs or have any suggestions, please [open an issue](https://github.com/neuledge/engine-js/issues/new/choose) on GitHub or let us know on our Discord community.
+
+<br>
 
 # 📄 License
 
