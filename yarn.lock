@@ -1939,10 +1939,10 @@
   resolved "https://registry.npmjs.org/@types/node/-/node-16.11.57.tgz"
   integrity sha512-diBb5AE2V8h9Fs9zEDtBwSeLvIACng/aAkdZ3ujMV+cGuIQ9Nc/V+wQqurk9HJp8ni5roBxQHW21z/ZYbGDivg==
 
-"@types/node@^18":
-  version "18.11.15"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-18.11.15.tgz#de0e1fbd2b22b962d45971431e2ae696643d3f5d"
-  integrity sha512-VkhBbVo2+2oozlkdHXLrb3zjsRkpdnaU2bXmX8Wgle3PUi569eLRaHGlgETQHR7lLL1w7GiG3h9SnePhxNDecw==
+"@types/node@^18.14.1":
+  version "18.14.1"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-18.14.1.tgz#90dad8476f1e42797c49d6f8b69aaf9f876fc69f"
+  integrity sha512-QH+37Qds3E0eDlReeboBxfHbX9omAcBCXEzswCu6jySP642jiM3cYSIkU/REqwhCUqXdonHFuBfJDiAJxMNhaQ==
 
 "@types/normalize-package-data@^2.4.0":
   version "2.4.1"
@@ -2090,10 +2090,10 @@
     "@typescript-eslint/types" "5.53.0"
     eslint-visitor-keys "^3.3.0"
 
-"@vscode/vsce@^2.16.0":
-  version "2.16.0"
-  resolved "https://registry.yarnpkg.com/@vscode/vsce/-/vsce-2.16.0.tgz#a3ddcf7e84914576f35d891e236bc496c568776f"
-  integrity sha512-BhJ0zO7UxShLFBZM6jwOLt1ZVoqQ4r5Lj/kHNeYp0ICPXhz/erqBSMQnHkRgkjn2L/bh+TYFGkZyguhu/SKsjw==
+"@vscode/vsce@^2.17.0":
+  version "2.17.0"
+  resolved "https://registry.yarnpkg.com/@vscode/vsce/-/vsce-2.17.0.tgz#64093e1e083673081ea8bd7e69745ff2f632003e"
+  integrity sha512-W4HN5MtTVj/mroQU1d82bUEeWM3dUykMFnMYZPtZ6jrMiHN1PUoN3RGcS896N0r2rIq8KpWDtufcQHgK8VfgpA==
   dependencies:
     azure-devops-node-api "^11.0.1"
     chalk "^2.4.2"
