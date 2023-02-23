@@ -129,7 +129,7 @@ const queryJoinChoice = async (
   queryJoin: QueryJoinFn,
   signal: AbortSignal,
 ): Promise<(StoreDocument | undefined)[]> => {
-  const { find, limit } = joinByFilter(choice.by, refs);
+  const { find, limit } = joinByFilter(choice, refs);
 
   if (!limit) {
     return [];
@@ -161,14 +161,18 @@ const getJoinQuery = (
   find: JoinQuery['find'],
   limit: JoinQuery['limit'],
 ): JoinQuery => {
-  let project: Document | null = Object.fromEntries(
-    Object.keys(choice.by).map((key) => [escapeFieldName(key), 1]),
+  let project: Document | null = projectFilter(
+    choice.collection.primaryKey,
+    Object.fromEntries(Object.keys(choice.by).map((key) => [key, true])),
   );
 
   if (choice.select) {
     project =
       typeof choice.select === 'object'
-        ? { ...projectFilter(choice.select), ...project }
+        ? {
+            ...projectFilter(choice.collection.primaryKey, choice.select),
+            ...project,
+          }
         : null;
   }
 
@@ -176,7 +180,9 @@ const getJoinQuery = (
     choice: choice,
     collection: choice.collection,
     project,
-    find: choice.where ? { $and: [find, findFilter(choice.where)] } : find,
+    find: choice.where
+      ? { $and: [find, findFilter(choice.collection.primaryKey, choice.where)] }
+      : find,
     limit,
   };
 };
@@ -187,10 +193,10 @@ const getJoinQuery = (
  * Assume `refs.length > 1`.
  */
 const joinByFilter = (
-  by: StoreJoinBy,
+  choice: StoreJoinChoice,
   refs: StoreDocumentReference[],
 ): Pick<JoinQuery, 'find' | 'limit'> => {
-  const { find, filters } = parseJoinByDocuments(by, refs);
+  const { find, filters } = parseJoinByDocuments(choice, refs);
 
   if (filters.length === 1) {
     const [key, values] = filters[0];
@@ -198,7 +204,7 @@ const joinByFilter = (
     const uniqueValues = uniqueStoreScalarValues(
       values.filter((v) => v != null),
     );
-    find[escapeFieldName(key)] = {
+    find[key] = {
       $in: uniqueValues.map((v) => escapeValue(v)),
     };
 
@@ -223,7 +229,7 @@ const joinByFilter = (
         continue;
       }
 
-      or[escapeFieldName(key)] = { $eq: escapeValue(value) };
+      or[key] = { $eq: escapeValue(value) };
     }
 
     if (skip) continue;
@@ -240,18 +246,20 @@ const joinByFilter = (
  * Break down the `by` option into a common find filter and specific filters for
  * each document value.
  *
- * Assume `refs.length > 1`.
+ * Assume `refs.length >= 1`.
  */
 const parseJoinByDocuments = (
-  by: StoreJoinBy,
+  { collection, by }: StoreJoinChoice,
   refs: StoreDocumentReference[],
 ) => {
   const find: Filter<Document> = {};
   const filters: [key: string, values: (StoreScalarValue | undefined)[]][] = [];
 
-  for (const [key, value] of Object.entries(by)) {
+  for (const [name, value] of Object.entries(by)) {
+    const key = escapeFieldName(collection.primaryKey, name);
+
     if (value.field == null) {
-      find[escapeFieldName(key)] = { $eq: escapeValue(value.value) };
+      find[key] = { $eq: escapeValue(value.value) };
       continue;
     }
 
@@ -262,7 +270,7 @@ const parseJoinByDocuments = (
       existValues.length >= 1 &&
       existValues.every((v) => isStoreScalarValueEqual(v, existValues[0]))
     ) {
-      find[escapeFieldName(key)] = { $eq: escapeValue(existValues[0]) };
+      find[key] = { $eq: escapeValue(existValues[0]) };
       continue;
     }
 

@@ -11,7 +11,7 @@ import {
 import { chooseStatesCollection } from '../collection';
 import { NeuledgeEngine } from '../engine';
 import { toEntityList, toEntityOrThrow, toMaybeEntity } from '../entity';
-import { convertUniqueQuery, convertWhereFilterQuery } from '../find';
+import { convertUniqueFilterQuery, convertWhereFilterQuery } from '../find';
 import {
   convertLimitQuery,
   checkLimitedList,
@@ -65,7 +65,7 @@ export const execFindUnique = async <S extends StateDefinition>(
     ...convertSelectQuery(collection, options),
     ...convertExpandQuery(metadata, collection, options),
     ...convertPopulateOneQuery(metadata, collection, options),
-    ...convertUniqueQuery(states, collection, options),
+    ...convertUniqueFilterQuery(states, collection, options),
     limit: 1,
   });
 
@@ -88,7 +88,7 @@ export const execFindUniqueOrThrow = async <S extends StateDefinition>(
     ...convertSelectQuery(collection, options),
     ...convertExpandQuery(metadata, collection, options),
     ...convertPopulateOneQuery(metadata, collection, options),
-    ...convertUniqueQuery(states, collection, options),
+    ...convertUniqueFilterQuery(states, collection, options),
     limit: 1,
   });
 

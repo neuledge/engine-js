@@ -1,35 +1,49 @@
+import { StorePrimaryKey } from '@neuledge/store';
 import { escapeFieldName, unescapeFieldName } from './fields';
 
 /* eslint-disable max-lines-per-function */
 
 describe('fields', () => {
   describe('escapeFieldName', () => {
-    it('should keep id', () => {
-      expect(escapeFieldName('id')).toBe('id');
+    const primaryKey: StorePrimaryKey = {
+      fields: { id: {} },
+    } as never;
+    const primaryKeys: StorePrimaryKey = {
+      fields: { id: {}, sub_id: {} },
+    } as never;
+
+    it('should handle primary key', () => {
+      expect(escapeFieldName(primaryKey, 'id')).toBe('_id');
+    });
+
+    it('should handle primary keys', () => {
+      expect(escapeFieldName(primaryKeys, 'id')).toBe('_id.id');
+      expect(escapeFieldName(primaryKeys, 'sub_id')).toBe('_id.sub_id');
     });
 
     it('should keep name', () => {
-      expect(escapeFieldName('name')).toBe('name');
+      expect(escapeFieldName(primaryKey, 'name')).toBe('name');
+      expect(escapeFieldName(primaryKeys, 'name')).toBe('name');
     });
 
     it('should escape _id', () => {
-      expect(escapeFieldName('_id')).toBe('_id_org');
+      expect(escapeFieldName(primaryKey, '_id')).toBe('_id_org');
     });
 
     it('should escape v', () => {
-      expect(escapeFieldName('v')).toBe('v');
+      expect(escapeFieldName(primaryKey, 'v')).toBe('v');
     });
 
     it('should escape _org', () => {
-      expect(escapeFieldName('_org')).toBe('_org_org');
+      expect(escapeFieldName(primaryKey, '_org')).toBe('_org_org');
     });
 
     it('should escape foo_org', () => {
-      expect(escapeFieldName('foo_org')).toBe('foo_org_org');
+      expect(escapeFieldName(primaryKey, 'foo_org')).toBe('foo_org_org');
     });
 
     it('should escape _org_org', () => {
-      expect(escapeFieldName('_org_org')).toBe('_org_org_org');
+      expect(escapeFieldName(primaryKey, '_org_org')).toBe('_org_org_org');
     });
   });
 

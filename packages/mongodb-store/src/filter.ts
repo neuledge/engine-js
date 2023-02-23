@@ -1,19 +1,27 @@
-import { StoreScalarValue, StoreWhere, StoreWhereTerm } from '@neuledge/store';
+import {
+  StorePrimaryKey,
+  StoreScalarValue,
+  StoreWhere,
+  StoreWhereTerm,
+} from '@neuledge/store';
 import { Filter, Document, FilterOperators } from 'mongodb';
 import { escapeFieldName } from './fields';
 import { escapeValue } from './values';
 
-export const findFilter = (where: StoreWhere): Filter<Document> => {
+export const findFilter = (
+  primaryKey: StorePrimaryKey,
+  where: StoreWhere,
+): Filter<Document> => {
   if (Array.isArray(where.$or)) {
     return {
-      $or: where.$or.map((record) => findFilter(record)),
+      $or: where.$or.map((record) => findFilter(primaryKey, record)),
     };
   }
 
   const res: Filter<Document> = {};
 
   for (const [fieldName, term] of Object.entries(where)) {
-    res[escapeFieldName(fieldName)] = filterTerm(term);
+    res[escapeFieldName(primaryKey, fieldName)] = filterTerm(term);
   }
 
   return res;

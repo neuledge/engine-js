@@ -1,28 +1,44 @@
 import { StateDefinition, StateDefinitionWhereRecord } from '@/definitions';
 import { NeuledgeError } from '@/error';
 import { MetadataCollection, MetadataState } from '@/metadata';
-import { UniqueQueryOptions } from '@/queries';
+import { Filter, FilterQueryOptions, UniqueQueryOptions } from '@/queries';
 import {
   StoreFindOptions,
   StoreWhere,
   StoreWhereRecord,
 } from '@neuledge/store';
+import { applyFilter } from './filter';
 import { applyWhereRecordTerm } from './term';
 
-export const convertUniqueQuery = <S extends StateDefinition>(
+export const convertUniqueFilterQuery = <S extends StateDefinition>(
   states: MetadataState[],
   collection: MetadataCollection,
-  { unique }: UniqueQueryOptions<S>,
+  { unique, filter }: UniqueQueryOptions<S> & FilterQueryOptions<S>,
 ): Pick<StoreFindOptions, 'where'> => ({
-  where: convertUnique(states, collection, unique),
+  where: convertUniqueFilter(states, collection, unique, filter),
 });
+
+const convertUniqueFilter = <S extends StateDefinition>(
+  states: MetadataState[],
+  collection: MetadataCollection,
+  unique: StateDefinitionWhereRecord | true,
+  filter: Filter<S> | null | undefined,
+): StoreWhere => {
+  let res = convertUnique(states, collection, unique);
+
+  if (filter != null) {
+    res = applyFilter(res, collection, filter);
+  }
+
+  return res.length === 1 ? res[0] : { $or: res };
+};
 
 const convertUnique = (
   states: MetadataState[],
   collection: MetadataCollection,
-  where: StateDefinitionWhereRecord | true,
-): StoreWhere => {
-  if (where === true) {
+  unique: StateDefinitionWhereRecord | true,
+): StoreWhereRecord[] => {
+  if (unique === true) {
     throw new NeuledgeError(
       NeuledgeError.Code.QUERY_EXECUTION_ERROR,
       `This query is not executable`,
@@ -37,7 +53,7 @@ const convertUnique = (
     },
   ];
 
-  for (const [key, value] of Object.entries(where)) {
+  for (const [key, value] of Object.entries(unique)) {
     const choices = collection.schema[key] ?? [];
     if (!choices?.length) {
       throw new NeuledgeError(
@@ -61,5 +77,5 @@ const convertUnique = (
     }
   }
 
-  return records.length === 1 ? records[0] : { $or: records };
+  return records;
 };

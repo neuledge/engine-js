@@ -34,7 +34,7 @@ import { applyJoinOptions, JoinQuery } from './join';
 import {
   generateDocumentInsertedId,
   AutoIncrementDocument,
-} from './primary-key';
+} from './inserted-ids';
 import { projectFilter } from './project';
 import { sortFilter } from './sort';
 import { updateFilter } from './update';
@@ -179,7 +179,11 @@ export class MongoDBStore implements Store {
     }
 
     if (options.indexes?.length) {
-      await ensureIndexes(collection, options.indexes);
+      await ensureIndexes(
+        options.collection.primaryKey,
+        collection,
+        options.indexes,
+      );
     }
   }
 
@@ -191,14 +195,20 @@ export class MongoDBStore implements Store {
   async find(options: StoreFindOptions): Promise<StoreList> {
     const collection = await this.collection(options.collection.name);
 
+    const filter = options.where
+      ? findFilter(options.collection.primaryKey, options.where)
+      : {};
+
     let query = collection
       // unicon issue: https://github.com/sindresorhus/eslint-plugin-unicorn/issues/1947
       // eslint-disable-next-line unicorn/no-array-callback-reference
-      .find(options.where ? findFilter(options.where) : {})
+      .find(filter)
       .limit(options.limit);
 
     if (options.select) {
-      query = query.project(projectFilter(options.select));
+      query = query.project(
+        projectFilter(options.collection.primaryKey, options.select),
+      );
     }
 
     if (options.offset != null) {
@@ -206,7 +216,9 @@ export class MongoDBStore implements Store {
     }
 
     if (options.sort) {
-      query = query.sort(sortFilter(options.sort));
+      query = query.sort(
+        sortFilter(options.collection.primaryKey, options.sort),
+      );
     }
 
     const rawDocs = await query.toArray();
@@ -256,8 +268,13 @@ export class MongoDBStore implements Store {
   async update(options: StoreUpdateOptions): Promise<StoreMutationResponse> {
     const collection = await this.collection(options.collection.name);
 
-    const filter = options.where ? findFilter(options.where) : {};
-    const update = updateFilter(options.set as Document);
+    const filter = options.where
+      ? findFilter(options.collection.primaryKey, options.where)
+      : {};
+    const update = updateFilter(
+      options.collection.primaryKey,
+      options.set as Document,
+    );
     let res;
 
     if (options.limit === 1) {
@@ -290,7 +307,9 @@ export class MongoDBStore implements Store {
   async delete(options: StoreDeleteOptions): Promise<StoreMutationResponse> {
     const collection = await this.collection(options.collection.name);
 
-    const filter = options.where ? findFilter(options.where) : {};
+    const filter = options.where
+      ? findFilter(options.collection.primaryKey, options.where)
+      : {};
     let res;
 
     if (options.limit === 1) {

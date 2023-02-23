@@ -42,7 +42,7 @@ export const escapeDocument = (
     ['_id', id],
     ...Object.entries(doc as object)
       .filter(([k]) => !primaryKey.fields[k])
-      .map(([k, v]) => [escapeFieldName(k), escapeValue(v)]),
+      .map(([k, v]) => [escapeFieldName(primaryKey, k), escapeValue(v)]),
   ]);
 };
 
