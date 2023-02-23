@@ -10,8 +10,8 @@ on:
     branches: ['main']
 
 jobs:
-  turbo:
-    name: Install and test repository
+  yarn:
+    name: Install dependencies
     runs-on: ubuntu-latest
     environment: production
 
@@ -25,14 +25,61 @@ jobs:
           node-version: 18
           cache: 'yarn'
 
-      - name: Cache Trubo
-        uses: actions/cache@v3
+      - name: Yarn install
+        run: yarn --frozen-lockfile
+
+  test:
+    name: Test repository
+    runs-on: ubuntu-latest
+    environment: production
+    needs: yarn
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
         with:
-          path: .turbo
-          key: ${{ runner.os }}-turbo
+          node-version: 18
+          cache: 'yarn'
 
       - name: Yarn install
         run: yarn --frozen-lockfile
 
+      - name: Cache Trubo
+        uses: actions/cache@v3
+        with:
+          path: .turbo
+          key: ${{ runner.os }}-turbo-test
+
       - name: Yarn test
         run: yarn test --cache-dir=.turbo
+
+  lint:
+    name: Lint repository
+    runs-on: ubuntu-latest
+    environment: production
+    needs: yarn
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'yarn'
+
+      - name: Yarn install
+        run: yarn --frozen-lockfile
+
+      - name: Cache Trubo
+        uses: actions/cache@v3
+        with:
+          path: .turbo
+          key: ${{ runner.os }}-turbo-lint
+
+      - name: Yarn test
+        run: yarn lint:strict --cache-dir=.turbo
