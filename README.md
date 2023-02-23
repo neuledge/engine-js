@@ -1,9 +1,7 @@
-# Neuledge Engine (TypeScript/JavaScript)
-
 <p align=center>
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="https://cdn.neuledge.com/images/logo/dark.svg">
-    <a href="https://neuledge.com"><img alt="Neuledge" src="https://cdn.neuledge.com/images/logo/light.svg" height="150"></a>
+    <img alt="Neuledge" src="https://cdn.neuledge.com/images/logo/light.svg" height="150">
   </picture>
 </p>
 
