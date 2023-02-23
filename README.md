@@ -36,14 +36,11 @@
 
 ### Main features
 
-- **Predictable data schema**: Provides a predictable data schema for databases, improving data integrity and simplifying business logic interfaces.
-- **Customizable state-machine**: Convert any database to a fully customizable state-machine in a human-readable format.
-- **State-of-the-art validation**: Ensure precise values and no surprises with automated type checking for each state.
-- **Better team collaboration**: Work separately on the same data models, align on business-logic together, and merge the code and deploy.
-- **Auto-generated types**: Use a strongly-typed engine to generate queries and complex mutations, catch errors on compile time, and get auto-generated suggestions for your IDE.
-- **Multiple databases, same interface**: Integrated with most popular databases like MongoDB, MySQL, PostgreSQL, DynamoDB and more.
-- **Automatic data models for popular frameworks**: Generate clean and elegant business-logic code for your framework that scales fast and evolves with your project needs.
-- **No breaking changes during deployment**: Migrate and deploy schemas automatically, remove deprecated versions safely, and keep your data organized.
+- **Human-readable schema language**
+- **Type-safe data models**
+- **Consistent data usage**
+- **Business rules enforcement**
+- **Same code for rational and non-relational databases**
 
 ## ❤️ Sponsored by
 
@@ -110,7 +107,6 @@ DraftPost.publish(): PublishedPost => {
 
 ```bash
 npm install @neuledge/engine @neuledge/mongodb-store --save
-npm install @neuledge/states-cli --save-dev
 ```
 
 ### Define your schema
@@ -151,6 +147,12 @@ Category.delete(): Void
 
 ### Generate your code
 
+Install a development dependency:
+
+```bash
+npm install @neuledge/states-cli --save-dev
+```
+
 Add `generate:states` script on your `package.json`:
 
 ```json
@@ -168,6 +170,7 @@ npm run generate:states
 ```
 
 This will generate a `src/states.codegen.ts` file with all your business logic code.
+You should add this file to your `.gitignore` file, as it will be generated automatically.
 
 ### Initialize your database
 
