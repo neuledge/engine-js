@@ -36,7 +36,7 @@ If you find Neuledge useful and would like to support its ongoing development an
 - [Alpha release](#-alpha-release)
 - [How it works](#-how-it-works)
 - [Getting started](#-getting-started)
-- [Documentation](#-documentation-examples)
+- [Documentation & examples](#-documentation--examples)
 - [Join the community](#-join-the-community)
 - [License](#-license)
 
