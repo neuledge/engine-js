@@ -40,7 +40,7 @@
 - **Type-safe data models**
 - **Consistent data usage**
 - **Business rules enforcement**
-- **Same code for rational and non-relational databases**
+- **Identical for rational and non-relational databases**
 
 ## ❤️ Sponsored by
 
@@ -61,7 +61,7 @@ If you find Neuledge useful and would like to support its ongoing development an
 
 # 🏁 Alpha release
 
-Neuledge is currently in alpha release. We are working hard to make it stable and ready for production. If you are interested in using Neuledge in your project, please [join our community](#-join-the-community) and help us improve it and give us a star ⭐️.
+Neuledge is currently in alpha release. We are working hard to make it stable and ready for production. If you are interested in using Neuledge in your project, help us improve it by [join our community](#-join-the-community) and give us a star ⭐️.
 
 For more information, please visit [neuledge.com](https://neuledge.com).
 
@@ -76,18 +76,19 @@ With Neuledge, you can create different states for the same entity. Each state c
 ```states
 state DraftPost {
   @id id: Integer = 1
-  title?: String = 2
+  title: String = 2
   content?: String = 3
+  category?: Category = 4
 }
 
 state PublishedPost from DraftPost {
-  category: Category = 1
-  content: String = 2
+  content: String = 1
+  category: Category = 2
   publishedAt: DateTime = 3
 }
 ```
 
-On your database, Neuledge will create a single collection `posts` and will store both `DraftPost` and `PublishedPost` states in it. You can query and mutate both states using the same interface, but you can also query and mutate only `DraftPost` or `PublishedPost` states separately.
+On your database, Neuledge will create a single collection "posts" and will store both "DraftPost" and "PublishedPost" states in it. You can query and mutate both states using the same entity, but you can also query and mutate only "DraftPost" or "PublishedPost" states separately.
 
 This makes it easy to work with different states on type-safe interfaces, ensuring that you always get the data you expect. For instance, you can define a "publish" mutation that will only be available on "DraftPost" states, and it will require the "content" and "category" fields to be defined. This way, you can ensure that all published posts have the required data, and prevent any errors or inconsistencies in your database.
 
@@ -241,7 +242,7 @@ To get involved in the Neuledge community:
 - Follow us on [Twitter](https://twitter.com/neuledge).
 - Join our [Discord community](https://discord.gg/49JMwxKvhF) to connect with other users and get help.
 - Subscribe to our [newsletter](https://neuledge.com/#join) to stay up to date on the latest news and updates.
-- If you find any bugs or have any suggestions, please [open an issue](https://github.com/neuledge/engine-js/issues/new/choose) on GitHub or let us know on our Discord community.
+- If you find any bugs or have any suggestions, please [open an issue](https://github.com/neuledge/engine-js/issues/new/choose) on GitHub or let us know on our [Discord channel](https://discord.gg/49JMwxKvhF).
 
 <br>
 
