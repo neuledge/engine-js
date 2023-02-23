@@ -43,7 +43,10 @@ describe('join', () => {
       const queryJoin = jest.fn(async () => [{ id: 1 }, { id: 2 }]);
 
       const choice: StoreJoinChoice = {
-        collection: { name: 'category' } as never,
+        collection: {
+          name: 'category',
+          primaryKey: { fields: { id: {} } },
+        } as never,
         by: { id: { field: 'category_id' } },
         select: true,
       };
@@ -67,10 +70,10 @@ describe('join', () => {
       expect(queryJoin).toHaveBeenCalledTimes(1);
       expect(queryJoin).toHaveBeenCalledWith(
         {
-          collection: { name: 'category' },
+          collection: choice.collection,
           choice: choice,
           project: null,
-          find: { id: { $in: [1, 2] } },
+          find: { _id: { $in: [1, 2] } },
           limit: 2,
         },
         expect.any(AbortSignal),
@@ -84,7 +87,10 @@ describe('join', () => {
       ]);
 
       const choice: StoreJoinChoice = {
-        collection: { name: 'category' } as never,
+        collection: {
+          name: 'category',
+          primaryKey: { fields: { id: {} } },
+        } as never,
         by: { id: { field: 'category_id' } },
         select: { name: true },
       };
@@ -108,10 +114,10 @@ describe('join', () => {
       expect(queryJoin).toHaveBeenCalledTimes(1);
       expect(queryJoin).toHaveBeenCalledWith(
         {
-          collection: { name: 'category' },
+          collection: choice.collection,
           choice,
-          project: { id: 1, name: 1 },
-          find: { id: { $in: [1, 2] } },
+          project: { _id: 1, name: 1 },
+          find: { _id: { $in: [1, 2] } },
           limit: 2,
         },
         expect.any(AbortSignal),
@@ -122,7 +128,10 @@ describe('join', () => {
       const queryJoin = jest.fn(async () => [{ id: 1 }]);
 
       const choice: StoreJoinChoice = {
-        collection: { name: 'category' } as never,
+        collection: {
+          name: 'category',
+          primaryKey: { fields: { id: {} } },
+        } as never,
         by: { id: { field: 'category_id' } },
         select: true,
       };
@@ -145,10 +154,10 @@ describe('join', () => {
       expect(queryJoin).toHaveBeenCalledTimes(1);
       expect(queryJoin).toHaveBeenCalledWith(
         {
-          collection: { name: 'category' },
+          collection: choice.collection,
           choice,
           project: null,
-          find: { id: { $in: [1, 2] } },
+          find: { _id: { $in: [1, 2] } },
           limit: 2,
         },
         expect.any(AbortSignal),
@@ -159,7 +168,10 @@ describe('join', () => {
       const queryJoin = jest.fn(async () => [{ id: 1 }]);
 
       const choice: StoreLeftJoinChoice = {
-        collection: { name: 'category' } as never,
+        collection: {
+          name: 'category',
+          primaryKey: { fields: { id: {} } },
+        } as never,
         by: { id: { field: 'category_id' } },
         select: true,
       };
@@ -183,10 +195,10 @@ describe('join', () => {
       expect(queryJoin).toHaveBeenCalledTimes(1);
       expect(queryJoin).toHaveBeenCalledWith(
         {
-          collection: { name: 'category' },
+          collection: choice.collection,
           choice,
           project: null,
-          find: { id: { $in: [1, 2] } },
+          find: { _id: { $in: [1, 2] } },
           limit: 2,
         },
         expect.any(AbortSignal),
@@ -197,7 +209,10 @@ describe('join', () => {
       const queryJoin = jest.fn(async () => [{ id: 1 }]);
 
       const choice: StoreJoinChoice = {
-        collection: { name: 'category' } as never,
+        collection: {
+          name: 'category',
+          primaryKey: { fields: { id: {} } },
+        } as never,
         by: { id: { field: 'category_id' } },
       };
 
@@ -219,10 +234,10 @@ describe('join', () => {
       expect(queryJoin).toHaveBeenCalledTimes(1);
       expect(queryJoin).toHaveBeenCalledWith(
         {
-          collection: { name: 'category' },
+          collection: choice.collection,
           choice,
-          project: { id: 1 },
-          find: { id: { $in: [1, 2] } },
+          project: { _id: 1 },
+          find: { _id: { $in: [1, 2] } },
           limit: 2,
         },
         expect.any(AbortSignal),
@@ -233,7 +248,10 @@ describe('join', () => {
       const queryJoin = jest.fn(async () => [{ id: 1 }]);
 
       const choice: StoreJoinChoice = {
-        collection: { name: 'category' } as never,
+        collection: {
+          name: 'category',
+          primaryKey: { fields: { id: {} } },
+        } as never,
         by: { id: { field: 'category_id' } },
         select: true,
       };
@@ -257,10 +275,10 @@ describe('join', () => {
       expect(queryJoin).toHaveBeenCalledTimes(1);
       expect(queryJoin).toHaveBeenCalledWith(
         {
-          collection: { name: 'category' },
+          collection: choice.collection,
           choice,
           project: null,
-          find: { id: { $eq: 1 } },
+          find: { _id: { $eq: 1 } },
           limit: 1,
         },
         expect.any(AbortSignal),
@@ -274,7 +292,10 @@ describe('join', () => {
       ]);
 
       const choice: StoreJoinChoice = {
-        collection: { name: 'category' } as never,
+        collection: {
+          name: 'category',
+          primaryKey: { fields: { id: {}, sub_id: {} } },
+        } as never,
         by: {
           id: { field: 'category_id' },
           sub_id: { field: 'category_sub_id' },
@@ -316,12 +337,12 @@ describe('join', () => {
       expect(queryJoin).toHaveBeenCalledTimes(1);
       expect(queryJoin).toHaveBeenCalledWith(
         {
-          collection: { name: 'category' },
+          collection: choice.collection,
           choice,
           project: null,
           find: {
-            id: { $in: [1, 2] },
-            sub_id: { $eq: 1 },
+            '_id.id': { $in: [1, 2] },
+            '_id.sub_id': { $eq: 1 },
           },
           limit: 2,
         },
@@ -337,7 +358,10 @@ describe('join', () => {
       ]);
 
       const choice: StoreJoinChoice = {
-        collection: { name: 'category' } as never,
+        collection: {
+          name: 'category',
+          primaryKey: { fields: { id: {}, sub_id: {} } },
+        } as never,
         by: {
           id: { field: 'category_id' },
           sub_id: { field: 'category_sub_id' },
@@ -379,14 +403,14 @@ describe('join', () => {
       expect(queryJoin).toHaveBeenCalledTimes(1);
       expect(queryJoin).toHaveBeenCalledWith(
         {
-          collection: { name: 'category' },
+          collection: choice.collection,
           choice,
           project: null,
           find: {
             $or: [
-              { id: { $eq: 1 }, sub_id: { $eq: 1 } },
-              { id: { $eq: 1 }, sub_id: { $eq: 2 } },
-              { id: { $eq: 2 }, sub_id: { $eq: 1 } },
+              { '_id.id': { $eq: 1 }, '_id.sub_id': { $eq: 1 } },
+              { '_id.id': { $eq: 1 }, '_id.sub_id': { $eq: 2 } },
+              { '_id.id': { $eq: 2 }, '_id.sub_id': { $eq: 1 } },
             ],
           },
           limit: 3,
@@ -415,13 +439,19 @@ describe('join', () => {
       });
 
       const menuChoice: StoreJoinChoice = {
-        collection: { name: 'menu' } as never,
+        collection: {
+          name: 'menu',
+          primaryKey: { fields: { id: {} } },
+        } as never,
         by: { id: { field: 'menu_id' } },
         select: true,
       };
 
       const choice: StoreJoinChoice = {
-        collection: { name: 'category' } as never,
+        collection: {
+          name: 'category',
+          primaryKey: { fields: { id: {} } },
+        } as never,
         by: { id: { field: 'category_id' } },
         select: true,
         innerJoin: { menu: [menuChoice] },
@@ -459,10 +489,10 @@ describe('join', () => {
       expect(queryJoin).toHaveBeenNthCalledWith(
         1,
         {
-          collection: { name: 'category' },
+          collection: choice.collection,
           choice,
           project: null,
-          find: { id: { $in: [1, 2] } },
+          find: { _id: { $in: [1, 2] } },
           limit: 2,
         },
         expect.any(AbortSignal),
@@ -470,10 +500,10 @@ describe('join', () => {
       expect(queryJoin).toHaveBeenNthCalledWith(
         2,
         {
-          collection: { name: 'menu' },
+          collection: menuChoice.collection,
           choice: menuChoice,
           project: null,
-          find: { id: { $in: [1, 2] } },
+          find: { _id: { $in: [1, 2] } },
           limit: 2,
         },
         expect.any(AbortSignal),
@@ -501,13 +531,19 @@ describe('join', () => {
       });
 
       const idChoice: StoreJoinChoice = {
-        collection: { name: 'old_categories' } as never,
+        collection: {
+          name: 'old_categories',
+          primaryKey: { fields: { id: {} } },
+        } as never,
         by: { id: { field: 'category_id' } },
         select: true,
       };
 
       const slugChoice: StoreJoinChoice = {
-        collection: { name: 'categories' } as never,
+        collection: {
+          name: 'categories',
+          primaryKey: { fields: { id: {} } },
+        } as never,
         by: { slug: { field: 'category_slug' } },
         select: true,
       };
@@ -565,10 +601,10 @@ describe('join', () => {
       expect(queryJoin).toHaveBeenNthCalledWith(
         1,
         {
-          collection: { name: 'old_categories' },
+          collection: idChoice.collection,
           choice: idChoice,
           project: null,
-          find: { id: { $in: [1, 2, 5, 10, 15, 20] } },
+          find: { _id: { $in: [1, 2, 5, 10, 15, 20] } },
           limit: 6,
         },
         expect.any(AbortSignal),
@@ -576,7 +612,7 @@ describe('join', () => {
       expect(queryJoin).toHaveBeenNthCalledWith(
         2,
         {
-          collection: { name: 'categories' },
+          collection: slugChoice.collection,
           choice: slugChoice,
           project: null,
           find: {
@@ -609,13 +645,19 @@ describe('join', () => {
       });
 
       const idChoice: StoreJoinChoice = {
-        collection: { name: 'old_categories' } as never,
+        collection: {
+          name: 'old_categories',
+          primaryKey: { fields: { id: {} } },
+        } as never,
         by: { id: { field: 'category_id' } },
         select: true,
       };
 
       const slugChoice: StoreJoinChoice = {
-        collection: { name: 'categories' } as never,
+        collection: {
+          name: 'categories',
+          primaryKey: { fields: { id: {} } },
+        } as never,
         by: { slug: { field: 'category_slug' } },
         select: true,
       };
@@ -648,10 +690,10 @@ describe('join', () => {
       expect(queryJoin).toHaveBeenNthCalledWith(
         1,
         {
-          collection: { name: 'old_categories' },
+          collection: idChoice.collection,
           choice: idChoice,
           project: null,
-          find: { id: { $in: [5, 10] } },
+          find: { _id: { $in: [5, 10] } },
           limit: 2,
         },
         expect.any(AbortSignal),
@@ -659,7 +701,7 @@ describe('join', () => {
       expect(queryJoin).toHaveBeenNthCalledWith(
         2,
         {
-          collection: { name: 'categories' },
+          collection: slugChoice.collection,
           choice: slugChoice,
           project: null,
           find: { slug: { $in: ['cat2', 'cat1'] } },
@@ -682,13 +724,19 @@ describe('join', () => {
       });
 
       const idChoice: StoreJoinChoice = {
-        collection: { name: 'old_categories' } as never,
+        collection: {
+          name: 'old_categories',
+          primaryKey: { fields: { id: {} } },
+        } as never,
         by: { id: { field: 'category_id' } },
         select: true,
       };
 
       const slugChoice: StoreJoinChoice = {
-        collection: { name: 'categories' } as never,
+        collection: {
+          name: 'categories',
+          primaryKey: { fields: { id: {} } },
+        } as never,
         by: { slug: { field: 'category_slug' } },
         select: true,
       };

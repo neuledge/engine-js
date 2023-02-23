@@ -11,14 +11,15 @@ import {
   Where,
   WhereQueryOptions,
 } from '@/queries';
-import { applyFilterRecord, convertWhereRecord } from './record';
+import { convertWhereRecord } from './record';
+import { applyFilter } from './filter';
 
 export const convertWhereFilterQuery = <S extends StateDefinition>(
   states: MetadataState[],
   collection: MetadataCollection,
   { where, filter }: WhereQueryOptions<S> & FilterQueryOptions<S>,
 ): Pick<StoreFindOptions, 'where'> => ({
-  where: convertWhereFilter(states, collection, where ?? null, filter ?? null),
+  where: convertWhereFilter(states, collection, where, filter),
 });
 
 export const convertFilterQuery = <S extends StateDefinition>(
@@ -26,14 +27,14 @@ export const convertFilterQuery = <S extends StateDefinition>(
   collection: MetadataCollection,
   { filter }: FilterQueryOptions<S>,
 ): Pick<StoreFindOptions, 'where'> => ({
-  where: convertWhereFilter(states, collection, null, filter ?? null),
+  where: convertWhereFilter(states, collection, null, filter),
 });
 
 const convertWhereFilter = <S extends StateDefinition>(
   states: MetadataState[],
   collection: MetadataCollection,
-  where: Where<S> | null,
-  filter: Filter<S> | null,
+  where: Where<S> | null | undefined,
+  filter: Filter<S> | null | undefined,
 ): StoreWhere => {
   let res = convertWhere(states, collection, where);
 
@@ -47,7 +48,7 @@ const convertWhereFilter = <S extends StateDefinition>(
 const convertWhere = <S extends StateDefinition>(
   states: MetadataState[],
   collection: MetadataCollection,
-  where: Where<S> | null,
+  where: Where<S> | null | undefined,
 ): StoreWhereRecord[] =>
   where && Array.isArray(where.$or)
     ? where.$or.flatMap((w: StateDefinitionWhereRecord) =>
@@ -57,19 +58,4 @@ const convertWhere = <S extends StateDefinition>(
         states,
         collection,
         where as StateDefinitionWhereRecord,
-      );
-
-const applyFilter = <S extends StateDefinition>(
-  records: StoreWhereRecord[],
-  collection: MetadataCollection,
-  filter: Filter<S>,
-): StoreWhereRecord[] =>
-  Array.isArray(filter.$or)
-    ? filter.$or.flatMap((w: StateDefinitionWhereRecord) =>
-        applyFilterRecord(records, collection, w),
-      )
-    : applyFilterRecord(
-        records,
-        collection,
-        filter as StateDefinitionWhereRecord,
       );

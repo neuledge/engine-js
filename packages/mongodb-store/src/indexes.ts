@@ -1,4 +1,4 @@
-import { StoreIndex } from '@neuledge/store';
+import { StoreIndex, StorePrimaryKey } from '@neuledge/store';
 import { Collection } from 'mongodb';
 import { escapeFieldName } from './fields';
 
@@ -10,6 +10,7 @@ export const dropIndexes = async (
 };
 
 export const ensureIndexes = async (
+  primaryKey: StorePrimaryKey,
   collection: Collection,
   indexes: StoreIndex[],
 ): Promise<void> => {
@@ -29,7 +30,7 @@ export const ensureIndexes = async (
     const indexSpec: Record<string, 1 | -1> = {};
 
     for (const [name, indexField] of Object.entries(index.fields)) {
-      indexSpec[escapeFieldName(name)] =
+      indexSpec[escapeFieldName(primaryKey, name)] =
         indexField.direction === 'asc' ? 1 : -1;
     }
 
@@ -40,7 +41,7 @@ export const ensureIndexes = async (
 
     await collection.createIndex(indexSpec, {
       name: index.name,
-      unique: index.unique,
+      unique: !!index.unique,
       sparse: true,
       background: true,
     });
