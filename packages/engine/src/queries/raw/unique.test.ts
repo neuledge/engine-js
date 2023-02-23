@@ -21,7 +21,7 @@ describe('queries/unique', () => {
     });
 
     it('should have common fields for multiple states', () => {
-      type t = Unique<typeof Post[number]>;
+      type t = Unique<(typeof Post)[number]>;
 
       expect<t>({ id: 123 });
 

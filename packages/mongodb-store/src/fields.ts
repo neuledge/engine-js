@@ -11,11 +11,13 @@ export const escapeFieldName = (
   }
 
   switch (name) {
-    case '_id':
+    case '_id': {
       return `${name}_org`;
+    }
 
-    default:
+    default: {
       return name.endsWith('_org') ? `${name}_org` : name;
+    }
   }
 };
 

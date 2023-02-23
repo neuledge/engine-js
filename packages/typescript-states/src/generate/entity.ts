@@ -8,35 +8,43 @@ import {
 
 export const generateEntityScalar = (entity: NonNullableEntity): string => {
   switch (entity.type) {
-    case 'Either':
+    case 'Either': {
       return `[...${entity.name}]`;
+    }
 
-    case 'State':
+    case 'State': {
       return `[${entity.name}]`;
+    }
 
-    case 'Scalar':
+    case 'Scalar': {
       return `$.scalars.${entity.name}`;
+    }
 
-    default:
+    default: {
       // @ts-expect-error `entity` is never
       throw new TypeError(`Unexpected entity type: ${entity.type}`);
+    }
   }
 };
 
 export const generateEntityType = (entity: NonNullableEntity): string => {
   switch (entity.type) {
-    case 'Either':
+    case 'Either': {
       return `$.Id<typeof ${entity.name}[number]>`;
+    }
 
-    case 'State':
+    case 'State': {
       return `$.Id<typeof ${entity.name}>`;
+    }
 
-    case 'Scalar':
+    case 'Scalar': {
       return entity.node ? entity.name : `$.scalars.${entity.name}`;
+    }
 
-    default:
+    default: {
       // @ts-expect-error `entity` is never
       throw new TypeError(`Unexpected entity type: ${entity.type}`);
+    }
   }
 };
 

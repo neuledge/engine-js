@@ -18,12 +18,12 @@
     "dotenv": "^16.0.3",
     "fastify": "^4.13.0",
     "graphql": "^16.6.0",
-    "mercurius": "^11.5.0"
+    "mercurius": "^12.2.0"
   },
   "devDependencies": {
-    "@graphql-codegen/cli": "^2.13.7",
-    "@graphql-codegen/typescript-resolvers": "^2.7.4",
-    "@graphql-tools/schema": "^9.0.12",
+    "@graphql-codegen/cli": "^3.2.0",
+    "@graphql-codegen/typescript-resolvers": "^3.1.0",
+    "@graphql-tools/schema": "^9.0.16",
     "@neuledge/states-cli": "^0.1.0-alpha.2"
   }
 }

@@ -37,7 +37,7 @@ describe('definitions/mutations/state', () => {
 
     it('should have multiple state methods', () => {
       expect<{ update: 1; delete: 1 }>(
-        {} as Record<StateDefinitionMethods<typeof Post[number]>, 1>,
+        {} as Record<StateDefinitionMethods<(typeof Post)[number]>, 1>,
       );
     });
   });
@@ -57,7 +57,7 @@ describe('definitions/mutations/state', () => {
 
     it('should have multiple state methods', () => {
       expect<Record<never, 1>>(
-        {} as Record<StateDefinitionInitMethods<typeof Post[number]>, 1>,
+        {} as Record<StateDefinitionInitMethods<(typeof Post)[number]>, 1>,
       );
     });
   });
@@ -81,7 +81,7 @@ describe('definitions/mutations/state', () => {
     it('should have multiple state methods', () => {
       expect<Record<never, 1>>(
         {} as Record<
-          StateDefinitionInitWithArgsMethods<typeof Post[number]>,
+          StateDefinitionInitWithArgsMethods<(typeof Post)[number]>,
           1
         >,
       );
@@ -110,7 +110,7 @@ describe('definitions/mutations/state', () => {
     it('should have multiple state methods', () => {
       expect<Record<never, 1>>(
         {} as Record<
-          StateDefinitionInitWithoutArgsMethods<typeof Post[number]>,
+          StateDefinitionInitWithoutArgsMethods<(typeof Post)[number]>,
           1
         >,
       );
@@ -132,7 +132,7 @@ describe('definitions/mutations/state', () => {
 
     it('should have multiple state methods', () => {
       expect<{ update: 1 }>(
-        {} as Record<StateDefinitionAlterMethods<typeof Post[number]>, 1>,
+        {} as Record<StateDefinitionAlterMethods<(typeof Post)[number]>, 1>,
       );
     });
   });
@@ -156,7 +156,7 @@ describe('definitions/mutations/state', () => {
     it('should have multiple state methods', () => {
       expect<{ update: 1 }>(
         {} as Record<
-          StateDefinitionAlterWithArgsMethods<typeof Post[number]>,
+          StateDefinitionAlterWithArgsMethods<(typeof Post)[number]>,
           1
         >,
       );
@@ -187,7 +187,7 @@ describe('definitions/mutations/state', () => {
     it('should have multiple state methods', () => {
       expect<{ delete: 1 }>(
         {} as Record<
-          StateDefinitionAlterWithoutArgsMethods<typeof Post[number]>,
+          StateDefinitionAlterWithoutArgsMethods<(typeof Post)[number]>,
           1
         >,
       );
@@ -221,10 +221,12 @@ describe('definitions/mutations/state', () => {
         title: string;
         content: string;
         category: StateId<typeof Category>;
-      }>({} as StateDefinitionMutationArguments<typeof Post[number], 'update'>);
+      }>(
+        {} as StateDefinitionMutationArguments<(typeof Post)[number], 'update'>,
+      );
 
       expect<Record<string, never>>(
-        {} as StateDefinitionMutationArguments<typeof Post[number], 'delete'>,
+        {} as StateDefinitionMutationArguments<(typeof Post)[number], 'delete'>,
       );
     });
   });
@@ -265,11 +267,11 @@ describe('definitions/mutations/state', () => {
     });
 
     it('should have multiple states method return', () => {
-      expect<StateDefinitionMutationsReturn<typeof Post[number], 'update'>>(
-        DraftPost as typeof Post[number],
+      expect<StateDefinitionMutationsReturn<(typeof Post)[number], 'update'>>(
+        DraftPost as (typeof Post)[number],
       );
 
-      expect<StateDefinitionMutationsReturn<typeof Post[number], 'delete'>>(
+      expect<StateDefinitionMutationsReturn<(typeof Post)[number], 'delete'>>(
         null as never,
       );
     });

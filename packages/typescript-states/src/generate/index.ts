@@ -16,29 +16,33 @@ export const generate = (
 
   for (const entity of entities) {
     switch (entity.type) {
-      case 'Scalar':
+      case 'Scalar': {
         // skip built-in scalars
         if (!entity.node) break;
 
         // TODO generate scalars code
         // res.push({ source: generateScalar(entity), order: 1 });
         break;
+      }
 
       case 'State': {
         res.push({ source: generateState(entity), order: 2 });
         break;
       }
 
-      case 'Either':
+      case 'Either': {
         res.push({ source: generateEither(entity), order: 3 });
         break;
+      }
 
-      case 'Void':
+      case 'Void': {
         break;
+      }
 
-      default:
+      default: {
         // @ts-expect-error `entity.type` is never
         throw new TypeError(`Unsupported entity type '${entity.type}'`);
+      }
     }
   }
 

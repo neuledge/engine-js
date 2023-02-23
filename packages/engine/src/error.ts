@@ -81,9 +81,9 @@ export class NeuledgeError extends Error {
         : code ?? NeuledgeError.Code.INTERNAL_ERROR,
       hideOriginalError
         ? message ?? 'An unknown error occurred'
-        : message != null
-        ? `${message}: ${orgMsg}`
-        : orgMsg,
+        : message == null
+        ? orgMsg
+        : `${message}: ${orgMsg}`,
     );
 
     error.stack = (originalError as Error)?.stack;
@@ -105,15 +105,18 @@ const fromStoreErrorCode = (
   defaultCode?: NeuledgeError.Code,
 ): NeuledgeError.Code => {
   switch (code) {
-    case StoreError.Code.INVALID_DATA:
+    case StoreError.Code.INVALID_DATA: {
       return NeuledgeError.Code.CORRUPTED_METADATA;
+    }
 
-    case StoreError.Code.NOT_IMPLEMENTED:
+    case StoreError.Code.NOT_IMPLEMENTED: {
       return NeuledgeError.Code.NOT_IMPLEMENTED;
+    }
 
     // case StoreError.Code.INVALID_INPUT:
     // case StoreError.Code.INTERNAL_ERROR:
-    default:
+    default: {
       return defaultCode ?? NeuledgeError.Code.INTERNAL_ERROR;
+    }
   }
 };

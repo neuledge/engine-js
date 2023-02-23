@@ -7,15 +7,15 @@ export interface NeuledgeGlob {
 const globKey = '__NeuledgeGlob__';
 
 const glob = (
-  typeof globalThis !== 'undefined'
-    ? globalThis
-    : typeof self !== 'undefined'
-    ? self
-    : typeof window !== 'undefined'
-    ? window
-    : typeof global !== 'undefined'
-    ? global
-    : {}
+  typeof globalThis === 'undefined'
+    ? typeof self === 'undefined'
+      ? typeof window === 'undefined'
+        ? typeof global === 'undefined'
+          ? {}
+          : global
+        : window
+      : self
+    : globalThis
 ) as typeof globalThis & { [globKey]?: NeuledgeGlob };
 
 export const neuledgeGlob = (glob[globKey] = glob[globKey] ?? {

@@ -10,9 +10,9 @@ export const convertMatchQuery = <S extends StateDefinition>(
   collection: MetadataCollection,
   { match }: MatchQueryOptions<S>,
 ): Pick<StoreFindOptions, 'innerJoin'> => ({
-  ...(match != null
-    ? { innerJoin: convertMatch(metadata, collection, match) }
-    : null),
+  ...(match == null
+    ? null
+    : { innerJoin: convertMatch(metadata, collection, match) }),
 });
 
 const convertMatch = <S extends StateDefinition>(

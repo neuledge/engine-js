@@ -7,7 +7,7 @@ import { Void } from './void';
 
 export type Entity<N extends string = string> =
   | NonNullableEntity<N>
-  | (typeof Void['name'] extends N ? typeof Void : never);
+  | ((typeof Void)['name'] extends N ? typeof Void : never);
 
 export type NonNullableEntity<N extends string = string> =
   | Either<N>

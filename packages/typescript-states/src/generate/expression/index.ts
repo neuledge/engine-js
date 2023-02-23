@@ -13,35 +13,45 @@ export const generateExpression = (
   indent: string,
 ): string => {
   switch (expression.type) {
-    case 'IdentifierExpression':
+    case 'IdentifierExpression': {
       return generateIdentifierExpression(expression);
+    }
 
-    case 'CallExpression':
+    case 'CallExpression': {
       return generateCallExpression(expression, indent);
+    }
 
-    case 'ThisExpression':
+    case 'ThisExpression': {
       return generateThisExpression(expression);
+    }
 
-    case 'MemberExpression':
+    case 'MemberExpression': {
       return generateMemberExpression(expression, indent);
+    }
 
-    case 'Literal':
+    case 'Literal': {
       return generateLiteral(expression);
+    }
 
-    case 'UnaryExpression':
+    case 'UnaryExpression': {
       return generateUnaryExpression(expression, indent);
+    }
 
-    case 'BinaryExpression':
+    case 'BinaryExpression': {
       return generateBinaryExpression(expression, indent);
+    }
 
-    case 'LogicalExpression':
+    case 'LogicalExpression': {
       return generateLogicalExpression(expression, indent);
+    }
 
-    case 'NullLiteral':
+    case 'NullLiteral': {
       return generateNullLiteral(expression);
+    }
 
-    default:
+    default: {
       // @ts-expect-error `expression` type is never
       throw new TypeError(`Unexpected expression: ${expression.type}`);
+    }
   }
 };

@@ -21,11 +21,7 @@ export const parseProperties = (
 ): Record<string, Property> => {
   const properties: Record<string, Property> = {};
 
-  if (!nodes.length) {
-    for (const parameter of Object.values(params.parameters)) {
-      properties[parameter.name] = parseParameterProperty(params, parameter);
-    }
-  } else {
+  if (nodes.length) {
     for (const node of nodes) {
       const property = parseProperty(params, node);
 
@@ -37,6 +33,10 @@ export const parseProperties = (
       }
 
       properties[property.name] = property;
+    }
+  } else {
+    for (const parameter of Object.values(params.parameters)) {
+      properties[parameter.name] = parseParameterProperty(params, parameter);
     }
   }
 

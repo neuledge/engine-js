@@ -93,13 +93,16 @@ const parseCoreExpressionNode = (cursor: TokenCursor): ExpressionNode => {
   }
 
   switch (next?.value) {
-    case '(':
+    case '(': {
       return parseCallExpressionNode(cursor);
+    }
 
-    case '.':
+    case '.': {
       return parseMemberExpressionNode(cursor);
+    }
 
-    default:
+    default: {
       return parseIdentifierExpressionNode(cursor);
+    }
   }
 };

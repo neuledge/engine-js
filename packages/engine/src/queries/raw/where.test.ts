@@ -32,7 +32,7 @@ describe('queries/where', () => {
     });
 
     it('should have common fields for multiple states', () => {
-      type t = Where<typeof Post[number]>;
+      type t = Where<(typeof Post)[number]>;
 
       expect<t>({ id: { $eq: 123 } });
       expect<t>({ id: null });
@@ -49,7 +49,7 @@ describe('queries/where', () => {
     });
 
     it('should allow $or on multiple states', () => {
-      type t = Where<typeof Post[number]>;
+      type t = Where<(typeof Post)[number]>;
 
       expect<t>({
         $or: [{ id: { $eq: 123 } }, { id: { $eq: 456 } }],

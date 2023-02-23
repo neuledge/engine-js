@@ -36,21 +36,24 @@ const parseDocumentBodyNodes = (cursor: TokenCursor): DocumentBodyNode[] => {
     let node: DocumentBodyNode;
 
     switch (nodeKeyword) {
-      case STATE_KEYWORD:
+      case STATE_KEYWORD: {
         node = parseStateNode(cursor, description, decorators);
         break;
+      }
 
-      case EITHER_KEYWORD:
+      case EITHER_KEYWORD: {
         node = parseEitherNode(cursor, description, decorators);
         break;
+      }
 
-      default:
+      default: {
         if (!keyword) {
           // TODO parse migration
           throw cursor.createError();
         }
 
         node = parseMutationNode(cursor, description, decorators);
+      }
     }
 
     body.push(node);

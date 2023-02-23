@@ -35,14 +35,14 @@ const validatePrecision = (
         `Cannot set 'max' greater than equal ${digitsBelow} for 'precision' of ${precision} and 'scale' of ${scale}`,
       );
     }
-  } else if (below != null) {
+  } else if (below == null) {
+    below = digitsBelow;
+  } else {
     if (below > digitsBelow) {
       throw new Error(
         `Cannot set 'below' greater than ${digitsBelow} for 'precision' of ${precision} and 'scale' of ${scale}`,
       );
     }
-  } else {
-    below = digitsBelow;
   }
 
   return { below };

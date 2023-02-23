@@ -21,9 +21,9 @@ export const convertJoinSelectQuery = <S extends StateDefinition>(
   collection: MetadataCollection,
   { select }: SelectQueryOptions<S>,
 ): Pick<StoreJoinChoice, 'select'> => ({
-  ...(select != null
-    ? { select: select === true ? true : convertSelect(collection, select) }
-    : null),
+  ...(select == null
+    ? null
+    : { select: select === true ? true : convertSelect(collection, select) }),
 });
 
 export const convertLeftJoinSelectQuery = <S extends StateDefinition>(

@@ -70,11 +70,11 @@ export const applyWhereOperatorTerm = (
           // else, ignore $ne if $eq is present
         } else if (Array.isArray(term.$nin)) {
           term.$nin = [...term.$nin, scalarValue];
-        } else if (!('$ne' in term)) {
-          term.$ne = scalarValue;
-        } else {
+        } else if ('$ne' in term) {
           term.$nin = [term.$ne, scalarValue];
           delete term.$ne;
+        } else {
+          term.$ne = scalarValue;
         }
       } else if (!(operator in term)) {
         term[operator] = scalarValue;
@@ -111,7 +111,7 @@ const assignWhereScalarOperator = (
     case '$startsWith':
     case '$endsWith': {
       res[operator as never] = (
-        value != null ? scalar.encode(value) : null
+        value == null ? null : scalar.encode(value)
       ) as never;
       break;
     }
@@ -126,7 +126,7 @@ const assignWhereScalarOperator = (
       }
 
       res[operator as never] = value.map((v) =>
-        v != null ? scalar.encode(v) : null,
+        v == null ? null : scalar.encode(v),
       ) as never;
       break;
     }

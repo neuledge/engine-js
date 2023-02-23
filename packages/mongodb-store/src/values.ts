@@ -65,10 +65,10 @@ export const unescapeValue = (value: unknown): StoreScalarValue => {
   switch (typeof value) {
     case 'object': {
       if (value instanceof Binary) {
-        return value.buffer;
+        return Buffer.from(value.buffer);
       }
       if (value instanceof ObjectId) {
-        return value.id;
+        return Buffer.from(value.id);
       }
       if (Array.isArray(value)) {
         return value.map((v) => unescapeValue(v));

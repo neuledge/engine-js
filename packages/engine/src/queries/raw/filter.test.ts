@@ -38,7 +38,7 @@ describe('queries/filter', () => {
     });
 
     it('should have common fields for multiple states', () => {
-      type t = Filter<typeof Post[number]>;
+      type t = Filter<(typeof Post)[number]>;
 
       expect<t>({ id: { $eq: 123 } });
       expect<t>({ id: null });
@@ -56,7 +56,7 @@ describe('queries/filter', () => {
     });
 
     it('should allow $or on multiple states', () => {
-      type t = Filter<typeof Post[number]>;
+      type t = Filter<(typeof Post)[number]>;
 
       expect<t>({
         $or: [{ title: { $eq: 'Hello' } }, { id: { $eq: 456 } }],

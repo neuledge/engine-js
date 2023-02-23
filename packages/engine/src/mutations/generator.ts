@@ -74,14 +74,17 @@ const hasMutation = <
     const fn = state[method] as MutationDefinition<S> | undefined;
 
     switch (fn?.mutation) {
-      case 'create':
+      case 'create': {
         return type.startsWith('Init');
+      }
 
       case 'update':
-      case 'delete':
+      case 'delete': {
         return type.startsWith('Alter');
+      }
 
-      default:
+      default: {
         return false;
+      }
     }
   });

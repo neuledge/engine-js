@@ -85,11 +85,13 @@ const escapeKey = (key: string): string =>
 const escapeValue = (value: unknown): string => {
   switch (typeof value) {
     case 'string':
-    default:
+    default: {
       return JSON.stringify(value);
+    }
 
     case 'number':
-    case 'boolean':
+    case 'boolean': {
       return String(value);
+    }
   }
 };

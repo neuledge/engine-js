@@ -137,9 +137,10 @@ const setEntityValue = (obj: object, path: string, value: unknown): void => {
   for (let i = 0; i < pathKeys.length - 1; i += 1) {
     const key = pathKeys[i];
 
-    obj = !(key in obj)
-      ? (obj[key as never] = {} as never)
-      : (obj[key as never] as object);
+    obj =
+      key in obj
+        ? (obj[key as never] as object)
+        : (obj[key as never] = {} as never);
   }
 
   obj[pathKeys[pathKeys.length - 1] as never] = value as never;

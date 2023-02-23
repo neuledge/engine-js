@@ -52,14 +52,14 @@ describe('types/entity', () => {
 
     describe('multiple states', () => {
       it('should accept different states with missing optional fields', () => {
-        expect<Entity<typeof Post[number]>>({
+        expect<Entity<(typeof Post)[number]>>({
           $state: 'DraftPost',
           $version: 1,
           id: 1,
           title: 'str',
         });
 
-        expect<Entity<typeof Post[number]>>({
+        expect<Entity<(typeof Post)[number]>>({
           $state: 'PublishedPost',
           $version: 1,
           id: 1,
@@ -72,14 +72,14 @@ describe('types/entity', () => {
 
       it('should throw on missing field', () => {
         // @ts-expect-error Property 'title' is missing
-        expect<Entity<typeof Post[number]>>({
+        expect<Entity<(typeof Post)[number]>>({
           $state: 'DraftPost',
           $version: 1,
           id: 1,
         });
 
         // @ts-expect-error Property 'category' is missing
-        expect<Entity<typeof Post[number]>>({
+        expect<Entity<(typeof Post)[number]>>({
           $state: 'PublishedPost',
           $version: 1,
           id: 1,
@@ -89,7 +89,7 @@ describe('types/entity', () => {
       });
 
       it('should throw on unknown field', () => {
-        expect<Entity<typeof Post[number]>>({
+        expect<Entity<(typeof Post)[number]>>({
           $state: 'DraftPost',
           $version: 1,
           id: 1,
@@ -98,7 +98,7 @@ describe('types/entity', () => {
           foo: 'foo bar',
         });
 
-        expect<Entity<typeof Post[number]>>({
+        expect<Entity<(typeof Post)[number]>>({
           $state: 'PublishedPost',
           $version: 1,
           id: 1,

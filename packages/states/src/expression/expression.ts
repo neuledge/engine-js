@@ -30,35 +30,45 @@ export const parseExpression = (
   node: ExpressionNode,
 ): Expression & { node: ExpressionNode } => {
   switch (node.type) {
-    case 'CallExpression':
+    case 'CallExpression': {
       return parseCallExpression(params, node);
+    }
 
-    case 'Identifier':
+    case 'Identifier': {
       return parseIdentifierExpression(params, node);
+    }
 
-    case 'ThisExpression':
+    case 'ThisExpression': {
       return parseThisExpression(params, node);
+    }
 
-    case 'MemberExpression':
+    case 'MemberExpression': {
       return parseMemberExpression(params, node);
+    }
 
-    case 'Literal':
+    case 'Literal': {
       return parseLiteral(node);
+    }
 
-    case 'UnaryExpression':
+    case 'UnaryExpression': {
       return parseUnaryExpression(params, node);
+    }
 
-    case 'BinaryExpression':
+    case 'BinaryExpression': {
       return parseBinaryExpression(params, node);
+    }
 
-    case 'LogicalExpression':
+    case 'LogicalExpression': {
       return parseLogicalExpression(params, node);
+    }
 
-    case 'NullLiteral':
+    case 'NullLiteral': {
       return parseNullLiteral(node);
+    }
 
-    default:
+    default: {
       // @ts-expect-error `node` type is never
       throw new TypeError(`Unexpected expression type: ${node.type}`);
+    }
   }
 };

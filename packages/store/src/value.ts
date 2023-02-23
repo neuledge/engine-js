@@ -93,8 +93,9 @@ export const getStoreScalarValueKey = (
       return null;
     }
 
-    case 'string':
+    case 'string': {
       return JSON.stringify(value);
+    }
 
     case 'object': {
       if (value === null) {

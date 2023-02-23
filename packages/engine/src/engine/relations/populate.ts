@@ -12,9 +12,9 @@ export const convertPopulateOneQuery = <S extends StateDefinition>(
   collection: MetadataCollection,
   { populateOne }: PopulateQueryOptions<S>,
 ): Pick<StoreFindOptions, 'leftJoin'> => ({
-  ...(populateOne != null
-    ? { leftJoin: convertPopulateOne(metadata, collection, populateOne) }
-    : null),
+  ...(populateOne == null
+    ? null
+    : { leftJoin: convertPopulateOne(metadata, collection, populateOne) }),
 });
 
 const convertPopulateOne = <S extends StateDefinition>(

@@ -26,7 +26,7 @@ describe('queries/select', () => {
     });
 
     it('should select multi-state fields', () => {
-      type t = Select<typeof Post[number]>;
+      type t = Select<(typeof Post)[number]>;
 
       expect<t>({});
       expect<t>({ id: true });

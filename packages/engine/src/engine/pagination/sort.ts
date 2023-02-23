@@ -37,19 +37,22 @@ export const convertSortQuery = <S extends StateDefinition>(
   for (const key of sort as SortDefinition<S>) {
     let direction: 'asc' | 'desc';
     switch (key[0]) {
-      case '+':
+      case '+': {
         direction = reverse ? 'desc' : 'asc';
         break;
+      }
 
-      case '-':
+      case '-': {
         direction = reverse ? 'asc' : 'desc';
         break;
+      }
 
-      default:
+      default: {
         throw new NeuledgeError(
           NeuledgeError.Code.UNKNOWN_SORT_DIRECTION,
           `Unknown sort direction: '${key}'`,
         );
+      }
     }
 
     const field = key.slice(1);

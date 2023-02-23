@@ -291,7 +291,7 @@ const getDocumentKey = (by: StoreJoinBy, doc: StoreDocument, ref?: boolean) => {
   const key = Object.fromEntries(
     Object.entries(by).map(([key, value]) => [
       key,
-      value.field != null ? doc[ref ? value.field : key] : value.value,
+      value.field == null ? value.value : doc[ref ? value.field : key],
     ]),
   );
 

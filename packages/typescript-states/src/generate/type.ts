@@ -6,13 +6,15 @@ export const generateTypeScalar = (type: Type): string => {
     // case 'TypeGenerator':
     //   throw new Error('Not implemented.');
 
-    case 'EntityExpression':
+    case 'EntityExpression': {
       return type.list
         ? `[${generateEntityScalar(type.entity)}]`
         : generateEntityScalar(type.entity);
+    }
 
-    default:
+    default: {
       throw new TypeError(`Unexpected type: ${type.type}`);
+    }
   }
 };
 
@@ -21,12 +23,14 @@ export const generateTypeType = (type: Type): string => {
     // case 'TypeGenerator':
     //   throw new Error('Not implemented.');
 
-    case 'EntityExpression':
+    case 'EntityExpression': {
       return type.list
         ? `${generateEntityType(type.entity)}[]`
         : generateEntityType(type.entity);
+    }
 
-    default:
+    default: {
       throw new TypeError(`Unexpected type: ${type.type}`);
+    }
   }
 };

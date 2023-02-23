@@ -12,9 +12,9 @@ export const convertExpandQuery = <S extends StateDefinition>(
   collection: MetadataCollection,
   { expand }: ExpandQueryOptions<S>,
 ): Pick<StoreFindOptions, 'innerJoin'> => ({
-  ...(expand != null
-    ? { innerJoin: convertExpand(metadata, collection, expand) }
-    : null),
+  ...(expand == null
+    ? null
+    : { innerJoin: convertExpand(metadata, collection, expand) }),
 });
 
 const convertExpand = <S extends StateDefinition>(

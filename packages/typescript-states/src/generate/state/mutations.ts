@@ -44,20 +44,24 @@ const generateStateMutation = (
 ): string => {
   let value;
   switch (mutation.mutation) {
-    case 'create':
+    case 'create': {
       value = generateCreateMutationFn(state, mutation, indent);
       break;
+    }
 
-    case 'update':
+    case 'update': {
       value = generateUpdateMutationFn(state, mutation, indent);
       break;
+    }
 
-    case 'delete':
+    case 'delete': {
       value = generateDeleteMutationFn(state, mutation, indent);
       break;
+    }
 
-    default:
+    default: {
       throw new Error(`Unknown mutation type: ${mutation.mutation}`);
+    }
   }
 
   return (
