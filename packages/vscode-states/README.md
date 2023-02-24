@@ -1,6 +1,6 @@
 # VSCode Neuledge States Plugin
 
-This is a VSCode plugin for the Neuledge States language. It provides syntax highlighting and code completion for the Neuledge States language.
+This is a VSCode plugin for the [Neuledge](https://neuledge.com) States language. It provides syntax highlighting and code completion for the Neuledge `*.states` files.
 
 ## Release Notes
 
@@ -11,3 +11,7 @@ This is a VSCode plugin for the Neuledge States language. It provides syntax hig
 ### 0.0.1
 
 Initial release.
+
+## 📄 License
+
+Neuledge is [Apache 2.0 licensed](https://github.com/neuledge/engine-js/blob/main/LICENSE).

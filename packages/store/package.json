@@ -1,6 +1,15 @@
 {
   "name": "@neuledge/store",
   "version": "0.1.0-alpha.1",
+  "description": "Neuledge Store abstract interface for Neuledge Engine",
+  "keywords": [
+    "neuledge",
+    "store",
+    "engine",
+    "database",
+    "interface",
+    "abstract"
+  ],
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.js",

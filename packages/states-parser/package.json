@@ -1,6 +1,16 @@
 {
   "name": "@neuledge/states-parser",
   "version": "0.1.0-alpha.1",
+  "description": "A parser for the Neuledge States language",
+  "keywords": [
+    "neuledge",
+    "engine",
+    "states",
+    "parser",
+    "ast",
+    "tree",
+    "nodes"
+  ],
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.js",

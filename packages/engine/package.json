@@ -1,6 +1,20 @@
 {
   "name": "@neuledge/engine",
   "version": "0.1.0-alpha.1",
+  "description": "Neuledge Engine is a state machine engine for JavaScript and TypeScript that allows you to define predictable data schema and business logic definitions for databases",
+  "keywords": [
+    "neuledge",
+    "schema language",
+    "state-machine",
+    "database",
+    "graphql",
+    "typesafe",
+    "typescript",
+    "javascript",
+    "orm",
+    "validation",
+    "business logic"
+  ],
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.js",

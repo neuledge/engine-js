@@ -1,6 +1,13 @@
 {
   "name": "@neuledge/mongodb-store",
   "version": "0.1.0-alpha.1",
+  "deascription": "MongoDB store implementation for Neuledge Engine",
+  "keywords": [
+    "neuledge",
+    "mongodb",
+    "store",
+    "database"
+  ],
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.js",

@@ -1,6 +1,16 @@
 {
   "name": "@neuledge/states-cli",
   "version": "0.1.0-alpha.2",
+  "description": "Neuledge Engine states CLI for parsing and converting *.states files",
+  "keywords": [
+    "neuledge",
+    "engine",
+    "states",
+    "cli",
+    "typescript",
+    "javascript",
+    "parser"
+  ],
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.js",

@@ -1,6 +1,15 @@
 {
   "name": "@neuledge/typescript-states",
   "version": "0.1.0-alpha.2",
+  "description": "State code generator for Neuledge Engine in TypeScript",
+  "keywords": [
+    "typescript",
+    "state",
+    "code",
+    "generator",
+    "neuledge",
+    "engine"
+  ],
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.js",

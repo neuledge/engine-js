@@ -1,6 +1,22 @@
 {
   "name": "@neuledge/scalars",
   "version": "0.1.0-alpha.1",
+  "description": "Scalar definitions for Neuledge Engine",
+  "keywords": [
+    "neuledge",
+    "engine",
+    "store",
+    "scalars",
+    "integer",
+    "float",
+    "string",
+    "boolean",
+    "datetime",
+    "buffer",
+    "bigint",
+    "number",
+    "object"
+  ],
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.js",

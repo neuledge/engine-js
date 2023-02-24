@@ -26,7 +26,7 @@
     <img src="https://codecov.io/gh/neuledge/engine-js/branch/master/graph/badge.svg?token=4YPG4FPM23"
       alt="Coverage Status" />
   </a> -->
-  <a href="LICENSE">
+  <a href="https://github.com/neuledge/engine-js/blob/main/LICENSE">
     <img src="https://img.shields.io/github/license/neuledge/engine-js" alt="License">
   </a>
 </p>
@@ -107,7 +107,7 @@ DraftPost.publish(): PublishedPost => {
 ### Install
 
 ```bash
-npm install @neuledge/engine @neuledge/mongodb-store --save
+npm install @neuledge/engine @neuledge/mongodb-store
 ```
 
 ### Define your schema
@@ -230,7 +230,7 @@ await engine.alterUniqueOrThrow(Category).delete().unique({ id: category.id });
 
 For more information, please visit [neuledge.com/docs](https://neuledge.com/docs).
 
-For examples, please check the [examples](/examples/) folder.
+For examples, please check the [examples](https://github.com/neuledge/engine-js/tree/main/examples) folder.
 
 <br>
 
@@ -248,4 +248,4 @@ To get involved in the Neuledge community:
 
 # 📄 License
 
-Neuledge is [Apache 2.0 licensed](/LICENSE).
+Neuledge is [Apache 2.0 licensed](https://github.com/neuledge/engine-js/blob/main/LICENSE).

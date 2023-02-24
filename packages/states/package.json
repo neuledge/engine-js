@@ -1,6 +1,14 @@
 {
   "name": "@neuledge/states",
   "version": "0.1.0-alpha.1",
+  "description": "Neuledge Engine internal state management and context",
+  "keywords": [
+    "neuledge",
+    "engine",
+    "state",
+    "parser",
+    "context"
+  ],
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.js",
