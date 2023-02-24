@@ -1,6 +1,6 @@
 {
   "name": "@neuledge/states-parser",
-  "version": "0.1.0-alpha.1",
+  "version": "0.0.0",
   "description": "A parser for the Neuledge States language",
   "keywords": [
     "neuledge",

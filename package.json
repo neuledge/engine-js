@@ -21,6 +21,7 @@
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },
   "devDependencies": {
+    "@changesets/cli": "^2.26.0",
     "@neuledge/eslint-config": "^1.0.0-alpha.18",
     "@neuledge/jest-ts-preset": "^1.0.0-alpha.10",
     "@neuledge/tsconfig": "^1.0.0-alpha.17",
