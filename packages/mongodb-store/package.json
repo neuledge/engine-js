@@ -1,6 +1,6 @@
 {
   "name": "@neuledge/mongodb-store",
-  "version": "0.0.0",
+  "version": "0.1.0-alpha.0",
   "deascription": "MongoDB store implementation for Neuledge Engine",
   "keywords": [
     "neuledge",
@@ -37,7 +37,7 @@
     "lint:strict": "yarn lint --max-warnings 0"
   },
   "dependencies": {
-    "@neuledge/store": "^0.0.0",
+    "@neuledge/store": "^0.1.0-alpha.0",
     "mongodb": "^5.0.1",
     "p-limit": "^3.1.0"
   }

@@ -1,6 +1,6 @@
 {
   "name": "@neuledge/states",
-  "version": "0.0.0",
+  "version": "0.1.0-alpha.0",
   "description": "Neuledge Engine internal state management and context",
   "keywords": [
     "neuledge",
@@ -38,8 +38,8 @@
     "lint:strict": "yarn lint --max-warnings 0"
   },
   "dependencies": {
-    "@neuledge/scalars": "^0.0.0",
-    "@neuledge/states-parser": "^0.0.0",
+    "@neuledge/scalars": "^0.1.0-alpha.0",
+    "@neuledge/states-parser": "^0.1.0-alpha.0",
     "zod": "^3.20.6"
   }
 }

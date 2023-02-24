@@ -1,6 +1,6 @@
 {
   "name": "@neuledge/states-cli",
-  "version": "0.0.0",
+  "version": "0.1.0-alpha.0",
   "description": "Neuledge Engine states CLI for parsing and converting *.states files",
   "keywords": [
     "neuledge",
@@ -43,8 +43,8 @@
     "lint:strict": "yarn lint --max-warnings 0"
   },
   "dependencies": {
-    "@neuledge/states": "^0.0.0",
-    "@neuledge/typescript-states": "^0.0.0",
+    "@neuledge/states": "^0.1.0-alpha.0",
+    "@neuledge/typescript-states": "^0.1.0-alpha.0",
     "commander": "^10.0.0",
     "fast-glob": "^3.2.12",
     "p-limit": "^3.1.0"
