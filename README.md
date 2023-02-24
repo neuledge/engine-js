@@ -50,7 +50,7 @@ If you find Neuledge useful and would like to support its ongoing development an
 
 # Table of contents
 
-- [Alpha release](#-alpha-release)
+- [Beta release](#-beta-release)
 - [How it works](#-how-it-works)
 - [Getting started](#-getting-started)
 - [Documentation & examples](#-documentation--examples)
@@ -59,9 +59,9 @@ If you find Neuledge useful and would like to support its ongoing development an
 
 <br>
 
-# 🏁 Alpha release
+# 🏁 Beta release
 
-Neuledge is currently in alpha release. We are working hard to make it stable and ready for production. If you are interested in using Neuledge in your project, help us improve it by [join our community](#-join-the-community) and give us a star ⭐️.
+Neuledge is now in beta release! If you are interested in using Neuledge in your project, help us improve it by [join our community](#-join-the-community) and give us a star ⭐️.
 
 For more information, please visit [neuledge.com](https://neuledge.com).
 
