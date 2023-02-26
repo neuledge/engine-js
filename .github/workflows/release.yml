@@ -10,6 +10,10 @@ on:
       - completed
     branches: ['main']
 
+permissions:
+  contents: write
+  packages: write
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
