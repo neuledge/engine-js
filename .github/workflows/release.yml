@@ -34,6 +34,16 @@ jobs:
           key: ${{ runner.os }}-node-modules-${{ hashFiles('**/yarn.lock') }}
 
       - name: Create Release Pull Request
+        id: changesets
         uses: changesets/action@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish NPM
+        if: steps.changesets.outputs.hasChangesets == 'false'
+        run: yarn release:publish
+
+      - name: Publish Github
+        if: steps.changesets.outputs.hasChangesets == 'false'
+        run: yarn release:github-publish || true

@@ -25,7 +25,7 @@
     "release:github-publish": "YARN_REGISTRY=https://npm.pkg.github.com yarn release:publish",
     "release:push": "git push --follow-tags",
     "release:status": "changeset status",
-    "release": "yarn release:version && yarn release:publish && release:github-publish && yarn release:push"
+    "release": "yarn release:version && yarn release:publish && yarn release:github-publish && yarn release:push"
   },
   "devDependencies": {
     "@changesets/cli": "^2.26.0",
