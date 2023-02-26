@@ -36,6 +36,7 @@ jobs:
         with:
           path: node_modules
           key: ${{ runner.os }}-node-modules-${{ hashFiles('**/yarn.lock') }}
+          fail-on-cache-miss: true
 
       - name: Create Release Pull Request
         id: changesets
