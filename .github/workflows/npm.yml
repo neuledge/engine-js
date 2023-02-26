@@ -18,19 +18,22 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
-          cache: 'yarn'
-
       - name: Cache Node.js modules
+        id: cache-node-modules
         uses: actions/cache@v3
         with:
           path: node_modules
           key: ${{ runner.os }}-node-modules-${{ hashFiles('**/yarn.lock') }}
 
+      - name: Setup Node.js
+        if: steps.cache.outputs.cache-hit != 'true'
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'yarn'
+
       - name: Yarn install
+        if: steps.cache.outputs.cache-hit != 'true'
         run: yarn --frozen-lockfile
 
   test:
