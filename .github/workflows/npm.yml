@@ -23,7 +23,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: node_modules
-          key: ${{ runner.os }}-node-modules-${{ hashFiles('**/yarn.lock') }}
+          key: ${{ runner.os }}-${{ runner.arch }}-node-modules-${{ hashFiles('**/yarn.lock') }}
 
       - name: Setup Node.js
         if: steps.cache.outputs.cache-hit != 'true'
@@ -54,17 +54,17 @@ jobs:
         uses: actions/cache@v3
         with:
           path: node_modules
-          key: ${{ runner.os }}-node-modules-${{ hashFiles('**/yarn.lock') }}
+          key: ${{ runner.os }}-${{ runner.arch }}-node-modules-${{ hashFiles('**/yarn.lock') }}
           fail-on-cache-miss: true
 
       - name: Cache Trubo
         uses: actions/cache@v3
         with:
           path: .turbo
-          key: ${{ runner.os }}-turbo-test-${{ hashFiles('**/yarn.lock') }}-${{ github.sha }}
+          key: ${{ runner.os }}-${{ runner.arch }}-turbo-test-${{ hashFiles('**/yarn.lock') }}-${{ github.sha }}
           restore-keys: |
-            ${{ runner.os }}-turbo-test-${{ hashFiles('**/yarn.lock') }}
-            ${{ runner.os }}-turbo-test
+            ${{ runner.os }}-${{ runner.arch }}-turbo-test-${{ hashFiles('**/yarn.lock') }}
+            ${{ runner.os }}-${{ runner.arch }}-turbo-test
 
       - name: Yarn test
         run: yarn test --cache-dir=.turbo
@@ -87,17 +87,17 @@ jobs:
         uses: actions/cache@v3
         with:
           path: node_modules
-          key: ${{ runner.os }}-node-modules-${{ hashFiles('**/yarn.lock') }}
+          key: ${{ runner.os }}-${{ runner.arch }}-node-modules-${{ hashFiles('**/yarn.lock') }}
           fail-on-cache-miss: true
 
       - name: Cache Trubo
         uses: actions/cache@v3
         with:
           path: .turbo
-          key: ${{ runner.os }}-turbo-lint-${{ hashFiles('**/yarn.lock') }}-${{ github.sha }}
+          key: ${{ runner.os }}-${{ runner.arch }}-turbo-lint-${{ hashFiles('**/yarn.lock') }}-${{ github.sha }}
           restore-keys: |
-            ${{ runner.os }}-turbo-lint-${{ hashFiles('**/yarn.lock') }}
-            ${{ runner.os }}-turbo-lint
+            ${{ runner.os }}-${{ runner.arch }}-turbo-lint-${{ hashFiles('**/yarn.lock') }}
+            ${{ runner.os }}-${{ runner.arch }}-turbo-lint
 
       - name: Yarn lint:strict
         run: yarn lint:strict --cache-dir=.turbo

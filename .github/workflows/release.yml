@@ -35,7 +35,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: node_modules
-          key: ${{ runner.os }}-node-modules-${{ hashFiles('**/yarn.lock') }}
+          key: ${{ runner.os }}-${{ runner.arch }}-node-modules-${{ hashFiles('**/yarn.lock') }}
           fail-on-cache-miss: true
 
       - name: Create Release Pull Request
