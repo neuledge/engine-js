@@ -1,5 +1,11 @@
 # @neuledge/states
 
+## 0.1.0-alpha.1
+
+### Minor Changes
+
+- b75d9a9: Allow pure update mutations on Either
+
 ## 0.1.0-alpha.0
 
 ### Minor Changes
