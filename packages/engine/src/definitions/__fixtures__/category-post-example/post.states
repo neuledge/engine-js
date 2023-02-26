@@ -39,13 +39,13 @@ DraftPost.update(
 ): DraftPost
 
 """
-Update a published post
+Update a post
 """
-PublishedPost.update(
+Post.update(
   title: String
   content: String
   category: Category
-): PublishedPost
+): Post
 
 """
 Publish a draft post

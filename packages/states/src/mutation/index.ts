@@ -20,7 +20,7 @@ export interface Mutation extends ParametersContext {
   description?: string;
   deprecated?: boolean | string;
   target: State | Either;
-  returns: State | typeof Void;
+  returns: State | Either | typeof Void;
   parameters: Record<string, Parameter>;
   body: Record<string, Property>;
 }
@@ -30,7 +30,7 @@ export const parseMutation = (
   node: MutationNode,
 ): Mutation => {
   const target = parseTarget(ctx, node);
-  const returns = parseReturns(ctx, node);
+  const returns = parseReturns(ctx, node, target);
 
   const params = parseParametersContext(
     ctx,
@@ -44,7 +44,7 @@ export const parseMutation = (
     node,
     ...params,
     mutation: node.from
-      ? node.returns.name === Void.name
+      ? returns.name === Void.name
         ? 'delete'
         : 'update'
       : 'create',
@@ -102,7 +102,8 @@ const parseTarget = (
 const parseReturns = (
   ctx: StatesContext,
   node: MutationNode,
-): State | typeof Void => {
+  target: State | Either,
+): State | Either | typeof Void => {
   const returnsNode = node.returns;
   const returns = ctx.entity(returnsNode.name);
 
@@ -113,11 +114,35 @@ const parseReturns = (
     );
   }
 
-  if (returns.type !== 'State' && returns.type !== 'Void') {
-    throw new ParsingError(
-      returnsNode,
-      `Expected state or void, got '${returns.type}'`,
-    );
+  switch (returns.type) {
+    case 'State':
+    case 'Void': {
+      break;
+    }
+
+    case 'Either': {
+      if (target.type !== 'Either') {
+        throw new ParsingError(
+          returnsNode,
+          `Expected state or void, got '${returns.type}'`,
+        );
+      }
+
+      if (target.name !== returns.name) {
+        throw new ParsingError(
+          returnsNode,
+          `Expected either '${target.name}', got '${returns.name}'`,
+        );
+      }
+      break;
+    }
+
+    case 'Scalar': {
+      throw new ParsingError(
+        returnsNode,
+        `Expected state or void, got '${returns.type}'`,
+      );
+    }
   }
 
   return returns;

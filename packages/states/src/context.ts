@@ -31,6 +31,7 @@ enum ProcessingOrder {
   States = 20,
   StateRelations = 21,
   Mutations = 30,
+  EitherMutations = 31,
   Transforms = 40,
 }
 
@@ -208,25 +209,22 @@ export class StatesContext {
   }
 
   private registerEither(node: EitherNode): void {
-    this.registerEntity(node, ProcessingOrder.Eithers, () => {
-      const mutations = this.mutationMap[node.id.name] ?? {};
+    this.registerEntity(node, ProcessingOrder.Eithers, () =>
+      parseEither(this, node),
+    );
 
-      for (const state of node.states) {
-        const stateMutations = this.mutationMap[state.name];
-        if (!stateMutations) continue;
-
-        Object.assign(stateMutations, mutations);
-      }
-
-      return parseEither(this, node);
-    });
+    this.registerEitherMutations(node);
   }
 
   private registerState(node: StateNode): void {
     this.registerEntity(node, ProcessingOrder.States, (ref) => {
       const fields: State['fields'] = {};
       const baseIndex = this.assignStateFields(node, ref, fields);
-      const mutations = this.mutationMap[node.id.name] ?? {};
+
+      let mutations = this.mutationMap[node.id.name];
+      if (!mutations) {
+        mutations = this.mutationMap[node.id.name] = {};
+      }
 
       return parseState(
         node,
@@ -284,15 +282,18 @@ export class StatesContext {
         for (const mutation of Object.values(mutations)) {
           if (mutation?.mutation !== 'update') continue;
 
-          const transformed = mutation.returns as State;
-          if (transformed.name !== state.name) continue;
+          const returns = mutation.returns;
+          if (returns.name !== state.name) {
+            continue;
+          }
 
           if (
+            returns.type !== 'State' ||
             !isStateSortingIndexEquals(
               state,
               state.primaryKey,
-              transformed,
-              transformed.primaryKey,
+              returns,
+              returns.primaryKey,
             )
           ) {
             throw new ParsingError(
@@ -329,6 +330,43 @@ export class StatesContext {
     this.processing.push({
       order: ProcessingOrder.Mutations,
       process: () => Object.assign(ref, parseMutation(this, node)),
+    });
+  }
+
+  private registerEitherMutations(node: EitherNode): void {
+    this.processing.push({
+      order: ProcessingOrder.EitherMutations,
+      process: () => {
+        const mutations = this.mutationMap[node.id.name] ?? {};
+
+        for (const stateNode of node.states) {
+          const state = this.entity(stateNode.name) as State;
+
+          let stateMutations = this.mutationMap[state.name];
+          if (!stateMutations) {
+            this.mutationMap[state.name] = stateMutations = {};
+          }
+
+          for (const name in mutations) {
+            const mutation = mutations[name];
+
+            if (stateMutations[name] || !mutation) {
+              // do not override existing state mutations
+              continue;
+            }
+
+            stateMutations[name] = {
+              ...mutation,
+              target: state,
+              returns:
+                !mutation.node.from ||
+                mutation.node.returns.name === mutation.node.from.name
+                  ? state
+                  : mutation.returns,
+            };
+          }
+        }
+      },
     });
   }
 
