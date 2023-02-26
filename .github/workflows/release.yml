@@ -1,0 +1,28 @@
+# Release packages when the test workflow completes successfully using the changesets/action action.
+# https://github.com/changesets/action
+
+name: Release Packages
+
+on:
+  workflow_run:
+    workflows: ['Test Packages']
+    types:
+      - completed
+    branches: ['main']
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+
+      - name: Create Release Pull Request
+        uses: changesets/action@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
