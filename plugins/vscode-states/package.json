@@ -1,5 +1,7 @@
 {
   "name": "vscode-neuledge-states",
+  "version": "0.0.3",
+  "private": true,
   "displayName": "Neuledge States",
   "description": "This is a VSCode plugin for the Neuledge States language. It provides syntax highlighting and code completion for the Neuledge States language.",
   "keywords": [
@@ -12,7 +14,6 @@
     "highlighting",
     "completion"
   ],
-  "version": "0.0.3",
   "icon": "images/icon.png",
   "repository": {
     "type": "git",
