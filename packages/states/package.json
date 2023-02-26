@@ -1,6 +1,6 @@
 {
   "name": "@neuledge/states",
-  "version": "0.1.0-alpha.0",
+  "version": "0.1.0-alpha.1",
   "description": "Neuledge Engine internal state management and context",
   "keywords": [
     "neuledge",

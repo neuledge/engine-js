@@ -14,6 +14,7 @@
     "vscode-neuledge-states": "0.0.3"
   },
   "changesets": [
+    "cold-lions-drum",
     "modern-pumpkins-ring"
   ]
 }
