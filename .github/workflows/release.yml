@@ -33,12 +33,19 @@ jobs:
           path: node_modules
           key: ${{ runner.os }}-node-modules-${{ hashFiles('**/yarn.lock') }}
 
-      - name: Create Release Pull Request
-        id: changesets
-        uses: changesets/action@v1
+      - name: Creating .npmrc
+        run: |
+          cat << EOF > "$HOME/.npmrc"
+            //registry.npmjs.org/:_authToken=$NPM_TOKEN
+            //npm.pkg.github.com/:_authToken=$GITHUB_TOKEN
+          EOF
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Create Release Pull Request
+        id: changesets
+        uses: changesets/action@v1
 
       - name: Publish NPM
         if: steps.changesets.outputs.hasChangesets == 'false'
