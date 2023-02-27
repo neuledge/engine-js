@@ -1,6 +1,6 @@
 {
   "name": "@neuledge/engine",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Neuledge Engine is a state machine engine for JavaScript and TypeScript that allows you to define predictable data schema and business logic definitions for databases",
   "keywords": [
     "neuledge",

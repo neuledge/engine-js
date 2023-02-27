@@ -13,7 +13,7 @@
     "start": "node --enable-source-maps dist/app.js"
   },
   "dependencies": {
-    "@neuledge/engine": "^1.0.0",
+    "@neuledge/engine": "^0.1.0",
     "@neuledge/mongodb-store": "^0.1.0",
     "dotenv": "^16.0.3",
     "fastify": "^4.13.0",
