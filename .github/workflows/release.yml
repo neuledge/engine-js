@@ -52,6 +52,18 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
+      - name: Cache Trubo
+        if: steps.changesets.outputs.hasChangesets == 'false'
+        uses: actions/cache@v3
+        with:
+          path: .turbo
+          key: ${{ runner.os }}-${{ runner.arch }}-turbo-test-${{ hashFiles('**/yarn.lock') }}-${{ github.sha }}
+          fail-on-cache-miss: true
+
+      - name: Yarn build
+        if: steps.changesets.outputs.hasChangesets == 'false'
+        run: yarn release:build --cache-dir=.turbo
+
       - name: Publish NPM
         if: steps.changesets.outputs.hasChangesets == 'false'
         run: yarn release:publish

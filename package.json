@@ -21,11 +21,12 @@
     "lint:strict": "turbo run lint:strict",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "release:version": "changeset version",
+    "release:build": "turbo run build types",
     "release:publish": "changeset publish",
     "release:github-publish": "YARN_REGISTRY=https://npm.pkg.github.com yarn release:publish",
     "release:push": "git push --follow-tags",
     "release:status": "changeset status",
-    "release": "yarn release:version && yarn release:publish && yarn release:github-publish && yarn release:push"
+    "release": "yarn release:build && yarn release:version && yarn release:publish && yarn release:github-publish && yarn release:push"
   },
   "devDependencies": {
     "@changesets/cli": "^2.26.0",
