@@ -1,6 +1,6 @@
 {
   "name": "@neuledge/scalars",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Scalar definitions for Neuledge Engine",
   "keywords": [
     "neuledge",
@@ -46,7 +46,7 @@
     "lint:strict": "yarn lint --max-warnings 0"
   },
   "dependencies": {
-    "@neuledge/store": "^0.1.0",
+    "@neuledge/store": "^0.1.1",
     "fast-deep-equal": "^3.1.3",
     "zod": "^3.20.6"
   }

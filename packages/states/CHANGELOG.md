@@ -1,5 +1,14 @@
 # @neuledge/states
 
+## 0.1.1
+
+### Patch Changes
+
+- 1fb1790: npm build fix
+- Updated dependencies [1fb1790]
+  - @neuledge/scalars@0.1.1
+  - @neuledge/states-parser@0.1.1
+
 ## 0.1.0
 
 ### Minor Changes
