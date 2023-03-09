@@ -1,5 +1,13 @@
 # @neuledge/typescript-states
 
+## 0.1.2
+
+### Patch Changes
+
+- 613d5d5: Support Email and URL scalars
+- Updated dependencies [613d5d5]
+  - @neuledge/states@0.1.2
+
 ## 0.1.1
 
 ### Patch Changes
