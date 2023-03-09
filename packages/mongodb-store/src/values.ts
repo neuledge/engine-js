@@ -1,4 +1,4 @@
-import { StoreScalarValue } from '@neuledge/store';
+import { StoreError, StoreScalarValue } from '@neuledge/store';
 import { Binary, ObjectId } from 'mongodb';
 
 /**
@@ -50,7 +50,10 @@ export const escapeValue = (value: StoreScalarValue | undefined): unknown => {
 
     case 'symbol':
     case 'function': {
-      throw new Error(`Unexpected value type: ${typeof value}`);
+      throw new StoreError(
+        StoreError.Code.INVALID_INPUT,
+        `Unexpected value type: ${typeof value}`,
+      );
     }
   }
 };
@@ -95,7 +98,10 @@ export const unescapeValue = (value: unknown): StoreScalarValue => {
 
     case 'symbol':
     case 'function': {
-      throw new Error(`Unexpected value type: ${typeof value}`);
+      throw new StoreError(
+        StoreError.Code.INVALID_DATA,
+        `Unexpected value type: ${typeof value}`,
+      );
     }
   }
 };

@@ -10,3 +10,5 @@ export {
   ObjectScalar as Object,
   StringScalar as String,
 } from './primitives';
+
+export { EmailScalar as Email, URLScalar as URL } from './commons';

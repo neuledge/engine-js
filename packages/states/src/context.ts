@@ -179,8 +179,11 @@ export class StatesContext {
       }
 
       default: {
-        // @ts-expect-error `node.type` should be never
-        throw new Error(`Unsupported document node '${node.type}'`);
+        throw new ParsingError(
+          node,
+          // @ts-expect-error `node.type` should be never
+          `Unsupported document node '${node.type}'`,
+        );
       }
     }
   }

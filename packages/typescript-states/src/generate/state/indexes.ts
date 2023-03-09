@@ -1,3 +1,4 @@
+import { ParsingError } from '@neuledge/states-parser';
 import { ScalarField, State, StateSortingIndex } from '@neuledge/states';
 import { generateWhereEntityExpression } from '../entity';
 import { generateTypeScalar } from '../type';
@@ -131,7 +132,8 @@ const getIndexTypePaths = (
       if (!entry) {
         const field = state.fields[key];
         if (field?.type !== 'ScalarField') {
-          throw new Error(
+          throw new ParsingError(
+            state.node,
             `Index field '${key}' not found in state '${state.name}'`,
           );
         }

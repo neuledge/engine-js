@@ -1,7 +1,11 @@
 import { Arguments, parseArguments } from '@/arguments';
 import { ParametersContext } from '@/parameter';
 import { Callable, runtime } from '@neuledge/scalars';
-import { CallExpressionNode, ExpressionNode } from '@neuledge/states-parser';
+import {
+  CallExpressionNode,
+  ExpressionNode,
+  ParsingError,
+} from '@neuledge/states-parser';
 import { Expression, parseExpression } from './expression';
 
 export interface CallExpression {
@@ -17,7 +21,10 @@ export const parseCallExpression = (
 ): CallExpression => {
   const callee = runtime[node.callee.name as keyof typeof runtime];
   if (!callee) {
-    throw new Error(`Unknown runtime function '${node.callee.name}'`);
+    throw new ParsingError(
+      node.callee,
+      `Unknown runtime function '${node.callee.name}'`,
+    );
   }
 
   return {

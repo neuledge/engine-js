@@ -4,7 +4,7 @@ import { generateEntityScalar, generateEntityType } from './entity';
 export const generateTypeScalar = (type: Type): string => {
   switch (type.type) {
     // case 'TypeGenerator':
-    //   throw new Error('Not implemented.');
+    //   throw new ParsingError('Not implemented.');
 
     case 'EntityExpression': {
       return type.list
@@ -21,7 +21,7 @@ export const generateTypeScalar = (type: Type): string => {
 export const generateTypeType = (type: Type): string => {
   switch (type.type) {
     // case 'TypeGenerator':
-    //   throw new Error('Not implemented.');
+    //   throw new ParsingError('Not implemented.');
 
     case 'EntityExpression': {
       return type.list

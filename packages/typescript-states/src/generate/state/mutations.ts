@@ -1,3 +1,4 @@
+import { ParsingError } from '@neuledge/states-parser';
 import { State, Mutation } from '@neuledge/states';
 import { generateDescriptionComment } from '../comments';
 import {
@@ -60,7 +61,10 @@ const generateStateMutation = (
     }
 
     default: {
-      throw new Error(`Unknown mutation type: ${mutation.mutation}`);
+      throw new ParsingError(
+        mutation.node,
+        `Unknown mutation type: ${mutation.mutation}`,
+      );
     }
   }
 

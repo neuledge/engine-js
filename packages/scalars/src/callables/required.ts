@@ -20,7 +20,7 @@ export const Required = createCallable(
     message?: string | undefined | null;
   }) => {
     if (value == null) {
-      throw new Error(message ?? 'Required value is null or undefined');
+      throw new TypeError(message ?? 'Required value is null or undefined');
     }
 
     return value;

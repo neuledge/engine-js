@@ -1,4 +1,8 @@
-import { TypeExpressionNode, TypeNode } from '@neuledge/states-parser';
+import {
+  ParsingError,
+  TypeExpressionNode,
+  TypeNode,
+} from '@neuledge/states-parser';
 import { StatesContext } from './context';
 import { NonNullableEntity, parseNonNullableEntity } from './entity';
 
@@ -19,7 +23,7 @@ export interface EntityExpression {
 
 export const parseType = (ctx: StatesContext, node: TypeNode): Type => {
   if (node.type === 'TypeGenerator') {
-    throw new Error('Not implemented');
+    throw new ParsingError(node, 'Not implemented');
   }
 
   return parseEntityExpression(ctx, node);

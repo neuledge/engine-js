@@ -8,7 +8,7 @@
 </p>
 
 <p align=center>
-  <strong>Predictable data schema and business logic definitions for databases.</strong>
+  <strong>Business rules and data integrity for databases.</strong>
 </p>
 <p align="center">
   <a href="https://www.npmjs.org/package/@neuledge/engine">

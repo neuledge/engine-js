@@ -38,7 +38,7 @@ export const IntegerScalar = createCallableScalar(
 
     if (after != null) {
       if (min != null) {
-        throw new Error('Cannot set both `min` and `after`');
+        throw new TypeError('Cannot set both `min` and `after`');
       }
 
       minRange = Math.floor(after) + 1;
@@ -47,7 +47,7 @@ export const IntegerScalar = createCallableScalar(
 
     if (below != null) {
       if (max != null) {
-        throw new Error('Cannot set both `max` and `below`');
+        throw new TypeError('Cannot set both `max` and `below`');
       }
 
       maxRange = Math.ceil(below) - 1;

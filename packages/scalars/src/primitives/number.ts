@@ -23,7 +23,7 @@ const validatePrecision = (
   below?: number | null,
 ) => {
   if (precision < scale) {
-    throw new Error('`precision` must be greater than or equal to `scale`');
+    throw new TypeError('`precision` must be greater than or equal to `scale`');
   }
 
   const digits = precision - scale;
@@ -31,7 +31,7 @@ const validatePrecision = (
 
   if (max != null) {
     if (max >= digitsBelow) {
-      throw new Error(
+      throw new TypeError(
         `Cannot set 'max' greater than equal ${digitsBelow} for 'precision' of ${precision} and 'scale' of ${scale}`,
       );
     }
@@ -39,7 +39,7 @@ const validatePrecision = (
     below = digitsBelow;
   } else {
     if (below > digitsBelow) {
-      throw new Error(
+      throw new TypeError(
         `Cannot set 'below' greater than ${digitsBelow} for 'precision' of ${precision} and 'scale' of ${scale}`,
       );
     }
@@ -78,7 +78,7 @@ export const NumberScalar = createCallableScalar(
 
     if (after != null) {
       if (min != null) {
-        throw new Error('Cannot set both `min` and `after`');
+        throw new TypeError('Cannot set both `min` and `after`');
       }
 
       validator = validator.gt(after);
@@ -86,7 +86,7 @@ export const NumberScalar = createCallableScalar(
 
     if (below != null) {
       if (max != null) {
-        throw new Error('Cannot set both `max` and `below`');
+        throw new TypeError('Cannot set both `max` and `below`');
       }
 
       validator = validator.lt(below);

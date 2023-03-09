@@ -1,4 +1,5 @@
 import {
+  StoreError,
   StorePrimaryKey,
   StoreScalarValue,
   StoreWhere,
@@ -62,7 +63,10 @@ const filterTerm = (
       }
 
       default: {
-        throw new Error(`Unknown operator: ${operator}`);
+        throw new StoreError(
+          StoreError.Code.INVALID_INPUT,
+          `Unknown operator: ${operator}`,
+        );
       }
     }
   }
