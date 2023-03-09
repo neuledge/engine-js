@@ -1,5 +1,11 @@
 # @neuledge/scalars
 
+## 0.2.0
+
+### Minor Changes
+
+- 613d5d5: Support Email and URL scalars
+
 ## 0.1.1
 
 ### Patch Changes
