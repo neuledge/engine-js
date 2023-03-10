@@ -11,25 +11,45 @@
   <strong>Business rules and data integrity for databases.</strong>
 </p>
 <p align="center">
-  <a href="https://www.npmjs.org/package/@neuledge/engine">
-    <img src="https://img.shields.io/npm/v/@neuledge/engine" alt="View On NPM">
-  </a>
-  <a href="https://github.com/neuledge/engine-js/actions/workflows/npm.yml">
+  <a href="https://github.com/neuledge/engine-js/actions/workflows/npm.yml" target="_blank">
     <img src="https://github.com/neuledge/engine-js/actions/workflows/npm.yml/badge.svg"
       alt="Build Status">
   </a>
-  <a href="https://depfu.com/github/neuledge/engine-js?project_id=37965">
+  <a href="https://depfu.com/github/neuledge/engine-js?project_id=37965" target="_blank">
     <img src="https://badges.depfu.com/badges/2c05ca219e802269062aac09ed69994b/overview.svg"
       alt="Dependency Status">
   </a>
-  <!-- <a href="https://codecov.io/gh/neuledge/engine-js">
+  <!-- <a href="https://www.npmjs.org/package/@neuledge/engine" target="_blank">
+    <img src="https://img.shields.io/npm/v/@neuledge/engine" alt="View On NPM">
+  </a> -->
+  <!-- <a href="https://codecov.io/gh/neuledge/engine-js" target="_blank">
     <img src="https://codecov.io/gh/neuledge/engine-js/branch/master/graph/badge.svg?token=4YPG4FPM23"
       alt="Coverage Status" />
   </a> -->
-  <a href="https://github.com/neuledge/engine-js/blob/main/LICENSE">
+  <a href="https://github.com/neuledge/engine-js/blob/main/LICENSE" target="_blank">
     <img src="https://img.shields.io/github/license/neuledge/engine-js" alt="License">
   </a>
+  <a href="https://twitter.com/neuledge" target="_blank">
+    <img src="https://img.shields.io/badge/follow-@neuledge-4BBAAB.svg" alt="Follow @neuledge">
+  </a>
+  <a href="https://discord.gg/49JMwxKvhF" target="_blank">
+    <img src="https://img.shields.io/discord/1035085658823327764?logo=discord&logoColor=fff"
+      alt="Discord">
+  </a>
 </p>
+<div align="center">
+  <a href="https://neuledge.com/docs" target="_blank">Documentation</a>
+  <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
+  <a href="https://discord.gg/49JMwxKvhF" target="_blank">Discord</a>
+  <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
+  <a href="https://www.npmjs.org/package/@neuledge/engine" target="_blank">NPM</a>
+  <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
+  <a href="https://github.com/neuledge/engine-js/issues" target="_blank">Issues</a>
+  <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
+  <a href="https://twitter.com/neuledge" target="_blank">@neuledge</a>
+  <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
+  <a href="https://neuledge.com" target="_blank">Website</a>
+</div>
 <br>
 
 [Neuledge](https://neuledge.com) is an open-source library that simplifies data management and enhances data integrity for databases. It offers a powerful schema language that enables you to define your data models and business logic in a precise and customizable way. The schema language supports scalar types such as `Email(at: 'my-company.com')` and `Integer(min: 1, max: 10)`, providing type-safe data models and ensuring that you always receive the expected data.
