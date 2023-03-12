@@ -1,5 +1,11 @@
 # @neuledge/states-cli
 
+## 0.1.2
+
+### Patch Changes
+
+- 7149511: Bump cli version
+
 ## 0.1.1
 
 ### Patch Changes
