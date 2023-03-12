@@ -16,6 +16,42 @@ const core: Scalar<StringScalar> = {
   encode: (value) => z.string().parse(value),
 };
 
+const formatValidator = ({
+  trim,
+  normalize,
+  lowercase,
+  uppercase,
+}: {
+  trim?: boolean | null;
+  normalize?: boolean | null;
+  lowercase?: boolean | null;
+  uppercase?: boolean | null;
+}) => {
+  let validator = z.string();
+
+  if (trim) {
+    validator = validator.trim();
+  }
+
+  if (normalize) {
+    validator = validator.transform((value) => value.normalize()) as never;
+  }
+
+  if (lowercase) {
+    if (uppercase) {
+      throw new TypeError(
+        '`lowercase` and `uppercase` cannot be used together',
+      );
+    }
+
+    validator = validator.transform((value) => value.toLowerCase()) as never;
+  } else if (uppercase) {
+    validator = validator.transform((value) => value.toUpperCase()) as never;
+  }
+
+  return validator;
+};
+
 export const StringScalar = createCallableScalar(
   {
     min: { type: IntegerScalar({ min: 0 }), nullable: true },
@@ -70,39 +106,3 @@ export const StringScalar = createCallableScalar(
     };
   },
 );
-
-const formatValidator = ({
-  trim,
-  normalize,
-  lowercase,
-  uppercase,
-}: {
-  trim?: boolean | null;
-  normalize?: boolean | null;
-  lowercase?: boolean | null;
-  uppercase?: boolean | null;
-}) => {
-  let validator = z.string();
-
-  if (trim) {
-    validator = validator.trim();
-  }
-
-  if (normalize) {
-    validator = validator.transform((value) => value.normalize()) as never;
-  }
-
-  if (lowercase) {
-    if (uppercase) {
-      throw new TypeError(
-        '`lowercase` and `uppercase` cannot be used together',
-      );
-    }
-
-    validator = validator.transform((value) => value.toLowerCase()) as never;
-  } else if (uppercase) {
-    validator = validator.transform((value) => value.toUpperCase()) as never;
-  }
-
-  return validator;
-};
