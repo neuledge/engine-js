@@ -1,5 +1,11 @@
 # @neuledge/scalars
 
+## 0.3.0
+
+### Minor Changes
+
+- 83b7147: Add case and normalize transformers
+
 ## 0.2.0
 
 ### Minor Changes

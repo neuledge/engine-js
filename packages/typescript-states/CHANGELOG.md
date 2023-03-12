@@ -1,5 +1,13 @@
 # @neuledge/typescript-states
 
+## 0.1.3
+
+### Patch Changes
+
+- da48b9c: Fix mutation parameters missing on generated code body
+- Updated dependencies [da48b9c]
+  - @neuledge/states@0.1.3
+
 ## 0.1.2
 
 ### Patch Changes
