@@ -8,7 +8,7 @@
 </p>
 
 <p align=center>
-  <strong>The best way to model, share and interact with databases at any scale.</strong>
+  <strong>The best way to model, share and interact with databases.</strong>
 </p>
 <p align="center">
   <a href="https://github.com/neuledge/engine-js/actions/workflows/npm.yml" target="_blank">
