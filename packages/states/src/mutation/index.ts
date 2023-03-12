@@ -37,7 +37,7 @@ export const parseMutation = (
     node.from ? target : null,
     node.parameters,
   );
-  const body = parseBody(ctx, params, target, node);
+  const body = parseBody(ctx, params, node);
 
   const mutation: Mutation = {
     type: 'Mutation',
@@ -151,33 +151,5 @@ const parseReturns = (
 const parseBody = (
   ctx: StatesContext,
   params: ParametersContext,
-  target: State | Either,
   node: MutationNode,
-): Record<string, Property> => {
-  let body = parseProperties(ctx, params, node.body);
-
-  if (!node.from) {
-    body = { ...initializeBody(target as State), ...body };
-  }
-
-  return body;
-};
-
-const initializeBody = (state: State): Record<string, Property> => {
-  const body: Record<string, Property> = {};
-
-  for (const field of Object.values(state.fields)) {
-    if (field.type === 'RelationField') continue;
-
-    body[field.name] = {
-      type: 'Property',
-      name: field.name,
-      value: {
-        type: 'Literal',
-        value: null,
-      },
-    };
-  }
-
-  return body;
-};
+): Record<string, Property> => parseProperties(ctx, params, node.body);

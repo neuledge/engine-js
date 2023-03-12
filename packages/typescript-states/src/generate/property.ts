@@ -1,24 +1,43 @@
-import { Property, State } from '@neuledge/states';
+import { Parameter, Property, State } from '@neuledge/states';
 import { generateExpression } from './expression';
 
 export const generateStateFunctionBody = (
   state: State,
-  properties: Property[],
+  parameters: Record<string, Parameter>,
+  properties: Record<string, Property>,
   extendsThis: boolean,
   indent: string,
-): string =>
-  `{\n` +
-  `${indent}  return {\n` +
-  (extendsThis ? `${indent}    ...this,\n` : '') +
-  `${indent}    $state: '${state.name}',\n` +
-  properties
-    .map(
-      (property) =>
-        `${indent}    ${generateProperty(property, `${indent}    `)},\n`,
-    )
-    .join('') +
-  `${indent}  };\n` +
-  `${indent}}`;
+): string => {
+  let res =
+    `{\n` +
+    `${indent}  return {\n` +
+    (extendsThis ? `${indent}    ...this,\n` : '') +
+    `${indent}    $state: '${state.name}',\n`;
+
+  if (!extendsThis) {
+    for (const key in state.fields) {
+      if (properties[key] || parameters[key]) continue;
+
+      res += `${indent}    ${key}: null,\n`;
+    }
+  }
+
+  for (const key in parameters) {
+    if (properties[key] || !state.fields[key]) continue;
+
+    res += `${indent}    ${key},\n`;
+  }
+
+  for (const key in properties) {
+    const property = properties[key];
+
+    res += `${indent}    ${generateProperty(property, `${indent}    `)},\n`;
+  }
+
+  res += `${indent}  };\n${indent}}`;
+
+  return res;
+};
 
 const generateProperty = (property: Property, indent: string): string => {
   const value = generateExpression(property.value, indent);

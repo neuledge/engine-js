@@ -80,14 +80,14 @@ const generateCreateMutationFn = (
   indent: string,
 ): string => {
   const parameters = Object.values(mutation.parameters);
-  const properties = Object.values(mutation.body);
 
   if (!parameters.length) {
     return `$.mutation<typeof ${state.name}>('${
       mutation.mutation
     }', async function () ${generateStateFunctionBody(
       state,
-      properties,
+      mutation.parameters,
+      mutation.body,
       false,
       indent,
     )})`;
@@ -101,7 +101,13 @@ const generateCreateMutationFn = (
       mutation.mutation
     }', async function (${generateParametersArgument(
       parameters,
-    )}) ${generateStateFunctionBody(state, properties, false, indent)})`
+    )}) ${generateStateFunctionBody(
+      state,
+      mutation.parameters,
+      mutation.body,
+      false,
+      indent,
+    )})`
   );
 };
 
@@ -111,7 +117,6 @@ const generateUpdateMutationFn = (
   indent: string,
 ): string => {
   const parameters = Object.values(mutation.parameters);
-  const properties = Object.values(mutation.body);
 
   if (!parameters.length) {
     return (
@@ -119,7 +124,8 @@ const generateUpdateMutationFn = (
       `${indent}  '${mutation.mutation}',\n` +
       `${indent}  async function () ${generateStateFunctionBody(
         mutation.returns as State,
-        properties,
+        mutation.parameters,
+        mutation.body,
         true,
         `${indent}  `,
       )},\n` +
@@ -138,7 +144,8 @@ const generateUpdateMutationFn = (
       parameters,
     )}) ${generateStateFunctionBody(
       mutation.returns as State,
-      properties,
+      mutation.parameters,
+      mutation.body,
       true,
       indent,
     )})`
@@ -165,6 +172,12 @@ const generateDeleteMutationFn = (
       mutation.mutation
     }', async function (${generateParametersArgument(
       parameters,
-    )}) ${generateStateFunctionBody(state, properties, true, indent)})`
+    )}) ${generateStateFunctionBody(
+      state,
+      mutation.parameters,
+      mutation.body,
+      true,
+      indent,
+    )})`
   );
 };
