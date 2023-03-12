@@ -8,7 +8,7 @@
 </p>
 
 <p align=center>
-  <strong>Business rules and data integrity for databases.</strong>
+  <strong>The best way to model, share and interact with databases at any scale.</strong>
 </p>
 <p align="center">
   <a href="https://github.com/neuledge/engine-js/actions/workflows/npm.yml" target="_blank">
@@ -52,20 +52,6 @@
 </div>
 <br>
 
-[Neuledge](https://neuledge.com) is an open-source library that simplifies data management and enhances data integrity for databases. It offers a powerful schema language that enables you to define your data models and business logic in a precise and customizable way. The schema language supports scalar types such as `Email(at: 'my-company.com')` and `Integer(min: 1, max: 10)`, providing type-safe data models and ensuring that you always receive the expected data.
-
-With Neuledge, you can create different states for the same entity, each with its own set of fields and mutations. These states are stored and accessed from the same table, with an abstraction layer that defines which fields are needed for each state. For example, you can define a "DraftPost" state with a set of fields and mutations, and then create a "PublishedPost" state that inherits from "DraftPost" and adds more fields and restrictions necessary for published posts.
-
-The Neuledge schema language is identical for relational and non-relational databases, giving you the flexibility to use it with any database of your choice. It allows you to define precise field types, validate data mutations, and enforce business rules across different states. Whether you are working with a small or complex data model, Neuledge makes it easy to manage and maintain your data.
-
-<br>
-
-## ❤️ Sponsored by
-
-If you find Neuledge useful and would like to support its ongoing development and maintenance, please consider [sponsoring us](https://github.com/sponsors/neuledge). Your sponsorship will help us to continue to improve and evolve this project. Thank you for your support!
-
-<br>
-
 ## Table of contents
 
 - [Introduction](#-introduction)
@@ -77,15 +63,178 @@ If you find Neuledge useful and would like to support its ongoing development an
 
 <br>
 
-# 🎉 Introduction
+### ❤️ Sponsored by
 
-### The problem with traditional data modeling approaches
+If you find Neuledge useful and would like to support its ongoing development and maintenance, please consider [sponsoring us](https://github.com/sponsors/neuledge). Your sponsorship will help us to continue to improve and evolve this project. Thank you for your support!
 
-Developers often face challenges when defining and managing data models. Traditional approaches like using ORM frameworks, writing raw SQL queries, or defining models in application code can introduce overhead, complexity, limitations, and inconsistencies. These methods can also lead to data migrations and schema changes that can cause downtime or data loss. Additionally, as the application grows and the data model becomes more complex, it can be difficult to scale and maintain these approaches.
+<br>
 
-### How Neuledge solves these problems
+# 👋 Introduction
 
-Neuledge schema language offers a powerful and flexible solution for defining and managing data models. It allows you to define your data schema and business logic in a precise and customizable way, avoiding data migrations and making it easy to handle complex data models and workflows. With Neuledge schema language, you can define each state of your entities, describe the exact fields and their types that are available in each state, and specify the allowed mutations and data validation rules. This ensures that your data remains consistent and valid over time, while also providing better data integrity and making it easier to work with your data. Neuledge schema is also language and database agnostic, making it highly flexible and adaptable to different environments and use cases.
+[Neuledge](https://neuledge.com) is an open-source library that simplifies data management and enhances data integrity for databases. It offers a powerful schema language that enables you to define your data models and business logic in a precise and customizable way. The schema language supports scalar types such as `Email` and `Integer`, providing type-safe data models and ensuring that you always receive the expected data.
+
+With Neuledge, you can create different states for the same entity, each with its own set of fields and mutations. These states are stored and accessed from the same table, with an abstraction layer that defines which fields are needed for each state. For example, you can define a "DraftPost" state with a set of fields and mutations, and then create a "PublishedPost" state that inherits from "DraftPost" and adds more fields and restrictions necessary for published posts.
+
+The Neuledge schema language is identical for relational and non-relational databases, giving you the flexibility to use it with any database of your choice. It allows you to define precise field types, validate data mutations, and enforce business rules across different states. Whether you are working with a small or complex data model, Neuledge makes it easy to manage and maintain your data.
+
+### Fetching entries from the database:
+
+<table>
+<tr>
+<th>Without Neuledge</th>
+<th>With Neuledge</th>
+</tr>
+<tr>
+<td>
+  
+```ts
+if (
+  user.status === 'ACTIVE' &&
+  user.email != null &&
+  user.firstName != null
+) {
+  // handle user login..
+  console.info(`Login ${user.firstName}`);
+}
+```
+  
+</td>
+<td>
+
+```ts
+// skip null checks thanks to the schema state
+
+if (user.$state === 'ActiveUser') {
+  // handle user login..
+  console.info(`Login ${user.firstName}`);
+}
+```
+
+</td>
+</tr>
+</table>
+
+### Validating data mutations:
+
+<table>
+<tr>
+<th>Without Neuledge</th>
+<th>With Neuledge</th>
+</tr>
+<tr>
+<td>
+
+```ts
+// implmenet data mutations manually
+
+await db.updateOne({
+  find: {
+    id: 1234,
+    status: 'DRAFT',
+    title: { $exists: true },
+    content: { $exists: true },
+  },
+  set: {
+    status: 'PUBLISHED',
+    publishedAt: new Date(),
+  },
+});
+```
+
+</td>
+<td>
+
+<!-- prettier-ignore -->
+```ts
+// use the `publish` mutation defined 
+// on the database schema
+
+await db
+  .alterUnique(DraftPost)
+  .unique({ id: 1234 })
+  .publish();
+```
+
+</td>
+</tr>
+</table>
+
+### Handling legacy code and migrations:
+
+<table>
+<tr>
+<th>Without Neuledge</th>
+<th>With Neuledge</th>
+</tr>
+<tr>
+<td>
+
+```ts
+let username;
+
+if (user.username != null) {
+  username = user.username;
+} else if (user.migratedUsername != null) {
+  username = user.migratedUsername;
+} else {
+  throw new Error('Username is missing');
+}
+```
+
+</td>
+<td>
+
+```ts
+// both `username` and `migratedUsername`
+// are mapped to the same field by the engine
+// so you can access them directly
+
+const username = user.username;
+```
+
+</td>
+</tr>
+</table>
+
+### Quering legacy code and migrations:
+
+<table>
+<tr>
+<th>Without Neuledge</th>
+<th>With Neuledge</th>
+</tr>
+<tr>
+<td>
+
+```ts
+const user = await db.findOne({
+  where: [
+    {
+      username: 'john',
+    },
+    {
+      migratedUsername: 'john',
+    },
+  ],
+});
+```
+
+</td>
+<td>
+
+```ts
+// the engine will automatically transform
+// the query to include both `username` and
+// `migratedUsername` in the `where` clause
+
+const user = await db.findUnique(...User).where({
+  username: 'john',
+});
+```
+
+</td>
+</tr>
+</table>
 
 <br>
 
@@ -111,9 +260,9 @@ Neuledge schema language offers a powerful and flexible solution for defining an
 
 # 🏁 Getting started
 
-## Beta release ⚠️
+## ⚠️ Beta release
 
-Neuledge is still in beta release. Help us improve it by [join our community](#-join-the-community) and give us a star ⭐️. If you are interested in using Neuledge in your project, please join our [Discord server](https://discord.gg/49JMwxKvhF) and we will be happy to help you.
+Neuledge is still in beta. Help us improve it by [join our community](#-join-the-community) and give us a star ⭐️. If you are interested in using Neuledge in your project, please join our [Discord server](https://discord.gg/49JMwxKvhF) and we will be happy to help you.
 
 <br />
 
@@ -150,108 +299,86 @@ You should add this file to your `.gitignore` file, as it will be generated auto
 
 ## Define your schema files
 
-Create a `states` folder and your first `.states` files:
-
-#### `states/posts.states`
+Create a `states` folder and your first `users.states` file:
 
 ```states
-either Post = DraftPost | PublishedPost
-
-"""
-An unpublished post
-"""
-state DraftPost {
-  @id(auto: "increment") id: Integer = 1
-  category?: Category = 2
-  title: String = 3
-  content?: String = 4
+state CreatedUser {
+  @id(auto: 'increment') id: Integer = 1
+  firstName?: String = 2
+  lastName?: String = 3
+  @unique email: Email = 4
+  @index createdAt: DateTime = 6
 }
 
-"""
-A published post
-"""
-@index(fields: ["category", "title"])
-state PublishedPost from DraftPost {
-  category: Category = 1
-  content: String = 2
-  publishedAt: DateTime = 3
+state ActiveUser from CreatedUser {
+  firstName: String = 1
+  lastName: String = 2
+  passwordHash?: Buffer = 3
+  updatedAt: DateTime = 4
 }
 
-"""
-Create a new draft post
-"""
+state SuspendedUser from ActiveUser {
+  suspendedAt: DateTime = 1
+}
+
+state DeletedUser from CreatedUser {
+  -firstName
+  -lastName
+  -email
+
+  deletedAt: DateTime = 1
+}
+
 create(
-  title: String
-  content?: String
-  category?: Category
-): DraftPost
-
-"""
-Update a draft post
-"""
-DraftPost.update(
-  title: String
-  content?: String
-  category?: Category
-): DraftPost
-
-"""
-Update a post
-"""
-Post.update(
-  title: String
-  content: String
-  category: Category
-): Post
-
-"""
-Publish a draft post
-"""
-DraftPost.publish(): PublishedPost => {
-  content: Required(value: this.content),
-  category: Required(value: this.category),
-  publishedAt: DateTime(),
+  firstName: String,
+  lastName: String,
+  email: Email,
+): CreatedUser => {
+  createdAt: DateTime(),
 }
 
-"""
-Delete a post
-"""
-Post.delete(): Void
-```
-
-#### `states/categories.states`
-
-```states
-"""
-A posts category
-"""
-state Category {
-  @id(auto: "increment") id: Integer = 1
-  name: String = 2
-  description?: String = 3
-  @reference(field: 'category') posts: Post[] = 4
+CreatedUser.activate(
+  firstName: String,
+  lastName: String,
+  passwordHash?: Buffer,
+): ActiveUser => {
+  updatedAt: DateTime(),
 }
 
-"""
-Create a new category
-"""
 create(
-  name: String
-  description?: String
-): Category
+  firstName: String,
+  lastName: String,
+  email: Email,
+  passwordHash?: Buffer,
+): ActiveUser => {
+  createdAt: DateTime(),
+  updatedAt: DateTime(),
+}
 
-"""
-Update the category details
-"""
-Category.update(
-  name: String
-  description?: String
-): Category
+ActiveUser.update(
+  firstName: String,
+  lastName: String,
+  email: Email,
+  passwordHash?: Buffer,
+): ActiveUser => {
+  updatedAt: DateTime(),
+}
 
-"""
-Delete the category and all it's related posts
-"""
-Category.delete(): Void
+ActiveUser.suspend(): SuspendedUser => {
+  suspendedAt: DateTime(),
+}
+
+SuspendedUser.activate(): ActiveUser => {
+  updatedAt: DateTime(),
+}
+
+either User = ActiveUser | SuspendedUser
+
+User.delete(): DeletedUser => {
+  deletedAt: DateTime(),
+}
+
+CreatedUser.delete(): Void
 
 ```
 
@@ -283,54 +410,46 @@ const engine = new NeuledgeEngine({
 ## Query the database
 
 ```ts
-import { Category } from './states.codegen';
+import { CreatedUser, User } from './states.codegen';
 
-// create a new category
-const category = await engine
-  .initOne(Category)
+// create a new user
+const createdUser = await engine
+  .initOne(CreatedUser)
   .create({
-    name: 'GraphQL',
+    firstName: 'John',
+    lastName: 'Doe',
+    email: 'john.doe@example.com',
   })
   .select();
 
-// update the category
-const updatedCategory = await engine
-  .alterUniqueOrThrow(Category)
+// activate the user
+const activeUser = await engine
+  .alterUniqueOrThrow(CreatedUser)
+  .activate()
+  .unique({ id: createdUser.id })
+  .select();
+
+// update the user information
+const updatedUser = await engine
+  .alterUniqueOrThrow(ActiveUser)
   .update({
-    description:
-      'GraphQL is a query language for APIs and a runtime for fulfilling those queries with your existing data.',
+    firstName: 'Jane',
+    lastName: 'Doe',
+    email: 'john.doe@example.com',
+    passwordHash: Buffer.from('password'),
   })
-  .unique({ id: category.id })
+  .unique({ id: activeUser.id })
   .select();
 
-// create new draft post
-const draftPost = await engine
-  .initOne(DraftPost)
-  .create({
-    title: 'GraphQL vs REST',
-    content:
-      'GraphQL is a query language for APIs and a runtime for fulfilling those queries with your existing data.',
-    category: { id: category.id },
-  })
+// suspend the user
+const suspendedUser = await engine
+  .alterUniqueOrThrow(ActiveUser)
+  .suspend()
+  .unique({ id: updatedUser.id })
   .select();
 
-// publish the draft post
-const publishedPost = await engine
-  .alterUniqueOrThrow(DraftPost)
-  .publish()
-  .unique({ id: draftPost.id })
-  .select();
-
-// query published posts by category
-const publisedPosts = await engine.findMany(PublishedPost).where({
-  category: { id: category.id },
-});
-
-// list posts with their categories
-const categories = await engine
-  .findMany(PublishedPost)
-  .expand('category')
-  .limit(10);
+// list active and suspended users
+const users = await engine.findMany(...User).limit(10);
 ```
 
 <br>
