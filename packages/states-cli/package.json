@@ -1,6 +1,6 @@
 {
   "name": "@neuledge/states-cli",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Neuledge Engine states CLI for parsing and converting *.states files",
   "keywords": [
     "neuledge",
