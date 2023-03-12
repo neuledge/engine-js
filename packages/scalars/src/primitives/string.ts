@@ -21,19 +21,18 @@ export const StringScalar = createCallableScalar(
     min: { type: IntegerScalar({ min: 0 }), nullable: true },
     max: { type: IntegerScalar({ min: 0 }), nullable: true },
     trim: { type: BooleanScalar, nullable: true },
+    lowercase: { type: BooleanScalar, nullable: true },
+    uppercase: { type: BooleanScalar, nullable: true },
+    normalize: { type: BooleanScalar, nullable: true },
     startsWith: { type: core, nullable: true },
     endsWith: { type: core, nullable: true },
     regex: { type: core, nullable: true },
   },
   (
-    { min, max, trim, startsWith, endsWith, regex },
+    { min, max, startsWith, endsWith, regex, ...format },
     key,
   ): Scalar<StringScalar> => {
-    let validator = z.string();
-
-    if (trim) {
-      validator = validator.trim();
-    }
+    let validator = formatValidator(format);
 
     if (min != null) {
       validator = validator.min(min);
@@ -71,3 +70,39 @@ export const StringScalar = createCallableScalar(
     };
   },
 );
+
+const formatValidator = ({
+  trim,
+  normalize,
+  lowercase,
+  uppercase,
+}: {
+  trim?: boolean | null;
+  normalize?: boolean | null;
+  lowercase?: boolean | null;
+  uppercase?: boolean | null;
+}) => {
+  let validator = z.string();
+
+  if (trim) {
+    validator = validator.trim();
+  }
+
+  if (normalize) {
+    validator = validator.transform((value) => value.normalize()) as never;
+  }
+
+  if (lowercase) {
+    if (uppercase) {
+      throw new TypeError(
+        '`lowercase` and `uppercase` cannot be used together',
+      );
+    }
+
+    validator = validator.transform((value) => value.toLowerCase()) as never;
+  } else if (uppercase) {
+    validator = validator.transform((value) => value.toUpperCase()) as never;
+  }
+
+  return validator;
+};

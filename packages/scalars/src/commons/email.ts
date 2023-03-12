@@ -1,5 +1,5 @@
 import { createCallableScalar } from '@/generator';
-import { StringScalar } from '@/primitives';
+import { BooleanScalar, StringScalar } from '@/primitives';
 import { getStringShape } from '@/primitives/shapes';
 import { Scalar } from '@/scalar';
 import { z } from 'zod';
@@ -21,9 +21,17 @@ export const EmailScalar = createCallableScalar(
       }),
       nullable: true,
     },
+    lowercase: {
+      type: BooleanScalar,
+      nullable: true,
+    },
   },
-  ({ at }, key): Scalar<StringScalar> => {
+  ({ at, lowercase }, key): Scalar<StringScalar> => {
     let validator = z.string().trim().email();
+
+    if (lowercase) {
+      validator = validator.transform((value) => value.toLowerCase()) as never;
+    }
 
     if (at != null) {
       validator = validator.refine((value) => value.endsWith(`@${at}`), {
