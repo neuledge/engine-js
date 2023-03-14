@@ -40,6 +40,6 @@
   "dependencies": {
     "@neuledge/scalars": "^0.3.0",
     "@neuledge/states-parser": "^0.1.1",
-    "zod": "^3.20.6"
+    "zod": "^3.21.4"
   }
 }
