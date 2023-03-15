@@ -77,6 +77,10 @@ With Neuledge, you can create different states for the same entity, each with it
 
 The schema language is identical for relational and non-relational databases, giving you the flexibility to use it with any database of your choice. It allows you to define precise field types, validate data mutations, and enforce business rules across different states. Whether you are working with a small or complex data model, Neuledge makes it easy to manage and maintain your data.
 
+<br>
+
+## Quick comparisons
+
 ### Fetching entries from the database:
 
 <table>
@@ -255,6 +259,141 @@ const user = await db.findUnique(...User).where({
 - 📚 **Comprehensive documentation:** Learn how to use Neuledge with ease, thanks to its comprehensive and well-organized documentation. Access tutorials, examples, and reference guides, and get up to speed quickly with the language and its features.
 
 - 🌟 **Active community:** Join a vibrant and supportive community of developers and enthusiasts, and share your experiences and insights with others. Contribute to the development of Neuledge, report bugs, and suggest new features and improvements.
+
+<br>
+
+## Schema examples
+
+### Unique state for each status:
+
+<table>
+<tr>
+<th>RegisteredUser</th>
+<th>ActiveUser</th>
+</tr>
+
+<tr>
+<td>
+
+```states
+state RegisteredUser {
+  id: Integer = 1
+  email: Email = 2
+  firstName?: String = 3
+  lastName?: String = 4
+  createdAt: DateTime = 5
+}
+```
+
+</td>
+<td>
+
+```states
+# Extend the `RegisteredUser` state
+# with additional fields
+
+state ActiveUser from RegisteredUser {
+  firstName: String = 1
+  lastName: String = 2
+  passwordHash: Buffer = 3
+  lastLoginAt: DateTime = 4
+}
+```
+
+</td>
+</tr>
+</table>
+
+### Percise data mutations by state:
+
+<table>
+<tr>
+<th>Register a user</th>
+<th>Activate a user</th>
+</tr>
+
+<tr>
+<td>
+
+```states
+register(
+  email: Email,
+  firstName?: String,
+  lastName?: String,
+): RegisteredUser => {
+  createdAt: DateTime(),
+}
+```
+
+</td>
+<td>
+
+```states
+RegisteredUser.activate(
+  passwordHash: Buffer
+): ActiveUser => {
+  firstName: Required(value: this.firstName),
+  lastName: Required(value: this.lastName),
+  lastLoginAt: DateTime(),
+}
+```
+
+</td>
+</tr>
+</table>
+
+### Custom data validations:
+
+```states
+state Person {
+  name: String(normalize: true, trim: true, min: 3, max: 50) = 1
+  email: Email(lowercase: true, trim: true, at: "gmail.com") = 2
+  profilePicture?: URL(secure: true) = 3
+  age: Integer(min: 18, max: 100) = 4
+  createdAt: DateTime = 5
+}
+```
+
+### Seemless data migrations on the fly:
+
+<table>
+<tr>
+<th>Current state</th>
+<th>Original state</th>
+</tr>
+
+<tr>
+<td>
+
+```states
+state User from LegacyUser {
+  -slug
+  @unique username: String = 1
+}
+
+# runtime database migration
+(LegacyUser): User => {
+  username: this.slug,
+}
+```
+
+</td>
+<td>
+
+```states
+state LegacyUser {
+  id: Integer = 1
+  email: Email = 2
+  slug: String = 3
+  createdAt: DateTime = 4
+}
+```
+
+</td>
+</tr>
+</table>
+
+_(Runtime migrations are partially supported, will be fully supported in the future releases)_
 
 <br>
 
