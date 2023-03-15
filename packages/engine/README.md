@@ -289,9 +289,6 @@ state RegisteredUser {
 <td>
 
 ```states
-# Extend the `RegisteredUser` state
-# with additional fields
-
 state ActiveUser from RegisteredUser {
   firstName: String = 1
   lastName: String = 2
