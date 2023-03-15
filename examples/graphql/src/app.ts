@@ -1,4 +1,4 @@
-import { fastify as Fastify } from 'fastify';
+import Fastify from 'fastify';
 import fs from 'node:fs/promises';
 import mercurius from 'mercurius';
 import { fileURLToPath } from 'node:url';
