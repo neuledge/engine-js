@@ -76,7 +76,7 @@ If you find Neuledge useful and would like to support its ongoing development an
 With Neuledge, you can create different states for the same entity, each with its own set of fields and mutations. These states are stored and accessed from the same table, with an abstraction layer that defines which fields are needed for each state. For example, you can define a "DraftPost" state with a set of fields and mutations, and then create a "PublishedPost" state that inherits from "DraftPost" and adds more fields and restrictions necessary for published posts.
 
 ```mermaid
-graph LR
+flowchart LR
   DraftPost -->|publish| PublishedPost
   DraftPost -->|delete| Void
   PublishedPost -->|archive| ArchivedPost
