@@ -79,6 +79,31 @@ The schema language is identical for relational and non-relational databases, gi
 
 <br>
 
+# 🚀 Features
+
+🌍&nbsp; **Intuitive schema** <br>
+&nbsp; &nbsp; &nbsp; &nbsp; Define your data models and business logic using a simple and intuitive schema language.
+
+📏&nbsp; **Custom types** <br>
+&nbsp; &nbsp; &nbsp; &nbsp; Define custom scalar such as `Integer(min: 5, max: 10)` or `Email(at: "my-company.com")`.
+
+🛡️&nbsp; **Percise modeling** <br>
+&nbsp; &nbsp; &nbsp; &nbsp; Create different states for the same entity, each with its own set of fields and mutations.
+
+🔄&nbsp; **Zero migrations** <br>
+&nbsp; &nbsp; &nbsp; &nbsp; Avoid data migrations with automatic query rewriting per each state.
+
+🚦&nbsp; **Explicit mutations** <br>
+&nbsp; &nbsp; &nbsp; &nbsp; Define explicit mutations for each state, and allow only predefined alterations.
+
+🔍&nbsp; **Type-safe queries** <br>
+&nbsp; &nbsp; &nbsp; &nbsp; Validate your queries at compile time, with a simple and powerful query language.
+
+🔌&nbsp; **Database agnostic** <br>
+&nbsp; &nbsp; &nbsp; &nbsp; The schema language is identical for relational and non-relational databases.
+
+<br>
+
 ## Quick comparisons
 
 ### Fetching entries from the database:
@@ -239,26 +264,6 @@ const user = await db.findUnique(...User).where({
 </td>
 </tr>
 </table>
-
-<br>
-
-# 🚀 Features
-
-- 🛡️ **Precise data modeling:** Define your data schema in a precise and customizable way, with different entities, fields, types, and validation rules for each state.
-
-- 🔄 **Zero data migrations:** Avoid data migrations by allowing the engine to transform the user query and apply it for each state individually.
-
-- 🚦 **Allowed mutations and data validation:** Define the allowed mutations and prevent making invalid changes to the data. Specify rules for creating, updating, and deleting entities, and ensure that your data remains consistent and valid over time.
-
-- 🔍 **Powerful querying:** Query your data with precision and flexibility, using a simple and intuitive syntax. Use a variety of filters, conditions, and aggregations to find the data you need, and make complex queries with ease.
-
-- 🔌 **Database and language agnostic:** Use Neuledge with any programming language or database system, thanks to its language-agnostic design. This makes it highly flexible and adaptable to different environments and use cases.
-
-- 💻 **Easy integration:** Integrate Neuledge with your existing application stack with ease, thanks to its simple and modular architecture. Use it as a standalone server or embed it in your application code, and enjoy seamless communication with other services and components.
-
-- 📚 **Comprehensive documentation:** Learn how to use Neuledge with ease, thanks to its comprehensive and well-organized documentation. Access tutorials, examples, and reference guides, and get up to speed quickly with the language and its features.
-
-- 🌟 **Active community:** Join a vibrant and supportive community of developers and enthusiasts, and share your experiences and insights with others. Contribute to the development of Neuledge, report bugs, and suggest new features and improvements.
 
 <br>
 
