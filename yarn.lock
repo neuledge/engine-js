@@ -1703,10 +1703,10 @@
   dependencies:
     ts-jest "^29.0.5"
 
-"@neuledge/tsconfig@^2.0.0-next.0":
-  version "2.0.0-next.0"
-  resolved "https://registry.yarnpkg.com/@neuledge/tsconfig/-/tsconfig-2.0.0-next.0.tgz#99aecf94e9ca7d0b203fa740df640f495310924c"
-  integrity sha512-TGxZFy+3doe8YiR0uYflUEbT8ggb6dWdXdnU37UNm53bV5dI3A3CAGkxqZAoPDUCDL+Y9+vDu7j7TM1SdpBdng==
+"@neuledge/tsconfig@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@neuledge/tsconfig/-/tsconfig-2.0.0.tgz#4ea34e88ae5c89115485197ec5e44d0351dcff10"
+  integrity sha512-3Puy0j8+c826tMqhCAnhn05IlWZr77DrTyZWeYv2+yGRfMG3ioPe97h8ZhGifVmSoACgmalxc1RYOuPzLyY2EA==
 
 "@nodelib/fs.scandir@2.1.5":
   version "2.1.5"
