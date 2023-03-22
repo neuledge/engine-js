@@ -1,5 +1,16 @@
 # @neuledge/typescript-states
 
+## 0.2.0
+
+### Minor Changes
+
+- 0052b53: Rename index "direction" argument to "sort"
+
+### Patch Changes
+
+- Updated dependencies [0052b53]
+  - @neuledge/states@0.2.0
+
 ## 0.1.3
 
 ### Patch Changes

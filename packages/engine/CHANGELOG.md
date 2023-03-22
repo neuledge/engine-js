@@ -1,5 +1,15 @@
 # @neuledge/engine
 
+## 0.2.0
+
+### Minor Changes
+
+- 0052b53: Rename index "direction" argument to "sort"
+
+### Patch Changes
+
+- @neuledge/scalars@0.3.1
+
 ## 0.1.3
 
 ### Patch Changes

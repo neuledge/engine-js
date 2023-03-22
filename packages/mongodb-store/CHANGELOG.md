@@ -1,5 +1,16 @@
 # @neuledge/mongodb-store
 
+## 0.2.0
+
+### Minor Changes
+
+- 0052b53: Rename index "direction" argument to "sort"
+
+### Patch Changes
+
+- Updated dependencies [0052b53]
+  - @neuledge/store@0.2.0
+
 ## 0.1.2
 
 ### Patch Changes
