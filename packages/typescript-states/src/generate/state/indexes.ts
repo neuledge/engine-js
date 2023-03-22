@@ -43,10 +43,7 @@ export const generateStateOptionalIndexes = (
               ? index.name
               : `'${index.name.replace(/['\\]/g, '\\$1')}'`
           }: { fields: [${Object.entries(index.fields)
-            .map(
-              ([field, direction]) =>
-                `'${direction === 'asc' ? `+` : '-'}${field}'`,
-            )
+            .map(([field, sort]) => `'${sort === 'asc' ? `+` : '-'}${field}'`)
             .join(', ')}]${index.unique ? ', unique: true' : ''} } as const,`,
       )
       .join('') +

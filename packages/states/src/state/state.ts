@@ -105,7 +105,7 @@ const decorators: Decorators<State> = {
         ? fields.map((field): [string, 'asc'] => [field, 'asc'])
         : Object.entries(fields);
 
-      for (const [key, direction] of fieldsEntries) {
+      for (const [key, sort] of fieldsEntries) {
         const field = state.fields[key];
 
         if (!field) {
@@ -116,7 +116,7 @@ const decorators: Decorators<State> = {
         }
 
         state.primaryKey.fields[field.name] =
-          direction === 1 || direction === 'asc' ? 'asc' : 'desc';
+          sort === 1 || sort === 'asc' ? 'asc' : 'desc';
       }
 
       if (auto) {
@@ -152,7 +152,7 @@ const decorators: Decorators<State> = {
         unique,
       };
 
-      for (const [key, direction] of fieldsEntries) {
+      for (const [key, sort] of fieldsEntries) {
         const field = state.fields[key];
 
         if (!field) {
@@ -163,7 +163,7 @@ const decorators: Decorators<State> = {
         }
 
         index.fields[field.name] =
-          direction === 1 || direction === 'asc' ? 'asc' : 'desc';
+          sort === 1 || sort === 'asc' ? 'asc' : 'desc';
       }
 
       if (state.indexes[index.name]) {

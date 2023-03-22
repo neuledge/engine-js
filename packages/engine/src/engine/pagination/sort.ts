@@ -35,15 +35,15 @@ export const convertSortQuery = <S extends StateDefinition>(
   const res: StoreSort = {};
 
   for (const key of sort as SortDefinition<S>) {
-    let direction: 'asc' | 'desc';
+    let sort: 'asc' | 'desc';
     switch (key[0]) {
       case '+': {
-        direction = reverse ? 'desc' : 'asc';
+        sort = reverse ? 'desc' : 'asc';
         break;
       }
 
       case '-': {
-        direction = reverse ? 'asc' : 'desc';
+        sort = reverse ? 'asc' : 'desc';
         break;
       }
 
@@ -58,7 +58,7 @@ export const convertSortQuery = <S extends StateDefinition>(
     const field = key.slice(1);
 
     for (const name of collection.getSchemaFieldNames(field)) {
-      res[name] = direction;
+      res[name] = sort;
     }
   }
 

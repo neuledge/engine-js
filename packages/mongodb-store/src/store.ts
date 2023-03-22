@@ -135,7 +135,7 @@ export class MongoDBStore implements Store {
           Object.entries(index.key).map(
             ([key, value]): [string, StoreIndexField] => [
               key,
-              { direction: value === 1 ? 'asc' : 'desc' },
+              { sort: value === 1 ? 'asc' : 'desc' },
             ],
           ),
         ),

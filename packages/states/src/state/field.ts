@@ -93,7 +93,7 @@ const decorators: Decorators<StateField> = {
 
   id: createDecorator(
     z.object({
-      direction: z
+      sort: z
         .union([
           z.literal('asc'),
           z.literal('desc'),
@@ -103,7 +103,7 @@ const decorators: Decorators<StateField> = {
         .optional(),
       auto: z.literal('increment').optional(),
     }),
-    (field, { direction, auto }) => {
+    (field, { sort, auto }) => {
       if (field.type !== 'ScalarField') {
         throw new ParsingError(
           field.node,
@@ -122,9 +122,7 @@ const decorators: Decorators<StateField> = {
         name: field.name,
         fields: {
           [field.name]:
-            direction == null || direction === 'asc' || direction === 1
-              ? 'asc'
-              : 'desc',
+            sort == null || sort === 'asc' || sort === 1 ? 'asc' : 'desc',
         },
         unique: true,
         auto,
@@ -134,7 +132,7 @@ const decorators: Decorators<StateField> = {
 
   index: createDecorator(
     z.object({
-      direction: z
+      sort: z
         .union([
           z.literal('asc'),
           z.literal('desc'),
@@ -145,7 +143,7 @@ const decorators: Decorators<StateField> = {
       unique: z.boolean().optional(),
       name: z.string().regex(StateIndexNameRegex).optional(),
     }),
-    (field, { direction, unique, name }) => {
+    (field, { sort, unique, name }) => {
       if (field.type !== 'ScalarField') {
         throw new ParsingError(
           field.node,
@@ -164,9 +162,7 @@ const decorators: Decorators<StateField> = {
         name: name || field.name,
         fields: {
           [field.name]:
-            direction == null || direction === 'asc' || direction === 1
-              ? 'asc'
-              : 'desc',
+            sort == null || sort === 'asc' || sort === 1 ? 'asc' : 'desc',
         },
         unique,
       };
@@ -175,7 +171,7 @@ const decorators: Decorators<StateField> = {
 
   unique: createDecorator(
     z.object({
-      direction: z
+      sort: z
         .union([
           z.literal('asc'),
           z.literal('desc'),
@@ -185,7 +181,7 @@ const decorators: Decorators<StateField> = {
         .optional(),
       name: z.string().regex(StateIndexNameRegex).optional(),
     }),
-    (field, { direction, name }) => {
+    (field, { sort, name }) => {
       if (field.type !== 'ScalarField') {
         throw new ParsingError(
           field.node,
@@ -204,9 +200,7 @@ const decorators: Decorators<StateField> = {
         name: name || field.name,
         fields: {
           [field.name]:
-            direction == null || direction === 'asc' || direction === 1
-              ? 'asc'
-              : 'desc',
+            sort == null || sort === 'asc' || sort === 1 ? 'asc' : 'desc',
         },
         unique: true,
       };

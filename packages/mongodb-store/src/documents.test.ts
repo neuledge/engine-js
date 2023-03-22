@@ -9,7 +9,7 @@ describe('documents', () => {
     fields: {} as never,
     primaryKey: {
       name: 'id',
-      fields: { id: { direction: 'asc' } },
+      fields: { id: { sort: 'asc' } },
       unique: 'primary',
     },
     indexes: [] as never,
@@ -20,7 +20,7 @@ describe('documents', () => {
     fields: {} as never,
     primaryKey: {
       name: 'id_sub_id',
-      fields: { id: { direction: 'asc' }, sub_id: { direction: 'asc' } },
+      fields: { id: { sort: 'asc' }, sub_id: { sort: 'asc' } },
       unique: 'primary',
     },
     indexes: [] as never,
@@ -31,7 +31,7 @@ describe('documents', () => {
     fields: {} as never,
     primaryKey: {
       name: '_id',
-      fields: { _id: { direction: 'asc' } },
+      fields: { _id: { sort: 'asc' } },
       unique: 'primary',
     },
     indexes: [] as never,
@@ -42,7 +42,7 @@ describe('documents', () => {
     fields: {} as never,
     primaryKey: {
       name: '_id_sub_iq',
-      fields: { _id: { direction: 'asc' }, sub_id: { direction: 'asc' } },
+      fields: { _id: { sort: 'asc' }, sub_id: { sort: 'asc' } },
       unique: 'primary',
     },
     indexes: [] as never,
