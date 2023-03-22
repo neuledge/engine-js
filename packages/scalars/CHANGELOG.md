@@ -1,5 +1,12 @@
 # @neuledge/scalars
 
+## 0.3.1
+
+### Patch Changes
+
+- Updated dependencies [0052b53]
+  - @neuledge/store@0.2.0
+
 ## 0.3.0
 
 ### Minor Changes
