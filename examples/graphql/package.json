@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "types": "tsc --noEmit",
-    "build": "rimraf dist/**/*.js dist/**/*.js.map && tsup",
+    "build": "rimraf --glob dist/*.{js,js.map} && tsup",
     "generate": "yarn generate:schema && yarn generate:states",
     "generate:states": "states --output \"src/states.codegen.ts\" \"states/*.states\"",
     "generate:schema": "graphql-codegen",
