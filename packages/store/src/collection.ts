@@ -27,5 +27,5 @@ export interface StorePrimaryKey extends StoreIndex {
 }
 
 export interface StoreIndexField {
-  direction: StoreSortDirection;
+  sort: StoreSortDirection;
 }

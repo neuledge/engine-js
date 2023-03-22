@@ -133,7 +133,7 @@ describe('state/field', () => {
     it('should parse fields with complex decorators', () => {
       const { ctx, nodes } = generateState(`
                 state User {
-                    @id(direction: "desc", auto: "increment") id: Number = 1
+                    @id(sort: "desc", auto: "increment") id: Number = 1
                     @deprecated(reason: "Use name instead") name?: String = 2
                     @unique email: String = 3
                 }
@@ -194,9 +194,9 @@ describe('state/field', () => {
     it('should parse fields with index decorators', () => {
       const { ctx, nodes } = generateState(`
         state User {
-          @id(direction: "desc") id: Number = 1
+          @id(sort: "desc") id: Number = 1
           @index name?: String = 2
-          @index(direction: -1, unique: true) email: String = 3
+          @index(sort: -1, unique: true) email: String = 3
         }
       `);
 

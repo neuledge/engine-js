@@ -31,7 +31,7 @@ export const ensureIndexes = async (
 
     for (const [name, indexField] of Object.entries(index.fields)) {
       indexSpec[escapeFieldName(primaryKey, name)] =
-        indexField.direction === 'asc' ? 1 : -1;
+        indexField.sort === 'asc' ? 1 : -1;
     }
 
     // we will create the index in the background so that it doesn't block the

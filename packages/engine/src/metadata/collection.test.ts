@@ -104,7 +104,7 @@ describe('engine/metadata/collection', () => {
         expect(categoriesCollection.indexes).toEqual({
           id: {
             name: 'id',
-            fields: { id: { direction: 'asc' } },
+            fields: { id: { sort: 'asc' } },
             unique: 'primary',
             auto: 'increment',
           },
@@ -115,15 +115,15 @@ describe('engine/metadata/collection', () => {
         expect(postsCollection.indexes).toEqual({
           id: {
             name: 'id',
-            fields: { id: { direction: 'asc' } },
+            fields: { id: { sort: 'asc' } },
             unique: 'primary',
             auto: 'increment',
           },
           category_title: {
             name: 'category_title',
             fields: {
-              category_id: { direction: 'desc' },
-              title: { direction: 'asc' },
+              category_id: { sort: 'desc' },
+              title: { sort: 'asc' },
             },
           },
         });

@@ -159,8 +159,8 @@ const getStoreIndexFields = (
   const fields: StoreIndex['fields'] = {};
 
   for (const sortField of sortDefinition) {
-    const [name, direction] = parseSortedField(sortField);
-    const indexField: StoreIndexField = { direction };
+    const [name, sort] = parseSortedField(sortField);
+    const indexField: StoreIndexField = { sort };
 
     const choices = schema[name];
     if (!choices) {
