@@ -1,5 +1,4 @@
 import fs from 'node:fs/promises';
-import { jest } from '@jest/globals';
 import { __test_action as action } from './generate';
 
 describe('generate', () => {
