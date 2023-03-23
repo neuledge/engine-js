@@ -71,7 +71,7 @@ If you find Neuledge useful and would like to support its ongoing development an
 
 # 👋 Introduction
 
-[Neuledge](https://neuledge.com) is an powerfull language that simplifies data management and enhances data integrity for databases. It enables you to define your data models and business logic in a precise and customizable way. The schema language supports customizable scalar types, providing type-safe data models and ensuring that you always get the data you expect.
+[Neuledge](https://neuledge.com) is an powerful language that simplifies data management and enhances data integrity for databases. It enables you to define your data models and business logic in a precise and customizable way. The schema language supports customizable scalar types, providing type-safe data models and ensuring that you always get the data you expect.
 
 With Neuledge, you can create different states for the same entity, each with its own set of fields and mutations. These states are stored and accessed from the same table, with an abstraction layer that defines which fields are needed for each state. For example, you can define a "DraftPost" state with a set of fields and mutations, and then create a "PublishedPost" state that inherits from "DraftPost" and adds more fields and restrictions necessary for published posts.
 
@@ -94,7 +94,7 @@ The schema language is identical for relational and non-relational databases, gi
 📏&nbsp; **Custom types** <br>
 &nbsp; &nbsp; &nbsp; &nbsp; Define custom scalar such as `Integer(min: 5, max: 10)` or `Email(at: "my-company.com")`.
 
-🛡️&nbsp; **Percise modeling** <br>
+🛡️&nbsp; **Precise modeling** <br>
 &nbsp; &nbsp; &nbsp; &nbsp; Create different states for the same entity, each with its own set of fields and mutations.
 
 🔄&nbsp; **Zero migrations** <br>
@@ -232,7 +232,7 @@ const username = user.username;
 </tr>
 </table>
 
-### Quering legacy code and migrations:
+### Querying legacy code and migrations:
 
 <table>
 <tr>
@@ -313,7 +313,7 @@ state ActiveUser from RegisteredUser {
 </tr>
 </table>
 
-### Percise data mutations by state:
+### Precise data mutations by state:
 
 <table>
 <tr>
@@ -363,7 +363,7 @@ state Person {
 }
 ```
 
-### Seemless data migrations on the fly:
+### Seamless data migrations on the fly:
 
 <table>
 <tr>
