@@ -32,12 +32,12 @@
   "scripts": {
     "types": "rimraf --glob dist/*.{d.ts,d.ts.map} dist/**/*.{d.ts,d.ts.map} && tsc --emitDeclarationOnly && tsc-alias",
     "build": "rimraf --glob dist/*.{js,js.map,mjs,mjs.map} && tsup",
-    "test": "jest",
     "lint": "eslint . --ext \"js,jsx,ts,tsx,mjs,cjs\"",
     "lint:strict": "yarn lint --max-warnings 0"
   },
   "dependencies": {
     "@neuledge/sql-store": "^0.0.0",
-    "mysql2": "^3.2.0"
+    "@types/mysql": "^2.15.21",
+    "mysql": "^2.18.1"
   }
 }
