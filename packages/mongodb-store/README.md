@@ -14,7 +14,7 @@ npm install @neuledge/mongodb-store
 import { Engine } from '@neuledge/engine';
 import { MongoDBStore } from '@neuledge/mongodb-store';
 
-const store = store: new MongoDBStore({
+const store = new MongoDBStore({
   url: process.env.MONGODB_URL ?? 'mongodb://localhost:27017',
   name: process.env.MONGODB_DATABASE ?? 'my-database',
 });
