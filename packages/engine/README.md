@@ -122,6 +122,10 @@ The schema language is identical for relational and non-relational databases, gi
 
 # 👀 Sneak peek
 
+Neuledge offers a straightforward approach to defining data models and business logic when compared to other available tools and frameworks. With Neuledge, users can easily define their data models and associated business logic, minimizing the complexity of the development process. This feature enables users to develop and deploy applications quickly, efficiently, and with greater accuracy, ultimately providing a more seamless and productive development experience.
+
+<br>
+
 ## Quick comparisons
 
 ### Fetching entries from the database:
