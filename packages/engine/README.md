@@ -14,7 +14,7 @@
   <a href="https://www.npmjs.com/package/@neuledge/mongodb-store">MongoDB</a> ⇄ 
   <a href="https://www.npmjs.com/package/@neuledge/mysql-store">MySQL</a> ⇄ 
   <a href="https://www.npmjs.com/package/@neuledge/postgresql-store">PostgreSQL</a> ⇄ 
-  [Request more](https://github.com/neuledge/engine-js/issues/new)
+  Your DB (<a href="https://github.com/neuledge/engine-js/issues/new">request</a>)
 </p>
 <br>
 <p align="center">
