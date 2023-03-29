@@ -82,7 +82,7 @@
 &nbsp; &nbsp; &nbsp; &nbsp; Define explicit mutations for each state, allowing only predefined alterations and maintaining control over data changes during state transitions.
 
 📏&nbsp; **Precise validation** <br>
-&nbsp; &nbsp; &nbsp; &nbsp; Define custom scalars such as `Integer(min: 5, max: 10)` or `Email(at: "my-company.com")`.
+&nbsp; &nbsp; &nbsp; &nbsp; Create unique data types with custom restrictions like minimum and maximum values, regular expressions, and more.
 
 <br>
 
