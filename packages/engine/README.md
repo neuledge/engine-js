@@ -10,6 +10,12 @@
 <p align=center>
   <strong>Universal language to model, share, and interact with databases.</strong>
 </p>
+<p align=center>
+  <a href="https://www.npmjs.com/package/@neuledge/mongodb-store">MongoDB</a> ⇄ 
+  MySQL (<a href="https://github.com/neuledge/engine-js/pull/20">soon</a>) ⇄ 
+  PostgreSQL (<a href="https://github.com/neuledge/engine-js/pull/20">soon</a>)
+</p>
+<br>
 <p align="center">
   <a href="https://github.com/neuledge/engine-js/actions/workflows/npm.yml" target="_blank">
     <img src="https://github.com/neuledge/engine-js/actions/workflows/npm.yml/badge.svg"
@@ -52,14 +58,31 @@
 </div>
 <br>
 
-## Table of contents
+## Main features
 
-- [Introduction](#-introduction)
-- [Features](#-features)
-- [Getting started](#-getting-started)
-- [Documentation & examples](#-documentation--examples)
-- [Join the community](#-join-the-community)
-- [License](#-license)
+🌍&nbsp; **Intuitive schema** <br>
+&nbsp; &nbsp; &nbsp; &nbsp; Define your data models using a simple and intuitive schema language.
+
+🔌&nbsp; **Database agnostic** <br>
+&nbsp; &nbsp; &nbsp; &nbsp; Seamlessly switch between various database technologies.
+
+🏎️&nbsp; **High performance** <br>
+&nbsp; &nbsp; &nbsp; &nbsp; Run efficiently on serverless or edge environments.
+
+🔍&nbsp; **Type-safe queries** <br>
+&nbsp; &nbsp; &nbsp; &nbsp; Validate your queries at compile time, with a simple and powerful query language.
+
+🛡️&nbsp; **State-based modeling** <br>
+&nbsp; &nbsp; &nbsp; &nbsp; Define different states for the same entity, each with its own set of fields and mutations, allowing for precise and controlled state transitions.
+
+🔄&nbsp; **Automatic query rewriting** <br>
+&nbsp; &nbsp; &nbsp; &nbsp; Avoid data migrations with automatic query rewriting for each state, simplifying the migration process.
+
+🚦&nbsp; **Controlled mutations** <br>
+&nbsp; &nbsp; &nbsp; &nbsp; Define explicit mutations for each state, allowing only predefined alterations and maintaining control over data changes during state transitions.
+
+📏&nbsp; **Precise validation** <br>
+&nbsp; &nbsp; &nbsp; &nbsp; Create unique data types with custom restrictions like minimum and maximum values, regular expressions, and more.
 
 <br>
 
@@ -69,9 +92,20 @@ If you find Neuledge useful and would like to support its ongoing development an
 
 <br>
 
+## Table of contents
+
+- [Introduction](#-introduction)
+- [How it works](#-how-it-works)
+- [Getting started](#-getting-started)
+- [Documentation & examples](#-documentation--examples)
+- [Join the community](#-join-the-community)
+- [License](#-license)
+
+<br>
+
 # 👋 Introduction
 
-[Neuledge](https://neuledge.com) is an powerful language that simplifies data management and enhances data integrity for databases. It enables you to define your data models and business logic in a precise and customizable way. The schema language supports customizable scalar types, providing type-safe data models and ensuring that you always get the data you expect.
+[Neuledge](https://neuledge.com) is a powerful language that simplifies data management and enhances data integrity for databases. It enables you to define your data models and business logic in a precise and customizable way. The schema language supports customizable scalar types, providing type-safe data models and ensuring that you always get the data you expect.
 
 With Neuledge, you can create different states for the same entity, each with its own set of fields and mutations. These states are stored and accessed from the same table, with an abstraction layer that defines which fields are needed for each state. For example, you can define a "DraftPost" state with a set of fields and mutations, and then create a "PublishedPost" state that inherits from "DraftPost" and adds more fields and restrictions necessary for published posts.
 
@@ -86,28 +120,9 @@ The schema language is identical for relational and non-relational databases, gi
 
 <br>
 
-# 🚀 Features
+# 🤔 How it works
 
-🌍&nbsp; **Intuitive schema** <br>
-&nbsp; &nbsp; &nbsp; &nbsp; Define your data models and business logic using a simple and intuitive schema language.
-
-📏&nbsp; **Custom types** <br>
-&nbsp; &nbsp; &nbsp; &nbsp; Define custom scalar such as `Integer(min: 5, max: 10)` or `Email(at: "my-company.com")`.
-
-🛡️&nbsp; **Precise modeling** <br>
-&nbsp; &nbsp; &nbsp; &nbsp; Create different states for the same entity, each with its own set of fields and mutations.
-
-🔄&nbsp; **Zero migrations** <br>
-&nbsp; &nbsp; &nbsp; &nbsp; Avoid data migrations with automatic query rewriting per each state.
-
-🚦&nbsp; **Explicit mutations** <br>
-&nbsp; &nbsp; &nbsp; &nbsp; Define explicit mutations for each state, and allow only predefined alterations.
-
-🔍&nbsp; **Type-safe queries** <br>
-&nbsp; &nbsp; &nbsp; &nbsp; Validate your queries at compile time, with a simple and powerful query language.
-
-🔌&nbsp; **Database agnostic** <br>
-&nbsp; &nbsp; &nbsp; &nbsp; The schema language is identical for relational and non-relational databases.
+Below are a few examples that demonstrate how Neuledge can be utilized in contrast to a conventional approach.
 
 <br>
 
