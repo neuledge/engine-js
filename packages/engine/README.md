@@ -12,8 +12,9 @@
 </p>
 <p align=center>
   <a href="https://www.npmjs.com/package/@neuledge/mongodb-store">MongoDB</a> ⇄ 
-  MySQL (<a href="https://github.com/neuledge/engine-js/pull/20">soon</a>) ⇄ 
-  PostgreSQL (<a href="https://github.com/neuledge/engine-js/pull/20">soon</a>)
+  <a href="https://www.npmjs.com/package/@neuledge/mysql-store">MySQL</a> ⇄ 
+  <a href="https://www.npmjs.com/package/@neuledge/postgresql-store">PostgreSQL</a> ⇄ 
+  [Request more](https://github.com/neuledge/engine-js/issues/new)
 </p>
 <br>
 <p align="center">
