@@ -1,5 +1,5 @@
 import { StoreShapeType } from '@neuledge/store';
-import { SQLConnection } from './connection';
+import { SQLConnection } from '@neuledge/sql-store';
 
 /**
  * A table column from the information_schema.columns table.

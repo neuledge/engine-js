@@ -16,13 +16,17 @@ import {
   StoreUpdateOptions,
 } from '@neuledge/store';
 import {
-  SQLConnection,
   dataTypeMap,
   listTableColumns,
   listIndexAttributes,
   listTables,
 } from './queries';
-import { getCollection, getStoreCollections } from '@neuledge/sql-store';
+import {
+  SQLConnection,
+  dropCollection,
+  getCollection,
+  getStoreCollections,
+} from '@neuledge/sql-store';
 
 export type MySQLStoreOptions = PoolConfig;
 
@@ -69,27 +73,27 @@ export class MySQLStore implements Store {
     );
   }
 
-  ensureCollection(options: StoreEnsureCollectionOptions): Promise<void> {
+  async ensureCollection(options: StoreEnsureCollectionOptions): Promise<void> {
     throw new Error('Method not implemented.');
   }
 
-  dropCollection(options: StoreDropCollectionOptions): Promise<void> {
+  async dropCollection(options: StoreDropCollectionOptions): Promise<void> {
+    return dropCollection(options, this.connection);
+  }
+
+  async find(options: StoreFindOptions): Promise<StoreList<StoreDocument>> {
     throw new Error('Method not implemented.');
   }
 
-  find(options: StoreFindOptions): Promise<StoreList<StoreDocument>> {
+  async insert(options: StoreInsertOptions): Promise<StoreInsertionResponse> {
     throw new Error('Method not implemented.');
   }
 
-  insert(options: StoreInsertOptions): Promise<StoreInsertionResponse> {
+  async update(options: StoreUpdateOptions): Promise<StoreMutationResponse> {
     throw new Error('Method not implemented.');
   }
 
-  update(options: StoreUpdateOptions): Promise<StoreMutationResponse> {
-    throw new Error('Method not implemented.');
-  }
-
-  delete(options: StoreDeleteOptions): Promise<StoreMutationResponse> {
+  async delete(options: StoreDeleteOptions): Promise<StoreMutationResponse> {
     throw new Error('Method not implemented.');
   }
 }

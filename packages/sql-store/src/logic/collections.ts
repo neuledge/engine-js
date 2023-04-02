@@ -7,10 +7,12 @@ import {
   toStoreField,
   toStoreIndex,
 } from '@/mappers';
+import { SQLConnection, dropTableIfExists } from '@/queries';
 import {
   StoreCollection,
   StoreCollection_Slim,
   StoreDescribeCollectionOptions,
+  StoreDropCollectionOptions,
   StoreError,
   StoreShapeType,
 } from '@neuledge/store';
@@ -112,4 +114,11 @@ const groupIndexColumns = <
   }
 
   return Object.values(groupMap);
+};
+
+export const dropCollection = async (
+  options: StoreDropCollectionOptions,
+  connection: SQLConnection,
+): Promise<void> => {
+  await dropTableIfExists(connection, options.collection.name);
 };

@@ -1,4 +1,4 @@
-import { SQLConnection } from './connection';
+import { SQLConnection } from '@neuledge/sql-store';
 
 /**
  * A table statistic row from the information_schema.statistics table.

@@ -1,4 +1,4 @@
-import { SQLConnection } from './connection';
+import { SQLConnection } from '@neuledge/sql-store';
 
 /**
  * The tables in the database. This is a view of the `information_schema.tables` table.
