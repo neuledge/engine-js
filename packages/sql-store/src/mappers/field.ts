@@ -1,28 +1,18 @@
 import { StoreError, StoreField, StoreShapeType } from '@neuledge/store';
-import { SQLColumn } from '@/queries';
 
-/**
- * Map the SQL data types to the corresponding StoreShapeType
- */
-const dataTypeMap: Record<string, StoreShapeType> = {
-  varchar: 'string',
-  char: 'string',
-  text: 'string',
-  numeric: 'number',
-  decimal: 'number',
-  float: 'number',
-  double: 'number',
-  integer: 'number',
-  bigint: 'number',
-  boolean: 'boolean',
-  bytea: 'binary',
-  timestamp: 'date-time',
-  timestamptz: 'date-time',
-  json: 'json',
-  jsonb: 'json',
-};
+export interface SQLColumn {
+  column_name: string;
+  data_type: string;
+  character_maximum_length: number | null;
+  numeric_precision: number | null;
+  numeric_scale: number | null;
+  is_nullable: boolean | 1 | 0;
+}
 
-export const toStoreField = (column: SQLColumn): StoreField => {
+export const toStoreField = (
+  dataTypeMap: Record<string, StoreShapeType>,
+  column: SQLColumn,
+): StoreField => {
   const type = dataTypeMap[column.data_type];
   if (!type) {
     throw new StoreError(
@@ -34,7 +24,7 @@ export const toStoreField = (column: SQLColumn): StoreField => {
   return {
     name: column.column_name,
     type,
-    nullable: column.is_nullable === 'YES',
+    nullable: !!column.is_nullable,
     size: column.character_maximum_length,
     precision: column.numeric_precision,
     scale: column.numeric_scale,

@@ -12,19 +12,15 @@ npm install @neuledge/sql-store
 
 ## 🚀 Getting started
 
+Import the util functions you need and use them to create your own store:
+
 ```ts
-import { SQLStore } from '@neuledge/mysql-store';
+import { Store } from '@neuledge/engine';
+import { ... } from '@neuledge/sql-store';
 
-// create a connection to your SQL database somehow
-const connection = createPool({
+export class MyStore implements Store {
   // ...
-});
-
-const store = new SQLStore(connection);
-
-const engine = new Engine({
-  store,
-});
+}
 ```
 
 ## 📄 License

@@ -1,27 +1,28 @@
-import { toStoreIndexes } from './store-index';
+import { toStoreIndex } from './store-index';
 
 describe('mappers/store-index', () => {
-  describe('toStoreIndexes()', () => {
+  describe('toStoreIndex()', () => {
     it('should convert a single primary index', () => {
       expect(
-        toStoreIndexes([
+        toStoreIndex([
           {
-            index_name: 'PRIMARY',
-            non_unique: 0,
+            index_name: 'id_index',
             column_name: 'field_name',
             seq_in_index: 1,
-            collation: 'A',
+            direction: 'ASC',
+            is_unique: true,
+            is_primary: true,
+            is_auto_increment: true,
           },
         ]),
-      ).toEqual([
-        {
-          name: 'PRIMARY',
-          unique: 'primary',
-          fields: {
-            field_name: { sort: 'asc' },
-          },
+      ).toEqual({
+        name: 'id_index',
+        unique: 'primary',
+        auto: 'increment',
+        fields: {
+          field_name: { sort: 'asc' },
         },
-      ]);
+      });
     });
   });
 });

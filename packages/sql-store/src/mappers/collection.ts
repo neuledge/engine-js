@@ -1,5 +1,8 @@
 import { StoreCollection_Slim } from '@neuledge/store';
-import { SQLTable } from '@/queries';
+
+export interface SQLTable {
+  table_name: string;
+}
 
 export const toStoreCollection_Slim = (
   table: SQLTable,
