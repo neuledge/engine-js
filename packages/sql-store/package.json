@@ -38,6 +38,7 @@
     "lint:strict": "yarn lint --max-warnings 0"
   },
   "dependencies": {
-    "@neuledge/store": "^0.2.0"
+    "@neuledge/store": "^0.2.0",
+    "p-limit": "^3.1.0"
   }
 }

@@ -4,6 +4,10 @@ import {
   listTableColumns,
   listIndexAttributes,
   listTables,
+  dropIndex,
+  addIndex,
+  createTableIfNotExists,
+  addColumn,
 } from './queries';
 import {
   Store,
@@ -24,18 +28,27 @@ import {
 import {
   SQLConnection,
   dropCollection,
-  getCollection,
-  getStoreCollections,
+  describeCollection,
+  listCollections,
+  ensureCollection,
 } from '@neuledge/sql-store';
 
-export type PostgreSQLStoreOptions = PoolConfig;
+export type PostgreSQLStorePool =
+  | (SQLConnection & { end: () => unknown })
+  | Pool;
+
+export type PostgreSQLStoreOptions =
+  | PoolConfig
+  | {
+      pool: PostgreSQLStorePool;
+    };
 
 export class PostgreSQLStore implements Store {
-  private pool: Pool;
+  private pool: PostgreSQLStorePool;
   private connection: SQLConnection;
 
   constructor(options: PostgreSQLStoreOptions) {
-    this.pool = new Pool(options);
+    this.pool = 'pool' in options ? options.pool : new Pool(options);
     this.connection = this.pool;
   }
 
@@ -48,23 +61,29 @@ export class PostgreSQLStore implements Store {
   // store methods
 
   async listCollections(): Promise<StoreCollection_Slim[]> {
-    return getStoreCollections(listTables, this.connection);
+    return listCollections(this.connection, { listTables });
   }
 
   async describeCollection(
     options: StoreDescribeCollectionOptions,
   ): Promise<StoreCollection> {
-    return getCollection(
-      options,
+    return describeCollection(options, this.connection, {
       listTableColumns,
       listIndexAttributes,
       dataTypeMap,
-      this.connection,
-    );
+    });
   }
 
   async ensureCollection(options: StoreEnsureCollectionOptions): Promise<void> {
-    throw new Error('Method not implemented.');
+    return ensureCollection(options, this.connection, {
+      createTableIfNotExists,
+      addIndex,
+      addColumn,
+      dropIndex,
+      listTableColumns,
+      listIndexAttributes,
+      dataTypeMap,
+    });
   }
 
   async dropCollection(options: StoreDropCollectionOptions): Promise<void> {

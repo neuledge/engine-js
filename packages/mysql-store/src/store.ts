@@ -20,12 +20,16 @@ import {
   listTableColumns,
   listIndexAttributes,
   listTables,
+  createTableIfNotExists,
+  addIndex,
+  addColumn,
 } from './queries';
 import {
   SQLConnection,
+  describeCollection,
   dropCollection,
-  getCollection,
-  getStoreCollections,
+  ensureCollection,
+  listCollections,
 } from '@neuledge/sql-store';
 
 export type MySQLStoreOptions = PoolConfig;
@@ -58,23 +62,28 @@ export class MySQLStore implements Store {
   // store methods
 
   async listCollections(): Promise<StoreCollection_Slim[]> {
-    return getStoreCollections(listTables, this.connection);
+    return listCollections(this.connection, { listTables });
   }
 
   async describeCollection(
     options: StoreDescribeCollectionOptions,
   ): Promise<StoreCollection> {
-    return getCollection(
-      options,
+    return describeCollection(options, this.connection, {
       listTableColumns,
       listIndexAttributes,
       dataTypeMap,
-      this.connection,
-    );
+    });
   }
 
   async ensureCollection(options: StoreEnsureCollectionOptions): Promise<void> {
-    throw new Error('Method not implemented.');
+    return ensureCollection(options, this.connection, {
+      createTableIfNotExists,
+      addIndex,
+      addColumn,
+      listTableColumns,
+      listIndexAttributes,
+      dataTypeMap,
+    });
   }
 
   async dropCollection(options: StoreDropCollectionOptions): Promise<void> {

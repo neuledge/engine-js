@@ -2,48 +2,46 @@ import {
   SQLColumn,
   SQLIndexAttribute,
   SQLIndexColumn,
-  SQLTable,
-  toStoreCollection_Slim,
   toStoreField,
   toStoreIndex,
 } from '@/mappers';
-import { SQLConnection, dropTableIfExists } from '@/queries';
+import { SQLConnection } from '@/queries';
 import {
   StoreCollection,
-  StoreCollection_Slim,
   StoreDescribeCollectionOptions,
-  StoreDropCollectionOptions,
   StoreError,
   StoreShapeType,
 } from '@neuledge/store';
 
-export const getStoreCollections = async <
-  A extends unknown[],
-  T extends SQLTable,
->(
-  listTables: (...args: A) => Promise<T[]>,
-  ...params: A
-): Promise<StoreCollection_Slim[]> => {
-  const tables = await listTables(...params);
-  return tables.map((table) => toStoreCollection_Slim(table));
-};
+export interface DescribeCollectionQueries<
+  C extends SQLColumn,
+  I extends SQLIndexAttribute & Omit<SQLIndexColumn, keyof C>,
+> {
+  listTableColumns: (name: string, connection: SQLConnection) => Promise<C[]>;
+  listIndexAttributes: (
+    name: string,
+    connection: SQLConnection,
+  ) => Promise<I[]>;
+  dataTypeMap: Record<string, StoreShapeType>;
+}
 
-export const getCollection = async <
-  A extends unknown[],
+export const describeCollection = async <
   C extends SQLColumn,
   I extends SQLIndexAttribute & Omit<SQLIndexColumn, keyof C>,
 >(
   options: StoreDescribeCollectionOptions,
-  listTableColumns: (name: string, ...args: A) => Promise<C[]>,
-  listIndexAttributes: (name: string, ...args: A) => Promise<I[]>,
-  dataTypeMap: Record<string, StoreShapeType>,
-  ...params: A
+  connection: SQLConnection,
+  {
+    listTableColumns,
+    listIndexAttributes,
+    dataTypeMap,
+  }: DescribeCollectionQueries<C, I>,
 ): Promise<StoreCollection> => {
   const { name } = options.collection;
 
   const [columns, indexAttributes] = await Promise.all([
-    listTableColumns(name, ...params),
-    listIndexAttributes(name, ...params),
+    listTableColumns(name, connection),
+    listIndexAttributes(name, connection),
   ]);
 
   const columnMap = Object.fromEntries(
@@ -114,11 +112,4 @@ const groupIndexColumns = <
   }
 
   return Object.values(groupMap);
-};
-
-export const dropCollection = async (
-  options: StoreDropCollectionOptions,
-  connection: SQLConnection,
-): Promise<void> => {
-  await dropTableIfExists(connection, options.collection.name);
 };
