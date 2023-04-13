@@ -186,14 +186,14 @@ const applyPrimaryKey = (state: State, node: StateNode) => {
   if (!primaryKeys.length) {
     throw new ParsingError(
       node.id,
-      'State must have at least one primary key field',
+      `State "${state.name}" must have at least one primary key field`,
     );
   }
 
   if (primaryKey.auto && primaryKeys.length > 1) {
     throw new ParsingError(
       node.id,
-      'State with auto-incrementing primary key can only have one field',
+      `State "${state.name}" with auto-incrementing primary key can only have one field`,
     );
   }
 
@@ -203,7 +203,7 @@ const applyPrimaryKey = (state: State, node: StateNode) => {
     if (field.nullable) {
       throw new ParsingError(
         field.node,
-        'Primary key field cannot be nullable',
+        `Primary key field "${field.name}" on state "${state.name}" cannot be nullable`,
       );
     }
   }
