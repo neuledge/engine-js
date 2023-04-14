@@ -1,7 +1,7 @@
 import { StoreCollection, StoreCollection_Slim } from '@neuledge/store';
 import { PostgreSQLTable } from '../list-tables';
 import { PostgreSQLColumn } from '../list-table-columns';
-import { PostgreSQLIndexAttribute } from '..';
+import { PostgreSQLIndexAttribute } from '../list-table-statistics';
 
 export const usersTableName = 'users';
 

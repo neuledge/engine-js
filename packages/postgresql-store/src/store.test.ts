@@ -1,3 +1,4 @@
+import { dropTableIfExists_sql } from '@neuledge/sql-store';
 import {
   listIndexAttributes_sql,
   listTableColumns_sql,
@@ -181,6 +182,19 @@ describe('store', () => {
           usersTable_phoneEmailIndexCreateSql,
           [],
         );
+      });
+    });
+
+    describe('.dropCollection()', () => {
+      it('should be able to drop a collection', async () => {
+        query.mockResolvedValueOnce({ rows: [] });
+
+        await store.dropCollection({ collection: usersCollection });
+
+        expect(query).toHaveBeenCalledTimes(1);
+        expect(query).toHaveBeenCalledWith(dropTableIfExists_sql, [
+          usersTableName,
+        ]);
       });
     });
   });
