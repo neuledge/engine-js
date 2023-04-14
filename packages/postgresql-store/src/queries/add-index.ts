@@ -1,15 +1,14 @@
 import { SQLConnection, indexColumns } from '@neuledge/sql-store';
-import { StoreIndex } from '@neuledge/store';
+import { StoreCollection, StoreIndex } from '@neuledge/store';
 
 export const addIndex = async (
-  tableName: string,
+  collection: StoreCollection,
   index: StoreIndex,
   connection: SQLConnection,
 ): Promise<void> => {
   await connection.query(
-    `CREATE ${
-      index.unique ? 'UNIQUE INDEX' : 'INDEX'
-    } IF NOT EXISTS ? (${indexColumns(index)})`,
-    [`${tableName}_${index.name}_idx`],
+    `CREATE ${index.unique ? 'UNIQUE INDEX' : 'INDEX'} IF NOT EXISTS ${
+      collection.name
+    }_${index.name}_idx ON ${collection.name} (${indexColumns(index)})`,
   );
 };

@@ -2,10 +2,17 @@ import { SQLConnection } from '@neuledge/sql-store';
 import { StoreCollection, StoreField } from '@neuledge/store';
 
 export const addColumn = async (
-  tableName: string,
+  collection: StoreCollection,
   field: StoreField,
   connection: SQLConnection,
-): Promise<void> => {};
+): Promise<void> => {
+  await connection.query(
+    `ALTER TABLE ${collection.name} ADD COLUMN ${getColumnDefinition(
+      field,
+      collection,
+    )}`,
+  );
+};
 
 export const getColumnDefinition = (
   field: StoreField,

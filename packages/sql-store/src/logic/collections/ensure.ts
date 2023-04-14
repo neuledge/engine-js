@@ -19,22 +19,22 @@ export interface EnsureCollectionQueries {
     connection: SQLConnection,
   ) => Promise<void>;
   addIndex: (
-    tableName: string,
+    collection: StoreCollection,
     index: StoreIndex,
     connection: SQLConnection,
   ) => Promise<void>;
   addColumn: (
-    tableName: string,
+    collection: StoreCollection,
     field: StoreField,
     connection: SQLConnection,
   ) => Promise<void>;
   dropIndex?: (
-    tableName: string,
+    collection: StoreCollection,
     index: string,
     connection: SQLConnection,
   ) => Promise<void>;
   dropColumn?: (
-    tableName: string,
+    collection: StoreCollection,
     field: string,
     connection: SQLConnection,
   ) => Promise<void>;
@@ -57,18 +57,17 @@ export const ensureCollection = async <
 ): Promise<void> => {
   await createTableIfNotExists(options.collection, connection);
 
-  const tableName = options.collection.name;
   const asyncLimit = pLimit(4);
 
   await Promise.all(
     options.dropIndexes?.map((index) =>
-      asyncLimit(() => dropIndex(tableName, index, connection)),
+      asyncLimit(() => dropIndex(options.collection, index, connection)),
     ) || [],
   );
 
   await Promise.all(
     options.dropFields?.map((field) =>
-      asyncLimit(() => dropColumn(tableName, field, connection)),
+      asyncLimit(() => dropColumn(options.collection, field, connection)),
     ) || [],
   );
 
@@ -83,16 +82,19 @@ export const ensureCollection = async <
   // the engine to ensure that new columns are nullable if inserted after the
   // collection has been created and this is the current implementation.
 
-  await Promise.all([
-    ...(options.indexes
-      ?.filter((index) => !collection.indexes[index.name])
-      .map((index) =>
-        asyncLimit(() => addIndex(tableName, index, connection)),
-      ) || []),
-    ...(options.fields
+  await Promise.all(
+    options.fields
       ?.filter((field) => !collection.fields[field.name])
       .map((field) =>
-        asyncLimit(() => addColumn(tableName, field, connection)),
-      ) || []),
-  ]);
+        asyncLimit(() => addColumn(collection, field, connection)),
+      ) || [],
+  );
+
+  await Promise.all(
+    options.indexes
+      ?.filter((index) => !collection.indexes[index.name])
+      .map((index) =>
+        asyncLimit(() => addIndex(collection, index, connection)),
+      ) || [],
+  );
 };

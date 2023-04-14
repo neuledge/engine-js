@@ -15,6 +15,12 @@ export const usersTable_createSql = `CREATE TABLE IF NOT EXISTS ${usersTableName
   CONSTRAINT ${usersTableName}_pkey PRIMARY KEY (id)
 )`;
 
+export const usersTable_phoneAddSql = `ALTER TABLE ${usersTableName} ADD COLUMN phone VARCHAR(20)`;
+
+export const usersTable_emailIndexCreateSql = `CREATE UNIQUE INDEX IF NOT EXISTS ${usersTableName}_email_idx ON ${usersTableName} (email ASC)`;
+
+export const usersTable_phoneEmailIndexCreateSql = `CREATE INDEX IF NOT EXISTS ${usersTableName}_phone_email_idx ON ${usersTableName} (phone DESC, email ASC)`;
+
 export const usersTable: PostgreSQLTable = { table_name: usersTableName };
 
 export const usersCollection_slim: StoreCollection_Slim = {
@@ -78,9 +84,21 @@ export const usersTableColumns: PostgreSQLColumn[] = [
   },
 ];
 
+export const usersTablePrimaryIndexes: PostgreSQLIndexAttribute[] = [
+  {
+    index_name: `${usersTableName}_id_idx`,
+    column_name: 'id',
+    seq_in_index: 1,
+    direction: 'ASC',
+    nulls: 'LAST',
+    is_unique: true,
+    is_primary: true,
+  },
+];
+
 export const usersTableIndexes: PostgreSQLIndexAttribute[] = [
   {
-    index_name: 'idx_email',
+    index_name: `${usersTableName}_email_idx`,
     column_name: 'email',
     seq_in_index: 1,
     direction: 'ASC',
@@ -89,7 +107,7 @@ export const usersTableIndexes: PostgreSQLIndexAttribute[] = [
     is_primary: false,
   },
   {
-    index_name: 'idx_phone_email',
+    index_name: `${usersTableName}_phone_email_idx`,
     column_name: 'phone',
     seq_in_index: 1,
     direction: 'DESC',
@@ -98,7 +116,7 @@ export const usersTableIndexes: PostgreSQLIndexAttribute[] = [
     is_primary: false,
   },
   {
-    index_name: 'idx_phone_email',
+    index_name: `${usersTableName}_phone_email_idx`,
     column_name: 'email',
     seq_in_index: 2,
     direction: 'ASC',
@@ -106,15 +124,7 @@ export const usersTableIndexes: PostgreSQLIndexAttribute[] = [
     is_unique: false,
     is_primary: false,
   },
-  {
-    index_name: 'users_pkey',
-    column_name: 'id',
-    seq_in_index: 1,
-    direction: 'ASC',
-    nulls: 'LAST',
-    is_unique: true,
-    is_primary: true,
-  },
+  ...usersTablePrimaryIndexes,
 ];
 
 export const usersCollection: StoreCollection = {
@@ -170,25 +180,25 @@ export const usersCollection: StoreCollection = {
     },
   },
   primaryKey: {
-    name: `${usersTableName}_pkey`,
+    name: 'id',
     fields: { id: { sort: 'asc' } },
     unique: 'primary',
     auto: 'increment',
   },
   indexes: {
-    [`${usersTableName}_pkey`]: {
-      name: `${usersTableName}_pkey`,
+    id: {
+      name: 'id',
       fields: { id: { sort: 'asc' } },
       unique: 'primary',
       auto: 'increment',
     },
-    idx_email: {
-      name: 'idx_email',
+    email: {
+      name: 'email',
       fields: { email: { sort: 'asc' } },
       unique: true,
     },
-    idx_phone_email: {
-      name: 'idx_phone_email',
+    phone_email: {
+      name: 'phone_email',
       fields: { phone: { sort: 'desc' }, email: { sort: 'asc' } },
       unique: false,
     },

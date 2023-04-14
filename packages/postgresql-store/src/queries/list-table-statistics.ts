@@ -16,10 +16,22 @@ export interface PostgreSQLIndexAttribute {
 export const listIndexAttributes = async (
   tableName: string,
   connection: SQLConnection,
-): Promise<PostgreSQLIndexAttribute[]> =>
-  connection.query<PostgreSQLIndexAttribute[]>(listIndexAttributes_sql, [
-    tableName,
-  ]);
+): Promise<PostgreSQLIndexAttribute[]> => {
+  const res = await connection.query<PostgreSQLIndexAttribute[]>(
+    listIndexAttributes_sql,
+    [tableName],
+  );
+
+  for (const row of res) {
+    if (!row.index_name.startsWith(`${tableName}_`)) continue;
+
+    row.index_name = row.index_name
+      .slice(tableName.length + 1)
+      .replace(/_idx$/, '');
+  }
+
+  return res;
+};
 
 export const listIndexAttributes_sql = `SELECT
 irel.relname AS index_name,

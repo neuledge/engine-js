@@ -1,10 +1,10 @@
 import { SQLConnection, indexColumns } from '@neuledge/sql-store';
-import { StoreIndex } from '@neuledge/store';
+import { StoreCollection, StoreIndex } from '@neuledge/store';
 
 // FIXME handle if not exists on mysql
 
 export const addIndex = async (
-  tableName: string,
+  collection: StoreCollection,
   index: StoreIndex,
   connection: SQLConnection,
 ): Promise<void> => {
@@ -12,6 +12,6 @@ export const addIndex = async (
     `CREATE ${
       index.unique ? 'UNIQUE INDEX' : 'INDEX'
     } IF NOT EXISTS ? ON ? (${indexColumns(index)})`,
-    [index.name, tableName],
+    [index.name, collection.name],
   );
 };

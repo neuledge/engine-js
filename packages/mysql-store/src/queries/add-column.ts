@@ -1,8 +1,8 @@
 import { SQLConnection } from '@neuledge/sql-store';
-import { StoreField } from '@neuledge/store';
+import { StoreCollection, StoreField } from '@neuledge/store';
 
 export const addColumn = async (
-  tableName: string,
+  collection: StoreCollection,
   field: StoreField,
   connection: SQLConnection,
 ): Promise<void> => {};

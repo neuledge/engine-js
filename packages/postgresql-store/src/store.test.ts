@@ -10,7 +10,11 @@ import {
   usersTableColumns,
   usersTableIndexes,
   usersTableName,
+  usersTablePrimaryIndexes,
   usersTable_createSql,
+  usersTable_emailIndexCreateSql,
+  usersTable_phoneAddSql,
+  usersTable_phoneEmailIndexCreateSql,
 } from './queries/__fixtures__/users-table';
 import { PostgreSQLStore } from './store';
 
@@ -48,7 +52,7 @@ describe('store', () => {
     let query: jest.Mock;
 
     beforeEach(() => {
-      query = jest.fn();
+      query = jest.fn().mockRejectedValue(new Error('unexpected query call'));
 
       store = new PostgreSQLStore({
         client: { query } as never,
@@ -109,6 +113,74 @@ describe('store', () => {
         expect(query).toHaveBeenNthCalledWith(3, listIndexAttributes_sql, [
           usersTableName,
         ]);
+      });
+
+      it('should create a new table', async () => {
+        query.mockResolvedValueOnce({ rows: [] });
+        query.mockResolvedValueOnce({ rows: usersTableColumns });
+        query.mockResolvedValueOnce({ rows: usersTablePrimaryIndexes });
+        query.mockResolvedValueOnce({ rows: [] });
+        query.mockResolvedValueOnce({ rows: [] });
+
+        await store.ensureCollection({
+          collection: usersCollection,
+          fields: Object.values(usersCollection.fields),
+          indexes: Object.values(usersCollection.indexes),
+        });
+
+        expect(query).toHaveBeenCalledTimes(5);
+        expect(query).toHaveBeenNthCalledWith(1, usersTable_createSql, []);
+        expect(query).toHaveBeenNthCalledWith(2, listTableColumns_sql, [
+          usersTableName,
+        ]);
+        expect(query).toHaveBeenNthCalledWith(3, listIndexAttributes_sql, [
+          usersTableName,
+        ]);
+        expect(query).toHaveBeenNthCalledWith(
+          4,
+          usersTable_emailIndexCreateSql,
+          [],
+        );
+        expect(query).toHaveBeenNthCalledWith(
+          5,
+          usersTable_phoneEmailIndexCreateSql,
+          [],
+        );
+      });
+
+      it('should create fill missing fields and indexes', async () => {
+        query.mockResolvedValueOnce({ rows: [] });
+        query.mockResolvedValueOnce({
+          rows: usersTableColumns.filter((c) => c.column_name !== 'phone'),
+        });
+        query.mockResolvedValueOnce({
+          rows: usersTableIndexes.filter(
+            (i) => !i.index_name.includes('phone'),
+          ),
+        });
+        query.mockResolvedValueOnce({ rows: [] });
+        query.mockResolvedValueOnce({ rows: [] });
+
+        await store.ensureCollection({
+          collection: usersCollection,
+          fields: Object.values(usersCollection.fields),
+          indexes: Object.values(usersCollection.indexes),
+        });
+
+        expect(query).toHaveBeenCalledTimes(5);
+        expect(query).toHaveBeenNthCalledWith(1, usersTable_createSql, []);
+        expect(query).toHaveBeenNthCalledWith(2, listTableColumns_sql, [
+          usersTableName,
+        ]);
+        expect(query).toHaveBeenNthCalledWith(3, listIndexAttributes_sql, [
+          usersTableName,
+        ]);
+        expect(query).toHaveBeenNthCalledWith(4, usersTable_phoneAddSql, []);
+        expect(query).toHaveBeenNthCalledWith(
+          5,
+          usersTable_phoneEmailIndexCreateSql,
+          [],
+        );
       });
     });
   });
