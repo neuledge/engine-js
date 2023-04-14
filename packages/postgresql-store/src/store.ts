@@ -50,7 +50,9 @@ export class PostgreSQLStore implements Store {
 
     this.connection = {
       query: (sql, values) =>
-        this.client.query(sql, values).then((result) => result.rows as never),
+        this.client
+          .query(sql, values ?? [])
+          .then((result) => result.rows as never),
     };
   }
 

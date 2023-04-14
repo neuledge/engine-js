@@ -4,7 +4,7 @@ import { StoreSortDirection } from './sort';
 export interface StoreCollection {
   name: string;
   primaryKey: StorePrimaryKey;
-  indexes: Record<StoreIndex['name'], StoreIndex>;
+  indexes: Record<StoreIndex['name'], StoreIndex | StorePrimaryKey>;
   fields: Record<StoreField['name'], StoreField>;
 }
 

@@ -11,19 +11,18 @@ export interface PostgreSQLColumn {
   numeric_precision: number | null;
   numeric_scale: number | null;
   is_nullable: boolean;
-  is_auto_increment: boolean;
+  is_auto_increment: boolean | null;
 }
 
 export const listTableColumns = async (
   tableName: string,
   connection: SQLConnection,
 ): Promise<PostgreSQLColumn[]> =>
-  connection.query<PostgreSQLColumn[]>(
-    `SELECT column_name, data_type, character_maximum_length, numeric_precision, numeric_scale, (is_nullable = 'YES') as is_nullable, column_default LIKE 'nextval(%)' AS is_auto_increment
-    FROM information_schema.columns
-    WHERE table_catalog = current_database() AND table_schema = current_schema() AND table_name = ?`,
-    [tableName],
-  );
+  connection.query<PostgreSQLColumn[]>(listTableColumns_sql, [tableName]);
+
+export const listTableColumns_sql = `SELECT column_name, data_type, character_maximum_length, numeric_precision, numeric_scale, (is_nullable = 'YES') as is_nullable, column_default LIKE 'nextval(%)' AS is_auto_increment
+FROM information_schema.columns
+WHERE table_catalog = current_database() AND table_schema = current_schema() AND table_name = ?`;
 
 // https://www.postgresql.org/docs/current/datatype.html
 export const dataTypeMap: Record<string, StoreShapeType> = {
