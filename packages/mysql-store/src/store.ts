@@ -1,4 +1,4 @@
-import { Pool, PoolConfig, createPool } from 'mysql';
+import { Connection, Pool, PoolConfig, createPool } from 'mysql';
 import {
   Store,
   StoreCollection,
@@ -32,19 +32,21 @@ import {
   listCollections,
 } from '@neuledge/sql-store';
 
-export type MySQLStoreOptions = PoolConfig;
+export type MySQLStoreClient = Pool | Connection;
+
+export type MySQLStoreOptions = PoolConfig | { client: MySQLStoreClient };
 
 export class MySQLStore implements Store {
-  private pool: Pool;
+  private client: MySQLStoreClient;
   private connection: SQLConnection;
 
   constructor(options: MySQLStoreOptions) {
-    this.pool = createPool(options);
+    this.client = 'client' in options ? options.client : createPool(options);
 
     this.connection = {
       query: (sql, values) =>
         new Promise((resolve, reject) =>
-          this.pool.query(sql, values, (error, results) =>
+          this.client.query(sql, values, (error, results) =>
             error ? reject(error) : resolve(results),
           ),
         ),
@@ -55,7 +57,7 @@ export class MySQLStore implements Store {
 
   async close(): Promise<void> {
     await new Promise<void>((resolve, reject) =>
-      this.pool.end((error) => (error ? reject(error) : resolve())),
+      this.client.end((error) => (error ? reject(error) : resolve())),
     );
   }
 

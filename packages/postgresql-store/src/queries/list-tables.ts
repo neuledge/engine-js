@@ -11,5 +11,7 @@ export const listTables = async (
   connection: SQLConnection,
 ): Promise<PostgreSQLTable[]> =>
   connection.query<PostgreSQLTable[]>(
-    `SELECT table_name FROM information_schema.tables WHERE table_catalog = current_database() AND table_schema = current_schema()`,
+    `SELECT table_name 
+    FROM information_schema.tables 
+    WHERE table_catalog = current_database() AND table_schema = current_schema() AND table_type = 'BASE TABLE'`,
   );

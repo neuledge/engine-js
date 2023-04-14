@@ -1,4 +1,4 @@
-import { Pool, PoolConfig } from 'pg';
+import { Client, Pool, PoolConfig } from 'pg';
 import {
   dataTypeMap,
   listTableColumns,
@@ -26,36 +26,38 @@ import {
   StoreUpdateOptions,
 } from '@neuledge/store';
 import {
-  SQLConnection,
   dropCollection,
   describeCollection,
   listCollections,
   ensureCollection,
+  SQLConnection,
 } from '@neuledge/sql-store';
 
-export type PostgreSQLStorePool =
-  | (SQLConnection & { end: () => unknown })
-  | Pool;
+export type PostgreSQLStoreClient = Client | Pool;
 
 export type PostgreSQLStoreOptions =
   | PoolConfig
   | {
-      pool: PostgreSQLStorePool;
+      client: PostgreSQLStoreClient;
     };
 
 export class PostgreSQLStore implements Store {
-  private pool: PostgreSQLStorePool;
+  private client: PostgreSQLStoreClient;
   private connection: SQLConnection;
 
   constructor(options: PostgreSQLStoreOptions) {
-    this.pool = 'pool' in options ? options.pool : new Pool(options);
-    this.connection = this.pool;
+    this.client = 'client' in options ? options.client : new Pool(options);
+
+    this.connection = {
+      query: (sql, values) =>
+        this.client.query(sql, values).then((result) => result.rows as never),
+    };
   }
 
   // connection methods
 
   async close(): Promise<void> {
-    await this.pool.end();
+    await this.client.end();
   }
 
   // store methods
