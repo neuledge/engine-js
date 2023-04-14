@@ -1,6 +1,7 @@
 import { SQLConnection } from '@neuledge/sql-store';
 import { StoreCollection } from '@neuledge/store';
 import { getColumnDefinition } from './add-column';
+import { addIndex } from './add-index';
 
 export const createTableIfNotExists = async (
   collection: StoreCollection,
@@ -17,6 +18,13 @@ export const createTableIfNotExists = async (
 )`,
   );
 
-  // FIXME add unique constraints if primary key has descending fields
+  // add unique constraints if primary key has descending fields
   // https://stackoverflow.com/a/45604459/518153
+  if (
+    Object.values(collection.primaryKey.fields).some(
+      (field) => field.sort === 'desc',
+    )
+  ) {
+    await addIndex(collection, collection.primaryKey, connection);
+  }
 };
