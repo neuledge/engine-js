@@ -192,5 +192,66 @@ describe('store', () => {
         expect(query).toHaveBeenCalledWith(usersTable_dropSql);
       });
     });
+
+    describe('.insert()', () => {
+      it('should be able to insert a document with auto increment', async () => {
+        query.mockResolvedValueOnce({ rows: [{ id: 1234 }] });
+
+        const res = await store.insert({
+          collection: usersCollection,
+          documents: [
+            {
+              name: 'John Doe',
+              email: 'john@example.com',
+              created_at: new Date('2020-01-01T00:00:00.000Z'),
+              updated_at: new Date('2020-01-01T00:00:00.000Z'),
+            },
+          ],
+        });
+
+        expect(query).toHaveBeenCalledTimes(1);
+
+        expect(query).toHaveBeenCalledWith(
+          `INSERT INTO ${usersTableName} (id, name, email, phone, created_at, updated_at)
+VALUES (DEFAULT, 'John Doe', 'john@example.com', NULL, '2020-01-01 00:00:00.000+00', '2020-01-01 00:00:00.000+00')
+RETURNING id`,
+        );
+
+        expect(res).toEqual({
+          affectedCount: 1,
+          insertedIds: [{ id: 1234 }],
+        });
+      });
+
+      it('should be able to insert a document with custom id', async () => {
+        query.mockResolvedValueOnce({ rows: [{ id: 789 }] });
+
+        const res = await store.insert({
+          collection: usersCollection,
+          documents: [
+            {
+              id: 789,
+              name: 'John Doe',
+              email: 'john@example.com',
+              created_at: new Date('2020-01-01T00:00:00.000Z'),
+              updated_at: new Date('2020-01-01T00:00:00.000Z'),
+            },
+          ],
+        });
+
+        expect(query).toHaveBeenCalledTimes(1);
+
+        expect(query).toHaveBeenCalledWith(
+          `INSERT INTO ${usersTableName} (id, name, email, phone, created_at, updated_at)
+VALUES ('789', 'John Doe', 'john@example.com', NULL, '2020-01-01 00:00:00.000+00', '2020-01-01 00:00:00.000+00')
+RETURNING id`,
+        );
+
+        expect(res).toEqual({
+          affectedCount: 1,
+          insertedIds: [{ id: 789 }],
+        });
+      });
+    });
   });
 });

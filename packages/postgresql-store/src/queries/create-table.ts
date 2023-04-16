@@ -9,14 +9,14 @@ export const createTableIfNotExists = async (
   collection: StoreCollection,
 ): Promise<void> => {
   await connection.query(
-    `CREATE TABLE IF NOT EXISTS ${format.literal(collection.name)} (
+    `CREATE TABLE IF NOT EXISTS ${format.ident(collection.name)} (
   ${Object.values(collection.fields)
     .map((field) => getColumnDefinition(field, collection))
     .join(',\n  ')},
-  CONSTRAINT ${format.literal(
+  CONSTRAINT ${format.ident(
     `${collection.name}_pkey`,
   )} PRIMARY KEY (${Object.keys(collection.primaryKey.fields)
-      .map((val) => format.literal(val))
+      .map((val) => format.ident(val))
       .join(', ')})
 )`,
   );

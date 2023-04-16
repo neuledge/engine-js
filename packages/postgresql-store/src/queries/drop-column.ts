@@ -8,8 +8,8 @@ export const dropColumn = async (
   field: string,
 ): Promise<void> => {
   await connection.query(
-    `ALTER TABLE ${format.literal(
-      collection.name,
-    )} DROP COLUMN ${format.literal(field)}`,
+    `ALTER TABLE ${format.ident(collection.name)} DROP COLUMN ${format.ident(
+      field,
+    )}`,
   );
 };

@@ -8,6 +8,6 @@ export const dropIndex = async (
   index: string,
 ): Promise<void> => {
   await connection.query(
-    `DROP INDEX IF EXISTS ${format.literal(`${collection.name}_${index}_idx`)}`,
+    `DROP INDEX IF EXISTS ${format.ident(`${collection.name}_${index}_idx`)}`,
   );
 };

@@ -34,7 +34,7 @@ import {
   listCollections,
 } from '@neuledge/sql-store';
 
-export type MySQLStoreClient = Pool | Connection;
+export type MySQLStoreClient = Pick<Pool | Connection, 'query' | 'end'>;
 
 export type MySQLStoreOptions = PoolConfig | { client: MySQLStoreClient };
 

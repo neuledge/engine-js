@@ -10,6 +10,7 @@ import {
   addColumn,
   dropColumn,
   dropTableIfExists,
+  insertInto,
 } from './queries';
 import {
   Store,
@@ -32,9 +33,10 @@ import {
   describeCollection,
   listCollections,
   ensureCollection,
+  insert,
 } from '@neuledge/sql-store';
 
-export type PostgreSQLStoreClient = Client | Pool;
+export type PostgreSQLStoreClient = Pick<Client | Pool, 'query' | 'end'>;
 
 export type PostgreSQLStoreOptions =
   | PoolConfig
@@ -93,7 +95,7 @@ export class PostgreSQLStore implements Store {
   }
 
   async insert(options: StoreInsertOptions): Promise<StoreInsertionResponse> {
-    throw new Error('Method not implemented.');
+    return insert(options, this.connection, { insertInto });
   }
 
   async update(options: StoreUpdateOptions): Promise<StoreMutationResponse> {

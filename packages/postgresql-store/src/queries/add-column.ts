@@ -8,7 +8,7 @@ export const addColumn = async (
   field: StoreField,
 ): Promise<void> => {
   await connection.query(
-    `ALTER TABLE ${format.literal(
+    `ALTER TABLE ${format.ident(
       collection.name,
     )} ADD COLUMN ${getColumnDefinition(field, collection)}`,
   );
@@ -18,7 +18,7 @@ export const getColumnDefinition = (
   field: StoreField,
   collection: StoreCollection,
 ): string =>
-  `${format.literal(field.name)} ${getColumnDataType(field, collection)}${
+  `${format.ident(field.name)} ${getColumnDataType(field, collection)}${
     field.nullable ? '' : ' NOT NULL'
   }`;
 

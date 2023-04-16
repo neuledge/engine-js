@@ -5,23 +5,23 @@ import { PostgreSQLIndexAttribute } from '../list-table-statistics';
 
 export const usersTableName = 'users';
 
-export const usersTable_dropSql = `DROP TABLE IF EXISTS '${usersTableName}'`;
+export const usersTable_dropSql = `DROP TABLE IF EXISTS users`;
 
-export const usersTable_createSql = `CREATE TABLE IF NOT EXISTS '${usersTableName}' (
-  'id' BIGSERIAL NOT NULL,
-  'name' VARCHAR(50),
-  'email' VARCHAR(100) NOT NULL,
-  'phone' VARCHAR(20),
-  'created_at' TIMESTAMP NOT NULL,
-  'updated_at' TIMESTAMP NOT NULL,
-  CONSTRAINT '${usersTableName}_pkey' PRIMARY KEY ('id')
+export const usersTable_createSql = `CREATE TABLE IF NOT EXISTS users (
+  id BIGSERIAL NOT NULL,
+  name VARCHAR(50),
+  email VARCHAR(100) NOT NULL,
+  phone VARCHAR(20),
+  created_at TIMESTAMP NOT NULL,
+  updated_at TIMESTAMP NOT NULL,
+  CONSTRAINT users_pkey PRIMARY KEY (id)
 )`;
 
-export const usersTable_phoneAddSql = `ALTER TABLE '${usersTableName}' ADD COLUMN 'phone' VARCHAR(20)`;
+export const usersTable_phoneAddSql = `ALTER TABLE users ADD COLUMN phone VARCHAR(20)`;
 
-export const usersTable_emailIndexCreateSql = `CREATE UNIQUE INDEX IF NOT EXISTS '${usersTableName}_email_idx' ON '${usersTableName}' ('email' ASC)`;
+export const usersTable_emailIndexCreateSql = `CREATE UNIQUE INDEX IF NOT EXISTS users_email_idx ON users (email ASC)`;
 
-export const usersTable_phoneEmailIndexCreateSql = `CREATE INDEX IF NOT EXISTS '${usersTableName}_phone_email_idx' ON '${usersTableName}' ('phone' DESC, 'email' ASC)`;
+export const usersTable_phoneEmailIndexCreateSql = `CREATE INDEX IF NOT EXISTS users_phone_email_idx ON users (phone DESC, email ASC)`;
 
 export const usersTable: PostgreSQLTable = { table_name: usersTableName };
 
@@ -88,7 +88,7 @@ export const usersTableColumns: PostgreSQLColumn[] = [
 
 export const usersTablePrimaryIndexes: PostgreSQLIndexAttribute[] = [
   {
-    index_name: `${usersTableName}_id_idx`,
+    index_name: `users_id_idx`,
     column_name: 'id',
     seq_in_index: 1,
     direction: 'ASC',
@@ -100,7 +100,7 @@ export const usersTablePrimaryIndexes: PostgreSQLIndexAttribute[] = [
 
 export const usersTableIndexes: PostgreSQLIndexAttribute[] = [
   {
-    index_name: `${usersTableName}_email_idx`,
+    index_name: `users_email_idx`,
     column_name: 'email',
     seq_in_index: 1,
     direction: 'ASC',
@@ -109,7 +109,7 @@ export const usersTableIndexes: PostgreSQLIndexAttribute[] = [
     is_primary: false,
   },
   {
-    index_name: `${usersTableName}_phone_email_idx`,
+    index_name: `users_phone_email_idx`,
     column_name: 'phone',
     seq_in_index: 1,
     direction: 'DESC',
@@ -118,7 +118,7 @@ export const usersTableIndexes: PostgreSQLIndexAttribute[] = [
     is_primary: false,
   },
   {
-    index_name: `${usersTableName}_phone_email_idx`,
+    index_name: `users_phone_email_idx`,
     column_name: 'email',
     seq_in_index: 2,
     direction: 'ASC',
