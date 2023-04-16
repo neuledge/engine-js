@@ -1,4 +1,4 @@
-import { SQLConnection } from '@neuledge/sql-store';
+import { PostgreSQLConnection } from './connection';
 
 /**
  * The tables in the database. This is a view of the `information_schema.tables` table.
@@ -8,9 +8,11 @@ export interface PostgreSQLTable {
 }
 
 export const listTables = async (
-  connection: SQLConnection,
+  connection: PostgreSQLConnection,
 ): Promise<PostgreSQLTable[]> =>
-  connection.query<PostgreSQLTable[]>(listTables_sql);
+  connection
+    .query<PostgreSQLTable>(listTables_sql)
+    .then((result) => result.rows);
 
 export const listTables_sql = `SELECT table_name 
 FROM information_schema.tables 

@@ -1,4 +1,4 @@
-import { SQLConnection } from '@neuledge/sql-store';
+import { MySQLConnection } from './connection';
 
 /**
  * A table statistic row from the information_schema.statistics table.
@@ -13,13 +13,16 @@ export interface MySQLIndexAttribute {
 }
 
 export const listIndexAttributes = async (
+  connection: MySQLConnection,
   tableName: string,
-  connection: SQLConnection,
 ): Promise<MySQLIndexAttribute[]> =>
-  connection.query<MySQLIndexAttribute[]>(
-    `SELECT index_name, column_name, seq_in_index, CASE collation WHEN 'A' THEN 'ASC' ELSE 'DESC' END AS direction, non_unique, (index_name == 'PRIMARY') as is_primary
+  new Promise((resolve, reject) =>
+    connection.query(
+      `SELECT index_name, column_name, seq_in_index, CASE collation WHEN 'A' THEN 'ASC' ELSE 'DESC' END AS direction, non_unique, (index_name == 'PRIMARY') as is_primary
     FROM information_schema.statistics
     WHERE table_schema = DATABASE() AND table_name = ? 
     ORDER BY index_name, seq_in_index`,
-    [tableName],
+      [tableName],
+      (error, results) => (error ? reject(error) : resolve(results)),
+    ),
   );

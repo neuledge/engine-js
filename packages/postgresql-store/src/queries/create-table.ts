@@ -1,20 +1,23 @@
-import { SQLConnection } from '@neuledge/sql-store';
 import { StoreCollection } from '@neuledge/store';
 import { getColumnDefinition } from './add-column';
 import { addIndex } from './add-index';
+import { PostgreSQLConnection } from './connection';
+import format from 'pg-format';
 
 export const createTableIfNotExists = async (
+  connection: PostgreSQLConnection,
   collection: StoreCollection,
-  connection: SQLConnection,
 ): Promise<void> => {
   await connection.query(
-    `CREATE TABLE IF NOT EXISTS ${collection.name} (
+    `CREATE TABLE IF NOT EXISTS ${format.literal(collection.name)} (
   ${Object.values(collection.fields)
     .map((field) => getColumnDefinition(field, collection))
     .join(',\n  ')},
-  CONSTRAINT ${collection.name}_pkey PRIMARY KEY (${Object.keys(
-      collection.primaryKey.fields,
-    ).join(', ')})
+  CONSTRAINT ${format.literal(
+    `${collection.name}_pkey`,
+  )} PRIMARY KEY (${Object.keys(collection.primaryKey.fields)
+      .map((val) => format.literal(val))
+      .join(', ')})
 )`,
   );
 
@@ -25,6 +28,6 @@ export const createTableIfNotExists = async (
       (field) => field.sort === 'desc',
     )
   ) {
-    await addIndex(collection, collection.primaryKey, connection);
+    await addIndex(connection, collection, collection.primaryKey);
   }
 };

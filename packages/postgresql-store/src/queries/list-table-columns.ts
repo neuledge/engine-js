@@ -1,5 +1,5 @@
 import { StoreShapeType } from '@neuledge/store';
-import { SQLConnection } from '@neuledge/sql-store';
+import { PostgreSQLConnection } from './connection';
 
 /**
  * A table column from the information_schema.columns table.
@@ -15,14 +15,16 @@ export interface PostgreSQLColumn {
 }
 
 export const listTableColumns = async (
+  connection: PostgreSQLConnection,
   tableName: string,
-  connection: SQLConnection,
 ): Promise<PostgreSQLColumn[]> =>
-  connection.query<PostgreSQLColumn[]>(listTableColumns_sql, [tableName]);
+  connection
+    .query<PostgreSQLColumn>(listTableColumns_sql, [tableName])
+    .then((result) => result.rows);
 
 export const listTableColumns_sql = `SELECT column_name, data_type, character_maximum_length, numeric_precision, numeric_scale, (is_nullable = 'YES') as is_nullable, column_default LIKE 'nextval(%)' AS is_auto_increment
 FROM information_schema.columns
-WHERE table_catalog = current_database() AND table_schema = current_schema() AND table_name = ?`;
+WHERE table_catalog = current_database() AND table_schema = current_schema() AND table_name = $1`;
 
 // https://www.postgresql.org/docs/current/datatype.html
 export const dataTypeMap: Record<string, StoreShapeType> = {

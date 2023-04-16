@@ -1,5 +1,5 @@
 import { StoreShapeType } from '@neuledge/store';
-import { SQLConnection } from '@neuledge/sql-store';
+import { MySQLConnection } from './connection';
 
 /**
  * A table column from the information_schema.columns table.
@@ -15,14 +15,17 @@ export interface MySQLColumn {
 }
 
 export const listTableColumns = async (
+  connection: MySQLConnection,
   tableName: string,
-  connection: SQLConnection,
 ): Promise<MySQLColumn[]> =>
-  connection.query<MySQLColumn[]>(
-    `SELECT column_name, data_type, character_maximum_length, numeric_precision, numeric_scale, (is_nullable = 'YES') AS is_nullable, extra LIKE '%auto_increment%' AS is_auto_increment
+  new Promise((resolve, reject) =>
+    connection.query(
+      `SELECT column_name, data_type, character_maximum_length, numeric_precision, numeric_scale, (is_nullable = 'YES') AS is_nullable, extra LIKE '%auto_increment%' AS is_auto_increment
 FROM information_schema.columns
 WHERE table_schema = DATABASE() AND table_name = ?`,
-    [tableName],
+      [tableName],
+      (error, results) => (error ? reject(error) : resolve(results)),
+    ),
   );
 
 export const dataTypeMap: Record<string, StoreShapeType> = {

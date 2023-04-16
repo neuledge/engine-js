@@ -1,16 +1,16 @@
-import { SQLConnection } from '@neuledge/sql-store';
 import { StoreCollection, StoreField } from '@neuledge/store';
+import { PostgreSQLConnection } from './connection';
+import format from 'pg-format';
 
 export const addColumn = async (
+  connection: PostgreSQLConnection,
   collection: StoreCollection,
   field: StoreField,
-  connection: SQLConnection,
 ): Promise<void> => {
   await connection.query(
-    `ALTER TABLE ${collection.name} ADD COLUMN ${getColumnDefinition(
-      field,
-      collection,
-    )}`,
+    `ALTER TABLE ${format.literal(
+      collection.name,
+    )} ADD COLUMN ${getColumnDefinition(field, collection)}`,
   );
 };
 
@@ -18,7 +18,7 @@ export const getColumnDefinition = (
   field: StoreField,
   collection: StoreCollection,
 ): string =>
-  `${field.name} ${getColumnDataType(field, collection)}${
+  `${format.literal(field.name)} ${getColumnDataType(field, collection)}${
     field.nullable ? '' : ' NOT NULL'
   }`;
 

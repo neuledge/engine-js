@@ -8,6 +8,8 @@ import {
   addIndex,
   createTableIfNotExists,
   addColumn,
+  dropColumn,
+  dropTableIfExists,
 } from './queries';
 import {
   Store,
@@ -30,7 +32,6 @@ import {
   describeCollection,
   listCollections,
   ensureCollection,
-  SQLConnection,
 } from '@neuledge/sql-store';
 
 export type PostgreSQLStoreClient = Client | Pool;
@@ -42,24 +43,16 @@ export type PostgreSQLStoreOptions =
     };
 
 export class PostgreSQLStore implements Store {
-  private client: PostgreSQLStoreClient;
-  private connection: SQLConnection;
+  private connection: PostgreSQLStoreClient;
 
   constructor(options: PostgreSQLStoreOptions) {
-    this.client = 'client' in options ? options.client : new Pool(options);
-
-    this.connection = {
-      query: (sql, values) =>
-        this.client
-          .query(sql, values ?? [])
-          .then((result) => result.rows as never),
-    };
+    this.connection = 'client' in options ? options.client : new Pool(options);
   }
 
   // connection methods
 
   async close(): Promise<void> {
-    await this.client.end();
+    await this.connection.end();
   }
 
   // store methods
@@ -84,6 +77,7 @@ export class PostgreSQLStore implements Store {
       addIndex,
       addColumn,
       dropIndex,
+      dropColumn,
       listTableColumns,
       listIndexAttributes,
       dataTypeMap,
@@ -91,7 +85,7 @@ export class PostgreSQLStore implements Store {
   }
 
   async dropCollection(options: StoreDropCollectionOptions): Promise<void> {
-    return dropCollection(options, this.connection);
+    return dropCollection(options, this.connection, { dropTableIfExists });
   }
 
   async find(options: StoreFindOptions): Promise<StoreList<StoreDocument>> {

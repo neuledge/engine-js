@@ -1,4 +1,4 @@
-import { SQLConnection } from '@neuledge/sql-store';
+import { MySQLConnection } from './connection';
 
 /**
  * The tables in the database. This is a view of the `information_schema.tables` table.
@@ -8,8 +8,11 @@ export interface MySQLTable {
 }
 
 export const listTables = async (
-  connection: SQLConnection,
+  connection: MySQLConnection,
 ): Promise<MySQLTable[]> =>
-  connection.query<MySQLTable[]>(
-    `SELECT table_name FROM information_schema.tables WHERE table_schema = DATABASE()`,
+  new Promise((resolve, reject) =>
+    connection.query(
+      `SELECT table_name FROM information_schema.tables WHERE table_schema = DATABASE()`,
+      (error, results) => (error ? reject(error) : resolve(results)),
+    ),
   );

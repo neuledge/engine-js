@@ -38,9 +38,13 @@
     "lint:strict": "yarn lint --max-warnings 0"
   },
   "dependencies": {
-    "@neuledge/store": "^0.2.0",
     "@neuledge/sql-store": "^0.0.0",
+    "@neuledge/store": "^0.2.0",
     "@types/pg": "^8.6.6",
-    "pg": "^8.10.0"
+    "pg": "^8.10.0",
+    "pg-format": "^1.0.4"
+  },
+  "devDependencies": {
+    "@types/pg-format": "^1.0.2"
   }
 }

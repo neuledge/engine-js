@@ -1,16 +1,7 @@
-import { SQLConnection } from '@neuledge/sql-store';
 import { StoreCollection } from '@neuledge/store';
-
-// FIXME handle if not exists on mysql
+import { MySQLConnection } from './connection';
 
 export const createTableIfNotExists = async (
+  connection: MySQLConnection,
   collection: StoreCollection,
-  connection: SQLConnection,
-): Promise<void> => {
-  await connection.query(
-    `CREATE TABLE IF NOT EXISTS ? (
-        ${/* FIXME add columns */ ''}
-        )`,
-    [collection.name],
-  );
-};
+): Promise<void> => {};

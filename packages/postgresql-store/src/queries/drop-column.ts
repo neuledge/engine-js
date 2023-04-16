@@ -2,12 +2,14 @@ import { StoreCollection } from '@neuledge/store';
 import { PostgreSQLConnection } from './connection';
 import format from 'pg-format';
 
-export const dropIndex = async (
+export const dropColumn = async (
   connection: PostgreSQLConnection,
   collection: StoreCollection,
-  index: string,
+  field: string,
 ): Promise<void> => {
   await connection.query(
-    `DROP INDEX IF EXISTS ${format.literal(`${collection.name}_${index}_idx`)}`,
+    `ALTER TABLE ${format.literal(
+      collection.name,
+    )} DROP COLUMN ${format.literal(field)}`,
   );
 };

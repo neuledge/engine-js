@@ -1,8 +1,3 @@
-import {
-  SQLConnection,
-  dropColumn as dropColumnDefault,
-  dropIndex as dropIndexDefault,
-} from '@/queries';
 import pLimit from 'p-limit';
 import {
   StoreCollection,
@@ -13,61 +8,63 @@ import {
 import { SQLColumn, SQLIndexAttribute, SQLIndexColumn } from '@/mappers';
 import { DescribeCollectionQueries, describeCollection } from './describe';
 
-export interface EnsureCollectionQueries {
-  createTableIfNotExists: (
+export interface EnsureCollectionQueries<Connection> {
+  createTableIfNotExists(
+    connection: Connection,
     collection: StoreCollection,
-    connection: SQLConnection,
-  ) => Promise<void>;
-  addIndex: (
+  ): Promise<void>;
+  addIndex(
+    connection: Connection,
     collection: StoreCollection,
     index: StoreIndex,
-    connection: SQLConnection,
-  ) => Promise<void>;
-  addColumn: (
+  ): Promise<void>;
+  addColumn(
+    connection: Connection,
     collection: StoreCollection,
     field: StoreField,
-    connection: SQLConnection,
-  ) => Promise<void>;
-  dropIndex?: (
+  ): Promise<void>;
+  dropIndex(
+    connection: Connection,
     collection: StoreCollection,
     index: string,
-    connection: SQLConnection,
-  ) => Promise<void>;
-  dropColumn?: (
+  ): Promise<void>;
+  dropColumn(
+    connection: Connection,
     collection: StoreCollection,
     field: string,
-    connection: SQLConnection,
-  ) => Promise<void>;
+  ): Promise<void>;
 }
 
 export const ensureCollection = async <
-  C extends SQLColumn,
-  I extends SQLIndexAttribute & Omit<SQLIndexColumn, keyof C>,
+  Connection,
+  Column extends SQLColumn,
+  IndexAttribute extends SQLIndexAttribute & Omit<SQLIndexColumn, keyof Column>,
 >(
   options: StoreEnsureCollectionOptions,
-  connection: SQLConnection,
+  connection: Connection,
   {
     createTableIfNotExists,
     addIndex,
     addColumn,
-    dropIndex = dropIndexDefault,
-    dropColumn = dropColumnDefault,
+    dropIndex,
+    dropColumn,
     ...describeCollectionQueries
-  }: EnsureCollectionQueries & DescribeCollectionQueries<C, I>,
+  }: EnsureCollectionQueries<Connection> &
+    DescribeCollectionQueries<Connection, Column, IndexAttribute>,
 ): Promise<void> => {
-  await createTableIfNotExists(options.collection, connection);
+  await createTableIfNotExists(connection, options.collection);
 
   const asyncLimit = pLimit(4);
 
   await Promise.all(
     options.dropIndexes?.map((index) =>
-      asyncLimit(() => dropIndex(options.collection, index, connection)),
+      asyncLimit(() => dropIndex(connection, options.collection, index)),
     ) || [],
   );
 
   await Promise.all(
     options.dropFields?.map((field) =>
-      asyncLimit(() => dropColumn(options.collection, field, connection)),
+      asyncLimit(() => dropColumn(connection, options.collection, field)),
     ) || [],
   );
 
@@ -86,7 +83,7 @@ export const ensureCollection = async <
     options.fields
       ?.filter((field) => !collection.fields[field.name])
       .map((field) =>
-        asyncLimit(() => addColumn(collection, field, connection)),
+        asyncLimit(() => addColumn(connection, collection, field)),
       ) || [],
   );
 
@@ -94,7 +91,7 @@ export const ensureCollection = async <
     options.indexes
       ?.filter((index) => !collection.indexes[index.name])
       .map((index) =>
-        asyncLimit(() => addIndex(collection, index, connection)),
+        asyncLimit(() => addIndex(connection, collection, index)),
       ) || [],
   );
 };

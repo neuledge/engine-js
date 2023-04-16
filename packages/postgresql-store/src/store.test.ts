@@ -1,4 +1,3 @@
-import { dropTableIfExists_sql } from '@neuledge/sql-store';
 import {
   listIndexAttributes_sql,
   listTableColumns_sql,
@@ -13,6 +12,7 @@ import {
   usersTableName,
   usersTablePrimaryIndexes,
   usersTable_createSql,
+  usersTable_dropSql,
   usersTable_emailIndexCreateSql,
   usersTable_phoneAddSql,
   usersTable_phoneEmailIndexCreateSql,
@@ -67,7 +67,7 @@ describe('store', () => {
         const collections = await store.listCollections();
 
         expect(query).toHaveBeenCalledTimes(1);
-        expect(query).toHaveBeenCalledWith(listTables_sql, []);
+        expect(query).toHaveBeenCalledWith(listTables_sql);
 
         expect(collections).toEqual([usersCollection_slim]);
       });
@@ -107,7 +107,7 @@ describe('store', () => {
         });
 
         expect(query).toHaveBeenCalledTimes(3);
-        expect(query).toHaveBeenNthCalledWith(1, usersTable_createSql, []);
+        expect(query).toHaveBeenNthCalledWith(1, usersTable_createSql);
         expect(query).toHaveBeenNthCalledWith(2, listTableColumns_sql, [
           usersTableName,
         ]);
@@ -130,7 +130,7 @@ describe('store', () => {
         });
 
         expect(query).toHaveBeenCalledTimes(5);
-        expect(query).toHaveBeenNthCalledWith(1, usersTable_createSql, []);
+        expect(query).toHaveBeenNthCalledWith(1, usersTable_createSql);
         expect(query).toHaveBeenNthCalledWith(2, listTableColumns_sql, [
           usersTableName,
         ]);
@@ -140,12 +140,10 @@ describe('store', () => {
         expect(query).toHaveBeenNthCalledWith(
           4,
           usersTable_emailIndexCreateSql,
-          [],
         );
         expect(query).toHaveBeenNthCalledWith(
           5,
           usersTable_phoneEmailIndexCreateSql,
-          [],
         );
       });
 
@@ -169,18 +167,17 @@ describe('store', () => {
         });
 
         expect(query).toHaveBeenCalledTimes(5);
-        expect(query).toHaveBeenNthCalledWith(1, usersTable_createSql, []);
+        expect(query).toHaveBeenNthCalledWith(1, usersTable_createSql);
         expect(query).toHaveBeenNthCalledWith(2, listTableColumns_sql, [
           usersTableName,
         ]);
         expect(query).toHaveBeenNthCalledWith(3, listIndexAttributes_sql, [
           usersTableName,
         ]);
-        expect(query).toHaveBeenNthCalledWith(4, usersTable_phoneAddSql, []);
+        expect(query).toHaveBeenNthCalledWith(4, usersTable_phoneAddSql);
         expect(query).toHaveBeenNthCalledWith(
           5,
           usersTable_phoneEmailIndexCreateSql,
-          [],
         );
       });
     });
@@ -192,9 +189,7 @@ describe('store', () => {
         await store.dropCollection({ collection: usersCollection });
 
         expect(query).toHaveBeenCalledTimes(1);
-        expect(query).toHaveBeenCalledWith(dropTableIfExists_sql, [
-          usersTableName,
-        ]);
+        expect(query).toHaveBeenCalledWith(usersTable_dropSql);
       });
     });
   });

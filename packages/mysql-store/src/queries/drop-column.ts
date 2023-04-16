@@ -1,8 +1,8 @@
-import { StoreCollection, StoreField } from '@neuledge/store';
+import { StoreCollection } from '@neuledge/store';
 import { MySQLConnection } from './connection';
 
-export const addColumn = async (
+export const dropColumn = async (
   connection: MySQLConnection,
   collection: StoreCollection,
-  field: StoreField,
+  field: string,
 ): Promise<void> => {};

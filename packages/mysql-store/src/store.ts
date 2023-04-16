@@ -23,9 +23,11 @@ import {
   createTableIfNotExists,
   addIndex,
   addColumn,
+  dropColumn,
+  dropIndex,
+  dropTableIfExists,
 } from './queries';
 import {
-  SQLConnection,
   describeCollection,
   dropCollection,
   ensureCollection,
@@ -37,27 +39,18 @@ export type MySQLStoreClient = Pool | Connection;
 export type MySQLStoreOptions = PoolConfig | { client: MySQLStoreClient };
 
 export class MySQLStore implements Store {
-  private client: MySQLStoreClient;
-  private connection: SQLConnection;
+  private connection: MySQLStoreClient;
 
   constructor(options: MySQLStoreOptions) {
-    this.client = 'client' in options ? options.client : createPool(options);
-
-    this.connection = {
-      query: (sql, values) =>
-        new Promise((resolve, reject) =>
-          this.client.query(sql, values, (error, results) =>
-            error ? reject(error) : resolve(results),
-          ),
-        ),
-    };
+    this.connection =
+      'client' in options ? options.client : createPool(options);
   }
 
   // connection methods
 
   async close(): Promise<void> {
     await new Promise<void>((resolve, reject) =>
-      this.client.end((error) => (error ? reject(error) : resolve())),
+      this.connection.end((error) => (error ? reject(error) : resolve())),
     );
   }
 
@@ -82,6 +75,8 @@ export class MySQLStore implements Store {
       createTableIfNotExists,
       addIndex,
       addColumn,
+      dropColumn,
+      dropIndex,
       listTableColumns,
       listIndexAttributes,
       dataTypeMap,
@@ -89,7 +84,7 @@ export class MySQLStore implements Store {
   }
 
   async dropCollection(options: StoreDropCollectionOptions): Promise<void> {
-    return dropCollection(options, this.connection);
+    return dropCollection(options, this.connection, { dropTableIfExists });
   }
 
   async find(options: StoreFindOptions): Promise<StoreList<StoreDocument>> {

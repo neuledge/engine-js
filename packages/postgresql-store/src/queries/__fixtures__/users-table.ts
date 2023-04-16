@@ -5,21 +5,23 @@ import { PostgreSQLIndexAttribute } from '../list-table-statistics';
 
 export const usersTableName = 'users';
 
-export const usersTable_createSql = `CREATE TABLE IF NOT EXISTS ${usersTableName} (
-  id BIGSERIAL NOT NULL,
-  name VARCHAR(50),
-  email VARCHAR(100) NOT NULL,
-  phone VARCHAR(20),
-  created_at TIMESTAMP NOT NULL,
-  updated_at TIMESTAMP NOT NULL,
-  CONSTRAINT ${usersTableName}_pkey PRIMARY KEY (id)
+export const usersTable_dropSql = `DROP TABLE IF EXISTS '${usersTableName}'`;
+
+export const usersTable_createSql = `CREATE TABLE IF NOT EXISTS '${usersTableName}' (
+  'id' BIGSERIAL NOT NULL,
+  'name' VARCHAR(50),
+  'email' VARCHAR(100) NOT NULL,
+  'phone' VARCHAR(20),
+  'created_at' TIMESTAMP NOT NULL,
+  'updated_at' TIMESTAMP NOT NULL,
+  CONSTRAINT '${usersTableName}_pkey' PRIMARY KEY ('id')
 )`;
 
-export const usersTable_phoneAddSql = `ALTER TABLE ${usersTableName} ADD COLUMN phone VARCHAR(20)`;
+export const usersTable_phoneAddSql = `ALTER TABLE '${usersTableName}' ADD COLUMN 'phone' VARCHAR(20)`;
 
-export const usersTable_emailIndexCreateSql = `CREATE UNIQUE INDEX IF NOT EXISTS ${usersTableName}_email_idx ON ${usersTableName} (email ASC)`;
+export const usersTable_emailIndexCreateSql = `CREATE UNIQUE INDEX IF NOT EXISTS '${usersTableName}_email_idx' ON '${usersTableName}' ('email' ASC)`;
 
-export const usersTable_phoneEmailIndexCreateSql = `CREATE INDEX IF NOT EXISTS ${usersTableName}_phone_email_idx ON ${usersTableName} (phone DESC, email ASC)`;
+export const usersTable_phoneEmailIndexCreateSql = `CREATE INDEX IF NOT EXISTS '${usersTableName}_phone_email_idx' ON '${usersTableName}' ('phone' DESC, 'email' ASC)`;
 
 export const usersTable: PostgreSQLTable = { table_name: usersTableName };
 

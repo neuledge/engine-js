@@ -1,4 +1,4 @@
-import { SQLConnection } from '@neuledge/sql-store';
+import { PostgreSQLConnection } from './connection';
 
 /**
  * A table statistic row from the information_schema.statistics table.
@@ -14,15 +14,15 @@ export interface PostgreSQLIndexAttribute {
 }
 
 export const listIndexAttributes = async (
+  connection: PostgreSQLConnection,
   tableName: string,
-  connection: SQLConnection,
 ): Promise<PostgreSQLIndexAttribute[]> => {
-  const res = await connection.query<PostgreSQLIndexAttribute[]>(
+  const { rows } = await connection.query<PostgreSQLIndexAttribute>(
     listIndexAttributes_sql,
     [tableName],
   );
 
-  for (const row of res) {
+  for (const row of rows) {
     if (!row.index_name.startsWith(`${tableName}_`)) continue;
 
     row.index_name = row.index_name
@@ -30,7 +30,7 @@ export const listIndexAttributes = async (
       .replace(/_idx$/, '');
   }
 
-  return res;
+  return rows;
 };
 
 export const listIndexAttributes_sql = `SELECT
@@ -49,5 +49,5 @@ CROSS JOIN LATERAL unnest (i.indkey) WITH ORDINALITY AS c (colnum, ordinality)
 LEFT JOIN LATERAL unnest (i.indoption) WITH ORDINALITY AS o (option, ordinality)
 ON c.ordinality = o.ordinality
 JOIN pg_attribute AS a ON trel.oid = a.attrelid AND a.attnum = c.colnum
-WHERE tnsp.nspname = current_schema() AND trel.relname = ?
+WHERE tnsp.nspname = current_schema() AND trel.relname = $1
 ORDER BY index_name, seq_in_index`;

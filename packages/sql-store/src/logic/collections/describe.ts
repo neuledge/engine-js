@@ -5,7 +5,6 @@ import {
   toStoreField,
   toStoreIndex,
 } from '@/mappers';
-import { SQLConnection } from '@/queries';
 import {
   StoreCollection,
   StoreDescribeCollectionOptions,
@@ -14,48 +13,32 @@ import {
 } from '@neuledge/store';
 
 export interface DescribeCollectionQueries<
-  C extends SQLColumn,
-  I extends SQLIndexAttribute & Omit<SQLIndexColumn, keyof C>,
+  Connection,
+  Column extends SQLColumn,
+  IndexAttribute extends SQLIndexAttribute & Omit<SQLIndexColumn, keyof Column>,
 > {
-  listTableColumns: (name: string, connection: SQLConnection) => Promise<C[]>;
-  listIndexAttributes: (
+  listTableColumns(connection: Connection, name: string): Promise<Column[]>;
+  listIndexAttributes(
+    connection: Connection,
     name: string,
-    connection: SQLConnection,
-  ) => Promise<I[]>;
+  ): Promise<IndexAttribute[]>;
   dataTypeMap: Record<string, StoreShapeType>;
 }
 
 export const describeCollection = async <
-  C extends SQLColumn,
-  I extends SQLIndexAttribute & Omit<SQLIndexColumn, keyof C>,
+  Connection,
+  Column extends SQLColumn,
+  IndexAttribute extends SQLIndexAttribute & Omit<SQLIndexColumn, keyof Column>,
 >(
   options: StoreDescribeCollectionOptions,
-  connection: SQLConnection,
-  {
-    listTableColumns,
-    listIndexAttributes,
-    dataTypeMap,
-  }: DescribeCollectionQueries<C, I>,
+  connection: Connection,
+  queries: DescribeCollectionQueries<Connection, Column, IndexAttribute>,
 ): Promise<StoreCollection> => {
-  const { name } = options.collection;
-
-  const [columns, indexAttributes] = await Promise.all([
-    listTableColumns(name, connection),
-    listIndexAttributes(name, connection),
-  ]);
-
-  const columnMap = Object.fromEntries(
-    columns.map((column) => [column.column_name, column]),
+  const { name, fields, indexColumns } = await getCollectionDetails(
+    options,
+    connection,
+    queries,
   );
-
-  const fields = Object.fromEntries(
-    columns.map((column) => [
-      column.column_name,
-      toStoreField(dataTypeMap, column),
-    ]),
-  );
-
-  const indexColumns = groupIndexColumns(columnMap, indexAttributes);
 
   let primaryKey: string | undefined;
   const indexes = Object.fromEntries(
@@ -84,12 +67,48 @@ export const describeCollection = async <
   };
 };
 
-const groupIndexColumns = <
-  C extends SQLColumn,
-  I extends SQLIndexAttribute & Omit<SQLIndexColumn, keyof C>,
+const getCollectionDetails = async <
+  Connection,
+  Column extends SQLColumn,
+  IndexAttribute extends SQLIndexAttribute & Omit<SQLIndexColumn, keyof Column>,
 >(
-  columnMap: Record<string, C>,
-  indexAttributes: I[],
+  options: StoreDescribeCollectionOptions,
+  connection: Connection,
+  {
+    listTableColumns,
+    listIndexAttributes,
+    dataTypeMap,
+  }: DescribeCollectionQueries<Connection, Column, IndexAttribute>,
+) => {
+  const { name } = options.collection;
+
+  const [columns, indexAttributes] = await Promise.all([
+    listTableColumns(connection, name),
+    listIndexAttributes(connection, name),
+  ]);
+
+  const columnMap = Object.fromEntries(
+    columns.map((column) => [column.column_name, column]),
+  );
+
+  const fields = Object.fromEntries(
+    columns.map((column) => [
+      column.column_name,
+      toStoreField(dataTypeMap, column),
+    ]),
+  );
+
+  const indexColumns = groupIndexColumns(columnMap, indexAttributes);
+
+  return { name, fields, indexColumns };
+};
+
+const groupIndexColumns = <
+  Column extends SQLColumn,
+  IndexAttribute extends SQLIndexAttribute & Omit<SQLIndexColumn, keyof Column>,
+>(
+  columnMap: Record<string, Column>,
+  indexAttributes: IndexAttribute[],
 ): SQLIndexColumn[][] => {
   const groupMap: Record<string, SQLIndexColumn[]> = {};
 
