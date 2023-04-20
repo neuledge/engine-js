@@ -11,6 +11,7 @@ import {
   dropColumn,
   dropTableIfExists,
   insertInto,
+  deleteFrom,
 } from './queries';
 import {
   Store,
@@ -35,6 +36,8 @@ import {
   ensureCollection,
   insert,
 } from '@neuledge/sql-store';
+import { deletes } from '@neuledge/sql-store';
+import { queryHelpers } from './queries/connection';
 
 export type PostgreSQLStoreClient = Pick<Client | Pool, 'query' | 'end'>;
 
@@ -103,6 +106,6 @@ export class PostgreSQLStore implements Store {
   }
 
   async delete(options: StoreDeleteOptions): Promise<StoreMutationResponse> {
-    throw new Error('Method not implemented.');
+    return deletes(options, this.connection, { deleteFrom, queryHelpers });
   }
 }

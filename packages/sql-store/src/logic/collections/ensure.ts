@@ -8,7 +8,14 @@ import {
 import { SQLColumn, SQLIndexAttribute, SQLIndexColumn } from '@/mappers';
 import { DescribeCollectionQueries, describeCollection } from './describe';
 
-export interface EnsureCollectionQueries<Connection> {
+export interface EnsureCollectionQueries<
+  Connection,
+  Column extends SQLColumn,
+  IndexAttribute extends SQLIndexAttribute & Omit<SQLIndexColumn, keyof Column>,
+> extends EnsureCollectionQueriesOnly<Connection>,
+    DescribeCollectionQueries<Connection, Column, IndexAttribute> {}
+
+export interface EnsureCollectionQueriesOnly<Connection> {
   createTableIfNotExists(
     connection: Connection,
     collection: StoreCollection,
@@ -49,8 +56,7 @@ export const ensureCollection = async <
     dropIndex,
     dropColumn,
     ...describeCollectionQueries
-  }: EnsureCollectionQueries<Connection> &
-    DescribeCollectionQueries<Connection, Column, IndexAttribute>,
+  }: EnsureCollectionQueries<Connection, Column, IndexAttribute>,
 ): Promise<void> => {
   await createTableIfNotExists(connection, options.collection);
 

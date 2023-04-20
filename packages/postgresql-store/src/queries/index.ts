@@ -1,6 +1,7 @@
 export * from './add-column';
 export * from './add-index';
 export * from './create-table';
+export * from './delete-from';
 export * from './drop-column';
 export * from './drop-index';
 export * from './drop-table';

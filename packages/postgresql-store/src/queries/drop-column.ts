@@ -1,6 +1,5 @@
 import { StoreCollection } from '@neuledge/store';
-import { PostgreSQLConnection } from './connection';
-import format from 'pg-format';
+import { PostgreSQLConnection, encodeIdentifier } from './connection';
 
 export const dropColumn = async (
   connection: PostgreSQLConnection,
@@ -8,8 +7,8 @@ export const dropColumn = async (
   field: string,
 ): Promise<void> => {
   await connection.query(
-    `ALTER TABLE ${format.ident(collection.name)} DROP COLUMN ${format.ident(
-      field,
-    )}`,
+    `ALTER TABLE ${encodeIdentifier(
+      collection.name,
+    )} DROP COLUMN ${encodeIdentifier(field)}`,
   );
 };

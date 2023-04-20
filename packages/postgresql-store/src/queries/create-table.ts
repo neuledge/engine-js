@@ -1,22 +1,21 @@
 import { StoreCollection } from '@neuledge/store';
 import { getColumnDefinition } from './add-column';
 import { addIndex } from './add-index';
-import { PostgreSQLConnection } from './connection';
-import format from 'pg-format';
+import { PostgreSQLConnection, encodeIdentifier } from './connection';
 
 export const createTableIfNotExists = async (
   connection: PostgreSQLConnection,
   collection: StoreCollection,
 ): Promise<void> => {
   await connection.query(
-    `CREATE TABLE IF NOT EXISTS ${format.ident(collection.name)} (
+    `CREATE TABLE IF NOT EXISTS ${encodeIdentifier(collection.name)} (
   ${Object.values(collection.fields)
     .map((field) => getColumnDefinition(field, collection))
     .join(',\n  ')},
-  CONSTRAINT ${format.ident(
+  CONSTRAINT ${encodeIdentifier(
     `${collection.name}_pkey`,
   )} PRIMARY KEY (${Object.keys(collection.primaryKey.fields)
-      .map((val) => format.ident(val))
+      .map((val) => encodeIdentifier(val))
       .join(', ')})
 )`,
   );

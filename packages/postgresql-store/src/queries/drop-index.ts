@@ -1,6 +1,5 @@
 import { StoreCollection } from '@neuledge/store';
-import { PostgreSQLConnection } from './connection';
-import format from 'pg-format';
+import { PostgreSQLConnection, encodeIdentifier } from './connection';
 
 export const dropIndex = async (
   connection: PostgreSQLConnection,
@@ -8,6 +7,8 @@ export const dropIndex = async (
   index: string,
 ): Promise<void> => {
   await connection.query(
-    `DROP INDEX IF EXISTS ${format.ident(`${collection.name}_${index}_idx`)}`,
+    `DROP INDEX IF EXISTS ${encodeIdentifier(
+      `${collection.name}_${index}_idx`,
+    )}`,
   );
 };

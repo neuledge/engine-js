@@ -253,5 +253,30 @@ RETURNING id`,
         });
       });
     });
+
+    // describe '.update()'
+
+    describe('.delete()', () => {
+      it('should be able to delete a document', async () => {
+        query.mockResolvedValueOnce({ rowCount: 1 });
+
+        const res = await store.delete({
+          collection: usersCollection,
+          where: { id: { $eq: 123 } },
+          limit: 1,
+        });
+
+        expect(query).toHaveBeenCalledTimes(1);
+        expect(query).toHaveBeenCalledWith(
+          `DELETE FROM ${usersTableName}
+WHERE id = '123'
+LIMIT 1`,
+        );
+
+        expect(res).toEqual({
+          affectedCount: 1,
+        });
+      });
+    });
   });
 });

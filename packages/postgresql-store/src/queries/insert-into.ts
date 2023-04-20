@@ -1,8 +1,9 @@
 import { StoreDocument, StoreScalarValue } from '@neuledge/store';
-import { PostgreSQLConnection } from './connection';
-import format from 'pg-format';
-
-// FIXME support format.literal for any scalar value
+import {
+  PostgreSQLConnection,
+  encodeIdentifier,
+  encodeLiteral,
+} from './connection';
 
 export const insertInto = async (
   connection: PostgreSQLConnection,
@@ -13,18 +14,16 @@ export const insertInto = async (
 ): Promise<StoreDocument[]> =>
   connection
     .query(
-      `INSERT INTO ${format.ident(name)} (${columns
-        .map((column) => format.ident(column))
+      `INSERT INTO ${encodeIdentifier(name)} (${columns
+        .map((column) => encodeIdentifier(column))
         .join(', ')})
 VALUES (${values
         .map((arr) =>
           arr
-            .map((v) =>
-              v === undefined ? 'DEFAULT' : format.literal(v as never),
-            )
+            .map((v) => (v === undefined ? 'DEFAULT' : encodeLiteral(v)))
             .join(', '),
         )
         .join('), (')})
-RETURNING ${returns.map((column) => format.ident(column)).join(', ')}`,
+RETURNING ${returns.map((column) => encodeIdentifier(column)).join(', ')}`,
     )
     .then((res) => res.rows);
