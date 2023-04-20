@@ -6,7 +6,6 @@ export interface DeleteQueries<Connection> {
     connection: Connection,
     name: string,
     where: string | null,
-    limit: number,
   ): Promise<number>;
   queryHelpers: QueryHelpers;
 }
@@ -16,14 +15,13 @@ export const deletes = async <Connection>(
   connection: Connection,
   { deleteFrom, queryHelpers }: DeleteQueries<Connection>,
 ): Promise<StoreMutationResponse> => {
-  const { collection, where, limit } = options;
+  const { collection, where } = options;
   const { name } = collection;
 
   const affectedCount = await deleteFrom(
     connection,
     name,
     where ? whereClause(queryHelpers, where) : null,
-    limit,
   );
 
   return {

@@ -271,33 +271,13 @@ export class MongoDBStore implements Store {
     const filter = options.where
       ? findFilter(options.collection.primaryKey, options.where)
       : {};
+
     const update = updateFilter(
       options.collection.primaryKey,
       options.set as Document,
     );
-    let res;
 
-    if (options.limit === 1) {
-      res = await collection.updateOne(filter, update);
-    } else {
-      const ids = await collection
-        // unicon issue: https://github.com/sindresorhus/eslint-plugin-unicorn/issues/1947
-        // eslint-disable-next-line unicorn/no-array-callback-reference, unicorn/no-array-method-this-argument
-        .find(filter, {
-          limit: options.limit,
-          projection: { _id: 1 },
-        })
-        .toArray();
-
-      if (!ids.length) {
-        return { affectedCount: 0 };
-      }
-
-      res = await collection.updateMany(
-        { ...filter, _id: { $in: ids.map((id) => id._id) } },
-        update,
-      );
-    }
+    const res = await collection.updateMany(filter, update);
 
     return {
       affectedCount: res.modifiedCount,
@@ -310,29 +290,8 @@ export class MongoDBStore implements Store {
     const filter = options.where
       ? findFilter(options.collection.primaryKey, options.where)
       : {};
-    let res;
 
-    if (options.limit === 1) {
-      res = await collection.deleteOne(filter);
-    } else {
-      const ids = await collection
-        // unicon issue: https://github.com/sindresorhus/eslint-plugin-unicorn/issues/1947
-        // eslint-disable-next-line unicorn/no-array-callback-reference, unicorn/no-array-method-this-argument
-        .find(filter, {
-          limit: options.limit,
-          projection: { _id: 1 },
-        })
-        .toArray();
-
-      if (!ids.length) {
-        return { affectedCount: 0 };
-      }
-
-      res = await collection.deleteMany({
-        ...filter,
-        _id: { $in: ids.map((id) => id._id) },
-      });
-    }
+    const res = await collection.deleteMany(filter);
 
     return { affectedCount: res.deletedCount };
   }

@@ -254,7 +254,56 @@ RETURNING id`,
       });
     });
 
-    // describe '.update()'
+    describe('.update()', () => {
+      it('should be able to update a document', async () => {
+        query.mockResolvedValueOnce({ rowCount: 1 });
+
+        const res = await store.update({
+          collection: usersCollection,
+          where: { id: { $eq: 123 } },
+          set: {
+            name: 'John Doe',
+            email: 'john@example.com',
+            phone: undefined,
+            updated_at: new Date('2020-01-01T00:00:00.000Z'),
+          },
+        });
+
+        expect(query).toHaveBeenCalledTimes(1);
+        expect(query).toHaveBeenCalledWith(
+          `UPDATE ${usersTableName}
+SET name = 'John Doe', email = 'john@example.com', phone = NULL, updated_at = '2020-01-01 00:00:00.000+00'
+WHERE id = '123'`,
+        );
+
+        expect(res).toEqual({
+          affectedCount: 1,
+        });
+      });
+
+      it('should be able to update multiple arbitrary documents', async () => {
+        query.mockResolvedValueOnce({ rowCount: 2 });
+
+        const res = await store.update({
+          collection: usersCollection,
+          set: {
+            name: 'John Doe',
+            email: 'john@example.com',
+            updated_at: new Date('2020-01-01T00:00:00.000Z'),
+          },
+        });
+
+        expect(query).toHaveBeenCalledTimes(1);
+        expect(query).toHaveBeenCalledWith(
+          `UPDATE ${usersTableName}
+SET name = 'John Doe', email = 'john@example.com', updated_at = '2020-01-01 00:00:00.000+00'`,
+        );
+
+        expect(res).toEqual({
+          affectedCount: 2,
+        });
+      });
+    });
 
     describe('.delete()', () => {
       it('should be able to delete a document', async () => {
@@ -263,18 +312,30 @@ RETURNING id`,
         const res = await store.delete({
           collection: usersCollection,
           where: { id: { $eq: 123 } },
-          limit: 1,
         });
 
         expect(query).toHaveBeenCalledTimes(1);
         expect(query).toHaveBeenCalledWith(
-          `DELETE FROM ${usersTableName}
-WHERE id = '123'
-LIMIT 1`,
+          `DELETE FROM ${usersTableName}\nWHERE id = '123'`,
         );
 
         expect(res).toEqual({
           affectedCount: 1,
+        });
+      });
+
+      it('should be able to delete multiple arbitrary documents', async () => {
+        query.mockResolvedValueOnce({ rowCount: 2 });
+
+        const res = await store.delete({
+          collection: usersCollection,
+        });
+
+        expect(query).toHaveBeenCalledTimes(1);
+        expect(query).toHaveBeenCalledWith(`TRUNCATE TABLE ${usersTableName}`);
+
+        expect(res).toEqual({
+          affectedCount: 2,
         });
       });
     });

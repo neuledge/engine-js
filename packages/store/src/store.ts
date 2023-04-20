@@ -70,13 +70,11 @@ export interface StoreUpdateOptions {
   collection: StoreCollection;
   where?: StoreWhere | null;
   set: StoreDocument;
-  limit: number;
 }
 
 export interface StoreDeleteOptions {
   collection: StoreCollection;
   where?: StoreWhere | null;
-  limit: number;
 }
 
 export interface StoreInsertionResponse extends StoreMutationResponse {

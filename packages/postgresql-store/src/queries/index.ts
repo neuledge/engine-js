@@ -9,3 +9,4 @@ export * from './insert-into';
 export * from './list-tables';
 export * from './list-table-columns';
 export * from './list-table-statistics';
+export * from './update-set';

@@ -12,6 +12,7 @@ import {
   dropTableIfExists,
   insertInto,
   deleteFrom,
+  updateSet,
 } from './queries';
 import {
   Store,
@@ -35,6 +36,7 @@ import {
   listCollections,
   ensureCollection,
   insert,
+  update,
 } from '@neuledge/sql-store';
 import { deletes } from '@neuledge/sql-store';
 import { queryHelpers } from './queries/connection';
@@ -102,7 +104,7 @@ export class PostgreSQLStore implements Store {
   }
 
   async update(options: StoreUpdateOptions): Promise<StoreMutationResponse> {
-    throw new Error('Method not implemented.');
+    return update(options, this.connection, { updateSet, queryHelpers });
   }
 
   async delete(options: StoreDeleteOptions): Promise<StoreMutationResponse> {

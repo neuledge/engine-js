@@ -58,7 +58,6 @@ const updateStoreDocument = async (
     collection,
     where: getWhereRecordByPrimaryKeys(collection, document),
     set: Object.fromEntries(setEntries),
-    limit: 1,
   });
 
   return !!res.affectedCount;
@@ -74,7 +73,6 @@ const deleteStoreDocuments = async (
   await store.delete({
     collection,
     where: getWhereByPrimaryKeys(collection, documents),
-    limit: documents.length,
   });
 };
 
@@ -86,7 +84,6 @@ const deleteStoreDocuments = async (
 //   await store.delete({
 //     collectionName: collection.name,
 //     where: getWhereRecord(collection.primaryKeys, document),
-//     limit: 1,
 //   });
 // };
 

@@ -140,7 +140,6 @@ export const syncStoreMetadata = async (
             collection: metadataCollection,
             where: { hash: { $eq: hash } },
             set: set as never,
-            limit: 1,
           }),
         ),
       ),

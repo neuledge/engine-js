@@ -4,16 +4,11 @@ export const deleteFrom = async (
   connection: PostgreSQLConnection,
   name: string,
   where: string | null,
-  limit: number,
 ): Promise<number> => {
   const res = await connection.query(
-    `DELETE FROM ${encodeIdentifier(name)}${
-      where
-        ? `
-WHERE ${where}`
-        : ''
-    }
-LIMIT ${Number(limit)}`,
+    where
+      ? `DELETE FROM ${encodeIdentifier(name)}\nWHERE ${where}`
+      : `TRUNCATE TABLE ${encodeIdentifier(name)}`,
   );
 
   return res.rowCount;
