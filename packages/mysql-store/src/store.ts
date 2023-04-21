@@ -5,7 +5,6 @@ import {
   StoreCollection_Slim,
   StoreDeleteOptions,
   StoreDescribeCollectionOptions,
-  StoreDocument,
   StoreDropCollectionOptions,
   StoreEnsureCollectionOptions,
   StoreFindOptions,
@@ -87,7 +86,7 @@ export class MySQLStore implements Store {
     return dropCollection(options, this.connection, { dropTableIfExists });
   }
 
-  async find(options: StoreFindOptions): Promise<StoreList<StoreDocument>> {
+  async find(options: StoreFindOptions): Promise<StoreList> {
     throw new Error('Method not implemented.');
   }
 

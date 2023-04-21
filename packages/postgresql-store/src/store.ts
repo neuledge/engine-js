@@ -13,6 +13,7 @@ import {
   insertInto,
   deleteFrom,
   updateSet,
+  selectFrom,
 } from './queries';
 import {
   Store,
@@ -20,7 +21,6 @@ import {
   StoreCollection_Slim,
   StoreDeleteOptions,
   StoreDescribeCollectionOptions,
-  StoreDocument,
   StoreDropCollectionOptions,
   StoreEnsureCollectionOptions,
   StoreFindOptions,
@@ -40,6 +40,7 @@ import {
 } from '@neuledge/sql-store';
 import { deletes } from '@neuledge/sql-store';
 import { queryHelpers } from './queries/connection';
+import { find } from '@neuledge/sql-store';
 
 export type PostgreSQLStoreClient = Pick<Client | Pool, 'query' | 'end'>;
 
@@ -95,8 +96,8 @@ export class PostgreSQLStore implements Store {
     return dropCollection(options, this.connection, { dropTableIfExists });
   }
 
-  async find(options: StoreFindOptions): Promise<StoreList<StoreDocument>> {
-    throw new Error('Method not implemented.');
+  async find(options: StoreFindOptions): Promise<StoreList> {
+    return find(options, this.connection, { selectFrom, queryHelpers });
   }
 
   async insert(options: StoreInsertOptions): Promise<StoreInsertionResponse> {

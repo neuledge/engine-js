@@ -1,4 +1,8 @@
-import { StoreCollection, StoreCollection_Slim } from '@neuledge/store';
+import {
+  StoreCollection,
+  StoreCollection_Slim,
+  StoreDocument,
+} from '@neuledge/store';
 import { PostgreSQLTable } from '../list-tables';
 import { PostgreSQLColumn } from '../list-table-columns';
 import { PostgreSQLIndexAttribute } from '../list-table-statistics';
@@ -205,4 +209,13 @@ export const usersCollection: StoreCollection = {
       unique: false,
     },
   },
+};
+
+export const usersTableRow1: StoreDocument = {
+  id: 1,
+  name: 'John Doe',
+  email: 'john@example.com',
+  phone: '+1 555 555 5555',
+  created_at: new Date('2020-01-01T00:00:00.000Z'),
+  updated_at: new Date('2020-01-01T00:02:00.000Z'),
 };

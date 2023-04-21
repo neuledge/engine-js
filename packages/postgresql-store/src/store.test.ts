@@ -11,6 +11,7 @@ import {
   usersTableIndexes,
   usersTableName,
   usersTablePrimaryIndexes,
+  usersTableRow1,
   usersTable_createSql,
   usersTable_dropSql,
   usersTable_emailIndexCreateSql,
@@ -190,6 +191,78 @@ describe('store', () => {
 
         expect(query).toHaveBeenCalledTimes(1);
         expect(query).toHaveBeenCalledWith(usersTable_dropSql);
+      });
+    });
+
+    describe('.find()', () => {
+      it('should be able to find documents', async () => {
+        query.mockResolvedValueOnce({ rows: [usersTableRow1] });
+
+        const res = await store.find({
+          collection: usersCollection,
+          where: {
+            email: { $eq: 'john@example.com' },
+          },
+          limit: 1,
+        });
+
+        expect(query).toHaveBeenCalledTimes(1);
+
+        expect(query).toHaveBeenCalledWith(
+          `SELECT *
+FROM ${usersTableName}
+WHERE email = 'john@example.com'
+LIMIT 1 OFFSET 0`,
+        );
+
+        expect(res).toEqual(Object.assign([usersTableRow1], { nextOffset: 1 }));
+      });
+
+      it('should be able to find documents with offset', async () => {
+        query.mockResolvedValueOnce({ rows: [] });
+
+        const res = await store.find({
+          collection: usersCollection,
+          where: {
+            email: { $eq: 'john@example.com' },
+          },
+          limit: 1,
+          offset: 1,
+        });
+        expect(query).toHaveBeenCalledTimes(1);
+
+        expect(query).toHaveBeenCalledWith(
+          `SELECT *
+FROM ${usersTableName}
+WHERE email = 'john@example.com'
+LIMIT 1 OFFSET 1`,
+        );
+
+        expect(res).toEqual(Object.assign([], { nextOffset: null }));
+      });
+
+      it('should be able to select columns', async () => {
+        query.mockResolvedValueOnce({ rows: [usersTableRow1] });
+
+        const res = await store.find({
+          collection: usersCollection,
+          select: {
+            id: true,
+            name: true,
+            phone: false,
+          },
+          limit: 1,
+        });
+
+        expect(query).toHaveBeenCalledTimes(1);
+
+        expect(query).toHaveBeenCalledWith(
+          `SELECT id, name
+FROM ${usersTableName}
+LIMIT 1 OFFSET 0`,
+        );
+
+        expect(res).toEqual(Object.assign([usersTableRow1], { nextOffset: 1 }));
       });
     });
 

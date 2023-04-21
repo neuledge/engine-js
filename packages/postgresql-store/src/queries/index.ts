@@ -10,3 +10,4 @@ export * from './list-tables';
 export * from './list-table-columns';
 export * from './list-table-statistics';
 export * from './update-set';
+export * from './select-from';
