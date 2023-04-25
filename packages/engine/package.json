@@ -40,7 +40,7 @@
     "types": "rimraf --glob dist/*.{d.ts,d.ts.map} dist/**/*.{d.ts,d.ts.map} && tsc --emitDeclarationOnly && tsc-alias",
     "build": "rimraf --glob dist/*.{js,js.map,mjs,mjs.map} && tsup",
     "generate": "yarn generate:states",
-    "generate:states": "states --basepath \"src/definitions/__fixtures__/category-post-example\" --output \"states.codegen.ts\" \"*.states\"",
+    "generate:states": "states --basepath \"src/definitions/__fixtures__/category-post-example\" --output \"states.codegen.ts\" \"*.states\" && states --basepath \"src/definitions/__fixtures__/spotify-example\" --output \"states.codegen.ts\" \"*.states\"",
     "test": "jest",
     "lint": "eslint . --ext \"js,jsx,ts,tsx,mjs,cjs\"",
     "lint:strict": "yarn lint --max-warnings 0"
