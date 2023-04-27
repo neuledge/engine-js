@@ -1,11 +1,10 @@
 import {
   QueryHelpers,
-  fillJoinedDocuments,
+  convertRawDocument,
   getFromJoins,
   getOrderBy,
   getSelectAny,
   getSelectColumns,
-  getSelectedDocument,
   getWhere,
 } from '@/helpers';
 import { StoreDocument, StoreFindOptions, StoreList } from '@neuledge/store';
@@ -64,17 +63,9 @@ export const find = async <Connection>(
     limit,
     offsetNumber,
   );
-  const nextOffset = rawDocs.length < limit ? null : offsetNumber + limit;
 
-  const docs = rawDocs
-    .map((rawDoc) =>
-      fillJoinedDocuments(
-        options,
-        rawDoc,
-        getSelectedDocument(collection, select, rawDoc),
-      ),
-    )
-    .filter((doc): doc is StoreDocument => doc != null);
+  const docs = rawDocs.map((rawDoc) => convertRawDocument(rawDoc));
+  const nextOffset = rawDocs.length < limit ? null : offsetNumber + limit;
 
   return Object.assign(docs, { nextOffset });
 };

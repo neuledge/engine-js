@@ -1,10 +1,10 @@
 import { StoreCollection } from '@neuledge/store';
-import { QueryHelpers } from '../query';
-import { getFromJoins } from './from';
+import { QueryHelpers } from './query';
+import { getFromJoins } from './join';
 
 /* eslint-disable max-lines-per-function */
 
-describe('helpers/join/from', () => {
+describe('helpers/join', () => {
   describe('getFromJoins()', () => {
     const helpers: QueryHelpers = {
       encodeIdentifier: (name) => `\`${name.replace(/([\\`])/g, '\\$1')}\``,
@@ -193,5 +193,9 @@ describe('helpers/join/from', () => {
         ],
       });
     });
+
+    // FIXME test where clauses
+
+    // FIXME test recursive joins
   });
 });

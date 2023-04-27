@@ -1,4 +1,4 @@
-import { StoreCollection, StoreDocument, StoreSelect } from '@neuledge/store';
+import { StoreCollection, StoreSelect } from '@neuledge/store';
 import { QueryHelpers } from './query';
 
 export const getSelectColumns = (
@@ -26,15 +26,3 @@ export const getSelectAny = (
   helpers: QueryHelpers,
   from: string | null,
 ): string => `${from ? `${helpers.encodeIdentifier(from)}.` : ''}*`;
-
-export const getSelectedDocument = (
-  collection: StoreCollection,
-  select: StoreSelect | null | undefined,
-  rawDoc: StoreDocument,
-): StoreDocument => {
-  const keyFilter = select || collection.fields;
-
-  return Object.fromEntries(
-    Object.entries(rawDoc).filter(([key]) => keyFilter[key]),
-  );
-};

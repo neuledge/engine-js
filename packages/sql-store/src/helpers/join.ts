@@ -4,8 +4,8 @@ import {
   StoreJoin,
   StoreJoinChoice,
 } from '@neuledge/store';
-import { QueryHelpers } from '../query';
-import { getSelectColumn } from '../select';
+import { QueryHelpers } from './query';
+import { getSelectColumn } from './select';
 
 export const getFromJoins = (
   helpers: QueryHelpers,

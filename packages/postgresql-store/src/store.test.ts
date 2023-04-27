@@ -254,18 +254,10 @@ describe('store', () => {
           `SELECT id, name FROM ${usersTableName} LIMIT 1 OFFSET 0`,
         );
 
-        expect(res).toEqual(
-          Object.assign(
-            [
-              {
-                id: usersTableRow1.id,
-                name: usersTableRow1.name,
-              },
-            ],
-            { nextOffset: 1 },
-          ),
-        );
+        expect(res).toEqual(Object.assign([usersTableRow1], { nextOffset: 1 }));
       });
+
+      // FIXME test joins
 
       it('should be able to sort documents', async () => {
         query.mockResolvedValueOnce({ rows: [usersTableRow1] });
