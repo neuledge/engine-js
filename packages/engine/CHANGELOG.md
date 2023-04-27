@@ -1,5 +1,12 @@
 # @neuledge/engine
 
+## 0.2.1
+
+### Patch Changes
+
+- 7751506: fix support for scalar arrays
+- 7751506: Fix state defintion type
+
 ## 0.2.0
 
 ### Minor Changes
