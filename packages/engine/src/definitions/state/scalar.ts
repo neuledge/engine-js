@@ -10,13 +10,22 @@ export type StateDefintionScalar<V = any> = {
 
 export type StateDefinitionScalarType<V> =
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  Scalar<V, any, any> | readonly StateDefinition<string, V>[];
+  | Scalar<V, any, any>
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  | readonly [Scalar<V extends readonly any[] ? V[number] : never, any, any>]
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  | readonly StateDefinition<string, V & { [key: string]: any }>[];
 
 export const isStateDefinitionScalarTypeScalar = <V>(
   type: StateDefinitionScalarType<V>,
+): type is  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  | Scalar<V, any, any>
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-): type is Scalar<V, any, any> => !Array.isArray(type);
+  | readonly [Scalar<V extends readonly any[] ? V[number] : never, any, any>] =>
+  !Array.isArray(type) || (type.length === 1 && type[0]?.type === 'Scalar');
 
 export const isStateDefinitionScalarTypeStates = <V>(
   type: StateDefinitionScalarType<V>,
-): type is readonly StateDefinition<string, V>[] => Array.isArray(type);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+): type is readonly StateDefinition<string, V & { [key: string]: any }>[] =>
+  Array.isArray(type) && type.every((t) => t?.type !== 'Scalar');

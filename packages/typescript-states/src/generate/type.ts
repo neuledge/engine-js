@@ -8,7 +8,7 @@ export const generateTypeScalar = (type: Type): string => {
 
     case 'EntityExpression': {
       return type.list
-        ? `[${generateEntityScalar(type.entity)}]`
+        ? `[${generateEntityScalar(type.entity)}] as const`
         : generateEntityScalar(type.entity);
     }
 

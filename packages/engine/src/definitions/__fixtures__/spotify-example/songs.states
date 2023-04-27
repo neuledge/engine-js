@@ -1,0 +1,7 @@
+state Song {
+  @id(auto: "increment") id: Integer = 1
+  title: String = 2
+  imgUrl: URL = 3
+  artist: String = 4
+  playlist: Playlist = 5
+}
