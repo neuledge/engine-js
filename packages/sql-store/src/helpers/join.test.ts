@@ -194,7 +194,64 @@ describe('helpers/join', () => {
       });
     });
 
-    // FIXME test where clauses
+    it('should handle inner join with where', () => {
+      expect(
+        getFromJoins(helpers, {
+          collection,
+          innerJoin: {
+            foo: [
+              {
+                collection: otherCollection,
+                select: { title: true },
+                by: { id: { field: 'foo' } },
+                where: { subId: { $eq: 123 } },
+              },
+            ],
+          },
+        }),
+      ).toEqual({
+        selectColumns: ['`foo$0`.`title` AS `foo$0.title`'],
+        fromAlias: '$',
+        fromJoins: [
+          'INNER JOIN `otherCollection` `foo$0` ON (`foo$0`.`id` = `$`.`foo` AND `foo$0`.`subId` = 123)',
+        ],
+        whereClauses: [],
+      });
+    });
+
+    it('should handle left joins with where', () => {
+      expect(
+        getFromJoins(helpers, {
+          collection,
+          leftJoin: {
+            foo: [
+              {
+                collection: otherCollection,
+                select: { title: true },
+                by: { id: { field: 'foo' } },
+                where: { subId: { $lt: 123 } },
+              },
+              {
+                collection: otherCollection,
+                select: { description: true },
+                by: { subId: { field: 'bar' } },
+                where: { title: { $eq: 'hello' } },
+              },
+            ],
+          },
+        }),
+      ).toEqual({
+        selectColumns: [
+          '`foo$0`.`title` AS `foo$0.title`',
+          '`foo$0`.`description` AS `foo$1.description`',
+        ],
+        fromAlias: '$',
+        fromJoins: [
+          'LEFT JOIN `otherCollection` `foo$0` ON (`foo$0`.`id` = `$`.`foo` AND `foo$0`.`subId` < 123) OR (`foo$0`.`subId` = `$`.`bar` AND `foo$0`.`title` = "hello")',
+        ],
+        whereClauses: [],
+      });
+    });
 
     // FIXME test recursive joins
   });

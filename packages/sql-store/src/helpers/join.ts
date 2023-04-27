@@ -6,6 +6,7 @@ import {
 } from '@neuledge/store';
 import { QueryHelpers } from './query';
 import { getSelectColumn } from './select';
+import { getWhere } from './where';
 
 export const getFromJoins = (
   helpers: QueryHelpers,
@@ -82,13 +83,6 @@ const handleStoreJoinChoices = (
   for (const [i, choice] of choices.entries()) {
     const { collection, by, select, where } = choice;
 
-    // join with where are tricky. if it's done with inner join, it will
-    // remove the parent document if the join is not found. If it's done
-    // with left join, it will keep the parent document even if the join
-    // is not found. This is problematic when we have multiple join choices
-    // for the same collection but with different where clauses or from
-    // different join choices set.
-
     let join = joinsFrom[collection.name];
     if (!join) {
       join = {
@@ -100,7 +94,7 @@ const handleStoreJoinChoices = (
       joinsFrom[collection.name] = join;
     }
 
-    join.ons.push({ fromAlias: fromAlias, by });
+    join.ons.push({ fromAlias: fromAlias, by, where });
 
     if (select) {
       for (const name of Object.keys(
@@ -127,7 +121,11 @@ interface Join {
   collection: StoreCollection;
   alias: string;
   select: Record<string, string>;
-  ons: { fromAlias: string; by: StoreJoinChoice['by'] }[];
+  ons: {
+    fromAlias: string;
+    by: StoreJoinChoice['by'];
+    where: StoreJoinChoice['where'];
+  }[];
   required?: Join[];
 }
 
@@ -157,7 +155,9 @@ const getFromJoin = (
   const fromJoin = `${joinType} JOIN ${helpers.encodeIdentifier(
     collection.name,
   )} ${helpers.encodeIdentifier(joinAlias)} ON (${ons
-    .map(({ fromAlias, by }) => getJoinOn(helpers, fromAlias, joinAlias, by))
+    .map(({ fromAlias, by, where }) =>
+      getJoinOn(helpers, fromAlias, joinAlias, by, where),
+    )
     .join(') OR (')})`;
 
   return { select: selectColumns, fromJoin, where };
@@ -168,9 +168,10 @@ const getJoinOn = (
   fromAlias: string,
   joinAlias: string,
   by: StoreJoinChoice['by'],
+  where: StoreJoinChoice['where'],
 ): string =>
-  Object.entries(by)
-    .map(([key, term]) => {
+  [
+    ...Object.entries(by).map(([key, term]) => {
       const field = `${helpers.encodeIdentifier(
         joinAlias,
       )}.${helpers.encodeIdentifier(key)}`;
@@ -186,8 +187,9 @@ const getJoinOn = (
       }
 
       return `${field} IS NULL`;
-    })
-    .join(' AND ');
+    }),
+    ...(where ? [getWhere(helpers, where, joinAlias)] : []),
+  ].join(' AND ');
 
 /**
  * Check that at least one of the required joins is not null.

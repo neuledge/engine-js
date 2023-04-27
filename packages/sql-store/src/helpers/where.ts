@@ -4,14 +4,17 @@ import { QueryHelpers } from './query';
 export const getWhere = (
   helpers: QueryHelpers,
   where: StoreWhere,
+  from?: string | null,
 ): string | null => {
   const { $or } = where;
 
   if (!Array.isArray($or)) {
-    return whereRecord(helpers, where as StoreWhereRecord) || null;
+    return whereRecord(helpers, where as StoreWhereRecord, from) || null;
   }
 
-  const sql = $or.map((record) => whereRecord(helpers, record)).filter(Boolean);
+  const sql = $or
+    .map((record) => whereRecord(helpers, record, from))
+    .filter(Boolean);
 
   if (sql.length === 0) {
     return null;
@@ -20,86 +23,87 @@ export const getWhere = (
   return `(${sql.join(') OR (')})`;
 };
 
-const whereRecord = (helpers: QueryHelpers, record: StoreWhereRecord): string =>
-  Object.entries(record)
-    .map(([columnName, term]) => whereTerm(helpers, columnName, term))
+const whereRecord = (
+  helpers: QueryHelpers,
+  record: StoreWhereRecord,
+  from?: string | null,
+): string => {
+  const fromEntry = from ? `${helpers.encodeIdentifier(from)}.` : '';
+
+  return Object.entries(record)
+    .map(([columnName, term]) =>
+      whereTerm(
+        helpers,
+        `${fromEntry}${helpers.encodeIdentifier(columnName)}`,
+        term,
+      ),
+    )
     .filter(Boolean)
     .join(' AND ');
+};
 
 const whereTerm = (
   helpers: QueryHelpers,
-  columnName: string,
+  entry: string,
   term: StoreWhereTerm,
 ): string =>
   [
-    ...whereComparisonTerm(helpers, columnName, term),
-    ...whereLikeTerm(helpers, columnName, term),
-    ...whereInTerm(helpers, columnName, term),
+    ...whereComparisonTerm(helpers, entry, term),
+    ...whereLikeTerm(helpers, entry, term),
+    ...whereInTerm(helpers, entry, term),
   ].join(' AND ');
 
 const whereComparisonTerm = (
-  { encodeIdentifier, encodeLiteral }: QueryHelpers,
-  columnName: string,
+  { encodeLiteral }: QueryHelpers,
+  entry: string,
   term: StoreWhereTerm,
 ): string[] => {
   const sql: string[] = [];
 
   if ('$eq' in term) {
-    sql.push(`${encodeIdentifier(columnName)} = ${encodeLiteral(term.$eq)}`);
+    sql.push(`${entry} = ${encodeLiteral(term.$eq)}`);
   }
 
   if ('$ne' in term) {
-    sql.push(`${encodeIdentifier(columnName)} != ${encodeLiteral(term.$ne)}`);
+    sql.push(`${entry} != ${encodeLiteral(term.$ne)}`);
   }
 
   if ('$gt' in term) {
-    sql.push(`${encodeIdentifier(columnName)} > ${encodeLiteral(term.$gt)}`);
+    sql.push(`${entry} > ${encodeLiteral(term.$gt)}`);
   }
 
   if ('$gte' in term) {
-    sql.push(`${encodeIdentifier(columnName)} >= ${encodeLiteral(term.$gte)}`);
+    sql.push(`${entry} >= ${encodeLiteral(term.$gte)}`);
   }
 
   if ('$lt' in term) {
-    sql.push(`${encodeIdentifier(columnName)} < ${encodeLiteral(term.$lt)}`);
+    sql.push(`${entry} < ${encodeLiteral(term.$lt)}`);
   }
 
   if ('$lte' in term) {
-    sql.push(`${encodeIdentifier(columnName)} <= ${encodeLiteral(term.$lte)}`);
+    sql.push(`${entry} <= ${encodeLiteral(term.$lte)}`);
   }
 
   return sql;
 };
 
 const whereLikeTerm = (
-  { encodeIdentifier, encodeLiteral }: QueryHelpers,
-  columnName: string,
+  { encodeLiteral }: QueryHelpers,
+  entry: string,
   term: StoreWhereTerm,
 ): string[] => {
   const sql: string[] = [];
 
   if ('$contains' in term) {
-    sql.push(
-      `${encodeIdentifier(columnName)} LIKE ${encodeLiteral(
-        `%${term.$contains}%`,
-      )}`,
-    );
+    sql.push(`${entry} LIKE ${encodeLiteral(`%${term.$contains}%`)}`);
   }
 
   if ('$startsWith' in term) {
-    sql.push(
-      `${encodeIdentifier(columnName)} LIKE ${encodeLiteral(
-        `${term.$startsWith}%`,
-      )}`,
-    );
+    sql.push(`${entry} LIKE ${encodeLiteral(`${term.$startsWith}%`)}`);
   }
 
   if ('$endsWith' in term) {
-    sql.push(
-      `${encodeIdentifier(columnName)} LIKE ${encodeLiteral(
-        `%${term.$endsWith}`,
-      )}`,
-    );
+    sql.push(`${entry} LIKE ${encodeLiteral(`%${term.$endsWith}`)}`);
   }
 
   if ('$in' in term) {
@@ -107,9 +111,7 @@ const whereLikeTerm = (
       sql.push('FALSE');
     } else {
       sql.push(
-        `${encodeIdentifier(columnName)} IN (${term.$in
-          .map((v) => encodeLiteral(v))
-          .join(', ')})`,
+        `${entry} IN (${term.$in.map((v) => encodeLiteral(v)).join(', ')})`,
       );
     }
   }
@@ -118,8 +120,8 @@ const whereLikeTerm = (
 };
 
 const whereInTerm = (
-  { encodeIdentifier, encodeLiteral }: QueryHelpers,
-  columnName: string,
+  { encodeLiteral }: QueryHelpers,
+  entry: string,
   term: StoreWhereTerm,
 ): string[] => {
   const sql: string[] = [];
@@ -129,9 +131,7 @@ const whereInTerm = (
       sql.push('FALSE');
     } else {
       sql.push(
-        `${encodeIdentifier(columnName)} IN (${term.$in
-          .map((v) => encodeLiteral(v))
-          .join(', ')})`,
+        `${entry} IN (${term.$in.map((v) => encodeLiteral(v)).join(', ')})`,
       );
     }
   }
