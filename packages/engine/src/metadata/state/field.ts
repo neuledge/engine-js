@@ -14,6 +14,7 @@ export interface StateFieldSnapshot {
   indexes: number[];
   type: Scalar;
   nullable: boolean;
+  list: boolean;
 }
 
 export interface MetadataStateField extends StateFieldSnapshot {
@@ -24,7 +25,7 @@ export const getMetadataStateFieldKey = (
   field: StateFieldSnapshot,
   strict?: boolean,
 ): string =>
-  `${field.indexes.join(':')}#${field.type}${
+  `${field.indexes.join(':')}#${field.type}${field.list ? '[]' : ''}${
     strict && field.nullable ? '?' : ''
   }`;
 
@@ -59,13 +60,18 @@ export const getScalarFields = (
 
   // type is scalar
   if (isStateDefinitionScalarTypeScalar(type)) {
+    const [list, scalarType] = Array.isArray(type)
+      ? [true, type[0]]
+      : [false, type];
+
     return [
       {
         name: toSnakeCase(name),
         path,
         indexes,
-        type,
+        type: scalarType,
         nullable: nullable ?? false,
+        list,
       },
     ];
   }
