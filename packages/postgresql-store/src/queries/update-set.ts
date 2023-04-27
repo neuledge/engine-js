@@ -17,8 +17,8 @@ export const updateSet = async (
   );
 
   const res = await connection.query(
-    `UPDATE ${encodeIdentifier(name)}\nSET ${setClauses.join(', ')}${
-      where ? `\nWHERE ${where}` : ''
+    `UPDATE ${encodeIdentifier(name)} SET ${setClauses.join(', ')}${
+      where ? ` WHERE ${where}` : ''
     }`,
   );
 

@@ -1,4 +1,4 @@
-import { QueryHelpers, whereClause } from '@/helpers';
+import { QueryHelpers, getWhere } from '@/helpers';
 import {
   StoreDocument,
   StoreMutationResponse,
@@ -27,7 +27,7 @@ export const update = async <Connection>(
     connection,
     name,
     set,
-    where ? whereClause(queryHelpers, where) : null,
+    where ? getWhere(queryHelpers, where) : null,
   );
 
   return {

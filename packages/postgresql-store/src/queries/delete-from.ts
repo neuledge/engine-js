@@ -7,7 +7,7 @@ export const deleteFrom = async (
 ): Promise<number> => {
   const res = await connection.query(
     where
-      ? `DELETE FROM ${encodeIdentifier(name)}\nWHERE ${where}`
+      ? `DELETE FROM ${encodeIdentifier(name)} WHERE ${where}`
       : `TRUNCATE TABLE ${encodeIdentifier(name)}`,
   );
 

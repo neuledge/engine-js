@@ -209,10 +209,7 @@ describe('store', () => {
         expect(query).toHaveBeenCalledTimes(1);
 
         expect(query).toHaveBeenCalledWith(
-          `SELECT *
-FROM ${usersTableName}
-WHERE email = 'john@example.com'
-LIMIT 1 OFFSET 0`,
+          `SELECT * FROM ${usersTableName} WHERE email = 'john@example.com' LIMIT 1 OFFSET 0`,
         );
 
         expect(res).toEqual(Object.assign([usersTableRow1], { nextOffset: 1 }));
@@ -232,10 +229,7 @@ LIMIT 1 OFFSET 0`,
         expect(query).toHaveBeenCalledTimes(1);
 
         expect(query).toHaveBeenCalledWith(
-          `SELECT *
-FROM ${usersTableName}
-WHERE email = 'john@example.com'
-LIMIT 1 OFFSET 1`,
+          `SELECT * FROM ${usersTableName} WHERE email = 'john@example.com' LIMIT 1 OFFSET 1`,
         );
 
         expect(res).toEqual(Object.assign([], { nextOffset: null }));
@@ -257,9 +251,38 @@ LIMIT 1 OFFSET 1`,
         expect(query).toHaveBeenCalledTimes(1);
 
         expect(query).toHaveBeenCalledWith(
-          `SELECT id, name
-FROM ${usersTableName}
-LIMIT 1 OFFSET 0`,
+          `SELECT id, name FROM ${usersTableName} LIMIT 1 OFFSET 0`,
+        );
+
+        expect(res).toEqual(
+          Object.assign(
+            [
+              {
+                id: usersTableRow1.id,
+                name: usersTableRow1.name,
+              },
+            ],
+            { nextOffset: 1 },
+          ),
+        );
+      });
+
+      it('should be able to sort documents', async () => {
+        query.mockResolvedValueOnce({ rows: [usersTableRow1] });
+
+        const res = await store.find({
+          collection: usersCollection,
+          sort: {
+            name: 'desc',
+            email: 'asc',
+          },
+          limit: 1,
+        });
+
+        expect(query).toHaveBeenCalledTimes(1);
+
+        expect(query).toHaveBeenCalledWith(
+          `SELECT * FROM ${usersTableName} ORDER BY name DESC, email ASC LIMIT 1 OFFSET 0`,
         );
 
         expect(res).toEqual(Object.assign([usersTableRow1], { nextOffset: 1 }));
@@ -285,9 +308,7 @@ LIMIT 1 OFFSET 0`,
         expect(query).toHaveBeenCalledTimes(1);
 
         expect(query).toHaveBeenCalledWith(
-          `INSERT INTO ${usersTableName} (id, name, email, phone, created_at, updated_at)
-VALUES (DEFAULT, 'John Doe', 'john@example.com', NULL, '2020-01-01 00:00:00.000+00', '2020-01-01 00:00:00.000+00')
-RETURNING id`,
+          `INSERT INTO ${usersTableName} (id, name, email, phone, created_at, updated_at) VALUES (DEFAULT, 'John Doe', 'john@example.com', NULL, '2020-01-01 00:00:00.000+00', '2020-01-01 00:00:00.000+00') RETURNING id`,
         );
 
         expect(res).toEqual({
@@ -315,9 +336,7 @@ RETURNING id`,
         expect(query).toHaveBeenCalledTimes(1);
 
         expect(query).toHaveBeenCalledWith(
-          `INSERT INTO ${usersTableName} (id, name, email, phone, created_at, updated_at)
-VALUES ('789', 'John Doe', 'john@example.com', NULL, '2020-01-01 00:00:00.000+00', '2020-01-01 00:00:00.000+00')
-RETURNING id`,
+          `INSERT INTO ${usersTableName} (id, name, email, phone, created_at, updated_at) VALUES ('789', 'John Doe', 'john@example.com', NULL, '2020-01-01 00:00:00.000+00', '2020-01-01 00:00:00.000+00') RETURNING id`,
         );
 
         expect(res).toEqual({
@@ -344,9 +363,7 @@ RETURNING id`,
 
         expect(query).toHaveBeenCalledTimes(1);
         expect(query).toHaveBeenCalledWith(
-          `UPDATE ${usersTableName}
-SET name = 'John Doe', email = 'john@example.com', phone = NULL, updated_at = '2020-01-01 00:00:00.000+00'
-WHERE id = '123'`,
+          `UPDATE ${usersTableName} SET name = 'John Doe', email = 'john@example.com', phone = NULL, updated_at = '2020-01-01 00:00:00.000+00' WHERE id = '123'`,
         );
 
         expect(res).toEqual({
@@ -368,8 +385,7 @@ WHERE id = '123'`,
 
         expect(query).toHaveBeenCalledTimes(1);
         expect(query).toHaveBeenCalledWith(
-          `UPDATE ${usersTableName}
-SET name = 'John Doe', email = 'john@example.com', updated_at = '2020-01-01 00:00:00.000+00'`,
+          `UPDATE ${usersTableName} SET name = 'John Doe', email = 'john@example.com', updated_at = '2020-01-01 00:00:00.000+00'`,
         );
 
         expect(res).toEqual({
@@ -389,7 +405,7 @@ SET name = 'John Doe', email = 'john@example.com', updated_at = '2020-01-01 00:0
 
         expect(query).toHaveBeenCalledTimes(1);
         expect(query).toHaveBeenCalledWith(
-          `DELETE FROM ${usersTableName}\nWHERE id = '123'`,
+          `DELETE FROM ${usersTableName} WHERE id = '123'`,
         );
 
         expect(res).toEqual({

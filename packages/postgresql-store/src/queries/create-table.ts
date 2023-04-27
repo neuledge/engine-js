@@ -8,16 +8,15 @@ export const createTableIfNotExists = async (
   collection: StoreCollection,
 ): Promise<void> => {
   await connection.query(
-    `CREATE TABLE IF NOT EXISTS ${encodeIdentifier(collection.name)} (
-  ${Object.values(collection.fields)
-    .map((field) => getColumnDefinition(field, collection))
-    .join(',\n  ')},
-  CONSTRAINT ${encodeIdentifier(
-    `${collection.name}_pkey`,
-  )} PRIMARY KEY (${Object.keys(collection.primaryKey.fields)
+    `CREATE TABLE IF NOT EXISTS ${encodeIdentifier(
+      collection.name,
+    )} (${Object.values(collection.fields)
+      .map((field) => getColumnDefinition(field, collection))
+      .join(', ')}, CONSTRAINT ${encodeIdentifier(
+      `${collection.name}_pkey`,
+    )} PRIMARY KEY (${Object.keys(collection.primaryKey.fields)
       .map((val) => encodeIdentifier(val))
-      .join(', ')})
-)`,
+      .join(', ')}))`,
   );
 
   // add unique constraints if primary key has descending fields

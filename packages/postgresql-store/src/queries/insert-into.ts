@@ -16,14 +16,14 @@ export const insertInto = async (
     .query(
       `INSERT INTO ${encodeIdentifier(name)} (${columns
         .map((column) => encodeIdentifier(column))
-        .join(', ')})
-VALUES (${values
+        .join(', ')}) VALUES (${values
         .map((arr) =>
           arr
             .map((v) => (v === undefined ? 'DEFAULT' : encodeLiteral(v)))
             .join(', '),
         )
-        .join('), (')})
-RETURNING ${returns.map((column) => encodeIdentifier(column)).join(', ')}`,
+        .join('), (')}) RETURNING ${returns
+        .map((column) => encodeIdentifier(column))
+        .join(', ')}`,
     )
     .then((res) => res.rows);

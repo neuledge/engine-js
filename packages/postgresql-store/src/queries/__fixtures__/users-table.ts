@@ -11,15 +11,7 @@ export const usersTableName = 'users';
 
 export const usersTable_dropSql = `DROP TABLE IF EXISTS users`;
 
-export const usersTable_createSql = `CREATE TABLE IF NOT EXISTS users (
-  id BIGSERIAL NOT NULL,
-  name VARCHAR(50),
-  email VARCHAR(100) NOT NULL,
-  phone VARCHAR(20),
-  created_at TIMESTAMP NOT NULL,
-  updated_at TIMESTAMP NOT NULL,
-  CONSTRAINT users_pkey PRIMARY KEY (id)
-)`;
+export const usersTable_createSql = `CREATE TABLE IF NOT EXISTS users (id BIGSERIAL NOT NULL, name VARCHAR(50), email VARCHAR(100) NOT NULL, phone VARCHAR(20), created_at TIMESTAMP NOT NULL, updated_at TIMESTAMP NOT NULL, CONSTRAINT users_pkey PRIMARY KEY (id))`;
 
 export const usersTable_phoneAddSql = `ALTER TABLE users ADD COLUMN phone VARCHAR(20)`;
 

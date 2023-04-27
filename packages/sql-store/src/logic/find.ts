@@ -1,12 +1,22 @@
-import { QueryHelpers, whereClause } from '@/helpers';
+import {
+  QueryHelpers,
+  fillJoinedDocuments,
+  getFromJoins,
+  getOrderBy,
+  getSelectAny,
+  getSelectColumns,
+  getSelectedDocument,
+  getWhere,
+} from '@/helpers';
 import { StoreDocument, StoreFindOptions, StoreList } from '@neuledge/store';
 
 export interface FindQueries<Connection> {
   selectFrom(
     connection: Connection,
-    name: string,
-    select: string[] | true,
+    select: string,
+    from: string,
     where: string | null,
+    orderBy: string | null,
     limit: number,
     offset: number,
   ): Promise<StoreDocument[]>;
@@ -18,38 +28,53 @@ export const find = async <Connection>(
   connection: Connection,
   { selectFrom, queryHelpers }: FindQueries<Connection>,
 ): Promise<StoreList> => {
-  const {
-    collection,
-    select: selectMap,
-    where,
-    innerJoin,
-    leftJoin,
-    limit,
-    offset: storeOffset,
-    sort,
-  } = options;
-  const { name } = collection;
+  const { collection, select, where, limit, offset, sort } = options;
 
-  if (innerJoin || leftJoin || sort) {
-    // FIXME implement joins and sorting on postgresql
-    throw new Error('Joins and sorting are not supported yet');
+  let from = queryHelpers.encodeIdentifier(collection.name);
+  const join = getFromJoins(queryHelpers, options);
+
+  let selectColumns;
+  const whereClauses = where ? [getWhere(queryHelpers, where)] : [];
+
+  if (join) {
+    from += `${queryHelpers.encodeIdentifier(
+      join.fromAlias,
+    )} ${join.fromJoins.join(' ')}`;
+
+    selectColumns = select
+      ? getSelectColumns(queryHelpers, join.fromAlias, select)
+      : [getSelectAny(queryHelpers, join.fromAlias)];
+
+    selectColumns.push(...join.selectColumns);
+    whereClauses.push(...join.whereClauses);
+  } else {
+    selectColumns = select
+      ? getSelectColumns(queryHelpers, null, select)
+      : ['*'];
   }
 
-  const select = selectMap
-    ? Object.keys(selectMap).filter((key) => selectMap[key])
-    : true;
-  const offset = storeOffset ? Number(storeOffset) : 0;
+  const offsetNumber = offset ? Number(offset) : 0;
 
-  const rows = await selectFrom(
+  const rawDocs = await selectFrom(
     connection,
-    name,
-    select,
-    where ? whereClause(queryHelpers, where) : null,
+    selectColumns.join(', '),
+    from,
+    whereClauses.join(' AND ') || null,
+    sort ? getOrderBy(queryHelpers, sort) : null,
     limit,
-    offset,
+    offsetNumber,
   );
+  const nextOffset = rawDocs.length < limit ? null : offsetNumber + limit;
 
-  const nextOffset = rows.length < limit ? null : offset + limit;
+  const docs = rawDocs
+    .map((rawDoc) =>
+      fillJoinedDocuments(
+        options,
+        rawDoc,
+        getSelectedDocument(collection, select, rawDoc),
+      ),
+    )
+    .filter((doc): doc is StoreDocument => doc != null);
 
-  return Object.assign(rows, { nextOffset });
+  return Object.assign(docs, { nextOffset });
 };

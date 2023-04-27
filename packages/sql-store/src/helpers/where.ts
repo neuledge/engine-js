@@ -1,7 +1,7 @@
 import { StoreWhere, StoreWhereRecord, StoreWhereTerm } from '@neuledge/store';
 import { QueryHelpers } from './query';
 
-export const whereClause = (
+export const getWhere = (
   helpers: QueryHelpers,
   where: StoreWhere,
 ): string | null => {

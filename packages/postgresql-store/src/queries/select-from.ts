@@ -1,27 +1,19 @@
 import { StoreDocument } from '@neuledge/store';
-import { PostgreSQLConnection, encodeIdentifier } from './connection';
+import { PostgreSQLConnection } from './connection';
 
 export const selectFrom = async (
   connection: PostgreSQLConnection,
-  name: string,
-  select: string[] | true,
+  select: string,
+  from: string,
   where: string | null,
+  orderBy: string | null,
   limit: number,
   offset: number,
 ): Promise<StoreDocument[]> => {
   const { rows } = await connection.query(
-    `SELECT ${
-      select === true
-        ? '*'
-        : select.map((column) => encodeIdentifier(column)).join(', ')
-    }
-FROM ${encodeIdentifier(name)}${
-      where
-        ? `
-WHERE ${where}`
-        : ''
-    }
-LIMIT ${Number(limit)} OFFSET ${Number(offset)}`,
+    `SELECT ${select} FROM ${from}${where ? ` WHERE ${where}` : ''}${
+      orderBy ? ` ORDER BY ${orderBy}` : ''
+    } LIMIT ${Number(limit)} OFFSET ${Number(offset)}`,
   );
 
   return rows;
