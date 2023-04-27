@@ -14,6 +14,7 @@ describe('engine/filter/where/record', () => {
       name: 'foo_old',
       path: 'foo',
       type: NumberScalar,
+      list: false,
       nullable: false,
       indexes: [1],
     };
@@ -21,6 +22,7 @@ describe('engine/filter/where/record', () => {
       name: 'foo',
       path: 'foo',
       type: NumberScalar,
+      list: false,
       nullable: false,
       indexes: [1],
     };
@@ -28,6 +30,7 @@ describe('engine/filter/where/record', () => {
       name: 'bar',
       path: 'bar',
       type: NumberScalar,
+      list: false,
       nullable: false,
       indexes: [2],
     };
@@ -35,6 +38,7 @@ describe('engine/filter/where/record', () => {
       name: 'entity_id',
       path: 'entity.id',
       type: NumberScalar,
+      list: false,
       nullable: false,
       indexes: [3, 1],
     };
@@ -42,6 +46,7 @@ describe('engine/filter/where/record', () => {
       name: 'entity_subId',
       path: 'entity.subId',
       type: NumberScalar,
+      list: false,
       nullable: false,
       indexes: [3, 2],
     };

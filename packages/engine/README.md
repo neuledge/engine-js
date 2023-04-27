@@ -8,7 +8,7 @@
 </p>
 
 <p align=center>
-  <strong>Universal language to model, share, and interact with databases.</strong>
+  <strong>Create data models directly from your business logic.</strong>
 </p>
 <p align=center>
   <a href="https://www.npmjs.com/package/@neuledge/mongodb-store">MongoDB</a> ⇄ 

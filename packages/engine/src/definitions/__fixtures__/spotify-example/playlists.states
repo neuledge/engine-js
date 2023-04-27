@@ -1,0 +1,8 @@
+state Playlist {
+  @id(auto: "increment") id: Integer = 1
+  name: String = 2
+  imgUrl: URL = 3
+  tags: String[] = 4
+  createdBy: User = 5
+  @reference(field: "playlist") songs: Song[] = 6
+}

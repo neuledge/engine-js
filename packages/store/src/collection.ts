@@ -12,6 +12,7 @@ export type StoreCollection_Slim = Pick<StoreCollection, 'name'>;
 
 export interface StoreField extends StoreShape {
   name: string;
+  list?: boolean;
   nullable?: boolean;
 }
 

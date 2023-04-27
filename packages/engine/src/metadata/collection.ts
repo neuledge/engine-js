@@ -122,6 +122,7 @@ const getStoreCollectionFields = (
 const getStoreField = (field: MetadataStateField): StoreField => ({
   name: field.name,
   ...field.type.shape,
+  list: field.list,
   nullable: field.nullable,
 });
 

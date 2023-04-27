@@ -88,7 +88,9 @@ export const getMetadataSchema = (
  * Get a unique field key
  */
 const getFieldKey = (field: MetadataStateField): string =>
-  `${field.name}:${field.type.name}${field.nullable ? '?' : ''}`;
+  `${field.name}${field.nullable ? '?' : ''}:${field.type.name}${
+    field.list ? '[]' : ''
+  }`;
 
 /**
  * Get a unique schema key

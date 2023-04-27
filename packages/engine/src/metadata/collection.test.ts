@@ -27,16 +27,19 @@ describe('engine/metadata/collection', () => {
             type: 'number',
             size: 8,
             scale: 0,
+            list: false,
             nullable: false,
           },
           name: {
             name: 'name',
             type: 'string',
+            list: false,
             nullable: false,
           },
           description: {
             name: 'description',
             type: 'string',
+            list: false,
             nullable: true,
           },
         });
@@ -49,16 +52,19 @@ describe('engine/metadata/collection', () => {
             type: 'number',
             size: 8,
             scale: 0,
+            list: false,
             nullable: false,
           },
           title: {
             name: 'title',
             type: 'string',
+            list: false,
             nullable: false,
           },
           content: {
             name: 'content',
             type: 'string',
+            list: false,
             nullable: true,
           },
           category_id: {
@@ -66,11 +72,13 @@ describe('engine/metadata/collection', () => {
             type: 'number',
             size: 8,
             scale: 0,
+            list: false,
             nullable: true,
           },
           published_at: {
             name: 'published_at',
             type: 'date-time',
+            list: false,
             nullable: true,
           },
         });

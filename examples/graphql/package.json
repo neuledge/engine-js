@@ -13,7 +13,7 @@
     "start": "node --enable-source-maps dist/app.js"
   },
   "dependencies": {
-    "@neuledge/engine": "^0.2.0",
+    "@neuledge/engine": "^0.2.1",
     "@neuledge/mongodb-store": "^0.2.0",
     "dotenv": "^16.0.3",
     "fastify": "^4.14.1",
@@ -21,9 +21,9 @@
     "mercurius": "^12.2.0"
   },
   "devDependencies": {
-    "@graphql-codegen/cli": "^3.2.1",
-    "@graphql-codegen/typescript-resolvers": "^3.1.0",
-    "@graphql-tools/schema": "^9.0.16",
+    "@graphql-codegen/cli": "^3.3.0",
+    "@graphql-codegen/typescript-resolvers": "^3.2.0",
+    "@graphql-tools/schema": "^9.0.18",
     "@neuledge/states-cli": "^0.1.3"
   }
 }

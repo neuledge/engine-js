@@ -22,6 +22,7 @@ interface StoreMetadataStateField {
   name: string;
   type: string;
   indexes: number[];
+  list: boolean;
   nullable: boolean;
 }
 
@@ -76,6 +77,7 @@ const fromStoreMetadataStateField = (
   name: doc.name,
   type: getType(doc.type),
   indexes: doc.indexes,
+  list: doc.list,
   nullable: doc.nullable,
 });
 
@@ -85,6 +87,7 @@ const toStoreMetadataStateField = (
   name: field.name,
   type: field.type.name,
   indexes: [...field.indexes],
+  list: field.list,
   nullable: field.nullable,
 });
 
