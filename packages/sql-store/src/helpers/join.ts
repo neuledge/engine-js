@@ -19,7 +19,7 @@ export const getFromJoins = (
 } | null => {
   const fromAlias = '$';
 
-  const joins = handleStoreOptions(fromAlias, options);
+  const joins = handleStoreOptions(fromAlias, '', options);
   if (!joins.length) return null;
 
   const selectColumns: string[] = [];
@@ -44,6 +44,7 @@ export const getFromJoins = (
 
 const handleStoreOptions = (
   fromAlias: string,
+  path: string,
   {
     innerJoin,
     leftJoin,
@@ -52,11 +53,11 @@ const handleStoreOptions = (
   const joins: Join[] = [];
 
   if (innerJoin) {
-    joins.push(...handleStoreJoin(fromAlias, innerJoin, true));
+    joins.push(...handleStoreJoin(fromAlias, path, innerJoin, true));
   }
 
   if (leftJoin) {
-    joins.push(...handleStoreJoin(fromAlias, leftJoin));
+    joins.push(...handleStoreJoin(fromAlias, path, leftJoin));
   }
 
   return joins;
@@ -64,11 +65,17 @@ const handleStoreOptions = (
 
 const handleStoreJoin = (
   fromAlias: string,
+  path: string,
   join: StoreJoin,
   required?: boolean,
 ): Join[] =>
   Object.entries(join).flatMap(([key, choices]) =>
-    handleStoreJoinChoices(fromAlias, key, choices, required),
+    handleStoreJoinChoices(
+      fromAlias,
+      path ? `${path}.${key}` : key,
+      choices,
+      required,
+    ),
   );
 
 const handleStoreJoinChoices = (
@@ -104,7 +111,7 @@ const handleStoreJoinChoices = (
       }
     }
 
-    childJoins.push(...handleStoreOptions(join.alias, choice));
+    childJoins.push(...handleStoreOptions(join.alias, join.alias, choice));
   }
 
   const joins = Object.values(joinsFrom);

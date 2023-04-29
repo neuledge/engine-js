@@ -253,6 +253,78 @@ describe('helpers/join', () => {
       });
     });
 
-    // FIXME test recursive joins
+    it('should handle inner join within left join', () => {
+      expect(
+        getFromJoins(helpers, {
+          collection,
+          leftJoin: {
+            foo: [
+              {
+                collection: otherCollection,
+                select: { title: true },
+                by: { id: { field: 'foo' } },
+                innerJoin: {
+                  bar: [
+                    {
+                      collection: otherCollection2,
+                      select: { url: true },
+                      by: { id: { field: 'bar' } },
+                    },
+                  ],
+                },
+              },
+            ],
+          },
+        }),
+      ).toEqual({
+        selectColumns: [
+          '`foo$0`.`title` AS `foo$0.title`',
+          '`foo$0.bar$0`.`url` AS `foo$0.bar$0.url`',
+        ],
+        fromAlias: '$',
+        fromJoins: [
+          'LEFT JOIN `otherCollection` `foo$0` ON (`foo$0`.`id` = `$`.`foo`)',
+          'INNER JOIN `otherCollection2` `foo$0.bar$0` ON (`foo$0.bar$0`.`id` = `foo$0`.`bar`)',
+        ],
+        whereClauses: [],
+      });
+    });
+
+    it('should handle overlapping inner join within left join', () => {
+      expect(
+        getFromJoins(helpers, {
+          collection,
+          leftJoin: {
+            test: [
+              {
+                collection: otherCollection,
+                select: { title: true },
+                by: { id: { field: 'foo' } },
+                innerJoin: {
+                  test: [
+                    {
+                      collection: otherCollection2,
+                      select: { url: true },
+                      by: { id: { field: 'bar' } },
+                    },
+                  ],
+                },
+              },
+            ],
+          },
+        }),
+      ).toEqual({
+        selectColumns: [
+          '`test$0`.`title` AS `test$0.title`',
+          '`test$0.test$0`.`url` AS `test$0.test$0.url`',
+        ],
+        fromAlias: '$',
+        fromJoins: [
+          'LEFT JOIN `otherCollection` `test$0` ON (`test$0`.`id` = `$`.`foo`)',
+          'INNER JOIN `otherCollection2` `test$0.test$0` ON (`test$0.test$0`.`id` = `test$0`.`bar`)',
+        ],
+        whereClauses: [],
+      });
+    });
   });
 });
