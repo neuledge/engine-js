@@ -36,7 +36,7 @@ export const find = async <Connection>(
   const whereClauses = where ? [getWhere(queryHelpers, where)] : [];
 
   if (join) {
-    from += `${queryHelpers.encodeIdentifier(
+    from += ` ${queryHelpers.encodeIdentifier(
       join.fromAlias,
     )} ${join.fromJoins.join(' ')}`;
 

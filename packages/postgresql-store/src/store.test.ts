@@ -4,6 +4,11 @@ import {
   listTables_sql,
 } from './queries';
 import {
+  postsCollection,
+  postsTableName,
+  postsTableRow1,
+} from './queries/__fixtures__/posts-table';
+import {
   usersCollection,
   usersCollection_slim,
   usersTable,
@@ -257,7 +262,37 @@ describe('store', () => {
         expect(res).toEqual(Object.assign([usersTableRow1], { nextOffset: 1 }));
       });
 
-      // FIXME test joins
+      it('should be able to join tables', async () => {
+        query.mockResolvedValueOnce({
+          rows: [{ ...postsTableRow1, author$0: usersTableRow1 }],
+        });
+
+        const res = await store.find({
+          collection: postsCollection,
+          innerJoin: {
+            author: [
+              {
+                collection: usersCollection,
+                select: true,
+                by: { author_id: { field: 'id' } },
+              },
+            ],
+          },
+          limit: 1,
+        });
+
+        expect(query).toHaveBeenCalledTimes(1);
+
+        expect(query).toHaveBeenCalledWith(
+          `SELECT "$".*, author$0.id AS "author$0.id", author$0.name AS "author$0.name", author$0.email AS "author$0.email", author$0.phone AS "author$0.phone", author$0.created_at AS "author$0.created_at", author$0.updated_at AS "author$0.updated_at" FROM ${postsTableName} "$" INNER JOIN ${usersTableName} author$0 ON (author$0.author_id = "$".id) LIMIT 1 OFFSET 0`,
+        );
+
+        expect(res).toEqual(
+          Object.assign([{ ...postsTableRow1, author: usersTableRow1 }], {
+            nextOffset: 1,
+          }),
+        );
+      });
 
       it('should be able to sort documents', async () => {
         query.mockResolvedValueOnce({ rows: [usersTableRow1] });
