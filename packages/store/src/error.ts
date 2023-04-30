@@ -24,9 +24,33 @@ export namespace StoreError {
 
 export class StoreError extends Error {
   static Code = StoreErrorCode;
+  public readonly originalError?: Error;
 
-  constructor(public readonly code: StoreErrorCode, message: string) {
+  constructor(
+    public readonly code: StoreErrorCode,
+    message: string,
+    originalError?: Error | unknown,
+  ) {
     super(message);
     this.name = 'StoreError';
+
+    if (originalError) {
+      this.originalError =
+        originalError instanceof Error
+          ? originalError
+          : new Error(String(originalError));
+    }
   }
 }
+
+export const throwStoreError = (error: unknown): never => {
+  if (error instanceof StoreError) {
+    throw error;
+  }
+
+  throw new StoreError(
+    StoreError.Code.INTERNAL_ERROR,
+    String((error as Error)?.message || error),
+    error,
+  );
+};

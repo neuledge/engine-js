@@ -4,6 +4,7 @@ import {
   StoreEnsureCollectionOptions,
   StoreField,
   StoreIndex,
+  throwStoreError,
 } from '@neuledge/store';
 import { SQLColumn, SQLIndexAttribute, SQLIndexColumn } from '@/mappers';
 import { DescribeCollectionQueries, describeCollection } from './describe';
@@ -49,36 +50,50 @@ export const ensureCollection = async <
 >(
   options: StoreEnsureCollectionOptions,
   connection: Connection,
-  {
-    createTableIfNotExists,
-    addIndex,
-    addColumn,
-    dropIndex,
-    dropColumn,
-    ...describeCollectionQueries
-  }: EnsureCollectionQueries<Connection, Column, IndexAttribute>,
+  queries: EnsureCollectionQueries<Connection, Column, IndexAttribute>,
 ): Promise<void> => {
-  await createTableIfNotExists(connection, options.collection);
+  await queries
+    .createTableIfNotExists(connection, options.collection)
+    .catch(throwStoreError);
 
+  await dropProperties(options, connection, queries);
+
+  const existsCollection = await describeCollection(
+    options,
+    connection,
+    queries,
+  );
+
+  await addProperties(options, connection, existsCollection, queries);
+};
+
+const dropProperties = async <Connection>(
+  options: StoreEnsureCollectionOptions,
+  connection: Connection,
+  { dropIndex, dropColumn }: EnsureCollectionQueriesOnly<Connection>,
+) => {
   const asyncLimit = pLimit(4);
 
   await Promise.all(
     options.dropIndexes?.map((index) =>
       asyncLimit(() => dropIndex(connection, options.collection, index)),
     ) || [],
-  );
+  ).catch(throwStoreError);
 
   await Promise.all(
     options.dropFields?.map((field) =>
       asyncLimit(() => dropColumn(connection, options.collection, field)),
     ) || [],
-  );
+  ).catch(throwStoreError);
+};
 
-  const collection = await describeCollection(
-    options,
-    connection,
-    describeCollectionQueries,
-  );
+const addProperties = async <Connection>(
+  options: StoreEnsureCollectionOptions,
+  connection: Connection,
+  existsCollection: StoreCollection,
+  { addIndex, addColumn }: EnsureCollectionQueriesOnly<Connection>,
+) => {
+  const asyncLimit = pLimit(4);
 
   // although we support adding columns with non-nullables types, it will be
   // rejected by the database and for a good reason. It's the responsibility of
@@ -87,17 +102,20 @@ export const ensureCollection = async <
 
   await Promise.all(
     options.fields
-      ?.filter((field) => !collection.fields[field.name])
+      ?.filter((field) => !existsCollection.fields[field.name])
       .map((field) =>
-        asyncLimit(() => addColumn(connection, collection, field)),
+        asyncLimit(() => addColumn(connection, existsCollection, field)),
       ) || [],
-  );
+  ).catch(throwStoreError);
 
   await Promise.all(
     options.indexes
-      ?.filter((index) => !collection.indexes[index.name])
+      ?.filter(
+        (index) =>
+          !existsCollection.indexes[index.name] && index.unique !== 'primary',
+      )
       .map((index) =>
-        asyncLimit(() => addIndex(connection, collection, index)),
+        asyncLimit(() => addIndex(connection, existsCollection, index)),
       ) || [],
-  );
+  ).catch(throwStoreError);
 };

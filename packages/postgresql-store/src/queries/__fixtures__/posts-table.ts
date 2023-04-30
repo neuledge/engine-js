@@ -8,6 +8,7 @@ export const postsCollection: StoreCollection = {
     id: {
       name: 'id',
       type: 'number',
+      list: false,
       nullable: false,
       size: null,
       precision: 32,
@@ -16,6 +17,7 @@ export const postsCollection: StoreCollection = {
     author_id: {
       name: 'author_id',
       type: 'number',
+      list: false,
       nullable: false,
       size: null,
       precision: 32,
@@ -24,6 +26,7 @@ export const postsCollection: StoreCollection = {
     title: {
       name: 'title',
       type: 'string',
+      list: false,
       nullable: false,
       size: 100,
       precision: null,
@@ -32,6 +35,7 @@ export const postsCollection: StoreCollection = {
     body: {
       name: 'body',
       type: 'string',
+      list: false,
       nullable: false,
       size: 1000,
       precision: null,
@@ -40,6 +44,7 @@ export const postsCollection: StoreCollection = {
     created_at: {
       name: 'created_at',
       type: 'date-time',
+      list: false,
       nullable: false,
       size: null,
       precision: null,
@@ -48,6 +53,7 @@ export const postsCollection: StoreCollection = {
     updated_at: {
       name: 'updated_at',
       type: 'date-time',
+      list: false,
       nullable: false,
       size: null,
       precision: null,

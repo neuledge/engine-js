@@ -1,4 +1,4 @@
-import { StoreIndex, StorePrimaryKey } from '@neuledge/store';
+import { StoreIndex, StorePrimaryKey, throwStoreError } from '@neuledge/store';
 import { Collection } from 'mongodb';
 import { escapeFieldName } from './fields';
 
@@ -6,7 +6,9 @@ export const dropIndexes = async (
   collection: Collection,
   indexes: string[],
 ): Promise<void> => {
-  await Promise.all(indexes.map((index) => collection.dropIndex(index)));
+  await Promise.all(indexes.map((index) => collection.dropIndex(index))).catch(
+    throwStoreError,
+  );
 };
 
 export const ensureIndexes = async (
@@ -14,7 +16,11 @@ export const ensureIndexes = async (
   collection: Collection,
   indexes: StoreIndex[],
 ): Promise<void> => {
-  const exists = await collection.listIndexes().toArray();
+  const exists = await collection
+    .listIndexes()
+    .toArray()
+    .catch(throwStoreError);
+
   const existMap = new Map(exists.map((item) => [item.name, item]));
 
   for (const index of indexes) {
@@ -39,11 +45,13 @@ export const ensureIndexes = async (
     // documents that don't have the indexed fields. This maintains the same
     // behavior with relational databases where NULL values are not indexed.
 
-    await collection.createIndex(indexSpec, {
-      name: index.name,
-      unique: !!index.unique,
-      sparse: true,
-      background: true,
-    });
+    await collection
+      .createIndex(indexSpec, {
+        name: index.name,
+        unique: !!index.unique,
+        sparse: true,
+        background: true,
+      })
+      .catch(throwStoreError);
   }
 };

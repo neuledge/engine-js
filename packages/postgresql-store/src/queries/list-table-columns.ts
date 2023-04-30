@@ -7,6 +7,7 @@ import { PostgreSQLConnection } from './connection';
 export interface PostgreSQLColumn {
   column_name: string;
   data_type: string;
+  list: boolean;
   character_maximum_length: number | null;
   numeric_precision: number | null;
   numeric_scale: number | null;
@@ -22,9 +23,11 @@ export const listTableColumns = async (
     .query<PostgreSQLColumn>(listTableColumns_sql, [tableName])
     .then((result) => result.rows);
 
-export const listTableColumns_sql = `SELECT column_name, data_type, character_maximum_length, numeric_precision, numeric_scale, (is_nullable = 'YES') as is_nullable, column_default LIKE 'nextval(%)' AS is_auto_increment FROM information_schema.columns WHERE table_catalog = current_database() AND table_schema = current_schema() AND table_name = $1`;
+export const listTableColumns_sql = `SELECT c.column_name, COALESCE(o.data_type, c.data_type) as data_type,(c.data_type = 'ARRAY') as list, c.character_maximum_length, c.numeric_precision, c.numeric_scale, (c.is_nullable = 'YES') as is_nullable, c.column_default LIKE 'nextval(%)' AS is_auto_increment FROM information_schema.columns c LEFT JOIN information_schema.element_types o ON o.object_catalog = c.table_catalog AND o.object_schema = c.table_schema AND o.object_name = c.table_name AND o.object_type = 'TABLE' AND o.collection_type_identifier = c.dtd_identifier WHERE c.table_catalog = current_database() AND c.table_schema = current_schema() AND c.table_name = $1`;
 
-// https://www.postgresql.org/docs/current/datatype.html
+// will prduce typnames instead of data_type:
+// export const listTableColumns_sql = `SELECT s.column_name, COALESCE(e.typname, t.typname) as data_type, a.attndims as dimensions,s.character_maximum_length, s.numeric_precision, s.numeric_scale, (s.is_nullable = 'YES') as is_nullable, s.column_default LIKE 'nextval(%)' AS is_auto_increment FROM information_schema.columns AS s JOIN pg_namespace AS n ON n.nspname = s.table_schema JOIN pg_class AS c ON c.relnamespace = n.oid AND c.relname = s.table_name JOIN pg_attribute AS a ON a.attrelid = c.oid AND a.attname = s.column_name JOIN pg_type t ON t.oid = a.atttypid LEFT JOIN pg_type e ON e.oid = t.typelem WHERE table_catalog = current_database() AND table_schema = current_schema() AND table_name = $1`;
+
 export const dataTypeMap: Record<string, StoreShapeType> = {
   bigint: 'number',
   bigserial: 'number',

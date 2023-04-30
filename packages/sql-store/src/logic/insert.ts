@@ -3,6 +3,7 @@ import {
   StoreInsertOptions,
   StoreInsertionResponse,
   StoreScalarValue,
+  throwStoreError,
 } from '@neuledge/store';
 
 export interface InsertQueries<Connection> {
@@ -34,7 +35,13 @@ export const insert = async <Connection>(
 
   const returns = Object.keys(primaryKey.fields);
 
-  const res = await insertInto(connection, name, columns, values, returns);
+  const res = await insertInto(
+    connection,
+    name,
+    columns,
+    values,
+    returns,
+  ).catch(throwStoreError);
 
   return {
     affectedCount: res.length,

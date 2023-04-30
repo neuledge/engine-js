@@ -1,5 +1,9 @@
 import { QueryHelpers, getWhere } from '@/helpers';
-import { StoreDeleteOptions, StoreMutationResponse } from '@neuledge/store';
+import {
+  StoreDeleteOptions,
+  StoreMutationResponse,
+  throwStoreError,
+} from '@neuledge/store';
 
 export interface DeleteQueries<Connection> {
   deleteFrom(
@@ -22,7 +26,7 @@ export const deletes = async <Connection>(
     connection,
     name,
     where ? getWhere(queryHelpers, where) : null,
-  );
+  ).catch(throwStoreError);
 
   return {
     affectedCount,

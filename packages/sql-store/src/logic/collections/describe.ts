@@ -10,6 +10,7 @@ import {
   StoreDescribeCollectionOptions,
   StoreError,
   StoreShapeType,
+  throwStoreError,
 } from '@neuledge/store';
 
 export interface DescribeCollectionQueries<
@@ -85,7 +86,7 @@ const getCollectionDetails = async <
   const [columns, indexAttributes] = await Promise.all([
     listTableColumns(connection, name),
     listIndexAttributes(connection, name),
-  ]);
+  ]).catch(throwStoreError);
 
   const columnMap = Object.fromEntries(
     columns.map((column) => [column.column_name, column]),

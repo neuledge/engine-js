@@ -17,6 +17,7 @@ import {
   StoreIndex,
   StoreIndexField,
   StorePrimaryKey,
+  throwStoreError,
 } from '@neuledge/store';
 import {
   Db,
@@ -95,7 +96,10 @@ export class MongoDBStore implements Store {
       typeof name === 'string'
         ? this.client
             .connect()
-            .then((client) => client.db(name, db as DbOptions | undefined))
+            .then(
+              (client) => client.db(name, db as DbOptions | undefined),
+              throwStoreError,
+            )
         : Promise.resolve(db as Db);
 
     this.collections = {};
@@ -112,12 +116,15 @@ export class MongoDBStore implements Store {
   }
 
   async close(): Promise<void> {
-    await this.client.close();
+    await this.client.close().catch(throwStoreError);
   }
 
   async listCollections(): Promise<StoreCollection_Slim[]> {
     const db = await this.db;
-    const res = await db.listCollections({}, { nameOnly: true }).toArray();
+    const res = await db
+      .listCollections({}, { nameOnly: true })
+      .toArray()
+      .catch(throwStoreError);
 
     return res.map((item): StoreCollection_Slim => ({ name: item.name }));
   }
@@ -126,7 +133,10 @@ export class MongoDBStore implements Store {
     options: StoreDescribeCollectionOptions,
   ): Promise<StoreCollection> {
     const collection = await this.collection(options.collection.name);
-    const indexes = await collection.listIndexes().toArray();
+    const indexes = await collection
+      .listIndexes()
+      .toArray()
+      .catch(throwStoreError);
 
     const storeIndexes = indexes.map(
       (index): StoreIndex => ({
@@ -189,7 +199,7 @@ export class MongoDBStore implements Store {
 
   async dropCollection(options: StoreDropCollectionOptions): Promise<void> {
     const db = await this.db;
-    await db.dropCollection(options.collection.name);
+    await db.dropCollection(options.collection.name).catch(throwStoreError);
   }
 
   async find(options: StoreFindOptions): Promise<StoreList> {
@@ -221,7 +231,7 @@ export class MongoDBStore implements Store {
       );
     }
 
-    const rawDocs = await query.toArray();
+    const rawDocs = await query.toArray().catch(throwStoreError);
     let docs = rawDocs.map((doc) => unescapeDocument(options.collection, doc));
 
     const asyncLimit = pLimit(this.readConcurrency);
@@ -250,14 +260,16 @@ export class MongoDBStore implements Store {
       ),
     );
 
-    const res = await collection.insertMany(
-      insertedIds.map((insertedId, i) =>
-        escapeDocument(options.collection, {
-          ...options.documents[i],
-          ...insertedId,
-        }),
-      ),
-    );
+    const res = await collection
+      .insertMany(
+        insertedIds.map((insertedId, i) =>
+          escapeDocument(options.collection, {
+            ...options.documents[i],
+            ...insertedId,
+          }),
+        ),
+      )
+      .catch(throwStoreError);
 
     return {
       insertedIds: insertedIds,
@@ -277,7 +289,9 @@ export class MongoDBStore implements Store {
       options.set as Document,
     );
 
-    const res = await collection.updateMany(filter, update);
+    const res = await collection
+      .updateMany(filter, update)
+      .catch(throwStoreError);
 
     return {
       affectedCount: res.modifiedCount,
@@ -291,7 +305,7 @@ export class MongoDBStore implements Store {
       ? findFilter(options.collection.primaryKey, options.where)
       : {};
 
-    const res = await collection.deleteMany(filter);
+    const res = await collection.deleteMany(filter).catch(throwStoreError);
 
     return { affectedCount: res.deletedCount };
   }
@@ -306,7 +320,8 @@ export class MongoDBStore implements Store {
         async (db) => {
           const [exists] = await db
             .listCollections({ name: collectionName }, { nameOnly: true })
-            .toArray();
+            .toArray()
+            .catch(throwStoreError);
 
           if (!exists) {
             // allow retry on next call
@@ -348,7 +363,7 @@ export class MongoDBStore implements Store {
       query = query.project(join.project ?? { _id: 1 });
     }
 
-    const rawDocs = await query.toArray();
+    const rawDocs = await query.toArray().catch(throwStoreError);
 
     return rawDocs.map((doc) => unescapeDocument(join.collection, doc));
   }

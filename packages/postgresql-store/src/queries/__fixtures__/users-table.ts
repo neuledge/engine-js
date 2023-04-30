@@ -29,6 +29,7 @@ export const usersTableColumns: PostgreSQLColumn[] = [
   {
     column_name: 'id',
     data_type: 'integer',
+    list: false,
     character_maximum_length: null,
     numeric_precision: 32,
     numeric_scale: 0,
@@ -38,6 +39,7 @@ export const usersTableColumns: PostgreSQLColumn[] = [
   {
     column_name: 'name',
     data_type: 'character varying',
+    list: false,
     character_maximum_length: 50,
     numeric_precision: null,
     numeric_scale: null,
@@ -47,6 +49,7 @@ export const usersTableColumns: PostgreSQLColumn[] = [
   {
     column_name: 'email',
     data_type: 'character varying',
+    list: false,
     character_maximum_length: 100,
     numeric_precision: null,
     numeric_scale: null,
@@ -56,6 +59,7 @@ export const usersTableColumns: PostgreSQLColumn[] = [
   {
     column_name: 'phone',
     data_type: 'character varying',
+    list: false,
     character_maximum_length: 20,
     numeric_precision: null,
     numeric_scale: null,
@@ -65,6 +69,7 @@ export const usersTableColumns: PostgreSQLColumn[] = [
   {
     column_name: 'created_at',
     data_type: 'timestamp without time zone',
+    list: false,
     character_maximum_length: null,
     numeric_precision: null,
     numeric_scale: null,
@@ -74,6 +79,7 @@ export const usersTableColumns: PostgreSQLColumn[] = [
   {
     column_name: 'updated_at',
     data_type: 'timestamp without time zone',
+    list: false,
     character_maximum_length: null,
     numeric_precision: null,
     numeric_scale: null,
@@ -131,6 +137,7 @@ export const usersCollection: StoreCollection = {
     id: {
       name: 'id',
       type: 'number',
+      list: false,
       nullable: false,
       size: null,
       precision: 32,
@@ -139,6 +146,7 @@ export const usersCollection: StoreCollection = {
     name: {
       name: 'name',
       type: 'string',
+      list: false,
       nullable: true,
       size: 50,
       precision: null,
@@ -147,6 +155,7 @@ export const usersCollection: StoreCollection = {
     email: {
       name: 'email',
       type: 'string',
+      list: false,
       nullable: false,
       size: 100,
       precision: null,
@@ -155,6 +164,7 @@ export const usersCollection: StoreCollection = {
     phone: {
       name: 'phone',
       type: 'string',
+      list: false,
       nullable: true,
       size: 20,
       precision: null,
@@ -163,6 +173,7 @@ export const usersCollection: StoreCollection = {
     created_at: {
       name: 'created_at',
       type: 'date-time',
+      list: false,
       nullable: false,
       size: null,
       precision: null,
@@ -171,6 +182,7 @@ export const usersCollection: StoreCollection = {
     updated_at: {
       name: 'updated_at',
       type: 'date-time',
+      list: false,
       nullable: false,
       size: null,
       precision: null,

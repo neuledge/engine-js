@@ -18,8 +18,8 @@ export const getColumnDefinition = (
   collection: StoreCollection,
 ): string =>
   `${encodeIdentifier(field.name)} ${getColumnDataType(field, collection)}${
-    field.nullable ? '' : ' NOT NULL'
-  }`;
+    field.list ? '[]' : ''
+  }${field.nullable ? '' : ' NOT NULL'}`;
 
 const getColumnDataType = (
   field: StoreField,

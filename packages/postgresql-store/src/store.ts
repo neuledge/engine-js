@@ -29,6 +29,7 @@ import {
   StoreList,
   StoreMutationResponse,
   StoreUpdateOptions,
+  throwStoreError,
 } from '@neuledge/store';
 import {
   dropCollection,
@@ -54,13 +55,19 @@ export class PostgreSQLStore implements Store {
   private connection: PostgreSQLStoreClient;
 
   constructor(options: PostgreSQLStoreOptions) {
-    this.connection = 'client' in options ? options.client : new Pool(options);
+    this.connection =
+      'client' in options
+        ? options.client
+        : new Pool({
+            connectionTimeoutMillis: 5000,
+            ...options,
+          });
   }
 
   // connection methods
 
   async close(): Promise<void> {
-    await this.connection.end();
+    await this.connection.end().catch(throwStoreError);
   }
 
   // store methods

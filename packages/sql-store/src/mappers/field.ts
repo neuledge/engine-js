@@ -3,6 +3,7 @@ import { StoreError, StoreField, StoreShapeType } from '@neuledge/store';
 export interface SQLColumn {
   column_name: string;
   data_type: string;
+  list?: boolean | 1 | 0 | null;
   character_maximum_length: number | null;
   numeric_precision: number | null;
   numeric_scale: number | null;
@@ -24,6 +25,7 @@ export const toStoreField = (
   return {
     name: column.column_name,
     type,
+    list: !!column.list,
     nullable: !!column.is_nullable,
     size: column.character_maximum_length,
     precision: column.numeric_precision,

@@ -41,7 +41,7 @@ describe('store', () => {
 
     describe('.close()', () => {
       it('should be able to close the store', async () => {
-        const end = jest.fn();
+        const end = jest.fn().mockResolvedValue(void 0);
 
         const store = new PostgreSQLStore({
           client: { end } as never,

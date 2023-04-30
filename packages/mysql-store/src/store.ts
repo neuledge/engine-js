@@ -7,6 +7,7 @@ import {
   StoreDescribeCollectionOptions,
   StoreDropCollectionOptions,
   StoreEnsureCollectionOptions,
+  StoreError,
   StoreFindOptions,
   StoreInsertOptions,
   StoreInsertionResponse,
@@ -49,7 +50,17 @@ export class MySQLStore implements Store {
 
   async close(): Promise<void> {
     await new Promise<void>((resolve, reject) =>
-      this.connection.end((error) => (error ? reject(error) : resolve())),
+      this.connection.end((error) =>
+        error
+          ? reject(
+              new StoreError(
+                StoreError.Code.INTERNAL_ERROR,
+                error.message,
+                error,
+              ),
+            )
+          : resolve(),
+      ),
     );
   }
 

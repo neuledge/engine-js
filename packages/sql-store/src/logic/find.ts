@@ -7,7 +7,12 @@ import {
   getSelectColumns,
   getWhere,
 } from '@/helpers';
-import { StoreDocument, StoreFindOptions, StoreList } from '@neuledge/store';
+import {
+  StoreDocument,
+  StoreFindOptions,
+  StoreList,
+  throwStoreError,
+} from '@neuledge/store';
 
 export interface FindQueries<Connection> {
   selectFrom(
@@ -62,7 +67,7 @@ export const find = async <Connection>(
     sort ? getOrderBy(queryHelpers, sort) : null,
     limit,
     offsetNumber,
-  );
+  ).catch(throwStoreError);
 
   const docs = rawDocs.map((rawDoc) => convertRawDocument(rawDoc));
   const nextOffset = rawDocs.length < limit ? null : offsetNumber + limit;

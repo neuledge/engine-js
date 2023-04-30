@@ -1,4 +1,4 @@
-import { StoreCollection, StoreError } from '@neuledge/store';
+import { StoreCollection, StoreError, throwStoreError } from '@neuledge/store';
 import { Collection } from 'mongodb';
 
 export interface AutoIncrementDocument {
@@ -56,17 +56,19 @@ const autoIncrementPrimaryKey = async (
   autoIncrement: Collection<AutoIncrementDocument>,
   collectionName: string,
 ): Promise<number> => {
-  const { value: doc } = await autoIncrement.findOneAndUpdate(
-    {
-      _id: collectionName,
-    },
-    {
-      $inc: { value: 1 },
-    },
-    {
-      upsert: true,
-    },
-  );
+  const { value: doc } = await autoIncrement
+    .findOneAndUpdate(
+      {
+        _id: collectionName,
+      },
+      {
+        $inc: { value: 1 },
+      },
+      {
+        upsert: true,
+      },
+    )
+    .catch(throwStoreError);
 
   return (doc?.value ?? 0) + 1;
 };

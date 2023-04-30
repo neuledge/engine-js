@@ -1,13 +1,7 @@
 import { NeuledgeError } from '@/error';
-import { MetadataChange, StateSnapshot, METADATA_HASH_BYTES } from '@/metadata';
+import { MetadataChange, StateSnapshot } from '@/metadata';
 import { MetadataSnapshot } from '@/metadata/snapshot';
-import {
-  Store,
-  StoreCollection,
-  StoreField,
-  StoreList,
-  StorePrimaryKey,
-} from '@neuledge/store';
+import { Store, StoreCollection, StoreList } from '@neuledge/store';
 import pLimit from 'p-limit';
 import {
   fromStoreMetadataState,
@@ -16,34 +10,7 @@ import {
 } from './state';
 
 const HASH_ENCODING = 'base64url';
-const COLLECTION_FIND_LIMIT = 1000;
-
-export const getMetadataCollection = (
-  metadataCollectionName: string,
-): StoreCollection => {
-  const hash: StoreField = {
-    name: 'hash',
-    type: 'binary',
-    size: METADATA_HASH_BYTES,
-  };
-
-  const primaryKey: StorePrimaryKey = {
-    name: 'hash',
-    fields: { [hash.name]: { sort: 'asc' } },
-    unique: 'primary',
-  };
-
-  return {
-    name: metadataCollectionName,
-    primaryKey,
-    indexes: { [primaryKey.name]: primaryKey },
-    fields: {
-      [hash.name]: hash,
-      key: { name: 'key', type: 'string' },
-      payload: { name: 'payload', type: 'json' },
-    },
-  };
-};
+const COLLECTION_FIND_LIMIT = 100;
 
 export const ensureMetadataCollection = async (
   store: Store,

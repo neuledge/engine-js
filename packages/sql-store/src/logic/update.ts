@@ -3,6 +3,7 @@ import {
   StoreDocument,
   StoreMutationResponse,
   StoreUpdateOptions,
+  throwStoreError,
 } from '@neuledge/store';
 
 export interface UpdateQueries<Connection> {
@@ -28,7 +29,7 @@ export const update = async <Connection>(
     name,
     set,
     where ? getWhere(queryHelpers, where) : null,
-  );
+  ).catch(throwStoreError);
 
   return {
     affectedCount,

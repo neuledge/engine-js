@@ -14,8 +14,12 @@ npm install @neuledge/postgresql-store
 import { PostgreSQLStore } from '@neuledge/postgresql-store';
 
 const store = new PostgreSQLStore({
-  uri: process.env.MYSQL_URI ?? 'mysql://localhost:3306',
-  database: process.env.MYSQL_DATABASE ?? 'my-database',
+  host: process.env.POSTGRESQL_HOST ?? 'localhost',
+  port: Number(process.env.POSTGRESQL_PORT) ?? 5432,
+  user: process.env.POSTGRESQL_USER ?? 'postgres',
+  password: process.env.POSTGRESQL_PASSWORD,
+  ssl: process.env.POSTGRESQL_SSL === 'true',
+  database: process.env.POSTGRESQL_DATABASE ?? 'my-database',
 });
 
 const engine = new Engine({
