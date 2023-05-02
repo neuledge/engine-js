@@ -38,7 +38,7 @@
   },
   "dependencies": {
     "@neuledge/store": "^0.2.0",
-    "mongodb": "^5.2.0",
+    "mongodb": "^5.3.0",
     "p-limit": "^3.1.0"
   }
 }
