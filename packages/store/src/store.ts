@@ -52,7 +52,13 @@ export interface StoreDropCollectionOptions {
 
 export interface StoreFindOptions {
   collection: StoreCollection;
+
+  /**
+   * Select only the specified fields to be returned.
+   * If not specified, all fields will be returned.
+   */
   select?: StoreSelect | null;
+
   where?: StoreWhere | null;
   innerJoin?: StoreJoin | null;
   leftJoin?: StoreLeftJoin | null;
@@ -69,14 +75,18 @@ export interface StoreInsertOptions {
 export interface StoreUpdateOptions {
   collection: StoreCollection;
   where?: StoreWhere | null;
+
+  /**
+   * Set is a document that contains the fields to be updated and their new values.
+   * The fields that are not present in the set document will not be updated.
+   * `undefined` values will be converted to `null` values.
+   */
   set: StoreDocument;
-  limit: number;
 }
 
 export interface StoreDeleteOptions {
   collection: StoreCollection;
   where?: StoreWhere | null;
-  limit: number;
 }
 
 export interface StoreInsertionResponse extends StoreMutationResponse {

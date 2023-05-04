@@ -1,12 +1,14 @@
+import { StoreCollection, StoreField, StorePrimaryKey } from '@neuledge/store';
 import { NeuledgeError } from '@/error';
 import {
   StateSnapshot,
   StateFieldSnapshot,
   StateRelationSnapshot,
+  METADATA_HASH_BYTES,
 } from '@/metadata';
 
 export interface StoreMetadataState {
-  collectionName: string;
+  collection_name: string;
   name: string;
   hash: Buffer;
   fields: StoreMetadataStateField[];
@@ -32,6 +34,36 @@ interface StoreMetadataStateRelation {
   index: number;
 }
 
+export const getMetadataCollection = (
+  metadataCollectionName: string,
+): StoreCollection => {
+  const hash: StoreField = {
+    name: 'hash',
+    type: 'binary',
+    size: METADATA_HASH_BYTES,
+  };
+
+  const primaryKey: StorePrimaryKey = {
+    name: 'hash',
+    fields: { [hash.name]: { sort: 'asc' } },
+    unique: 'primary',
+  };
+
+  return {
+    name: metadataCollectionName,
+    primaryKey,
+    indexes: { [primaryKey.name]: primaryKey },
+    fields: {
+      [hash.name]: hash,
+      collection_name: { name: 'collection_name', type: 'string' },
+      name: { name: 'name', type: 'string' },
+      fields: { name: 'fields', type: 'json', list: true },
+      relations: { name: 'relations', type: 'json', list: true },
+      v: { name: 'v', type: 'number', unsigned: true, scale: 0, precision: 4 },
+    },
+  };
+};
+
 export const fromStoreMetadataState = (
   getState: (hash: Buffer) => StateSnapshot,
   getType: (key: string) => StateFieldSnapshot['type'],
@@ -45,7 +77,7 @@ export const fromStoreMetadataState = (
   }
 
   return getState(doc.hash).assign({
-    collectionName: doc.collectionName,
+    collectionName: doc.collection_name,
     name: doc.name,
     hash: doc.hash,
     fields: doc.fields.map((field) =>
@@ -60,7 +92,7 @@ export const fromStoreMetadataState = (
 export const toStoreMetadataState = (
   state: StateSnapshot,
 ): StoreMetadataState => ({
-  collectionName: state.collectionName,
+  collection_name: state.collectionName,
   name: state.name,
   hash: state.hash,
   fields: state.fields.map((field) => toStoreMetadataStateField(field)),

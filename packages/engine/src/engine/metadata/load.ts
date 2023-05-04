@@ -4,10 +4,10 @@ import { Store } from '@neuledge/store';
 import { ensureStoreCollections } from './collections';
 import {
   ensureMetadataCollection,
-  getMetadataCollection,
   getStoreMetadataSnapshot,
   syncStoreMetadata,
 } from './store';
+import { getMetadataCollection } from './state';
 
 const DEFAULT_METADATA_COLLECTION_NAME = '__neuledge_metadata';
 

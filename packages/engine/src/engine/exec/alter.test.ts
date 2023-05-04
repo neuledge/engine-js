@@ -63,13 +63,11 @@ describe('engine/exec/alter', () => {
         collection: metadata['collections']['categories'],
         where: { id: { $eq: 1 }, __h: { $eq: hash }, __v: { $eq: 0 } },
         set: { name: 'foo', description: 'bar', __v: 1 },
-        limit: 1,
       });
       expect(update).toHaveBeenNthCalledWith(2, {
         collection: metadata['collections']['categories'],
         where: { id: { $eq: 2 }, __h: { $eq: hash }, __v: { $eq: 0 } },
         set: { name: 'foo', description: 'bar', __v: 1 },
-        limit: 1,
       });
     });
 
@@ -129,13 +127,11 @@ describe('engine/exec/alter', () => {
         collection: metadata['collections']['categories'],
         where: { id: { $eq: 1 }, __h: { $eq: hash }, __v: { $eq: 0 } },
         set: { name: 'foo', description: 'bar', __v: 1 },
-        limit: 1,
       });
       expect(update).toHaveBeenNthCalledWith(2, {
         collection: metadata['collections']['categories'],
         where: { id: { $eq: 2 }, __h: { $eq: hash }, __v: { $eq: 0 } },
         set: { name: 'foo', description: 'bar', __v: 1 },
-        limit: 1,
       });
     });
 
@@ -182,13 +178,11 @@ describe('engine/exec/alter', () => {
         collection: metadata['collections']['categories'],
         where: { id: { $eq: 1 }, __h: { $eq: hash }, __v: { $eq: 0 } },
         set: { name: 'foo', description: 'bar', __v: 1 },
-        limit: 1,
       });
       expect(update).toHaveBeenNthCalledWith(2, {
         collection: metadata['collections']['categories'],
         where: { id: { $eq: 2 }, __h: { $eq: hash }, __v: { $eq: 0 } },
         set: { name: 'foo', description: 'bar', __v: 1 },
-        limit: 1,
       });
     });
 
@@ -264,13 +258,11 @@ describe('engine/exec/alter', () => {
         collection: metadata['collections']['posts'],
         where: { id: { $eq: 1 }, __h: { $eq: hash }, __v: { $eq: 0 } },
         set: { title: 'foo', content: 'bar', category_id: 1, __v: 1 },
-        limit: 1,
       });
       expect(update).toHaveBeenNthCalledWith(2, {
         collection: metadata['collections']['posts'],
         where: { id: { $eq: 2 }, __h: { $eq: hash }, __v: { $eq: 0 } },
         set: { title: 'foo', content: 'bar', category_id: 1, __v: 1 },
-        limit: 1,
       });
     });
   });
@@ -376,7 +368,6 @@ describe('engine/exec/alter', () => {
         collection: metadata['collections']['categories'],
         where: { id: { $eq: 1 }, __h: { $eq: hash }, __v: { $eq: 0 } },
         set: { name: 'foo', description: 'bar', __v: 1 },
-        limit: 1,
       });
     });
 
@@ -454,7 +445,6 @@ describe('engine/exec/alter', () => {
         collection: metadata['collections']['categories'],
         where: { id: { $eq: 1 }, __h: { $eq: hash }, __v: { $eq: 0 } },
         set: { name: 'foo', description: 'bar', __v: 1 },
-        limit: 1,
       });
     });
 

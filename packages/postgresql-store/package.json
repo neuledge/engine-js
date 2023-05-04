@@ -1,0 +1,50 @@
+{
+  "name": "@neuledge/postgresql-store",
+  "version": "0.0.0",
+  "deascription": "PostgreSQL store implementation for Neuledge Engine",
+  "keywords": [
+    "neuledge",
+    "postgres",
+    "postgresql",
+    "store",
+    "database"
+  ],
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.js",
+  "exports": {
+    ".": {
+      "require": "./dist/index.js",
+      "import": "./dist/index.mjs",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/neuledge/engine-js.git"
+  },
+  "license": "Apache-2.0",
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">= 16"
+  },
+  "scripts": {
+    "types": "rimraf --glob dist/*.{d.ts,d.ts.map} dist/**/*.{d.ts,d.ts.map} && tsc --emitDeclarationOnly && tsc-alias",
+    "build": "rimraf --glob dist/*.{js,js.map,mjs,mjs.map} && tsup",
+    "test": "jest",
+    "lint": "eslint . --ext \"js,jsx,ts,tsx,mjs,cjs\"",
+    "lint:strict": "yarn lint --max-warnings 0"
+  },
+  "dependencies": {
+    "@neuledge/sql-store": "^0.0.0",
+    "@neuledge/store": "^0.2.0",
+    "@types/pg": "^8.6.6",
+    "pg": "^8.10.0",
+    "pg-format": "^1.0.4"
+  },
+  "devDependencies": {
+    "@types/pg-format": "^1.0.2"
+  }
+}
