@@ -1,8 +1,8 @@
 <p align=center>
   <a href="https://github.com/neuledge/engine-js">
     <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://github.com/neuledge/engine-js/raw/docs/dark.svg">
-      <img alt="Neuledge" src="https://github.com/neuledge/engine-js/raw/docs/light.svg" height="140">
+      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/neuledge/engine-js/main/docs/dark.svg">
+      <img alt="Neuledge" src="https://raw.githubusercontent.com/neuledge/engine-js/main/docs/light.svg" height="140">
     </picture>
   </a>
 </p>
