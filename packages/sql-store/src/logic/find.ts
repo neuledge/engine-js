@@ -6,6 +6,7 @@ import {
   getSelectAny,
   getSelectColumns,
   getWhere,
+  parseRawDocument,
 } from '@/helpers';
 import {
   StoreDocument,
@@ -34,11 +35,12 @@ export const find = async <Connection>(
 ): Promise<StoreList> => {
   const { collection, select, where, limit, offset, sort } = options;
 
-  let from = queryHelpers.encodeIdentifier(collection.name);
-  const join = getFromJoins(queryHelpers, options);
-
   let selectColumns;
-  const whereClauses = where ? [getWhere(queryHelpers, where)] : [];
+  let from = queryHelpers.encodeIdentifier(collection.name);
+  let { fields } = collection;
+
+  const join = getFromJoins(queryHelpers, options);
+  const whereClauses = where ? [getWhere(queryHelpers, collection, where)] : [];
 
   if (join) {
     from += ` ${queryHelpers.encodeIdentifier(
@@ -51,6 +53,7 @@ export const find = async <Connection>(
 
     selectColumns.push(...join.selectColumns);
     whereClauses.push(...join.whereClauses);
+    fields = { ...fields, ...join.joinFields };
   } else {
     selectColumns = select
       ? getSelectColumns(queryHelpers, null, select)
@@ -69,7 +72,9 @@ export const find = async <Connection>(
     offsetNumber,
   ).catch(throwStoreError);
 
-  const docs = rawDocs.map((rawDoc) => convertRawDocument(rawDoc));
+  const docs = rawDocs.map((rawDoc) =>
+    convertRawDocument(parseRawDocument(fields, rawDoc)),
+  );
   const nextOffset = rawDocs.length < limit ? null : offsetNumber + limit;
 
   return Object.assign(docs, { nextOffset });

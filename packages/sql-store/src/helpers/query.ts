@@ -1,6 +1,6 @@
-import { StoreScalarValue } from '@neuledge/store';
+import { StoreField, StoreScalarValue } from '@neuledge/store';
 
 export interface QueryHelpers {
   encodeIdentifier(identifier: string): string;
-  encodeLiteral(literal: StoreScalarValue): string;
+  encodeLiteral(literal: StoreScalarValue, field: StoreField): string;
 }

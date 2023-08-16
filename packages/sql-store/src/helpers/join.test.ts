@@ -58,6 +58,12 @@ describe('helpers/join', () => {
           '`foo$0`.`title` AS `foo$0.title`',
           '`foo$0`.`description` AS `foo$0.description`',
         ],
+        joinFields: {
+          'foo$0.id': otherCollection.fields.id,
+          'foo$0.subId': otherCollection.fields.subId,
+          'foo$0.title': otherCollection.fields.title,
+          'foo$0.description': otherCollection.fields.description,
+        },
         fromAlias: '$',
         fromJoins: [
           'INNER JOIN `otherCollection` `foo$0` ON (`foo$0`.`id` = `$`.`foo`)',
@@ -82,6 +88,9 @@ describe('helpers/join', () => {
         }),
       ).toEqual({
         selectColumns: ['`foo$0`.`title` AS `foo$0.title`'],
+        joinFields: {
+          'foo$0.title': otherCollection.fields.title,
+        },
         fromAlias: '$',
         fromJoins: [
           'LEFT JOIN `otherCollection` `foo$0` ON (`foo$0`.`id` = `$`.`foo` AND `foo$0`.`subId` = `$`.`bar`)',
@@ -118,6 +127,10 @@ describe('helpers/join', () => {
           '`foo$0`.`title` AS `foo$0.title`',
           '`bar$0`.`description` AS `bar$0.description`',
         ],
+        joinFields: {
+          'foo$0.title': otherCollection.fields.title,
+          'bar$0.description': otherCollection.fields.description,
+        },
         fromAlias: '$',
         fromJoins: [
           'INNER JOIN `otherCollection` `foo$0` ON (`foo$0`.`id` = `$`.`foo`)',
@@ -151,6 +164,10 @@ describe('helpers/join', () => {
           '`foo$0`.`title` AS `foo$0.title`',
           '`foo$0`.`title` AS `foo$1.title`',
         ],
+        joinFields: {
+          'foo$0.title': otherCollection.fields.title,
+          'foo$1.title': otherCollection.fields.title,
+        },
         fromAlias: '$',
         fromJoins: [
           'INNER JOIN `otherCollection` `foo$0` ON (`foo$0`.`id` = `$`.`foo`) OR (`foo$0`.`subId` = `$`.`bar`)',
@@ -183,6 +200,10 @@ describe('helpers/join', () => {
           '`foo$0`.`title` AS `foo$0.title`',
           '`foo$1`.`url` AS `foo$1.url`',
         ],
+        joinFields: {
+          'foo$0.title': otherCollection.fields.title,
+          'foo$1.url': otherCollection2.fields.url,
+        },
         fromAlias: '$',
         fromJoins: [
           'LEFT JOIN `otherCollection` `foo$0` ON (`foo$0`.`subId` = `$`.`foo`)',
@@ -211,6 +232,9 @@ describe('helpers/join', () => {
         }),
       ).toEqual({
         selectColumns: ['`foo$0`.`title` AS `foo$0.title`'],
+        joinFields: {
+          'foo$0.title': otherCollection.fields.title,
+        },
         fromAlias: '$',
         fromJoins: [
           'INNER JOIN `otherCollection` `foo$0` ON (`foo$0`.`id` = `$`.`foo` AND `foo$0`.`subId` = 123)',
@@ -245,6 +269,10 @@ describe('helpers/join', () => {
           '`foo$0`.`title` AS `foo$0.title`',
           '`foo$0`.`description` AS `foo$1.description`',
         ],
+        joinFields: {
+          'foo$0.title': otherCollection.fields.title,
+          'foo$1.description': otherCollection.fields.description,
+        },
         fromAlias: '$',
         fromJoins: [
           'LEFT JOIN `otherCollection` `foo$0` ON (`foo$0`.`id` = `$`.`foo` AND `foo$0`.`subId` < 123) OR (`foo$0`.`subId` = `$`.`bar` AND `foo$0`.`title` = "hello")',
@@ -281,6 +309,10 @@ describe('helpers/join', () => {
           '`foo$0`.`title` AS `foo$0.title`',
           '`foo$0.bar$0`.`url` AS `foo$0.bar$0.url`',
         ],
+        joinFields: {
+          'foo$0.title': otherCollection.fields.title,
+          'foo$0.bar$0.url': otherCollection2.fields.url,
+        },
         fromAlias: '$',
         fromJoins: [
           'LEFT JOIN `otherCollection` `foo$0` ON (`foo$0`.`id` = `$`.`foo`)',
@@ -318,6 +350,10 @@ describe('helpers/join', () => {
           '`test$0`.`title` AS `test$0.title`',
           '`test$0.test$0`.`url` AS `test$0.test$0.url`',
         ],
+        joinFields: {
+          'test$0.title': otherCollection.fields.title,
+          'test$0.test$0.url': otherCollection2.fields.url,
+        },
         fromAlias: '$',
         fromJoins: [
           'LEFT JOIN `otherCollection` `test$0` ON (`test$0`.`id` = `$`.`foo`)',

@@ -25,7 +25,7 @@ export const deletes = async <Connection>(
   const affectedCount = await deleteFrom(
     connection,
     name,
-    where ? getWhere(queryHelpers, where) : null,
+    where ? getWhere(queryHelpers, collection, where) : null,
   ).catch(throwStoreError);
 
   return {

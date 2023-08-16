@@ -1,4 +1,4 @@
-import { StoreDocument, StoreScalarValue } from '@neuledge/store';
+import { StoreDocument, StoreField, StoreScalarValue } from '@neuledge/store';
 import {
   PostgreSQLConnection,
   encodeIdentifier,
@@ -8,18 +8,20 @@ import {
 export const insertInto = async (
   connection: PostgreSQLConnection,
   name: string,
-  columns: string[],
+  columns: StoreField[],
   values: (StoreScalarValue | undefined)[][],
   returns: string[],
 ): Promise<StoreDocument[]> =>
   connection
     .query(
       `INSERT INTO ${encodeIdentifier(name)} (${columns
-        .map((column) => encodeIdentifier(column))
+        .map((column) => encodeIdentifier(column.name))
         .join(', ')}) VALUES (${values
         .map((arr) =>
           arr
-            .map((v) => (v === undefined ? 'DEFAULT' : encodeLiteral(v)))
+            .map((v, i) =>
+              v === undefined ? 'DEFAULT' : encodeLiteral(v, columns[i]),
+            )
             .join(', '),
         )
         .join('), (')}) RETURNING ${returns

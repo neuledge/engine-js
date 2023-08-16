@@ -1,4 +1,4 @@
-import { StoreDocument } from '@neuledge/store';
+import { StoreCollection, StoreDocument, StoreField } from '@neuledge/store';
 
 export const convertRawDocument = (rawDoc: StoreDocument): StoreDocument => {
   const doc: StoreDocument = {};
@@ -38,4 +38,27 @@ const preferLowerChoices = (doc: StoreDocument): void => {
 
     preferLowerChoices(value as StoreDocument);
   }
+};
+
+// not sure if we need this method, probably best to pass the responsibility
+// to the underlying database driver and make sure it's consistent with
+// javascript's values.
+export const parseRawDocument = (
+  fields: Record<string, StoreField>,
+  rawDoc: StoreDocument,
+): StoreDocument => {
+  for (const key in rawDoc) {
+    const field = fields[key];
+    if (field?.type !== 'number') continue;
+
+    const value = rawDoc[key];
+    if (typeof value !== 'string') continue;
+
+    rawDoc[key] =
+      field.scale === 0 && (!field.precision || field.precision > 15)
+        ? BigInt(value)
+        : Number(value);
+  }
+
+  return rawDoc;
 };

@@ -1,5 +1,7 @@
+import { parseRawDocument } from '@/helpers';
 import {
   StoreDocument,
+  StoreField,
   StoreInsertOptions,
   StoreInsertionResponse,
   StoreScalarValue,
@@ -10,7 +12,7 @@ export interface InsertQueries<Connection> {
   insertInto(
     connection: Connection,
     name: string,
-    columns: string[],
+    columns: StoreField[],
     values: (StoreScalarValue | undefined)[][],
     returns: string[],
   ): Promise<StoreDocument[]>;
@@ -24,12 +26,13 @@ export const insert = async <Connection>(
   const { collection, documents } = options;
   const { name, fields, primaryKey } = collection;
 
-  const columns = Object.keys(fields);
+  const columns = Object.values(fields);
 
   const values = documents.map((document) =>
     columns.map(
       (column) =>
-        document[column] ?? (primaryKey.fields[column] ? undefined : null),
+        document[column.name] ??
+        (primaryKey.fields[column.name] ? undefined : null),
     ),
   );
 
@@ -45,6 +48,6 @@ export const insert = async <Connection>(
 
   return {
     affectedCount: res.length,
-    insertedIds: res,
+    insertedIds: res.map((rawDoc) => parseRawDocument(fields, rawDoc)),
   };
 };

@@ -34,6 +34,8 @@ interface StoreMetadataStateRelation {
   index: number;
 }
 
+// FIXME we can't save buffers on json fields. We need to encode them somehow or use relations for `fields` and `relations` fields.
+
 export const getMetadataCollection = (
   metadataCollectionName: string,
 ): StoreCollection => {

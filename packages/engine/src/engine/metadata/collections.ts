@@ -19,6 +19,8 @@ const ensureStoreCollection = async (
   store: Store,
   collection: MetadataCollection,
 ): Promise<void> => {
+  // FIXME how we handle fields or indexes changes? (e.g. a field changed to be nullable)
+
   await store.ensureCollection({
     collection,
     indexes: Object.values(collection.indexes),

@@ -1,4 +1,4 @@
-import { StoreDocument } from '@neuledge/store';
+import { StoreField, StoreScalarValue } from '@neuledge/store';
 import {
   PostgreSQLConnection,
   encodeIdentifier,
@@ -8,12 +8,12 @@ import {
 export const updateSet = async (
   connection: PostgreSQLConnection,
   name: string,
-  set: StoreDocument,
+  setValues: [field: StoreField, value: StoreScalarValue][],
   where: string | null,
 ): Promise<number> => {
-  const setClauses = Object.entries(set).map(
-    ([key, value]) =>
-      `${encodeIdentifier(key)} = ${encodeLiteral(value ?? null)}`,
+  const setClauses = setValues.map(
+    ([field, value]) =>
+      `${encodeIdentifier(field.name)} = ${encodeLiteral(value, field)}`,
   );
 
   const res = await connection.query(

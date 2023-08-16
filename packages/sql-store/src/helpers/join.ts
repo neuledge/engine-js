@@ -1,6 +1,7 @@
 import {
   StoreCollection,
   StoreError,
+  StoreField,
   StoreJoin,
   StoreJoinChoice,
 } from '@neuledge/store';
@@ -13,6 +14,7 @@ export const getFromJoins = (
   options: Pick<StoreJoinChoice, 'collection' | 'innerJoin' | 'leftJoin'>,
 ): {
   selectColumns: string[];
+  joinFields: Record<string, StoreField>;
   fromAlias: string;
   fromJoins: string[];
   whereClauses: string[];
@@ -23,21 +25,23 @@ export const getFromJoins = (
   if (!joins.length) return null;
 
   const selectColumns: string[] = [];
+  const joinFields: Record<string, StoreField> = {};
   const fromJoins: string[] = [];
   let whereClauses: string[] = [];
 
   for (const join of joins) {
-    const { select, fromJoin, where } = getFromJoin(helpers, join);
+    const { select, fields, fromJoin, where } = getFromJoin(helpers, join);
 
     selectColumns.push(...select);
     fromJoins.push(fromJoin);
     whereClauses.push(...where);
+    Object.assign(joinFields, fields);
   }
 
   // remove where duplicates
   whereClauses = [...new Set(whereClauses)];
 
-  return { selectColumns, fromAlias, fromJoins, whereClauses };
+  return { selectColumns, joinFields, fromAlias, fromJoins, whereClauses };
 };
 
 // local helpers
@@ -139,12 +143,20 @@ interface Join {
 const getFromJoin = (
   helpers: QueryHelpers,
   join: Join,
-): { select: string[]; fromJoin: string; where: string[] } => {
+): {
+  select: string[];
+  fields: Record<string, StoreField>;
+  fromJoin: string;
+  where: string[];
+} => {
   const { collection, alias: joinAlias, select, ons, required } = join;
 
-  const selectColumns = Object.entries(select).map(([alias, name]) =>
-    getSelectColumn(helpers, joinAlias, name, alias),
-  );
+  const joinFields: Record<string, StoreField> = {};
+
+  const selectColumns = Object.entries(select).map(([alias, name]) => {
+    joinFields[alias] = collection.fields[name];
+    return getSelectColumn(helpers, joinAlias, name, alias);
+  });
 
   let joinType: 'INNER' | 'LEFT';
   const where: string[] = [];
@@ -163,15 +175,16 @@ const getFromJoin = (
     collection.name,
   )} ${helpers.encodeIdentifier(joinAlias)} ON (${ons
     .map(({ fromAlias, by, where }) =>
-      getJoinOn(helpers, fromAlias, joinAlias, by, where),
+      getJoinOn(helpers, collection, fromAlias, joinAlias, by, where),
     )
     .join(') OR (')})`;
 
-  return { select: selectColumns, fromJoin, where };
+  return { select: selectColumns, fields: joinFields, fromJoin, where };
 };
 
 const getJoinOn = (
   helpers: QueryHelpers,
+  collection: StoreCollection,
   fromAlias: string,
   joinAlias: string,
   by: StoreJoinChoice['by'],
@@ -190,12 +203,15 @@ const getJoinOn = (
       }
 
       if (term.value != null) {
-        return `${field} = ${helpers.encodeLiteral(term.value)}`;
+        return `${field} = ${helpers.encodeLiteral(
+          term.value,
+          collection.fields[key],
+        )}`;
       }
 
       return `${field} IS NULL`;
     }),
-    ...(where ? [getWhere(helpers, where, joinAlias)] : []),
+    ...(where ? [getWhere(helpers, collection, where, joinAlias)] : []),
   ].join(' AND ');
 
 /**

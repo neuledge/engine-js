@@ -1,19 +1,28 @@
-import { StoreWhere, StoreWhereRecord, StoreWhereTerm } from '@neuledge/store';
+import {
+  StoreCollection,
+  StoreField,
+  StoreWhere,
+  StoreWhereRecord,
+  StoreWhereTerm,
+} from '@neuledge/store';
 import { QueryHelpers } from './query';
 
 export const getWhere = (
   helpers: QueryHelpers,
+  collection: StoreCollection,
   where: StoreWhere,
   from?: string | null,
 ): string | null => {
   const { $or } = where;
 
   if (!Array.isArray($or)) {
-    return whereRecord(helpers, where as StoreWhereRecord, from) || null;
+    return (
+      whereRecord(helpers, collection, where as StoreWhereRecord, from) || null
+    );
   }
 
   const sql = $or
-    .map((record) => whereRecord(helpers, record, from))
+    .map((record) => whereRecord(helpers, collection, record, from))
     .filter(Boolean);
 
   if (sql.length === 0) {
@@ -25,6 +34,7 @@ export const getWhere = (
 
 const whereRecord = (
   helpers: QueryHelpers,
+  collection: StoreCollection,
   record: StoreWhereRecord,
   from?: string | null,
 ): string => {
@@ -35,6 +45,7 @@ const whereRecord = (
       whereTerm(
         helpers,
         `${fromEntry}${helpers.encodeIdentifier(columnName)}`,
+        collection.fields[columnName],
         term,
       ),
     )
@@ -45,43 +56,45 @@ const whereRecord = (
 const whereTerm = (
   helpers: QueryHelpers,
   entry: string,
+  field: StoreField,
   term: StoreWhereTerm,
 ): string =>
   [
-    ...whereComparisonTerm(helpers, entry, term),
-    ...whereLikeTerm(helpers, entry, term),
-    ...whereInTerm(helpers, entry, term),
+    ...whereComparisonTerm(helpers, entry, field, term),
+    ...whereLikeTerm(helpers, entry, field, term),
+    ...whereInTerm(helpers, entry, field, term),
   ].join(' AND ');
 
 const whereComparisonTerm = (
   { encodeLiteral }: QueryHelpers,
   entry: string,
+  field: StoreField,
   term: StoreWhereTerm,
 ): string[] => {
   const sql: string[] = [];
 
   if ('$eq' in term) {
-    sql.push(`${entry} = ${encodeLiteral(term.$eq)}`);
+    sql.push(`${entry} = ${encodeLiteral(term.$eq, field)}`);
   }
 
   if ('$ne' in term) {
-    sql.push(`${entry} != ${encodeLiteral(term.$ne)}`);
+    sql.push(`${entry} != ${encodeLiteral(term.$ne, field)}`);
   }
 
   if ('$gt' in term) {
-    sql.push(`${entry} > ${encodeLiteral(term.$gt)}`);
+    sql.push(`${entry} > ${encodeLiteral(term.$gt, field)}`);
   }
 
   if ('$gte' in term) {
-    sql.push(`${entry} >= ${encodeLiteral(term.$gte)}`);
+    sql.push(`${entry} >= ${encodeLiteral(term.$gte, field)}`);
   }
 
   if ('$lt' in term) {
-    sql.push(`${entry} < ${encodeLiteral(term.$lt)}`);
+    sql.push(`${entry} < ${encodeLiteral(term.$lt, field)}`);
   }
 
   if ('$lte' in term) {
-    sql.push(`${entry} <= ${encodeLiteral(term.$lte)}`);
+    sql.push(`${entry} <= ${encodeLiteral(term.$lte, field)}`);
   }
 
   return sql;
@@ -90,20 +103,21 @@ const whereComparisonTerm = (
 const whereLikeTerm = (
   { encodeLiteral }: QueryHelpers,
   entry: string,
+  field: StoreField,
   term: StoreWhereTerm,
 ): string[] => {
   const sql: string[] = [];
 
   if ('$contains' in term) {
-    sql.push(`${entry} LIKE ${encodeLiteral(`%${term.$contains}%`)}`);
+    sql.push(`${entry} LIKE ${encodeLiteral(`%${term.$contains}%`, field)}`);
   }
 
   if ('$startsWith' in term) {
-    sql.push(`${entry} LIKE ${encodeLiteral(`${term.$startsWith}%`)}`);
+    sql.push(`${entry} LIKE ${encodeLiteral(`${term.$startsWith}%`, field)}`);
   }
 
   if ('$endsWith' in term) {
-    sql.push(`${entry} LIKE ${encodeLiteral(`%${term.$endsWith}`)}`);
+    sql.push(`${entry} LIKE ${encodeLiteral(`%${term.$endsWith}`, field)}`);
   }
 
   if ('$in' in term) {
@@ -111,7 +125,9 @@ const whereLikeTerm = (
       sql.push('FALSE');
     } else {
       sql.push(
-        `${entry} IN (${term.$in.map((v) => encodeLiteral(v)).join(', ')})`,
+        `${entry} IN (${term.$in
+          .map((v) => encodeLiteral(v, field))
+          .join(', ')})`,
       );
     }
   }
@@ -122,6 +138,7 @@ const whereLikeTerm = (
 const whereInTerm = (
   { encodeLiteral }: QueryHelpers,
   entry: string,
+  field: StoreField,
   term: StoreWhereTerm,
 ): string[] => {
   const sql: string[] = [];
@@ -131,7 +148,9 @@ const whereInTerm = (
       sql.push('FALSE');
     } else {
       sql.push(
-        `${entry} IN (${term.$in.map((v) => encodeLiteral(v)).join(', ')})`,
+        `${entry} IN (${term.$in
+          .map((v) => encodeLiteral(v, field))
+          .join(', ')})`,
       );
     }
   }

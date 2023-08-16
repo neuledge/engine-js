@@ -21,9 +21,9 @@ export const getColumnDefinition = (
     field.list ? '[]' : ''
   }${field.nullable ? '' : ' NOT NULL'}`;
 
-const getColumnDataType = (
+export const getColumnDataType = (
   field: StoreField,
-  collection: StoreCollection,
+  collection?: StoreCollection,
 ): string => {
   switch (field.type) {
     case 'string': {
@@ -67,11 +67,11 @@ const getColumnDataType = (
 // https://www.postgresql.org/docs/current/datatype-numeric.html
 const getNumberDateType = (
   field: StoreField,
-  collection: StoreCollection,
+  collection?: StoreCollection,
 ): string => {
   if (field.scale === 0) {
     if (
-      collection.primaryKey.auto === 'increment' &&
+      collection?.primaryKey.auto === 'increment' &&
       collection.primaryKey.fields[field.name]
     ) {
       if (!field.precision || field.precision >= 10) {
