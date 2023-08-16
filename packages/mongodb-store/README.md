@@ -1,6 +1,6 @@
 # Neuledge MongoDB Store
 
-A store for [Neuledge Engine](https://neuledge.com) that uses [MongoDB](https://www.mongodb.com/) as the database backend.
+A store for [Neuledge Engine](https://github.com/neuledge/engine-js) that uses [MongoDB](https://www.mongodb.com/) as the database backend.
 
 ## 📦 Installation
 

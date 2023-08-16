@@ -1,6 +1,6 @@
 # Neuledge States Parser
 
-An state parser for [Neuledge Engine](https://neuledge.com) state language.
+An state parser for [Neuledge Engine](https://github.com/neuledge/engine-js) state language.
 
 This library is not intended to be used directly. It is a dependency of the [main package](https://www.npmjs.com/package/@neuledge/engine).
 

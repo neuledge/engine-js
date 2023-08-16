@@ -1,6 +1,6 @@
 # Neuledge Store
 
-An abstract store interface for [Neuledge Engine](https://neuledge.com) in order to support different database implementations.
+An abstract store interface for [Neuledge Engine](https://github.com/neuledge/engine-js) in order to support different database implementations.
 
 This library is not intended to be used directly. It is a dependency of the [main package](https://www.npmjs.com/package/@neuledge/engine).
 

@@ -1,6 +1,6 @@
 # Neuledge Scalars
 
-A set of [Neuledge Engine](https://neuledge.com) scalars that can be used on the schema definition.
+A set of [Neuledge Engine](https://github.com/neuledge/engine-js) scalars that can be used on the schema definition.
 
 This library is not intended to be used directly. It is a dependency of the [main package](https://www.npmjs.com/package/@neuledge/engine).
 

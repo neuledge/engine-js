@@ -1,6 +1,6 @@
 # Neuledge Typescript States
 
-A TypeScript code generator for [Neuledge Engine](https://neuledge.com) "\*.states" files.
+A TypeScript code generator for [Neuledge Engine](https://github.com/neuledge/engine-js) "\*.states" files.
 
 This library is not intended to be used directly. It is a dependency of the [main package](https://www.npmjs.com/package/@neuledge/engine).
 

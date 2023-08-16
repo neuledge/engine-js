@@ -1,6 +1,6 @@
 # Neuledge States CLI
 
-A CLI tool for [Neuledge Engine](https://neuledge.com) that can be used to generate TypeScript code from state files.
+A CLI tool for [Neuledge Engine](https://github.com/neuledge/engine-js) that can be used to generate TypeScript code from state files.
 
 ## 📦 Installation
 

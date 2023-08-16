@@ -1,6 +1,6 @@
 # GraphQL with Neuledge Engine Example
 
-This example shows how to use [Neuledge Engine](https://neuledge.com) with [GraphQL](https://graphql.org/).
+This example shows how to use [Neuledge Engine](https://github.com/neuledge/engine-js) with [GraphQL](https://graphql.org/).
 
 ### Main features
 
@@ -30,4 +30,4 @@ Open [http://localhost:3000/graphiql](http://localhost:3000/graphiql) to view th
 
 # 📚 Documentation & examples
 
-For more information, please visit [neuledge.com/docs](https://neuledge.com/docs).
+For more information, please visit [docs](https://github.com/neuledge/engine-js/tree/main/docs).

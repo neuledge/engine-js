@@ -1,6 +1,6 @@
 # Neuledge States
 
-An internal context and state management library for [Neuledge Engine](https://neuledge.com).
+An internal context and state management library for [Neuledge Engine](https://github.com/neuledge/engine-js).
 
 This library is not intended to be used directly. It is a dependency of the [main package](https://www.npmjs.com/package/@neuledge/engine).
 

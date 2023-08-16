@@ -1,8 +1,8 @@
 <p align=center>
-  <a href="https://neuledge.com">
+  <a href="https://github.com/neuledge/engine-js">
     <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://cdn.neuledge.com/images/logo/dark.svg">
-      <img alt="Neuledge" src="https://cdn.neuledge.com/images/logo/light.svg" height="140">
+      <source media="(prefers-color-scheme: dark)" srcset="https://github.com/neuledge/engine-js/raw/docs/dark.svg">
+      <img alt="Neuledge" src="https://github.com/neuledge/engine-js/raw/docs/light.svg" height="140">
     </picture>
   </a>
 </p>
@@ -44,7 +44,7 @@
   </a>
 </p>
 <div align="center">
-  <a href="https://neuledge.com/docs" target="_blank">Documentation</a>
+  <a href="https://github.com/neuledge/engine-js/tree/main/docs" target="_blank">Documentation</a>
   <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
   <a href="https://discord.gg/49JMwxKvhF" target="_blank">Discord</a>
   <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
@@ -53,8 +53,6 @@
   <a href="https://github.com/neuledge/engine-js/issues" target="_blank">Issues</a>
   <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
   <a href="https://twitter.com/neuledge" target="_blank">@neuledge</a>
-  <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
-  <a href="https://neuledge.com" target="_blank">Website</a>
 </div>
 <br>
 
@@ -105,7 +103,7 @@ If you find Neuledge useful and would like to support its ongoing development an
 
 # 👋 Introduction
 
-[Neuledge](https://neuledge.com) is a powerful language that simplifies data management and enhances data integrity for databases. It enables you to define your data models and business logic in a precise and customizable way. The schema language supports customizable scalar types, providing type-safe data models and ensuring that you always get the data you expect.
+**Neuledge Engine** is a powerful language that simplifies data management and enhances data integrity for databases. It enables you to define your data models and business logic in a precise and customizable way. The schema language supports customizable scalar types, providing type-safe data models and ensuring that you always get the data you expect.
 
 With Neuledge, you can create different states for the same entity, each with its own set of fields and mutations. These states are stored and accessed from the same table, with an abstraction layer that defines which fields are needed for each state. For example, you can define a "DraftPost" state with a set of fields and mutations, and then create a "PublishedPost" state that inherits from "DraftPost" and adds more fields and restrictions necessary for published posts.
 
@@ -619,7 +617,7 @@ const users = await engine.findMany(...User).limit(10);
 
 # 📚 Documentation & examples
 
-For more information, please visit [neuledge.com/docs](https://neuledge.com/docs).
+For more information, please visit [docs](https://github.com/neuledge/engine-js/tree/main/docs).
 
 For fully functional code examples, please check the [examples](https://github.com/neuledge/engine-js/tree/main/examples) folder.
 
@@ -632,7 +630,6 @@ To get involved in the Neuledge community:
 - Give us a star ⭐️ on GitHub.
 - Follow us on [Twitter](https://twitter.com/neuledge).
 - Join our [Discord community](https://discord.gg/49JMwxKvhF) to connect with other users and get help.
-- Subscribe to our [newsletter](https://neuledge.com/#join) to stay up to date on the latest news and updates.
 - If you find any bugs or have any suggestions, please [open an issue](https://github.com/neuledge/engine-js/issues/new/choose) on GitHub or let us know on our [Discord channel](https://discord.gg/49JMwxKvhF).
 
 <br>
