@@ -16,7 +16,7 @@
     "@neuledge/engine": "^0.2.1",
     "@neuledge/mongodb-store": "^0.2.0",
     "dotenv": "^16.3.1",
-    "fastify": "^4.21.0",
+    "fastify": "^4.22.2",
     "graphql": "^16.8.0",
     "mercurius": "^13.1.0"
   },
