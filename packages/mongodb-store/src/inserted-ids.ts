@@ -56,7 +56,7 @@ const autoIncrementPrimaryKey = async (
   autoIncrement: Collection<AutoIncrementDocument>,
   collectionName: string,
 ): Promise<number> => {
-  const { value: doc } = await autoIncrement.findOneAndUpdate(
+  const doc = await autoIncrement.findOneAndUpdate(
     {
       _id: collectionName,
     },
