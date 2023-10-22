@@ -1,5 +1,11 @@
 # @neuledge/states-parser
 
+## 0.1.2
+
+### Patch Changes
+
+- 2bd1448: dependencies update
+
 ## 0.1.1
 
 ### Patch Changes

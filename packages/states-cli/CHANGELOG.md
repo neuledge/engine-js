@@ -1,5 +1,14 @@
 # @neuledge/states-cli
 
+## 0.1.4
+
+### Patch Changes
+
+- 2bd1448: dependencies update
+- Updated dependencies [2bd1448]
+  - @neuledge/typescript-states@0.2.2
+  - @neuledge/states@0.2.1
+
 ## 0.1.3
 
 ### Patch Changes

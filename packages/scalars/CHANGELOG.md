@@ -1,5 +1,13 @@
 # @neuledge/scalars
 
+## 0.3.2
+
+### Patch Changes
+
+- 2bd1448: dependencies update
+- Updated dependencies [2bd1448]
+  - @neuledge/store@0.2.2
+
 ## 0.3.1
 
 ### Patch Changes

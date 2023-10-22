@@ -1,6 +1,6 @@
 {
   "name": "@neuledge/store",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Neuledge Store abstract interface for Neuledge Engine",
   "keywords": [
     "neuledge",

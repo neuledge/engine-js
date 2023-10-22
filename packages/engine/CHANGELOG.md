@@ -1,5 +1,13 @@
 # @neuledge/engine
 
+## 0.2.2
+
+### Patch Changes
+
+- 2bd1448: dependencies update
+- Updated dependencies [2bd1448]
+  - @neuledge/scalars@0.3.2
+
 ## 0.2.1
 
 ### Patch Changes

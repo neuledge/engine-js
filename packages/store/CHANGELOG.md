@@ -1,5 +1,11 @@
 # @neuledge/store
 
+## 0.2.2
+
+### Patch Changes
+
+- 2bd1448: dependencies update
+
 ## 0.2.1
 
 ### Patch Changes

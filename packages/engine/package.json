@@ -1,6 +1,6 @@
 {
   "name": "@neuledge/engine",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Neuledge Engine is a state machine engine for JavaScript and TypeScript that allows you to define predictable data schema and business logic definitions for databases",
   "keywords": [
     "neuledge",
@@ -46,14 +46,14 @@
     "lint:strict": "yarn lint --max-warnings 0"
   },
   "dependencies": {
-    "@neuledge/scalars": "^0.3.1",
+    "@neuledge/scalars": "^0.3.2",
     "p-limit": "^3.1.0",
     "pluralize": "^8.0.0"
   },
   "devDependencies": {
     "@types/pluralize": "^0.0.31",
-    "@neuledge/states-cli": "^0.1.3",
-    "@neuledge/store": "^0.2.1"
+    "@neuledge/states-cli": "^0.1.4",
+    "@neuledge/store": "^0.2.2"
   },
   "peerDependencies": {
     "@neuledge/store": ">=0.1.1"
