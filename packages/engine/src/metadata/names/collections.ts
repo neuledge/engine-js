@@ -158,4 +158,4 @@ const suggestStatesCollectionNames = (
  * For example: ['user', 'profile'] -> 'user_profiles'
  */
 const formatCollectionName = (words: string[]): string =>
-  [...words.slice(0, -1), pluralize.plural(words[words.length - 1])].join('_');
+  [...words.slice(0, -1), pluralize.plural(words.at(-1) as string)].join('_');

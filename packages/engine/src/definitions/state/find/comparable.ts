@@ -1,8 +1,15 @@
-export type ComparableFilters<V> =
+export type ComparableFilters<V> = (
   | WhereLowerThenFilter<V>
   | WhereLowerThenEqualFilter<V>
   | WhereGreaterThenFilter<V>
-  | WhereGreaterThenEqualFilter<V>;
+  | WhereGreaterThenEqualFilter<V>
+) &
+  Partial<
+    | WhereLowerThenFilter<V>
+    | WhereLowerThenEqualFilter<V>
+    | WhereGreaterThenFilter<V>
+    | WhereGreaterThenEqualFilter<V>
+  >;
 
 interface WhereLowerThenFilter<V> {
   $lt: V;

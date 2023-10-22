@@ -46,7 +46,10 @@ export const generateStateOptionalRelations = (
           item.as.entity,
         )}${item.as.list ? ', list: true' : ''}${
           item.type === 'RelationField' && item.referenceField
-            ? `, reference: '${item.referenceField.replace(/('|\\)/g, '\\$1')}'`
+            ? `, reference: '${item.referenceField.replaceAll(
+                /('|\\)/g,
+                '\\$1',
+              )}'`
             : ''
         } } as const,`,
     )

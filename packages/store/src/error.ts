@@ -25,7 +25,10 @@ export namespace StoreError {
 export class StoreError extends Error {
   static Code = StoreErrorCode;
 
-  constructor(public readonly code: StoreErrorCode, message: string) {
+  constructor(
+    public readonly code: StoreErrorCode,
+    message: string,
+  ) {
     super(message);
     this.name = 'StoreError';
   }

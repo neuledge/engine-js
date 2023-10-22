@@ -45,10 +45,11 @@ import { QueryOptions, QueryType } from './query';
 import { NeuledgeError } from '@/error';
 
 export class QueryClass<
-  T extends QueryType,
-  I extends StateDefinition,
-  O extends StateDefinition,
-> implements
+    T extends QueryType,
+    I extends StateDefinition,
+    O extends StateDefinition,
+  >
+  implements
     ReturnQuery<any, I, O>, // eslint-disable-line @typescript-eslint/no-explicit-any
     SelectQuery<any, I, O, any>, // eslint-disable-line @typescript-eslint/no-explicit-any
     ExpandQuery<any, I, O, any, any>, // eslint-disable-line @typescript-eslint/no-explicit-any

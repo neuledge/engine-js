@@ -11,17 +11,17 @@ export const generateDescriptionComment = (
   const deprecationReason = deprecated === true ? '' : deprecated || null;
 
   return description
-    ? `/**\n${indent} * ${description.replace(/\n/g, `\n${indent} * `)}${
+    ? `/**\n${indent} * ${description.replaceAll('\n', `\n${indent} * `)}${
         deprecationReason
-          ? `\n${indent} *\n${indent} * @deprecated ${deprecationReason.replace(
-              /\n/g,
+          ? `\n${indent} *\n${indent} * @deprecated ${deprecationReason.replaceAll(
+              '\n',
               `\n${indent} * `,
             )}`
           : ''
       }\n${indent} */\n${indent}`
     : deprecationReason
-    ? `/**\n${indent} * @deprecated ${deprecationReason.replace(
-        /\n/g,
+    ? `/**\n${indent} * @deprecated ${deprecationReason.replaceAll(
+        '\n',
         `\n${indent} * `,
       )}\n${indent} */\n${indent}`
     : '';

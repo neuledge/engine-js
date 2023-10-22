@@ -34,7 +34,7 @@ export const URLScalar = createCallableScalar(
 
     if (domain != null) {
       const regex = new RegExp(
-        `://([a-z0-9]+(-[a-z0-9]+)*\\.)*${domain.replace(/\./g, '\\.')}/`,
+        `://([a-z0-9]+(-[a-z0-9]+)*\\.)*${domain.replaceAll('.', '\\.')}/`,
         'i',
       );
 

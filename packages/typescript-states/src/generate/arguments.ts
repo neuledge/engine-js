@@ -23,4 +23,4 @@ export const generateArguments = (
 };
 
 const generateArgumentName = (name: string): string =>
-  /^\w+$/.test(name) ? name : `'${name.replace(/(['\\])/g, '\\$1')}'`;
+  /^\w+$/.test(name) ? name : `'${name.replaceAll(/(['\\])/g, '\\$1')}'`;

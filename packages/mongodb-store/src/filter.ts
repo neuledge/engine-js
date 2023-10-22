@@ -75,4 +75,4 @@ const filterTerm = (
 };
 
 const escapeRegExp = (string: string): string =>
-  string.replace(/[$()*+.?[\\\]^{|}]/g, '\\$&'); // $& means the whole matched string
+  string.replaceAll(/[$()*+.?[\\\]^{|}]/g, '\\$&'); // $& means the whole matched string
