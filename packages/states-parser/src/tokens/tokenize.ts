@@ -52,7 +52,7 @@ export const tokenize = (content: string, path?: string): Token[] => {
       column = 1;
     }
 
-    column += lines[lines.length - 1].length;
+    column += lines.at(-1)?.length ?? 0;
     position += value.length;
 
     if (isComment && value.includes('\n')) {
@@ -130,12 +130,12 @@ const parseStringToken = (
       value: raw
         .slice(3, -3)
         .trim()
-        .replace(/[\t ]*\r?\n[\t ]*/g, '\n'),
+        .replaceAll(/[\t ]*\r?\n[\t ]*/g, '\n'),
     };
   }
 
   return {
     kind: kind as '"' | "'",
-    value: raw.slice(1, -1).replace(/\\(.)/g, '$1'),
+    value: raw.slice(1, -1).replaceAll(/\\(.)/g, '$1'),
   };
 };

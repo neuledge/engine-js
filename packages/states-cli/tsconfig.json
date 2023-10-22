@@ -1,6 +1,8 @@
 {
   "extends": "@neuledge/tsconfig/base.json",
   "compilerOptions": {
+    "module": "es2022",
+    "moduleResolution": "Node",
     "baseUrl": "src",
     "rootDir": "src",
     "outDir": "dist"

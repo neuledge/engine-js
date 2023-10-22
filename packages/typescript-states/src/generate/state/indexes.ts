@@ -41,7 +41,7 @@ export const generateStateOptionalIndexes = (
           `\n${indent}  ${
             /^\w+$/.test(index.name)
               ? index.name
-              : `'${index.name.replace(/['\\]/g, '\\$1')}'`
+              : `'${index.name.replaceAll(/['\\]/g, '\\$1')}'`
           }: { fields: [${Object.entries(index.fields)
             .map(([field, sort]) => `'${sort === 'asc' ? `+` : '-'}${field}'`)
             .join(', ')}]${index.unique ? ', unique: true' : ''} } as const,`,

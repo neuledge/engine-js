@@ -15,4 +15,4 @@ export const generateMemberExpression = (
 const generatePropertyExpression = (expression: PropertyExpression): string =>
   /^\w+$/.test(expression.name)
     ? `.${expression.name}`
-    : `['${expression.name.replace(/(['\\])/g, '\\$1')}']`;
+    : `['${expression.name.replaceAll(/(['\\])/g, '\\$1')}']`;

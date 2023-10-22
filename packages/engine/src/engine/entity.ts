@@ -143,5 +143,5 @@ const setEntityValue = (obj: object, path: string, value: unknown): void => {
         : (obj[key as never] = {} as never);
   }
 
-  obj[pathKeys[pathKeys.length - 1] as never] = value as never;
+  obj[pathKeys.at(-1) as never] = value as never;
 };

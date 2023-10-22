@@ -7,7 +7,9 @@ import { Query, QueryMode, QueryOptions, QueryType } from '@/queries';
 import { Mutation, MutationType } from './mutation';
 
 export interface MutationGeneratorMethod {
-  (...args: Record<string, never>[]): Query<
+  (
+    ...args: Record<string, never>[]
+  ): Query<
     QueryMode,
     StateDefinition,
     StateDefinition,

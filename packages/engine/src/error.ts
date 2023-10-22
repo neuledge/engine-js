@@ -92,7 +92,10 @@ export class NeuledgeError extends Error {
     return error;
   }
 
-  constructor(public readonly code: NeuledgeError.Code, message: string) {
+  constructor(
+    public readonly code: NeuledgeError.Code,
+    message: string,
+  ) {
     super(message);
     this.name = 'NeuledgeError';
   }
