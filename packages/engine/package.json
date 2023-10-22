@@ -51,7 +51,7 @@
     "pluralize": "^8.0.0"
   },
   "devDependencies": {
-    "@types/pluralize": "^0.0.29",
+    "@types/pluralize": "^0.0.31",
     "@neuledge/states-cli": "^0.1.3",
     "@neuledge/store": "^0.2.1"
   },
